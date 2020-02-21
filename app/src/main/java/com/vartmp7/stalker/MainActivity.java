@@ -122,43 +122,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-//
-//        String s="{\n" +
-//                "  \"places\": [\n" +
-//                "    {\n" +
-//                "      \"approved\": false,\n" +
-//                "      \"coordinates\": [\n" +
-//                "        {\n" +
-//                "          \"latitude\": 1.1,\n" +
-//                "          \"longitude\": 1.2\n" +
-//                "        },\n" +
-//                "        {\n" +
-//                "          \"latitude\": 2.1,\n" +
-//                "          \"longitude\": 2.2\n" +
-//                "        },\n" +
-//                "        {\n" +
-//                "          \"latitude\": 3.1,\n" +
-//                "          \"longitude\": 3.2\n" +
-//                "        },\n" +
-//                "        {\n" +
-//                "          \"latitude\": 3.1,\n" +
-//                "          \"longitude\": 3.2\n" +
-//                "        }\n" +
-//                "      ],\n" +
-//                "      \"id\": 1,\n" +
-//                "      \"name\": \"nuovo luogo\",\n" +
-//                "      \"num_max_people\": 100\n" +
-//                "    }\n" +
-//                "  ]\n" +
-//                "}";
-//
-//        Gson gson = new Gson();
-//        ResponseLuogo l = gson.fromJson(s, ResponseLuogo.class);
-//
-//        Log.d(TAG, "onCreate: "+l.toString());
-//        OkHttpClient.Builder b = new OkHttpClient.Builder();
-
-//        client = new OkHttpClient();
         client = getUnsafeOkHttpClient();
         sScegliOrganizzazione = findViewById(R.id.s_scegliOrganizzazione);
         sScegliOrganizzazione.setSelected(false);
@@ -166,11 +129,19 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         tvStatus = findViewById(R.id.tvStatus);
 
         findViewById(R.id.btnStartTracking).setOnClickListener(this);
+        findViewById(R.id.btnRefresh).setOnClickListener(this);
 //        loadOrganizazzione();
 
         tvCurrentStatus = findViewById(R.id.tvCurrentStatus);
         tvLuoghi = findViewById(R.id.tvElencoLuoghi);
 
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item,
+                new String[]{"Seleziona un'organizzazione..."});
+
+        adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+        sScegliOrganizzazione.setAdapter(adapter);
+        sScegliOrganizzazione.setOnItemSelectedListener(this);
 
     }
 
@@ -205,8 +176,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
                 b.putInt("CODE", 0);
+                b.putString("ErrorMsg", e.getMessage());
                 msg.setData(b);
-                handler.sendMessage(msg);
+                error_handler.sendMessage(msg);
                 Log.d(TAG, "onFailure: " + e.toString());
             }
 
@@ -240,6 +212,17 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     }
 
+
+    @SuppressLint("HandlerLeak")
+    private Handler error_handler = new Handler(){
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+
+            Toast.makeText(MainActivity.this, msg.getData().getString("ErrorMsg"), Toast.LENGTH_SHORT).show();
+
+        }
+    };
     private final int REQ_ORG = 0;
     private final int REQ_LUOGHI = 5;
     @SuppressLint("HandlerLeak")
@@ -276,12 +259,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         String[] mList = orgs.getDataForSpinner();
         organizzazioni = orgs.getOrganizations();
+        if (organizzazioni.size()==0){
+            mList = new String[]{"Non ci sono organizzazioni!"};
+        }
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, mList);
 
         adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
         sScegliOrganizzazione.setAdapter(adapter);
-        sScegliOrganizzazione.setOnItemSelectedListener(this);
     }
 
     @Override
@@ -330,6 +315,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 Toast.makeText(MainActivity.this, sScegliOrganizzazione.getSelectedItem() + " ti sta tracciando!", Toast.LENGTH_SHORT).show();
                 tvCurrentStatus.setText(R.string.app_name);
                 showView(viewToShowOnTracking);
+                break;
+            case R.id.btnRefresh:
+                get(SERVER+"organizations");
                 break;
 
         }
