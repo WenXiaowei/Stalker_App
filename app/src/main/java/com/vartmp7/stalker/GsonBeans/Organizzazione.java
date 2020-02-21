@@ -12,7 +12,43 @@ public class Organizzazione {
     private String postal_code;
     private String region;
     private String type;
+    private String ldap_common_name;
+    private String ldap_domain_component;
+    private String ldap_port;
 
+    public String getLdap_common_name() {
+        return ldap_common_name;
+    }
+
+    public void setLdap_common_name(String ldap_common_name) {
+        this.ldap_common_name = ldap_common_name;
+    }
+
+    public String getLdap_domain_component() {
+        return ldap_domain_component;
+    }
+
+    public void setLdap_domain_component(String ldap_domain_component) {
+        this.ldap_domain_component = ldap_domain_component;
+    }
+
+    public String getLdap_port() {
+        return ldap_port;
+    }
+
+    public void setLdap_port(String ldap_port) {
+        this.ldap_port = ldap_port;
+    }
+
+    public String getLdap_url() {
+        return ldap_url;
+    }
+
+    public void setLdap_url(String ldap_url) {
+        this.ldap_url = ldap_url;
+    }
+
+    private String ldap_url;
     public String getCity() {
         return city;
     }

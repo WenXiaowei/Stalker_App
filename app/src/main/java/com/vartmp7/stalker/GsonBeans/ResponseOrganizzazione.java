@@ -20,7 +20,7 @@ public class ResponseOrganizzazione {
         toRet.add("Scegli un'organizzazione");
 
         for (Organizzazione org: organizations) {
-            toRet.add(org.getOrgInfo());
+            toRet.add(org.getName());
         }
 
         return toRet.toArray(new String[0]);

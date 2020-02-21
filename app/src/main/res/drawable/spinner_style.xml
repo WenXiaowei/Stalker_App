@@ -35,10 +35,5 @@
             </shape>
 
         </item>
-        <item >
-            <bitmap android:gravity="bottom|right"
-                android:src="@drawable/triangle"  />
-
-        </item>
     </layer-list></item>
 </selector>
