@@ -216,14 +216,15 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 try {
 
 
-                    int req_code= Integer.parseInt(Objects.requireNonNull(response.header("req_code")));
+                    int req_code = Integer.parseInt(Objects.requireNonNull(response.header("req_code")));
 
-                    Log.d(TAG, "onResponse: REQ_CODE: "+req_code);
+                    Log.d(TAG, "onResponse: REQ_CODE: " + req_code);
 
                     b.putInt("REQ_CODE", req_code);
 
 
                     String str = response.body().string();
+
                     Log.d(TAG, "onResponse: " + str);
 
                     b.putString("MSG", str);
@@ -256,23 +257,25 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     loadOrganizazzione(gson.fromJson(s, ResponseOrganizzazione.class));
                     break;
                 case REQ_LUOGHI:
-
                     updateLuoghi(gson.fromJson(s, ResponseLuogo.class));
                     // aggiornare i luoghi
                     break;
+                default:
+                        Toast.makeText(MainActivity.this,"Something failed!", Toast.LENGTH_SHORT).show();
             }
 
         }
     };
 
     private void updateLuoghi(ResponseLuogo l) {
+//        tvLuoghi.setText("Ciaoasd");
         tvLuoghi.setText(l.getDataForSpinner());
     }
 
     private void loadOrganizazzione(ResponseOrganizzazione orgs) {
 
         String[] mList = orgs.getDataForSpinner();
-        organizzazioni= orgs.getOrganizations();
+        organizzazioni = orgs.getOrganizations();
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, mList);
 
@@ -294,9 +297,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 //        Organizzazione org = (Organizzazione) parent.getSele;
 
         //todo richiedere i luoghi dell'organizzazione
-        String req=String.format("organizations/%s/places",organizzazioni.get(position-1).getId());
-        Log.d(TAG, "onItemSelected: REQ"+SERVER+req);
-        get(SERVER+req);
+        String req = String.format("organizations/%s/places", organizzazioni.get(position - 1).getId());
+        Log.d(TAG, "onItemSelected: REQ" + SERVER + req);
+        get(SERVER + req);
         showView(viewToshowOnChoice);
 
 

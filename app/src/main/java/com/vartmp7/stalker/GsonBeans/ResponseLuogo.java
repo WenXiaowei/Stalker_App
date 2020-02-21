@@ -18,16 +18,15 @@ public class ResponseLuogo {
 
 
     public String getDataForSpinner(){
-        ArrayList<String> toRet = new ArrayList<>();
-        toRet.add("Scegli un'organizzazione1");
-        toRet.add("Scegli un'organizzazione2");
-        toRet.add("Scegli un'organizzazione3");
+
+        StringBuilder builder = new StringBuilder();
 
         for (Luogo l: getPlaces()) {
-            toRet.add(l.getLuogoInfo());
+            builder.append((getPlaces().indexOf(l))+1);
+            builder.append(": "+l.getLuogoInfo());
         }
 
-        return toRet.toString();
+        return builder.toString();
     }
 
     @NonNull
