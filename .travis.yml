@@ -18,6 +18,8 @@ android:
 #  - emulator -avd test -no-audio -no-window &	
 #  - android-wait-for-emulator	
 #  - adb shell input keyevent 82 &
+before_install:
+- chmod +x gradlew
 script: sudo ./gradlew test --stacktrace
 install: sudo ./gradlew assembleDebug --stacktrace
 before_cache:
