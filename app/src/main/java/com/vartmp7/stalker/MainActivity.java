@@ -164,10 +164,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         final Request request = new Request.Builder()
                 .url(url)
                 .build();
-
-
         Call call = client.newCall(request);
-
 
         call.enqueue(new Callback() {
             Message msg = new Message();
@@ -179,25 +176,23 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 b.putString("ErrorMsg", e.getMessage());
                 msg.setData(b);
                 error_handler.sendMessage(msg);
-                Log.d(TAG, "onFailure: " + e.toString());
+//                Log.d(TAG, "onFailure: " + e.toString());
             }
 
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
 
                 try {
-
-
                     int req_code = Integer.parseInt(Objects.requireNonNull(response.header("req_code")));
 
-                    Log.d(TAG, "onResponse: REQ_CODE: " + req_code);
+//                    Log.d(TAG, "onResponse: REQ_CODE: " + req_code);
 
                     b.putInt("REQ_CODE", req_code);
 
 
                     String str = response.body().string();
 
-                    Log.d(TAG, "onResponse: " + str);
+//                    Log.d(TAG, "onResponse: " + str);
 
                     b.putString("MSG", str);
                 } catch (NullPointerException e) {
@@ -214,11 +209,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
 
     @SuppressLint("HandlerLeak")
-    private Handler error_handler = new Handler(){
+    private Handler error_handler = new Handler() {
         @Override
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
 
+            ResponseOrganizzazione r = new ResponseOrganizzazione();
+            r.setOrganizations(new ArrayList<Organizzazione>());
+            loadOrganizazzione(r);
             Toast.makeText(MainActivity.this, msg.getData().getString("ErrorMsg"), Toast.LENGTH_SHORT).show();
 
         }
@@ -244,7 +242,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     // aggiornare i luoghi
                     break;
                 default:
-                        Toast.makeText(MainActivity.this,"Something failed!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "Something failed!", Toast.LENGTH_SHORT).show();
             }
 
         }
@@ -259,7 +257,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         String[] mList = orgs.getDataForSpinner();
         organizzazioni = orgs.getOrganizations();
-        if (organizzazioni.size()==0){
+        if (organizzazioni.size() == 0) {
             mList = new String[]{"Non ci sono organizzazioni!"};
         }
 
@@ -317,7 +315,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 showView(viewToShowOnTracking);
                 break;
             case R.id.btnRefresh:
-                get(SERVER+"organizations");
+                get(SERVER + "organizations");
                 break;
 
         }

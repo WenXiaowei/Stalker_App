@@ -5,7 +5,37 @@ import androidx.annotation.NonNull;
 import java.util.ArrayList;
 
 public class Luogo {
+    private String id;
 
+    private String name;
+    private String num_max_people;
+    private float raggio;
+    private ArrayList<Coordinata> coordinates;
+
+    public Coordinata getCentro() {
+        Retta r1 = new Retta(coordinates.get(0), coordinates.get(2));
+        return r1.intersezione(new Retta(coordinates.get(1), coordinates.get(3)));
+    }
+
+
+    @NonNull
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+
+        for (Coordinata c : coordinates) {
+            builder.append(c.toString());
+        }
+
+        return "id: " + getId() +
+                "\nNome: " + getName() +
+                "\nNum. Max Persone " + getNum_max_people() +
+                "\nCoordinate: " + builder.toString();
+    }
+
+    public String getLuogoInfo() {
+        return "Nome ";
+    }
 
     public String getId() {
         return id;
@@ -37,30 +67,5 @@ public class Luogo {
 
     public void setCoordinate(ArrayList<Coordinata> coordinate) {
         this.coordinates = coordinate;
-    }
-
-    private String id;
-    private String name;
-    private String num_max_people;
-    private ArrayList<Coordinata> coordinates;
-
-    @NonNull
-    @Override
-    public String toString() {
-        StringBuilder builder= new StringBuilder();
-
-        for (Coordinata c: coordinates) {
-            builder.append(c.toString());
-        }
-
-
-        return "id: "+getId()+
-                "\nNome: "+getName()+
-                "\nNum. Max Persone "+getNum_max_people()+
-                "\nCoordinate: "+builder.toString();
-    }
-
-    public String getLuogoInfo() {
-        return "Nome ";
     }
 }
