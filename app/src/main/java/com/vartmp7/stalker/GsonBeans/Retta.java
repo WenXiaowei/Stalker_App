@@ -2,16 +2,17 @@ package com.vartmp7.stalker.GsonBeans;
 
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 public class Retta {
 
-    float m;
-    float q;
+    private double m;
+    private double q;
 
     public Retta(Coordinata c1, Coordinata c2) {
-        this.m = (c1.getLatitude() - c2.getLatitude()) / (c1.getLongitude() - c1.getLongitude());
-        this.q = (c1.getLatitude() - c2.getLatitude()) / (c1.getLongitude() - c1.getLongitude()) + c2.getLatitude();
+        this.m = (c2.getLatitude() - c1.getLatitude()) / (c2.getLongitude() - c1.getLongitude());
+        this.q = (((c2.getLatitude() - c1.getLatitude())*(-1)*c1.getLongitude()) / (c2.getLongitude() - c1.getLongitude())) + c1.getLatitude();
 
     }
 
@@ -20,14 +21,14 @@ public class Retta {
         this.q = q;
     }
 
-    public float calcoloY(float x) {
+    public double calcoloY(double x) {
         return this.m * x + this.q;
     }
 
     Coordinata intersezione(Retta r) {
         //System.out.println("x/:"+(-this.q + r.q));
         //System.out.println("/x:"+(this.m - r.m));
-        float x = (-this.q + r.q) / (this.m - r.m);
+        double x = (-this.q + r.q) / (this.m - r.m);
 
         return new Coordinata(x, calcoloY(x));
     }
@@ -41,4 +42,9 @@ public class Retta {
         return false;
     }
 
+    @NonNull
+    @Override
+    public String toString() {
+        return "y="+m+"x+"+q;
+    }
 }

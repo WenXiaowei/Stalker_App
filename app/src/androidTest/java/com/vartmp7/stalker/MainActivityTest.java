@@ -9,6 +9,8 @@ import org.junit.runner.RunWith;
 
 import androidx.test.rule.ActivityTestRule;
 import androidx.test.rule.GrantPermissionRule;
+
+import static androidx.test.espresso.Espresso.onData;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
@@ -29,8 +31,9 @@ public class MainActivityTest {
 
     @Test
     public void test_GetOrganizations(){
-        onView(withId(R.id.s_scegliOrganizzazione)).check(matches(isClickable()));
-        onView(withId(R.id.s_scegliOrganizzazione)).perform(click());
+//        onView(withId(R.id.s_scegliOrganizzazione)).check(matches(isClickable()));
+//        onView(withId(R.id.s_scegliOrganizzazione)).perform(click());
 
+//        onData(withId(R.id.s_scegliOrganizzazione)).atPosition(0).check(matches(isClickable()));
     }
 }

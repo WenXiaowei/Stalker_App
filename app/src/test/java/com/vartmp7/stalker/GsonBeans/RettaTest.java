@@ -1,16 +1,36 @@
 package com.vartmp7.stalker.GsonBeans;
 
-import com.vartmp7.stalker.GsonBeans.Retta;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
+
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.Assert.*;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+
+import java.util.Arrays;
+import java.util.Collection;
 
 import static org.junit.Assert.assertEquals;
 
+@RunWith(Parameterized.class)
 public class RettaTest {
 
     private static final float DELTA=0;
-    public Retta r;
+    private Retta r;
+
+    private Retta rettaProva;
+    private Coordinata coordinataRes;
+
+    public RettaTest(final Retta r, final Coordinata c){
+        this.rettaProva= r;
+        this.coordinataRes = c;
+    }
+    @Before
+    public void initialize(){
+        r= new Retta(1,0);
+    }
+
 
     @Test
     public  void testRettaOrizzontale(){
@@ -52,4 +72,34 @@ public class RettaTest {
         Coordinata c = r.intersezione(r2);
         assertEquals(c, new Coordinata(1,1));
     }
+
+    @Test
+    public void testRettaPerDueCoordinate(){
+        Coordinata c1 =new Coordinata(1,1);
+        Coordinata c2 = new Coordinata(2,2);
+
+        r= new Retta(c1,c2);
+
+//        System.out.println(r);
+        assertEquals(new Retta(1f,0f),r);
+    }
+
+    // serie di test
+
+    @Parameterized.Parameters
+    public static Collection rette() {
+        return Arrays.asList(new Object[][] {
+                { new Retta(1,0) ,new Coordinata(1,1) },
+                { new Retta(2,1) ,new Coordinata(15,7) }
+                // todo aggiungere altre rette e punti da calcolare
+        });
+    }
+
+    @Test
+    public void testConSetRette(){
+        System.out.println("retta: "+ rettaProva);
+        assertEquals(rettaProva.calcoloY(coordinataRes.getLongitude()), coordinataRes.getLatitude(),DELTA);
+    }
+
+
 }

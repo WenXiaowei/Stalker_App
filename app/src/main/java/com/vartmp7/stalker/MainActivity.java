@@ -5,7 +5,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -19,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.vartmp7.stalker.GsonBeans.Coordinata;
 import com.vartmp7.stalker.GsonBeans.Luogo;
 import com.vartmp7.stalker.GsonBeans.Organizzazione;
 import com.vartmp7.stalker.GsonBeans.ResponseLuogo;
@@ -27,6 +31,7 @@ import com.vartmp7.stalker.GsonBeans.ResponseOrganizzazione;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.security.Permission;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -48,6 +53,8 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.TlsVersion;
 
+import static com.vartmp7.stalker.Tools.getUnsafeOkHttpClient;
+
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, View.OnClickListener {
 
@@ -56,6 +63,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private TextView tvStatus;
 
     private ArrayList<Organizzazione> organizzazioni;
+    private ArrayList<Luogo> luoghi;
     private TextView tvCurrentStatus;
     private int[] viewToshowOnChoice = {R.id.tvTestoElenco, R.id.tvElencoLuoghi, R.id.btnStartTracking};
     private int[] viewToShowOnTracking = {R.id.tvStatus, R.id.tvCurrentStatus};
@@ -63,51 +71,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private int FAIL_RESPONSE_CODE = 0;
     private int SUCCESSFUL_RESPONSE_CODE = 1;
     public final static String SERVER = "https://10.0.2.2:5000/";
-
+    private LocationManager locationManager;
 
     private TextView tvLuoghi;
 
-    private static OkHttpClient getUnsafeOkHttpClient() {
-        try {
-            // Create a trust manager that does not validate certificate chains
-            final TrustManager[] trustAllCerts = new TrustManager[]{
-                    new X509TrustManager() {
-                        @Override
-                        public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
-                        }
-
-                        @Override
-                        public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
-                        }
-
-                        @Override
-                        public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-                            return new java.security.cert.X509Certificate[]{};
-                        }
-                    }
-            };
-
-            // Install the all-trusting trust manager
-            final SSLContext sslContext = SSLContext.getInstance("SSL");
-            sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
-            // Create an ssl socket factory with our all-trusting manager
-            final SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
-
-            OkHttpClient.Builder builder = new OkHttpClient.Builder();
-            builder.sslSocketFactory(sslSocketFactory, (X509TrustManager) trustAllCerts[0]);
-            builder.hostnameVerifier(new HostnameVerifier() {
-                @Override
-                public boolean verify(String hostname, SSLSession session) {
-                    return true;
-                }
-            });
-
-            OkHttpClient okHttpClient = builder.build();
-            return okHttpClient;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     @Override
     protected void onResume() {
@@ -143,6 +110,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         sScegliOrganizzazione.setAdapter(adapter);
         sScegliOrganizzazione.setOnItemSelectedListener(this);
 
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
     }
 
     @Override
@@ -152,6 +121,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             case 1:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     get(SERVER + "organizations");
+                } else {
+                    Toast.makeText(this, "I need permissions ", Toast.LENGTH_SHORT).show();
+                }
+            case 0:
+                if (grantResults.length > 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED &&
+                        grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                    startTracking();
                 } else {
                     Toast.makeText(this, "I need permissions ", Toast.LENGTH_SHORT).show();
                 }
@@ -251,6 +227,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private void updateLuoghi(ResponseLuogo l) {
 //        tvLuoghi.setText("Ciaoasd");
         tvLuoghi.setText(l.getDataForSpinner());
+        luoghi= l.getPlaces();
     }
 
     private void loadOrganizazzione(ResponseOrganizzazione orgs) {
@@ -306,13 +283,39 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
     }
 
+
+    private void startTracking(){
+        if (checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION)== PackageManager.PERMISSION_GRANTED &&
+                checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)== PackageManager.PERMISSION_GRANTED){
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,5,1, new Tracker(MainActivity.this, new StalkerCallBack() {
+                @Override
+                public boolean onLocationsChanged(Location l) {
+                    Coordinata c = new Coordinata( l.getLatitude(), l.getLongitude());
+
+                    for (Luogo luogo : luoghi) {
+                       if (luogo.isPlace(c)){
+                           return true;
+                       }
+
+                    }
+                    return false;
+                }
+            }));
+        }else
+            requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION},0);
+    }
+
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btnStartTracking:
                 Toast.makeText(MainActivity.this, sScegliOrganizzazione.getSelectedItem() + " ti sta tracciando!", Toast.LENGTH_SHORT).show();
-                tvCurrentStatus.setText(R.string.app_name);
                 showView(viewToShowOnTracking);
+
+                tvCurrentStatus.setText(sScegliOrganizzazione.getSelectedItem()+" ti sta tracciando!");
+                startTracking();
+
                 break;
             case R.id.btnRefresh:
                 get(SERVER + "organizations");

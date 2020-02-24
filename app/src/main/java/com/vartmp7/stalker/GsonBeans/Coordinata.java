@@ -4,15 +4,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 public class Coordinata {
-    private float latitude;//y
-    private float longitude; //x
+    private double latitude;//y
+    private double longitude; //x
 
     public  Coordinata(){}
-    public Coordinata(float latitudine, float longitude){
+    public Coordinata(double latitudine, double longitude){
         this.latitude=latitudine;
         this.longitude=longitude;
     }
-    public float getLatitude() {
+    public double getLatitude() {
         return latitude;
     }
 
@@ -20,7 +20,7 @@ public class Coordinata {
         this.latitude = latitude;
     }
 
-    public float getLongitude() {
+    public double getLongitude() {
         return longitude;
     }
 
