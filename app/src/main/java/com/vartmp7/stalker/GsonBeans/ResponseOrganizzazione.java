@@ -15,14 +15,18 @@ public class ResponseOrganizzazione {
     }
 
 
-    public String[] getDataForSpinner(){
+    public String[] getDataForSpinner() {
         ArrayList<String> toRet = new ArrayList<>();
         toRet.add("Scegli un'organizzazione");
 
-        for (Organizzazione org: organizations) {
+        for (Organizzazione org : organizations) {
             toRet.add(org.getName());
         }
 
         return toRet.toArray(new String[0]);
+    }
+
+    public int getOrganizzationsLength() {
+        return organizations.size();
     }
 }

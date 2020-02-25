@@ -160,16 +160,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
                 try {
                     int req_code = Integer.parseInt(Objects.requireNonNull(response.header("req_code")));
-
-//                    Log.d(TAG, "onResponse: REQ_CODE: " + req_code);
-
                     b.putInt("REQ_CODE", req_code);
-
-
                     String str = response.body().string();
-
-//                    Log.d(TAG, "onResponse: " + str);
-
                     b.putString("MSG", str);
                 } catch (NullPointerException e) {
                     b.putInt("CODE", FAIL_RESPONSE_CODE);
@@ -254,11 +246,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             return;
         }
 
-//        Organizzazione org = (Organizzazione) parent.getSele;
-
-        //todo richiedere i luoghi dell'organizzazione
         String req = String.format("organizations/%s/places", organizzazioni.get(position - 1).getId());
-        Log.d(TAG, "onItemSelected: REQ" + SERVER + req);
+//        Log.d(TAG, "onItemSelected: REQ" + SERVER + req);
         get(SERVER + req);
         showView(viewToshowOnChoice);
 

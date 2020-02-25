@@ -16,7 +16,7 @@ import static org.junit.Assert.assertEquals;
 @RunWith(Parameterized.class)
 public class RettaTest {
 
-    private static final float DELTA=0;
+    private static final Double DELTA=0.00001d;
     private Retta r;
 
     private Retta rettaProva;
@@ -99,6 +99,19 @@ public class RettaTest {
     public void testConSetRette(){
         System.out.println("retta: "+ rettaProva);
         assertEquals(rettaProva.calcoloY(coordinataRes.getLongitude()), coordinataRes.getLatitude(),DELTA);
+    }
+
+
+    @Test
+    public void coordinateTorre(){
+
+        Retta r1 = new Retta(new Coordinata(45.411555,11.887476),new Coordinata(45.411108,11.887787));
+        Retta r2 = new Retta(new Coordinata(45.411442,11.887942),new Coordinata(45.411222,11.887319));
+        Coordinata intersezione = r1.intersezione(r2);
+        Coordinata c =new Coordinata(45.41133218,11.88763102);
+        assertEquals(c.getLatitude(), intersezione.getLatitude(),DELTA);
+        assertEquals(c.getLongitude(), intersezione.getLongitude(),DELTA);
+
     }
 
 
