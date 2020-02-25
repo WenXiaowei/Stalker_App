@@ -1,8 +1,6 @@
 package com.vartmp7.stalker.GsonBeans;
 
 
-import com.google.firebase.analytics.FirebaseAnalytics;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,14 +34,14 @@ public class RettaTest {
     public  void testRettaOrizzontale(){
         r= new Retta(0,0);
 
-        assertEquals(r.calcoloY(0),0,DELTA);
+        assertEquals(r.calcoloLatitude(0),0,DELTA);
     }
 
     @Test
     public void testRetta(){
         r = new Retta(3,1);
 
-        assertEquals(r.calcoloY(1),4,DELTA);
+        assertEquals(r.calcoloLatitude(1),4,DELTA);
     }
 
 
@@ -98,7 +96,7 @@ public class RettaTest {
     @Test
     public void testConSetRette(){
         System.out.println("retta: "+ rettaProva);
-        assertEquals(rettaProva.calcoloY(coordinataRes.getLongitude()), coordinataRes.getLatitude(),DELTA);
+        assertEquals(rettaProva.calcoloLatitude(coordinataRes.getLongitude()), coordinataRes.getLatitude(),DELTA);
     }
 
 

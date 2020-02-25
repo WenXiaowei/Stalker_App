@@ -31,8 +31,8 @@ public class Coordinata {
     @NonNull
     @Override
     public String toString() {
-        return "Latitude: "+getLatitude()+
-                "\nLongitude: "+getLongitude();
+        return "\nLongitude(x): "+getLongitude()+
+                "\nLatitude(y): "+getLatitude();
     }
 
     @Override

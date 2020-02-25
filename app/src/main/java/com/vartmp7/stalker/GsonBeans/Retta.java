@@ -1,7 +1,5 @@
 package com.vartmp7.stalker.GsonBeans;
 
-import android.util.Log;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -21,8 +19,8 @@ public class Retta {
         this.q = q;
     }
 
-    public double calcoloY(double x) {
-        return this.m * x + this.q;
+    public double calcoloLatitude(double longitude) {
+        return this.m * longitude + this.q;
     }
 
     Coordinata intersezione(Retta r) {
@@ -30,7 +28,7 @@ public class Retta {
         //System.out.println("/x:"+(this.m - r.m));
         double x = (-this.q + r.q) / (this.m - r.m);
 
-        return new Coordinata(calcoloY(x),x);
+        return new Coordinata(calcoloLatitude(x),x);
     }
 
     @Override
@@ -45,6 +43,9 @@ public class Retta {
     @NonNull
     @Override
     public String toString() {
+        if (q<=0){
+            return  "y="+m+"x"+q;
+        }
         return "y="+m+"x+"+q;
     }
 }
