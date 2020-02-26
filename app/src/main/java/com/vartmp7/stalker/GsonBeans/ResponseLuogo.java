@@ -23,10 +23,11 @@ public class ResponseLuogo {
 
         StringBuilder builder = new StringBuilder();
 
+        if (getPlaces().size()==0)
+            return "Per l'organizzazione selezionata non ci sono ancora luoghi tracciabili!";
+        int i=1;
         for (Luogo l: getPlaces()) {
-//            Log.d(TAG, "getDataForSpinner: "+l.getName());
-            builder.append((getPlaces().indexOf(l))+1);
-            builder.append(": ").append(l.getName()).append("\n");
+            builder.append(i++).append(": ").append(l.getName()).append("\n");
         }
 
         return builder.toString();

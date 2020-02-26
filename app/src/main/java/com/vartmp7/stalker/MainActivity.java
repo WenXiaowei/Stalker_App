@@ -12,6 +12,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -25,6 +26,7 @@ import com.vartmp7.stalker.GsonBeans.Luogo;
 import com.vartmp7.stalker.GsonBeans.Organizzazione;
 import com.vartmp7.stalker.GsonBeans.ResponseLuogo;
 import com.vartmp7.stalker.GsonBeans.ResponseOrganizzazione;
+import com.vartmp7.stalker.GsonBeans.TrackSignal;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -96,6 +98,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         sScegliOrganizzazione.setOnItemSelectedListener(this);
 
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+        TrackSignal s= new TrackSignal();
+        s.setEntered(true);
+        s.setAuthenticated(false);
+
+        Gson gson = new Gson();
+
+        Log.d(TAG, "onCreate: "+gson.toJson(s));
 
     }
 
