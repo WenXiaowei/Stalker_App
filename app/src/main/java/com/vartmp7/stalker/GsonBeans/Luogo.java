@@ -1,6 +1,7 @@
 package com.vartmp7.stalker.GsonBeans;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
 
@@ -11,18 +12,39 @@ public class Luogo {
     private String num_max_people;
     private ArrayList<Coordinata> coordinates;
 
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if (obj instanceof Luogo && coordinates.size()== ((Luogo) obj).coordinates.size()){
+            Luogo l = (Luogo) obj;
+
+            for (int i = 0; i < coordinates.size(); i++) {
+                if (coordinates.get(i)!= l.coordinates.get(i))
+                    return false;
+            }
+            return l.getName().equals(id) && getName().equals(l.getName()) && num_max_people.equals(l.getNum_max_people());
+        }
+        return false;
+    }
+
     public Coordinata getCentro() {
         Retta r1 = new Retta(coordinates.get(0), coordinates.get(2));
         return r1.intersezione(new Retta(coordinates.get(1), coordinates.get(3)));
     }
 
 
-    public boolean isPlace(Coordinata c){
-        //todo definire quando una coordinata è all'interno di un luogo.
+    public boolean isInPlace(Coordinata c){
+        if (getCentro().getDistanceTo(c)< getRadius())
+            return true;
         return false;
     }
-    public float getRadius(){
-        return 10f;
+
+
+    /**
+     *  metodo usato per il POC per ottenere il raggio del tracciamento
+     * @return
+     */
+    public double getRadius(){
+        return (coordinates.get(0).getDistanceTo(coordinates.get(2))/2 + coordinates.get(0).getDistanceTo(coordinates.get(1))/2)/2;
     }
 
 
@@ -41,9 +63,6 @@ public class Luogo {
                 "\nCoordinate: " + builder.toString();
     }
 
-    public String getLuogoInfo() {
-        return "Nome ";
-    }
 
     public String getId() {
         return id;

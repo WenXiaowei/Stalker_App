@@ -1,11 +1,13 @@
 package com.vartmp7.stalker.GsonBeans;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
 
 public class ResponseLuogo {
-
+    private static final String TAG="com.vartmp7.stalker.GsonBeans.ResponseLuogo";
     private ArrayList<Luogo> places;
 
     public ArrayList<Luogo> getPlaces() {
@@ -22,8 +24,9 @@ public class ResponseLuogo {
         StringBuilder builder = new StringBuilder();
 
         for (Luogo l: getPlaces()) {
+//            Log.d(TAG, "getDataForSpinner: "+l.getName());
             builder.append((getPlaces().indexOf(l))+1);
-            builder.append(": ").append(l.getLuogoInfo());
+            builder.append(": ").append(l.getName()).append("\n");
         }
 
         return builder.toString();

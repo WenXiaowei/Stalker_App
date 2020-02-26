@@ -12,9 +12,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.View;
-import android.view.animation.RotateAnimation;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
@@ -31,27 +29,14 @@ import com.vartmp7.stalker.GsonBeans.ResponseOrganizzazione;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.security.Permission;
-import java.security.cert.CertificateException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Objects;
-
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.SSLSocketFactory;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
 
 import okhttp3.Call;
 import okhttp3.Callback;
-import okhttp3.CipherSuite;
-import okhttp3.ConnectionSpec;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import okhttp3.TlsVersion;
 
 import static com.vartmp7.stalker.Tools.getUnsafeOkHttpClient;
 
@@ -218,8 +203,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     private void updateLuoghi(ResponseLuogo l) {
 //        tvLuoghi.setText("Ciaoasd");
-        tvLuoghi.setText(l.getDataForSpinner());
         luoghi= l.getPlaces();
+        tvLuoghi.setText(l.getDataForSpinner());
     }
 
     private void loadOrganizazzione(ResponseOrganizzazione orgs) {
@@ -276,14 +261,21 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private void startTracking(){
         if (checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION)== PackageManager.PERMISSION_GRANTED &&
                 checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)== PackageManager.PERMISSION_GRANTED){
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,5,1, new Tracker(MainActivity.this, new StalkerCallBack() {
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,-1,
+                    (float) luoghi.get(0).getRadius(),
+                    new Tracker(MainActivity.this, new StalkerCallBack() {
                 @Override
                 public boolean onLocationsChanged(Location l) {
                     Coordinata c = new Coordinata( l.getLatitude(), l.getLongitude());
 
                     for (Luogo luogo : luoghi) {
-                       if (luogo.isPlace(c)){
+                       if (luogo.isInPlace(c)){
+                           tvCurrentStatus.setText("you are in "+luoghi.get(0).getName());
                            return true;
+                       }else{
+                           tvCurrentStatus.setText("You left "+ luoghi.get(0).getName());
+
+                           return false;
                        }
 
                     }
