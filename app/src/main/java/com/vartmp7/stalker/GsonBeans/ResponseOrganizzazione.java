@@ -1,5 +1,7 @@
 package com.vartmp7.stalker.GsonBeans;
 
+import androidx.annotation.NonNull;
+
 import java.util.ArrayList;
 
 public class ResponseOrganizzazione {
@@ -28,5 +30,14 @@ public class ResponseOrganizzazione {
 
     public int getOrganizzationsLength() {
         return organizations.size();
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        StringBuilder builder= new StringBuilder();
+        for (Organizzazione org: organizations)
+            builder.append(org.getName());
+        return builder.toString();
     }
 }

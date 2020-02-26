@@ -2,7 +2,6 @@ package com.vartmp7.stalker;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -19,7 +18,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.gson.Gson;
 import com.vartmp7.stalker.GsonBeans.Coordinata;
 import com.vartmp7.stalker.GsonBeans.Luogo;
@@ -27,17 +25,16 @@ import com.vartmp7.stalker.GsonBeans.Organizzazione;
 import com.vartmp7.stalker.GsonBeans.ResponseLuogo;
 import com.vartmp7.stalker.GsonBeans.ResponseOrganizzazione;
 import com.vartmp7.stalker.GsonBeans.TrackSignal;
-
 import org.jetbrains.annotations.NotNull;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
-
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import static com.vartmp7.stalker.Tools.getUnsafeOkHttpClient;
@@ -45,6 +42,7 @@ import static com.vartmp7.stalker.Tools.getUnsafeOkHttpClient;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, View.OnClickListener {
 
+    public static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
     private final String TAG = "MainActivity";
     private Spinner sScegliOrganizzazione;
     private TextView tvStatus;
@@ -99,13 +97,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
-        TrackSignal s= new TrackSignal();
-        s.setEntered(true);
-        s.setAuthenticated(false);
-
-        Gson gson = new Gson();
-
-        Log.d(TAG, "onCreate: "+gson.toJson(s));
+//        TrackSignal s= new TrackSignal();
+//        s.setEntered(true).setAuthenticated(false);
+//
+//        Gson gson = new Gson();
+//
+//        Log.d(TAG, "onCreate: "+gson.toJson(s));
 
     }
 
@@ -128,6 +125,35 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 }
                 break;
         }
+    }
+
+    void post(String url, String json){
+
+        Log.d(TAG, "post: "+json);
+        json ="{\"authenticated\":false,\"entered\":true,\"idPlace\":3,\"uid_number\":0}";
+        RequestBody requestBody = RequestBody.create(json,JSON);
+
+        final Request request = new Request.Builder()
+                .url(url)
+                .post(requestBody)
+                .build();
+
+        Call call = client.newCall(request);
+
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                Log.d(TAG, "onResponse: "+response.headers().toString());
+                Log.d(TAG, "onResponse: "+response.body().string());
+            }
+        });
+
+
     }
 
     void get(String url) {
@@ -198,6 +224,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             String s = msg.getData().getString("MSG");
             switch (code) {
                 case REQ_ORG:
+//                  Log.d(TAG, "handleMessage: "+s);
                     loadOrganizazzione(gson.fromJson(s, ResponseOrganizzazione.class));
                     break;
                 case REQ_LUOGHI:
@@ -212,12 +239,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     };
 
     private void updateLuoghi(ResponseLuogo l) {
-//        tvLuoghi.setText("Ciaoasd");
         luoghi= l.getPlaces();
         tvLuoghi.setText(l.getDataForSpinner());
     }
 
     private void loadOrganizazzione(ResponseOrganizzazione orgs) {
+        Log.d(TAG, "loadOrganizazzione: "+orgs);
 
         String[] mList = orgs.getDataForSpinner();
         organizzazioni = orgs.getOrganizations();
@@ -233,8 +260,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-//        Toast.makeText(MainActivity.this, "selezionato " + parent.getItemAtPosition(position), Toast.LENGTH_SHORT).show();
-
         if (position == 0) {
             hideView(viewToshowOnChoice);
             hideView(viewToShowOnTracking);
@@ -278,18 +303,26 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 public boolean onLocationsChanged(Location l) {
                     Coordinata c = new Coordinata( l.getLatitude(), l.getLongitude());
 
-                    for (Luogo luogo : luoghi) {
-                       if (luogo.isInPlace(c)){
-                           tvCurrentStatus.setText("you are in "+luoghi.get(0).getName());
-                           return true;
-                       }else{
-                           tvCurrentStatus.setText("You left "+ luoghi.get(0).getName());
+                    TrackSignal trackSignal =
+                            new TrackSignal().setAuthenticated(false)
+                            .setEntered(false);
+                    boolean inAnyPlace= false;
+                    for(int i =0; i < luoghi.size() && !inAnyPlace; i++){
+                        if (luoghi.get(i).isInPlace(c)){
+                            tvCurrentStatus.setText("you are in "+luoghi.get(i).getName());
+                            trackSignal=trackSignal.setEntered(true).setIdPlace(Long.parseLong(luoghi.get(i).getId()));
 
-                           return false;
-                       }
-
+                            Log.d(TAG, "onLocationsChanged: "+new Gson().toJson(trackSignal));
+                            post(SERVER+"organizations/1/places/"+luoghi.get(i).getId()+"/tracks",
+                                    new Gson().toJson(trackSignal));
+                            inAnyPlace= true;
+                        }
                     }
-                    return false;
+
+                    if (!inAnyPlace){
+                        tvCurrentStatus.setText("Non sei in nessun luogo dell'organizzazione tracciata");
+                    }
+                    return inAnyPlace;
                 }
             }));
         }else
