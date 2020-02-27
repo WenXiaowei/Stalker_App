@@ -60,7 +60,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_margin="5dp"
-            android:text="Agg."
+            android:text="@string/agg"
             tools:layout_editor_absoluteX="325dp"
             tools:layout_editor_absoluteY="179dp" />
     </LinearLayout>
@@ -74,7 +74,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="18dp"
         android:layout_marginEnd="3dp"
-        android:text="Elenco dei luoghi tracciati per l'organizzazione selezionata:"
+        android:text="@string/elenco_dei_luoghi_tracciati_per_l_organizzazione_selezionata"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/layout_Spinner" />
@@ -85,7 +85,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:visibility="invisible"
-        android:text="Elenco Luoghi:"
+        android:text="@string/elenco_luoghi"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.591"
         app:layout_constraintStart_toStartOf="parent"
@@ -97,10 +97,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="28dp"
-        android:text="Inizia"
+        android:text="@string/start_track"
         android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintHorizontal_bias="0.266"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvElencoLuoghi" />
 
@@ -109,7 +109,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:text="Status"
+        android:text="@string/status"
         android:visibility="invisible"
         android:textAlignment="center"
         app:layout_constraintTop_toBottomOf="@+id/btnStartTracking"
@@ -122,20 +122,21 @@
         android:layout_marginTop="8dp"
         android:textAlignment="center"
         android:visibility="invisible"
-        android:text="Nessun'organizzazione ti sta stalkerando!"
+        android:text="@string/nessun_organizzazione_ti_sta_stalkerando"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvStatus" />
 
     <Button
-        android:id="@+id/btnMeno"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginTop="28dp"
-        android:text="--"
+        android:text="@string/login"
+        android:id="@+id/btnShowLoginDialog"
+        android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.06"
+        app:layout_constraintHorizontal_bias="0.208"
         app:layout_constraintStart_toEndOf="@+id/btnStartTracking"
         app:layout_constraintTop_toBottomOf="@+id/tvElencoLuoghi" />
 

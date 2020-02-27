@@ -1,11 +1,13 @@
 package com.vartmp7.stalker;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
@@ -13,15 +15,18 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.unboundid.ldap.sdk.LDAPException;
 import com.vartmp7.stalker.GsonBeans.Coordinata;
 import com.vartmp7.stalker.GsonBeans.Luogo;
 import com.vartmp7.stalker.GsonBeans.Organizzazione;
@@ -32,8 +37,14 @@ import com.vartmp7.stalker.GsonBeans.TrackSignal;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -52,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private final String TAG = "MainActivity";
     private Spinner sScegliOrganizzazione;
     private TextView tvStatus;
-
+    private StalkerLDAP ldap;
     private ArrayList<Organizzazione> organizzazioni;
     private ArrayList<Luogo> luoghi;
     private TextView tvCurrentStatus;
@@ -71,39 +82,48 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         @Override
         public void onLocationsChanged(Location l) {
             Coordinata c = new Coordinata(l.getLatitude(), l.getLongitude());
+            Organizzazione org =
+                    organizzazioni.get(sScegliOrganizzazione.getSelectedItemPosition() - 1);
             trackSignal = new TrackSignal()
-                    .setIdOrganization(Long.parseLong(organizzazioni.get(sScegliOrganizzazione.getSelectedItemPosition() - 1).getId()))
-                    .setAuthenticated(false);// todo introdurre LDAP
+                    .setIdOrganization(Long.parseLong(org.getId()))
+                    .setAuthenticated(false);
+            SimpleDateFormat format = new SimpleDateFormat("YYYY-MM-DD hh:mm:ss");
+            Date date = Calendar.getInstance(Locale.getDefault()).getTime();
+            String formattedDate = format.format(date);
+            trackSignal.setDate_time(formattedDate.replace(" ","T"));
 
-            // primo caso: all'accensione del tracciamento!
+            Log.d(TAG, "onLocationsChanged: "+trackSignal.getDate_time());
 
+            if (ldap != null && !org.getType().equalsIgnoreCase("public"))
+                trackSignal.setAuthenticated(true)
+                        .setSurname(ldap.getSurname())
+                        .setUsername(ldap.getUsername());// todo introdurre LDAP
             for (int i = 0; i < luoghi.size() && !trackSignal.isEntered(); i++) {
                 Luogo luogo = luoghi.get(i);
                 if (luogo.isInPlace(c)) {
-                    tvCurrentStatus.setText("Sei in "+luogo.getName());
+                    tvCurrentStatus.setText("Sei in " + luogo.getName());
                     if (prevLuogo == null) {
                         prevLuogo = luogo;
                         trackSignal.setIdPlace(prevLuogo.getId()).setEntered(true);
                         post(trackSignal.getUrlToPost(), gson.toJson(trackSignal));
-                    }else if (prevLuogo != luogo){
+                    } else if (prevLuogo != luogo) {
                         trackSignal.setEntered(false).setIdPlace(prevLuogo.getId());
                         post(trackSignal.getUrlToPost(), gson.toJson(trackSignal));
                         trackSignal.setEntered(true).setIdPlace(luogo.getId());
                         post(trackSignal.getUrlToPost(), gson.toJson(trackSignal));
-                        prevLuogo= luogo;
+                        prevLuogo = luogo;
                     }
                     return;
                 }
             }
-
-            if (prevLuogo!=null){
+            if (prevLuogo != null) {
                 trackSignal.setEntered(false).setIdPlace(prevLuogo.getId());
                 post(trackSignal.getUrlToPost(), gson.toJson(trackSignal));
-                tvCurrentStatus.setText("Sei uscito da "+prevLuogo.getName());
-                prevLuogo= null;
-            }else
+                tvCurrentStatus.setText("Sei uscito da " + prevLuogo.getName());
+                prevLuogo = null;
+            } else
                 tvCurrentStatus.setText("Non sei in nessun luogo tracciato dell'organizzazione " +
-                    "selezionata!");
+                        "selezionata!");
 
         }
     });
@@ -129,7 +149,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         tvStatus = findViewById(R.id.tvStatus);
 
-        findViewById(R.id.btnMeno).setOnClickListener(this);
+        findViewById(R.id.btnShowLoginDialog).setOnClickListener(this);
         findViewById(R.id.btnStartTracking).setOnClickListener(this);
         findViewById(R.id.btnRefresh).setOnClickListener(this);
 //        loadOrganizazzione();
@@ -328,6 +348,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         for (int i : views) {
             findViewById(i).setVisibility(View.VISIBLE);
         }
+        if (!organizzazioni.get(sScegliOrganizzazione.getSelectedItemPosition() - 1).getType().equalsIgnoreCase("private")) {
+            findViewById(R.id.btnShowLoginDialog).setVisibility(View.VISIBLE);
+        }
     }
 
     private void hideView(int[] views) {
@@ -347,6 +370,46 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, 0);
     }
 
+    public void showLoginDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        LayoutInflater inflater = getLayoutInflater();
+        builder.setTitle(R.string.login);
+        builder.setMessage("Fai accesso all'organizzazione che hai scelto");
+        builder.setView(inflater.inflate(R.layout.dialog_login, null));
+        builder.setPositiveButton(R.string.login, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+//                  EditText etUsername= findViewById(R.id.etUsername);
+//                  EditText etPassword = findViewById(R.id.etPassword);
+                        try {
+                            ldap = new StalkerLDAP("10.0.2.2", 389,
+                                    "cn=wen xiaowei,cn=users,cn=accounts,dc=daf,dc=test,dc=it",
+                                    "1415926");
+                            ldap.connect();
+
+                            Log.d(TAG, "onClick:UID " + ldap.getUid());
+                            Log.d(TAG, "onClick: UIDNumber" + ldap.getUidNumber());
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        } catch (LDAPException e) {
+                            e.printStackTrace();
+                        } catch (ExecutionException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
+        );
+
+        builder.setNegativeButton(R.string.annulla, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.create().show();
+
+    }
 
     @Override
     public void onClick(View v) {
@@ -362,11 +425,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             case R.id.btnRefresh:
                 get(SERVER + "organizations");
                 break;
-            case R.id.btnMeno:
-                TrackSignal trackSignal =
-                        new TrackSignal().setIdOrganization(1).setIdPlace(2).setEntered(true).setAuthenticated(false);
-                Log.d(TAG, "onClick: " + gson.toJson(trackSignal));
-                post(trackSignal.getUrlToPost(), gson.toJson(trackSignal));
+            case R.id.btnShowLoginDialog:
+                showLoginDialog();
                 break;
         }
     }
