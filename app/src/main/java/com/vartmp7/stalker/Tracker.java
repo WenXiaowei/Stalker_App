@@ -22,7 +22,7 @@ public class Tracker implements LocationListener {
     @Override
     public void onLocationChanged(Location location) {
         if (callBack!= null){
-            inPlace=callBack.onLocationsChanged(location );
+            callBack.onLocationsChanged(location );
         }
     }
 

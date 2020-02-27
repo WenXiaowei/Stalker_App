@@ -66,31 +66,45 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     private Gson gson;
     private TextView tvLuoghi;
-    private Luogo currentLuogo;
+    private Luogo prevLuogo;
     private Tracker tracker = new Tracker(MainActivity.this, new StalkerCallBack() {
         @Override
-        public boolean onLocationsChanged(Location l) {
+        public void onLocationsChanged(Location l) {
             Coordinata c = new Coordinata(l.getLatitude(), l.getLongitude());
             trackSignal = new TrackSignal()
                     .setIdOrganization(Long.parseLong(organizzazioni.get(sScegliOrganizzazione.getSelectedItemPosition() - 1).getId()))
                     .setAuthenticated(false);// todo introdurre LDAP
 
-            if (currentLuogo != null) {
-                for (int i = 0; i< luoghi.size() && trackSignal.isEntered(); i++ ){
-                    Luogo luogo= luoghi.get(i);
-                    if (luogo.isInPlace(c)){
-                        if (currentLuogo!= luogo){
-                            currentLuogo= luogo;
-                            trackSignal.setIdPlace(currentLuogo.getId());
+            // primo caso: all'accensione del tracciamento!
 
-                        }
-
+            for (int i = 0; i < luoghi.size() && !trackSignal.isEntered(); i++) {
+                Luogo luogo = luoghi.get(i);
+                if (luogo.isInPlace(c)) {
+                    tvCurrentStatus.setText("Sei in "+luogo.getName());
+                    if (prevLuogo == null) {
+                        prevLuogo = luogo;
+                        trackSignal.setIdPlace(prevLuogo.getId()).setEntered(true);
+                        post(trackSignal.getUrlToPost(), gson.toJson(trackSignal));
+                    }else if (prevLuogo != luogo){
+                        trackSignal.setEntered(false).setIdPlace(prevLuogo.getId());
+                        post(trackSignal.getUrlToPost(), gson.toJson(trackSignal));
+                        trackSignal.setEntered(true).setIdPlace(luogo.getId());
+                        post(trackSignal.getUrlToPost(), gson.toJson(trackSignal));
+                        prevLuogo= luogo;
                     }
+                    return;
                 }
             }
 
+            if (prevLuogo!=null){
+                trackSignal.setEntered(false).setIdPlace(prevLuogo.getId());
+                post(trackSignal.getUrlToPost(), gson.toJson(trackSignal));
+                tvCurrentStatus.setText("Sei uscito da "+prevLuogo.getName());
+                prevLuogo= null;
+            }else
+                tvCurrentStatus.setText("Non sei in nessun luogo tracciato dell'organizzazione " +
+                    "selezionata!");
 
-            return trackSignal.isEntered();
         }
     });
 
