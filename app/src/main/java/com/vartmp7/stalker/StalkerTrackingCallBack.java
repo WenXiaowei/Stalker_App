@@ -2,6 +2,6 @@ package com.vartmp7.stalker;
 
 import android.location.Location;
 
-interface StalkerCallBack {
+interface StalkerTrackingCallBack {
     void onLocationsChanged(Location l);
 }

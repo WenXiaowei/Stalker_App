@@ -19,7 +19,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,7 +37,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -78,7 +76,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private Gson gson;
     private TextView tvLuoghi;
     private Luogo prevLuogo;
-    private Tracker tracker = new Tracker(MainActivity.this, new StalkerCallBack() {
+    private Tracker tracker = new Tracker(MainActivity.this, new StalkerTrackingCallBack() {
         @Override
         public void onLocationsChanged(Location l) {
             Coordinata c = new Coordinata(l.getLatitude(), l.getLongitude());

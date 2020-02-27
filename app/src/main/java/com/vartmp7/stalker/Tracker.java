@@ -9,9 +9,9 @@ public class Tracker implements LocationListener {
 
     private Context mContext;
 
-    private StalkerCallBack callBack;
+    private StalkerTrackingCallBack callBack;
     private  boolean inPlace;
-    public  Tracker(Context context, StalkerCallBack s){
+    public  Tracker(Context context, StalkerTrackingCallBack s){
         mContext= context;
         callBack= s;
     }
