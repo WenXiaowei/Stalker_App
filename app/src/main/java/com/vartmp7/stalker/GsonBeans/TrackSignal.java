@@ -1,6 +1,42 @@
 package com.vartmp7.stalker.GsonBeans;
 
+import com.google.gson.annotations.Expose;
+import com.vartmp7.stalker.MainActivity;
+
 public class TrackSignal {
+    // ANnotazione expose usato indicare quale campo devo venir serializzato
+    private long idOrganization;
+
+    private long idPlace=0;
+    @Expose
+    private boolean entered=false;
+    @Expose
+    private boolean authenticated=false;
+    @Expose
+    private long uid_number;
+    @Expose
+    private String username;
+    @Expose
+    private String surname;
+    @Expose
+    private String date_time;
+
+
+    public String getUrlToPost(){
+        return MainActivity.SERVER + "organizations/" + idOrganization
+                + "/places/" + idPlace+ "/tracks";
+    }
+
+
+    public long getIdOrganization() {
+        return idOrganization;
+    }
+
+    public TrackSignal setIdOrganization(long idOrganization) {
+        this.idOrganization = idOrganization;
+        return this;
+    }
+
     public boolean isEntered() {
         return entered;
     }
@@ -49,18 +85,10 @@ public class TrackSignal {
     public String getDate_time() {
         return date_time;
     }
-
     public TrackSignal setDate_time(String date_time) {
         this.date_time = date_time;
         return this;
     }
-    private boolean entered=false;
-    private boolean authenticated=false;
-    private long uid_number;
-    private String username;
-    private String surname;
-    private String date_time;
-    private long idPlace;
 
     public TrackSignal() {
     }

@@ -6,10 +6,10 @@ import androidx.annotation.Nullable;
 import java.util.ArrayList;
 
 public class Luogo {
-    private String id;
+    private long id;
 
     private String name;
-    private String num_max_people;
+    private long num_max_people;
     private ArrayList<Coordinata> coordinates;
 
     @Override
@@ -21,7 +21,7 @@ public class Luogo {
                 if (coordinates.get(i)!= l.coordinates.get(i))
                     return false;
             }
-            return l.getName().equals(id) && getName().equals(l.getName()) && num_max_people.equals(l.getNum_max_people());
+            return l.getId()==getId() && getName().equals(l.getName()) && num_max_people == l.getNum_max_people();
         }
         return false;
     }
@@ -64,12 +64,12 @@ public class Luogo {
     }
 
 
-    public String getId() {
+    public long getId() {
         return id;
     }
 
     public void setId(String id) {
-        this.id = id;
+        this.id = Long.parseLong(id);
     }
 
     public String getName() {
@@ -80,12 +80,12 @@ public class Luogo {
         this.name = name;
     }
 
-    public String getNum_max_people() {
+    public long getNum_max_people() {
         return num_max_people;
     }
 
     public void setNum_max_people(String num_max_people) {
-        this.num_max_people = num_max_people;
+        this.num_max_people = Long.parseLong(num_max_people);
     }
 
     public ArrayList<Coordinata> getCoordinate() {

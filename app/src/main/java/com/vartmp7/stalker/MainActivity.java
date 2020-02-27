@@ -2,6 +2,7 @@ package com.vartmp7.stalker;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -18,17 +19,22 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.vartmp7.stalker.GsonBeans.Coordinata;
 import com.vartmp7.stalker.GsonBeans.Luogo;
 import com.vartmp7.stalker.GsonBeans.Organizzazione;
 import com.vartmp7.stalker.GsonBeans.ResponseLuogo;
 import com.vartmp7.stalker.GsonBeans.ResponseOrganizzazione;
 import com.vartmp7.stalker.GsonBeans.TrackSignal;
+
 import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
+
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.MediaType;
@@ -58,7 +64,35 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public final static String SERVER = "https://10.0.2.2:5000/";
     private LocationManager locationManager;
 
+    private Gson gson;
     private TextView tvLuoghi;
+    private Luogo currentLuogo;
+    private Tracker tracker = new Tracker(MainActivity.this, new StalkerCallBack() {
+        @Override
+        public boolean onLocationsChanged(Location l) {
+            Coordinata c = new Coordinata(l.getLatitude(), l.getLongitude());
+            trackSignal = new TrackSignal()
+                    .setIdOrganization(Long.parseLong(organizzazioni.get(sScegliOrganizzazione.getSelectedItemPosition() - 1).getId()))
+                    .setAuthenticated(false);// todo introdurre LDAP
+
+            if (currentLuogo != null) {
+                for (int i = 0; i< luoghi.size() && trackSignal.isEntered(); i++ ){
+                    Luogo luogo= luoghi.get(i);
+                    if (luogo.isInPlace(c)){
+                        if (currentLuogo!= luogo){
+                            currentLuogo= luogo;
+                            trackSignal.setIdPlace(currentLuogo.getId());
+
+                        }
+
+                    }
+                }
+            }
+
+
+            return trackSignal.isEntered();
+        }
+    });
 
 
     @Override
@@ -74,12 +108,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
         client = getUnsafeOkHttpClient();
         sScegliOrganizzazione = findViewById(R.id.s_scegliOrganizzazione);
         sScegliOrganizzazione.setSelected(false);
 
         tvStatus = findViewById(R.id.tvStatus);
 
+        findViewById(R.id.btnMeno).setOnClickListener(this);
         findViewById(R.id.btnStartTracking).setOnClickListener(this);
         findViewById(R.id.btnRefresh).setOnClickListener(this);
 //        loadOrganizazzione();
@@ -97,12 +133,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
-//        TrackSignal s= new TrackSignal();
-//        s.setEntered(true).setAuthenticated(false);
-//
-//        Gson gson = new Gson();
-//
-//        Log.d(TAG, "onCreate: "+gson.toJson(s));
 
     }
 
@@ -127,11 +157,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
     }
 
-    void post(String url, String json){
+    void post(String url, String json) {
 
-        Log.d(TAG, "post: "+json);
-        json ="{\"authenticated\":false,\"entered\":true,\"idPlace\":3,\"uid_number\":0}";
-        RequestBody requestBody = RequestBody.create(json,JSON);
+//        Log.d(TAG, "post: " + json);
+//        Log.d(TAG, "URL:"+ url);
+        RequestBody requestBody = RequestBody.create(json, JSON);
 
         final Request request = new Request.Builder()
                 .url(url)
@@ -148,8 +178,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                Log.d(TAG, "onResponse: "+response.headers().toString());
-                Log.d(TAG, "onResponse: "+response.body().string());
+                Log.d(TAG, "onResponse: " + response.headers().toString());
+                Log.d(TAG, "onResponse: " + response.body().string());
             }
         });
 
@@ -239,12 +269,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     };
 
     private void updateLuoghi(ResponseLuogo l) {
-        luoghi= l.getPlaces();
+        luoghi = l.getPlaces();
         tvLuoghi.setText(l.getDataForSpinner());
     }
 
     private void loadOrganizazzione(ResponseOrganizzazione orgs) {
-        Log.d(TAG, "loadOrganizazzione: "+orgs);
+        Log.d(TAG, "loadOrganizazzione: " + orgs);
 
         String[] mList = orgs.getDataForSpinner();
         organizzazioni = orgs.getOrganizations();
@@ -292,41 +322,15 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
     }
 
+    private TrackSignal trackSignal = null;
 
-    private void startTracking(){
-        if (checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION)== PackageManager.PERMISSION_GRANTED &&
-                checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)== PackageManager.PERMISSION_GRANTED){
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,-1,
-                    (float) luoghi.get(0).getRadius(),
-                    new Tracker(MainActivity.this, new StalkerCallBack() {
-                @Override
-                public boolean onLocationsChanged(Location l) {
-                    Coordinata c = new Coordinata( l.getLatitude(), l.getLongitude());
 
-                    TrackSignal trackSignal =
-                            new TrackSignal().setAuthenticated(false)
-                            .setEntered(false);
-                    boolean inAnyPlace= false;
-                    for(int i =0; i < luoghi.size() && !inAnyPlace; i++){
-                        if (luoghi.get(i).isInPlace(c)){
-                            tvCurrentStatus.setText("you are in "+luoghi.get(i).getName());
-                            trackSignal=trackSignal.setEntered(true).setIdPlace(Long.parseLong(luoghi.get(i).getId()));
-
-                            Log.d(TAG, "onLocationsChanged: "+new Gson().toJson(trackSignal));
-                            post(SERVER+"organizations/1/places/"+luoghi.get(i).getId()+"/tracks",
-                                    new Gson().toJson(trackSignal));
-                            inAnyPlace= true;
-                        }
-                    }
-
-                    if (!inAnyPlace){
-                        tvCurrentStatus.setText("Non sei in nessun luogo dell'organizzazione tracciata");
-                    }
-                    return inAnyPlace;
-                }
-            }));
-        }else
-            requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION},0);
+    private void startTracking() {
+        if (checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, -1, 5, tracker);
+        } else
+            requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, 0);
     }
 
 
@@ -334,17 +338,22 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btnStartTracking:
+
                 Toast.makeText(MainActivity.this, sScegliOrganizzazione.getSelectedItem() + " ti sta tracciando!", Toast.LENGTH_SHORT).show();
                 showView(viewToShowOnTracking);
 
-                tvCurrentStatus.setText(sScegliOrganizzazione.getSelectedItem()+" ti sta tracciando!");
+                tvCurrentStatus.setText(sScegliOrganizzazione.getSelectedItem() + " ti sta tracciando!");
                 startTracking();
-
                 break;
             case R.id.btnRefresh:
                 get(SERVER + "organizations");
                 break;
-
+            case R.id.btnMeno:
+                TrackSignal trackSignal =
+                        new TrackSignal().setIdOrganization(1).setIdPlace(2).setEntered(true).setAuthenticated(false);
+                Log.d(TAG, "onClick: " + gson.toJson(trackSignal));
+                post(trackSignal.getUrlToPost(), gson.toJson(trackSignal));
+                break;
         }
     }
 }
