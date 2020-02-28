@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
@@ -19,6 +20,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -85,17 +88,18 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             trackSignal = new TrackSignal()
                     .setIdOrganization(Long.parseLong(org.getId()))
                     .setAuthenticated(false);
-            SimpleDateFormat format = new SimpleDateFormat("YYYY-MM-DD hh:mm:ss");
+
+            SimpleDateFormat format = new SimpleDateFormat("Y-M-d hh:mm:ss");
             Date date = Calendar.getInstance(Locale.getDefault()).getTime();
             String formattedDate = format.format(date);
             trackSignal.setDate_time(formattedDate.replace(" ","T"));
 
-            Log.d(TAG, "onLocationsChanged: "+trackSignal.getDate_time());
-
             if (ldap != null && !org.getType().equalsIgnoreCase("public"))
                 trackSignal.setAuthenticated(true)
                         .setSurname(ldap.getSurname())
-                        .setUsername(ldap.getUsername());// todo introdurre LDAP
+                        .setUsername(ldap.getUid())
+                        .setUid_number(Long.parseLong(ldap.getUidNumber()));
+
             for (int i = 0; i < luoghi.size() && !trackSignal.isEntered(); i++) {
                 Luogo luogo = luoghi.get(i);
                 if (luogo.isInPlace(c)) {
@@ -210,8 +214,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                Log.d(TAG, "onResponse: " + response.headers().toString());
-                Log.d(TAG, "onResponse: " + response.body().string());
+//                Log.d(TAG, "onResponse: " + response.headers().toString());
+//                Log.d(TAG, "onResponse: " + response.body().string());
             }
         });
 
@@ -306,18 +310,21 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     private void loadOrganizazzione(ResponseOrganizzazione orgs) {
-        Log.d(TAG, "loadOrganizazzione: " + orgs);
 
-        String[] mList = orgs.getDataForSpinner();
-        organizzazioni = orgs.getOrganizations();
-        if (organizzazioni.size() == 0) {
-            mList = new String[]{"Non ci sono organizzazioni!"};
-        }
+       if(orgs!=null){
+           String[] mList = orgs.getDataForSpinner();
+           organizzazioni = orgs.getOrganizations();
+           if (organizzazioni.size() == 0) {
+               mList = new String[]{"Non ci sono organizzazioni!"};
+           }
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, mList);
+           ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, mList);
 
-        adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
-        sScegliOrganizzazione.setAdapter(adapter);
+           adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+           sScegliOrganizzazione.setAdapter(adapter);
+       }else
+           Toast.makeText(MainActivity.this, "Qualcosa è andato storto!\nRiprova più tardi",
+                   Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -355,6 +362,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         for (int i : views) {
             findViewById(i).setVisibility(View.INVISIBLE);
         }
+        findViewById(R.id.btnShowLoginDialog).setVisibility(View.INVISIBLE);
     }
 
     private TrackSignal trackSignal = null;
@@ -377,16 +385,17 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         builder.setPositiveButton(R.string.login, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-//                  EditText etUsername= findViewById(R.id.etUsername);
-//                  EditText etPassword = findViewById(R.id.etPassword);
+
+                        Dialog d = (Dialog) dialog;
+                  EditText etUsername= d.findViewById(R.id.etUsername);
+                  EditText etPassword = d.findViewById(R.id.etPassword);
                         try {
                             ldap = new StalkerLDAP("10.0.2.2", 389,
-                                    "cn=wen xiaowei,cn=users,cn=accounts,dc=daf,dc=test,dc=it",
-                                    "1415926");
+                                    etUsername.getText().toString(), etPassword.getText().toString());
                             ldap.connect();
-
-                            Log.d(TAG, "onClick:UID " + ldap.getUid());
-                            Log.d(TAG, "onClick: UIDNumber" + ldap.getUidNumber());
+//                            Log.d(TAG, "onClick: "+ldap);
+//                            Log.d(TAG, "onClick:UID " + ldap.getUid());
+//                            Log.d(TAG, "onClick: UIDNumber" + ldap.getUidNumber());
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         } catch (LDAPException e) {
@@ -413,12 +422,19 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btnStartTracking:
+                Button btn = (Button) v;
+                if (btn.getText().toString().equalsIgnoreCase(getResources().getString(R.string.start_track))){
+                    Toast.makeText(MainActivity.this, sScegliOrganizzazione.getSelectedItem() + " ti sta tracciando!", Toast.LENGTH_SHORT).show();
+                    showView(viewToShowOnTracking);
 
-                Toast.makeText(MainActivity.this, sScegliOrganizzazione.getSelectedItem() + " ti sta tracciando!", Toast.LENGTH_SHORT).show();
-                showView(viewToShowOnTracking);
+                    tvCurrentStatus.setText(sScegliOrganizzazione.getSelectedItem() + " ti sta tracciando!");
+                    startTracking();
+                    btn.setText(getString(R.string.stop));
+                }else{
+                    locationManager.removeUpdates(tracker);
+                    btn.setText(getString(R.string.start_track));
+                }
 
-                tvCurrentStatus.setText(sScegliOrganizzazione.getSelectedItem() + " ti sta tracciando!");
-                startTracking();
                 break;
             case R.id.btnRefresh:
                 get(SERVER + "organizations");

@@ -16,10 +16,12 @@
         android:layout_marginLeft="4dp"
         android:layout_marginTop="16dp"
         android:layout_marginRight="4dp"
-        android:text="cn=bob,cn=users,cn=accounts,dc=daf,dc=test,dc=it"
+        android:text="cn=wen xiaowei,cn=users,cn=accounts,dc=daf,dc=test,dc=it"
         android:layout_marginBottom="4dp"
         android:hint="@string/username"
         android:inputType="textEmailAddress" />
+<!--    android:text="cn=bob,cn=users,cn=accounts,dc=daf,dc=test,dc=it"-->
+
 
     <EditText
         android:id="@+id/etPassword"
@@ -30,7 +32,8 @@
         android:layout_marginRight="4dp"
         android:layout_marginBottom="16dp"
         android:fontFamily="sans-serif"
-        android:text="password"
+        android:text="1415926"
+
         android:hint="@string/password"
         android:inputType="textPassword" />
 

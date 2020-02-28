@@ -2,6 +2,8 @@ package com.vartmp7.stalker;
 
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.unboundid.ldap.sdk.BindResult;
 import com.unboundid.ldap.sdk.LDAPConnection;
 import com.unboundid.ldap.sdk.LDAPException;
@@ -11,7 +13,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 
 public class StalkerLDAP {
-    private static final String TAG="com.vartmp7.stalker.StalkerLDAP";
+    private static final String TAG = "com.vartmp7.stalker.StalkerLDAP";
 
     private LDAPConnection connection;
     private BindResult result;
@@ -26,7 +28,7 @@ public class StalkerLDAP {
     public StalkerLDAP(String serverAddress, int port, String binDn, String password) throws InterruptedException, LDAPException, ExecutionException {
         this.serverAddress = serverAddress;
         this.serverPort = port;
-        this.bindDN= binDn;
+        this.bindDN = binDn;
         this.bindPassword = password;
 
     }
@@ -39,21 +41,19 @@ public class StalkerLDAP {
         FutureTask<SearchResultEntry> searchFutureTask = new FutureTask<>(() -> connection.getEntry(bindDN));
         new Thread(searchFutureTask).start();
         this.entry = searchFutureTask.get();
-
-
-        Log.d(TAG,"uid:"+entry.getAttributeValue("uid"));
-        Log.d(TAG,"uidNumber:"+entry.getAttributeValue("uidNumber"));
-        Log.d(TAG, "connect: "+entry.getAttributeValue("givenName"));
+        Log.d(TAG, "uid:" + entry.getAttributeValue("uid"));
+        Log.d(TAG, "uidNumber:" + entry.getAttributeValue("uidNumber"));
+        Log.d(TAG, "connect: " + entry.getAttributeValue("givenName"));
         this.connection.close();
     }
-    public String getSurname(){
-        return entry.getAttributeValue("giveName");
+
+    public String getSurname() {
+        return entry.getAttributeValue("givenName");
     }
-    public String getUsername(){
+
+    public String getUsername() {
         return entry.getAttributeValue("User Name");
     }
-
-
 
 
     public String getUid() {
@@ -64,4 +64,21 @@ public class StalkerLDAP {
     public String getUidNumber() {
         return entry.getAttributeValue("uidNumber");
     }
+
+    /**
+     * restiruisce il sn (non so che sia)
+     * @return
+     */
+    public String getSn() {
+        return entry.getAttributeValue("sn");
+    }
+
+    public String getCn() {
+        return entry.getAttributeValue("cn");
+    }
+
+    public SearchResultEntry getSearchResultEntry(){
+        return entry;
+    }
+
 }

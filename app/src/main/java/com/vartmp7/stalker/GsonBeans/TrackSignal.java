@@ -1,9 +1,12 @@
 package com.vartmp7.stalker.GsonBeans;
 
+import android.util.Log;
+
 import com.google.gson.annotations.Expose;
 import com.vartmp7.stalker.MainActivity;
 
 public class TrackSignal {
+    private static final String TAG="com.vartmp7.stalker.GsonBeans.TrackSignal";
     // ANnotazione expose usato indicare quale campo devo venir serializzato
     private long idOrganization;
 
@@ -69,6 +72,7 @@ public class TrackSignal {
     }
 
     public TrackSignal setUsername(String username) {
+        Log.d(TAG, "setUsername: "+username);
         this.username = username;
         return this;
     }
@@ -78,6 +82,8 @@ public class TrackSignal {
     }
 
     public TrackSignal setSurname(String surname) {
+
+        Log.d(TAG, "setUsername: "+surname);
         this.surname = surname;
         return this;
     }

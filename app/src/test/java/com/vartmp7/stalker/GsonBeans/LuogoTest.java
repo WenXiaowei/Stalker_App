@@ -14,7 +14,7 @@ import java.util.Collection;
 import static org.junit.Assert.assertEquals;
 
 
-@RunWith(Parameterized.class)
+//@RunWith(Parameterized.class)
 public class LuogoTest {
 
 
@@ -22,10 +22,10 @@ public class LuogoTest {
     private Luogo luogo;
     private Coordinata coordinata;
 
-    public LuogoTest(final Luogo l, final Coordinata c) {
-        this.luogo = l;
-        this.coordinata = c;
-    }
+//    public LuogoTest(final Luogo l, final Coordinata c) {
+//        this.luogo = l;
+//        this.coordinata = c;
+//    }
 
     @Test
     public void testY() {
