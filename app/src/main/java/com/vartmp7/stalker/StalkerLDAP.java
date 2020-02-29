@@ -25,7 +25,7 @@ public class StalkerLDAP {
 
     private SearchResultEntry entry;
 
-    public StalkerLDAP(String serverAddress, int port, String binDn, String password) throws InterruptedException, LDAPException, ExecutionException {
+    public StalkerLDAP(String serverAddress, int port, String binDn, String password) {
         this.serverAddress = serverAddress;
         this.serverPort = port;
         this.bindDN = binDn;

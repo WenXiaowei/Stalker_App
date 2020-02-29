@@ -145,7 +145,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
-        client = getUnsafeOkHttpClient();
+        client = getUnsafeOkHttpClient();// Client usato a scopo di test
         sScegliOrganizzazione = findViewById(R.id.s_scegliOrganizzazione);
         sScegliOrganizzazione.setSelected(false);
 
@@ -154,7 +154,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         findViewById(R.id.btnShowLoginDialog).setOnClickListener(this);
         findViewById(R.id.btnStartTracking).setOnClickListener(this);
         findViewById(R.id.btnRefresh).setOnClickListener(this);
-//        loadOrganizazzione();
 
         tvCurrentStatus = findViewById(R.id.tvCurrentStatus);
         tvLuoghi = findViewById(R.id.tvElencoLuoghi);
@@ -194,31 +193,18 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     void post(String url, String json) {
-
-//        Log.d(TAG, "post: " + json);
-//        Log.d(TAG, "URL:"+ url);
         RequestBody requestBody = RequestBody.create(json, JSON);
-
         final Request request = new Request.Builder()
                 .url(url)
                 .post(requestBody)
                 .build();
-
         Call call = client.newCall(request);
-
         call.enqueue(new Callback() {
             @Override
-            public void onFailure(@NotNull Call call, @NotNull IOException e) {
-
-            }
-
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {}
             @Override
-            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-//                Log.d(TAG, "onResponse: " + response.headers().toString());
-//                Log.d(TAG, "onResponse: " + response.body().string());
-            }
+            public void onResponse(@NotNull Call call, @NotNull Response response) {}
         });
-
 
     }
 
@@ -382,7 +368,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         builder.setTitle(R.string.login);
         builder.setMessage("Fai accesso all'organizzazione che hai scelto");
         builder.setView(inflater.inflate(R.layout.dialog_login, null));
-        builder.setPositiveButton(R.string.login, new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(getString(R.string.conferma), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
@@ -403,6 +389,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         } catch (ExecutionException e) {
                             e.printStackTrace();
                         }
+
+                        if (ldap!=null)
+                            Toast.makeText(MainActivity.this, "Logged", Toast.LENGTH_SHORT).show();
                     }
                 }
 

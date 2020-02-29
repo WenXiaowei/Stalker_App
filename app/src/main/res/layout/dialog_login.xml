@@ -2,13 +2,15 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="vertical">
-    <!--    <ImageView-->
-    <!--        android:src="@drawable/header_logo"-->
-    <!--        android:layout_width="match_parent"-->
-    <!--        android:layout_height="64dp"-->
-    <!--        android:scaleType="center"-->
-    <!--        android:background="#FFFFBB33"-->
-    <!--        android:contentDescription="@string/app_name" />-->
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="128dp"
+        android:background="#FFFFBB33"
+        android:contentDescription="@string/app_name"
+        android:scaleType="center"
+        android:src="@drawable/login_header" />
+
     <EditText
         android:id="@+id/etUsername"
         android:layout_width="match_parent"
@@ -16,11 +18,10 @@
         android:layout_marginLeft="4dp"
         android:layout_marginTop="16dp"
         android:layout_marginRight="4dp"
-        android:text="cn=wen xiaowei,cn=users,cn=accounts,dc=daf,dc=test,dc=it"
         android:layout_marginBottom="4dp"
         android:hint="@string/username"
-        android:inputType="textEmailAddress" />
-<!--    android:text="cn=bob,cn=users,cn=accounts,dc=daf,dc=test,dc=it"-->
+        android:inputType="textEmailAddress"
+        android:text="cn=wen xiaowei,cn=users,cn=accounts,dc=daf,dc=test,dc=it" />
 
 
     <EditText
@@ -32,27 +33,9 @@
         android:layout_marginRight="4dp"
         android:layout_marginBottom="16dp"
         android:fontFamily="sans-serif"
-        android:text="1415926"
-
         android:hint="@string/password"
-        android:inputType="textPassword" />
 
-<!--    <LinearLayout-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:orientation="horizontal">-->
+        android:inputType="textPassword"
+        android:text="1415926" />
 
-<!--        <Button-->
-<!--            android:id="@+id/btnAnnulla"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:text="@string/annulla"-->
-<!--            android:layout_weight="1"/>-->
-<!--        <Button-->
-<!--            android:id="@+id/btnLogin"-->
-<!--            android:text="@string/login"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_weight="1"/>-->
-<!--    </LinearLayout>-->
 </LinearLayout>
