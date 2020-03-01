@@ -61,21 +61,20 @@ import static com.vartmp7.stalker.Tools.getUnsafeOkHttpClient;
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, View.OnClickListener {
 
     public static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
-    private final String TAG = "MainActivity";
+    private final String TAG = "com.vartmp7.stalker.MainActivity";
     private Spinner sScegliOrganizzazione;
-    private TextView tvStatus;
     private StalkerLDAP ldap;
     private ArrayList<Organizzazione> organizzazioni;
     private ArrayList<Luogo> luoghi;
     private TextView tvCurrentStatus;
-    private int[] viewToshowOnChoice = {R.id.tvTestoElenco, R.id.tvElencoLuoghi, R.id.btnStartTracking};
+    private int[] viewToshowOnChoice = {R.id.tvTestoElenco, R.id.tvElencoLuoghi,
+            R.id.btnStartTracking, R.id.btnShowLoginDialog};
     private int[] viewToShowOnTracking = {R.id.tvStatus, R.id.tvCurrentStatus};
     private OkHttpClient client;
     private int FAIL_RESPONSE_CODE = 0;
-    private int SUCCESSFUL_RESPONSE_CODE = 1;
     public final static String SERVER = "https://10.0.2.2:5000/";
+//    public final static String SERVER = "https://192.168.31.76:5000/";
     private LocationManager locationManager;
-
     private Gson gson;
     private TextView tvLuoghi;
     private Luogo prevLuogo;
@@ -103,7 +102,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             for (int i = 0; i < luoghi.size() && !trackSignal.isEntered(); i++) {
                 Luogo luogo = luoghi.get(i);
                 if (luogo.isInPlace(c)) {
-                    tvCurrentStatus.setText("Sei in " + luogo.getName());
+                    tvCurrentStatus.setText(String.format(getString(R.string.you_are_in), luogo.getName()));
                     if (prevLuogo == null) {
                         prevLuogo = luogo;
                         trackSignal.setIdPlace(prevLuogo.getId()).setEntered(true);
@@ -121,11 +120,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             if (prevLuogo != null) {
                 trackSignal.setEntered(false).setIdPlace(prevLuogo.getId());
                 post(trackSignal.getUrlToPost(), gson.toJson(trackSignal));
-                tvCurrentStatus.setText("Sei uscito da " + prevLuogo.getName());
+                tvCurrentStatus.setText(String.format(getString(R.string.you_left), prevLuogo.getName()));
                 prevLuogo = null;
             } else
-                tvCurrentStatus.setText("Non sei in nessun luogo tracciato dell'organizzazione " +
-                        "selezionata!");
+                tvCurrentStatus.setText(R.string.not_in_any_place);
 
         }
     });
@@ -148,9 +146,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         client = getUnsafeOkHttpClient();// Client usato a scopo di test
         sScegliOrganizzazione = findViewById(R.id.s_scegliOrganizzazione);
         sScegliOrganizzazione.setSelected(false);
-
-        tvStatus = findViewById(R.id.tvStatus);
-
         findViewById(R.id.btnShowLoginDialog).setOnClickListener(this);
         findViewById(R.id.btnStartTracking).setOnClickListener(this);
         findViewById(R.id.btnRefresh).setOnClickListener(this);
@@ -187,6 +182,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     startTracking();
                 } else {
                     Toast.makeText(this, "I need permissions ", Toast.LENGTH_SHORT).show();
+                    requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
+                            Manifest.permission.ACCESS_COARSE_LOCATION},0);
                 }
                 break;
         }
@@ -324,7 +321,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         String req = String.format("organizations/%s/places", organizzazioni.get(position - 1).getId());
 //        Log.d(TAG, "onItemSelected: REQ" + SERVER + req);
         get(SERVER + req);
+        trackingSwitch();
         showView(viewToshowOnChoice);
+        hideView(viewToShowOnTracking);
 
 
     }
@@ -406,6 +405,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         builder.create().show();
 
     }
+    private void trackingSwitch(){
+        locationManager.removeUpdates(tracker);
+        ((Button) findViewById(R.id.btnStartTracking)).setText(getString(R.string.start_track));
+    }
 
     @Override
     public void onClick(View v) {
@@ -415,15 +418,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 if (btn.getText().toString().equalsIgnoreCase(getResources().getString(R.string.start_track))){
                     Toast.makeText(MainActivity.this, sScegliOrganizzazione.getSelectedItem() + " ti sta tracciando!", Toast.LENGTH_SHORT).show();
                     showView(viewToShowOnTracking);
-
-                    tvCurrentStatus.setText(sScegliOrganizzazione.getSelectedItem() + " ti sta tracciando!");
+                    tvCurrentStatus.setText(String.format("%s ti sta tracciando!", sScegliOrganizzazione.getSelectedItem()));
                     startTracking();
                     btn.setText(getString(R.string.stop));
                 }else{
-                    locationManager.removeUpdates(tracker);
-                    btn.setText(getString(R.string.start_track));
+                    trackingSwitch();
                 }
-
                 break;
             case R.id.btnRefresh:
                 get(SERVER + "organizations");

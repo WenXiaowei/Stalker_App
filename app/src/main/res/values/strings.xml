@@ -14,4 +14,7 @@
     <string name="annulla">Annulla</string>
     <string name="stop">Stop</string>
     <string name="conferma">Conferma</string>
+    <string name="not_in_any_place">Non sei in nessun luogo tracciato dell\'organizzazione selezionata!</string>
+    <string name="you_left">Hai lasciato %s</string>
+    <string name="you_are_in">Sei in %s</string>
 </resources>

@@ -76,7 +76,8 @@ public class LuogoTest {
         return Arrays.asList(
                 t, new Coordinata(),
                 i, new Coordinata(),
-                dsea, new Coordinata());
+                dsea, new Coordinata()
+        );
 
     }
 
