@@ -1,20 +1,16 @@
 package com.vartmp7.stalker.GsonBeans;
 
-import android.graphics.CornerPathEffect;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import java.nio.file.LinkOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
 import static org.junit.Assert.assertEquals;
 
-
-//@RunWith(Parameterized.class)
+@RunWith(Parameterized.class)
 public class LuogoTest {
 
 
@@ -22,16 +18,11 @@ public class LuogoTest {
     private Luogo luogo;
     private Coordinata coordinata;
 
-//    public LuogoTest(final Luogo l, final Coordinata c) {
-//        this.luogo = l;
-//        this.coordinata = c;
-//    }
-
-    @Test
-    public void testY() {
-
+    public LuogoTest(final Luogo l, final Coordinata c) {
+        this.luogo = l;
+        this.coordinata = c;
     }
-//
+
 
     @Test
     public void provaGetCentroTorre() {
@@ -44,11 +35,12 @@ public class LuogoTest {
         l.setCoordinate(coordinate);
 
 
-//        assertEquals(new Coordinata(), l.getCentro(),DELTA);
+        assertEquals(coordinata.getLongitude(), luogo.getCentro().getLongitude(),DELTA);
+        assertEquals(coordinata.getLatitude(), luogo.getCentro().getLatitude(),DELTA);
     }
 
-    //
-//    @Parameterized.Parameter
+
+    @Parameterized.Parameters
     public static Collection luoghi() {
         ArrayList<Coordinata> torreArchimede = new ArrayList<>();
         torreArchimede.add(new Coordinata(45.411555, 11.887476));
@@ -71,21 +63,17 @@ public class LuogoTest {
         dsea.add(new Coordinata(45.411702, 11.888113));
         dsea.add(new Coordinata(45.411341, 11.888381));
         dsea.add(new Coordinata(45.411284, 11.888224));
+        Luogo d= new Luogo();
+        d.setCoordinate(dsea);
 
-
-        return Arrays.asList(
-                t, new Coordinata(),
-                i, new Coordinata(),
-                dsea, new Coordinata()
-        );
+        return Arrays.asList(new Object[][]{
+                {t, new Coordinata( 45.411332,11.887631)},
+                {i, new Coordinata(45.411695, 11.8873390)},
+                {d, new Coordinata(45.411502, 11.888165)}
+        });
 
     }
 
 
-//    @Test
-//    public void testCentro(){
-//
-//        assertEquals(coordinata, luogo.getCentro());
-//
-//    }
+
 }

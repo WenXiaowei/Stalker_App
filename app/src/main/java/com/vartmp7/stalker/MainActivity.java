@@ -15,7 +15,6 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -73,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private OkHttpClient client;
     private int FAIL_RESPONSE_CODE = 0;
     public final static String SERVER = "https://10.0.2.2:5000/";
-//    public final static String SERVER = "https://192.168.31.76:5000/";
+    //    public final static String SERVER = "https://192.168.31.76:5000/";
     private LocationManager locationManager;
     private Gson gson;
     private TextView tvLuoghi;
@@ -91,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             SimpleDateFormat format = new SimpleDateFormat("Y-M-d hh:mm:ss");
             Date date = Calendar.getInstance(Locale.getDefault()).getTime();
             String formattedDate = format.format(date);
-            trackSignal.setDate_time(formattedDate.replace(" ","T"));
+            trackSignal.setDate_time(formattedDate.replace(" ", "T"));
 
             if (ldap != null && !org.getType().equalsIgnoreCase("public"))
                 trackSignal.setAuthenticated(true)
@@ -183,7 +182,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 } else {
                     Toast.makeText(this, "I need permissions ", Toast.LENGTH_SHORT).show();
                     requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
-                            Manifest.permission.ACCESS_COARSE_LOCATION},0);
+                            Manifest.permission.ACCESS_COARSE_LOCATION}, 0);
                 }
                 break;
         }
@@ -198,9 +197,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         Call call = client.newCall(request);
         call.enqueue(new Callback() {
             @Override
-            public void onFailure(@NotNull Call call, @NotNull IOException e) {}
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+            }
+
             @Override
-            public void onResponse(@NotNull Call call, @NotNull Response response) {}
+            public void onResponse(@NotNull Call call, @NotNull Response response) {
+            }
         });
 
     }
@@ -294,20 +296,20 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     private void loadOrganizazzione(ResponseOrganizzazione orgs) {
 
-       if(orgs!=null){
-           String[] mList = orgs.getDataForSpinner();
-           organizzazioni = orgs.getOrganizations();
-           if (organizzazioni.size() == 0) {
-               mList = new String[]{"Non ci sono organizzazioni!"};
-           }
+        if (orgs != null) {
+            String[] mList = orgs.getDataForSpinner();
+            organizzazioni = orgs.getOrganizations();
+            if (organizzazioni.size() == 0) {
+                mList = new String[]{"Non ci sono organizzazioni!"};
+            }
 
-           ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, mList);
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, mList);
 
-           adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
-           sScegliOrganizzazione.setAdapter(adapter);
-       }else
-           Toast.makeText(MainActivity.this, "Qualcosa è andato storto!\nRiprova più tardi",
-                   Toast.LENGTH_SHORT).show();
+            adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+            sScegliOrganizzazione.setAdapter(adapter);
+        } else
+            Toast.makeText(MainActivity.this, "Qualcosa è andato storto!\nRiprova più tardi",
+                    Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -323,7 +325,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         get(SERVER + req);
         trackingSwitch();
         showView(viewToshowOnChoice);
-        hideView(viewToShowOnTracking);
 
 
     }
@@ -372,25 +373,22 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     public void onClick(DialogInterface dialog, int which) {
 
                         Dialog d = (Dialog) dialog;
-                  EditText etUsername= d.findViewById(R.id.etUsername);
-                  EditText etPassword = d.findViewById(R.id.etPassword);
+                        EditText etUsername = d.findViewById(R.id.etUsername);
+                        EditText etPassword = d.findViewById(R.id.etPassword);
+
+                        ldap = new StalkerLDAP("10.0.2.2", 389,
+                                etUsername.getText().toString(), etPassword.getText().toString());
                         try {
-                            ldap = new StalkerLDAP("10.0.2.2", 389,
-                                    etUsername.getText().toString(), etPassword.getText().toString());
-                            ldap.connect();
-//                            Log.d(TAG, "onClick: "+ldap);
-//                            Log.d(TAG, "onClick:UID " + ldap.getUid());
-//                            Log.d(TAG, "onClick: UIDNumber" + ldap.getUidNumber());
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        } catch (LDAPException e) {
-                            e.printStackTrace();
-                        } catch (ExecutionException e) {
+                            ldap.bind();
+                            ldap.search();
+                            Toast.makeText(MainActivity.this, "Logged", Toast.LENGTH_SHORT).show();
+//                            ((Button)findViewById(R.id.btnShowLoginDialog)).setText("logged");
+                        } catch (LDAPException | ExecutionException | InterruptedException e) {
+                            Toast.makeText(MainActivity.this, "Qualcosa è andato storto, ri " +
+                                    "provare più tardi", Toast.LENGTH_SHORT).show();
                             e.printStackTrace();
                         }
 
-                        if (ldap!=null)
-                            Toast.makeText(MainActivity.this, "Logged", Toast.LENGTH_SHORT).show();
                     }
                 }
 
@@ -405,7 +403,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         builder.create().show();
 
     }
-    private void trackingSwitch(){
+
+    private void trackingSwitch() {
         locationManager.removeUpdates(tracker);
         ((Button) findViewById(R.id.btnStartTracking)).setText(getString(R.string.start_track));
     }
@@ -415,13 +414,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         switch (v.getId()) {
             case R.id.btnStartTracking:
                 Button btn = (Button) v;
-                if (btn.getText().toString().equalsIgnoreCase(getResources().getString(R.string.start_track))){
+                if (btn.getText().toString().equalsIgnoreCase(getResources().getString(R.string.start_track))) {
                     Toast.makeText(MainActivity.this, sScegliOrganizzazione.getSelectedItem() + " ti sta tracciando!", Toast.LENGTH_SHORT).show();
                     showView(viewToShowOnTracking);
                     tvCurrentStatus.setText(String.format("%s ti sta tracciando!", sScegliOrganizzazione.getSelectedItem()));
                     startTracking();
                     btn.setText(getString(R.string.stop));
-                }else{
+                } else {
                     trackingSwitch();
                 }
                 break;

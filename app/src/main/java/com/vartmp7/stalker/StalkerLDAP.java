@@ -33,18 +33,30 @@ public class StalkerLDAP {
 
     }
 
-    public void connect() throws LDAPException, ExecutionException, InterruptedException {
+    public void bind() throws LDAPException, ExecutionException, InterruptedException {
         this.connection = new LDAPConnection(serverAddress, serverPort);
         FutureTask<BindResult> bindFutureTask = new FutureTask<>(() -> connection.bind(bindDN, bindPassword));
         new Thread(bindFutureTask).start();
         this.result = bindFutureTask.get();
+
+
+    }
+    public void search() throws ExecutionException, InterruptedException {
         FutureTask<SearchResultEntry> searchFutureTask = new FutureTask<>(() -> connection.getEntry(bindDN));
         new Thread(searchFutureTask).start();
         this.entry = searchFutureTask.get();
-        Log.d(TAG, "uid:" + entry.getAttributeValue("uid"));
-        Log.d(TAG, "uidNumber:" + entry.getAttributeValue("uidNumber"));
-        Log.d(TAG, "connect: " + entry.getAttributeValue("givenName"));
+//        Log.d(TAG, "uid:" + entry.getAttributeValue("uid"));
+//        Log.d(TAG, "uidNumber:" + entry.getAttributeValue("uidNumber"));
+//        Log.d(TAG, "connect: " + entry.getAttributeValue("givenName"));
+//
+//        Log.d(TAG, "connect: "+result.getResultCode().toString());
+
         this.connection.close();
+    }
+    public boolean isLogged(){
+        if (this.result != null && this.entry != null && this.result.getResultCode().toString().equalsIgnoreCase("0"))
+            return true;
+        return false;
     }
 
     public String getSurname() {
