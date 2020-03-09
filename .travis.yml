@@ -23,7 +23,8 @@ before_install:
 - chmod +x gradlew
 script:
     - sudo ./gradlew test --stacktrace
-    - sudo ./gradlew -Dscan=true build
+    - sudo rm -rf android/.gradle
+    - ./gradlew -Dscan=true build
     - ./gradlew testBlueDebugUnitTestCoverage coveralls
     
 install: sudo ./gradlew assembleDebug --stacktrace
