@@ -21,8 +21,8 @@ android:
 before_install:
 - chmod +x gradlew
 script:
-    -sudo ./gradlew test --stacktrace
-    - ./gradlew testBlueDebugUnitTestCoverage coveralls
+    -sudo ./gradlew test --stacktrace  
+    -./gradlew testBlueDebugUnitTestCoverage coveralls
 install: sudo ./gradlew assembleDebug --stacktrace
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
