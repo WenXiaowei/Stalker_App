@@ -21,9 +21,14 @@ android:
 before_install:
 - chmod +x gradlew
 script:
-   # -sudo ./gradlew test --stacktrace  
-    - ./gradlew testBlueDebugUnitTestCoverage coveralls
+    - sudo ./gradlew test --stacktrace
+    - ./gradlew -Dscan=true build
 install: sudo ./gradlew assembleDebug --stacktrace
+
+after_success:
+  - ./gradlew check jacocoTestReport coveralls
+after_failure:
+- ./gradlew clean check --debug
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
