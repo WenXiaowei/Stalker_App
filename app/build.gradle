@@ -6,6 +6,7 @@ apply plugin: 'jacoco-android'
 buildscript {
     repositories {
         maven { url 'https://plugins.gradle.org/m2/'}
+        jcenter()
     }
     dependencies {
         classpath 'gradle.plugin.com.onesignal:onesignal-gradle-plugin:[0.12.4, 0.99.99]'
@@ -41,6 +42,11 @@ android {
         ]
     }
     buildTypes {
+        debug {
+            applicationIdSuffix '.debug'
+            versionNameSuffix '-debug'
+            testCoverageEnabled true
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
@@ -52,11 +58,8 @@ android {
     }
     flavorDimensions "mode"
     productFlavors {
-        full {
-            dimension "mode"
-            applicationIdSuffix ".full"
-            versionNameSuffix "-full"
-        }
+        free {}
+        paid {}
     }
 }
 

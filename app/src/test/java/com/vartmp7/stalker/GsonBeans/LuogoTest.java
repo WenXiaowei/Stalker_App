@@ -13,8 +13,7 @@ import static org.junit.Assert.assertEquals;
 @RunWith(Parameterized.class)
 public class LuogoTest {
 
-
-    public static final Double DELTA = 1d;
+    private static final Double DELTA = 0.000011d;
     private Luogo luogo;
     private Coordinata coordinata;
 
@@ -25,18 +24,9 @@ public class LuogoTest {
 
 
     @Test
-    public void provaGetCentroTorre() {
-        Luogo l = new Luogo();
-        ArrayList<Coordinata> coordinate = new ArrayList<>();
-        coordinate.add(new Coordinata(45.411555, 11.887476));
-        coordinate.add(new Coordinata(45.411442, 11.887942));
-        coordinate.add(new Coordinata(45.411108, 11.887787));
-        coordinate.add(new Coordinata(45.411222, 11.887319));
-        l.setCoordinate(coordinate);
-
-
-        assertEquals(coordinata.getLongitude(), luogo.getCentro().getLongitude(),DELTA);
-        assertEquals(coordinata.getLatitude(), luogo.getCentro().getLatitude(),DELTA);
+    public void provaGetCentroLuogo() {
+        assertEquals(coordinata.getLongitude(), luogo.getCentro().getLongitude(), DELTA);
+        assertEquals(coordinata.getLatitude(), luogo.getCentro().getLatitude(), DELTA);
     }
 
 
@@ -58,6 +48,8 @@ public class LuogoTest {
         inail.add(new Coordinata(45.411544, 11.887106));
         Luogo i = new Luogo();
         i.setCoordinate(inail);
+
+
         ArrayList<Coordinata> dsea = new ArrayList<>();
         dsea.add(new Coordinata(45.411660, 11.887957));
         dsea.add(new Coordinata(45.411702, 11.888113));
@@ -68,7 +60,7 @@ public class LuogoTest {
 
         return Arrays.asList(new Object[][]{
                 {t, new Coordinata( 45.411332,11.887631)},
-                {i, new Coordinata(45.411695, 11.8873390)},
+                {i, new Coordinata(45.411695, 11.887339)},
                 {d, new Coordinata(45.411502, 11.888165)}
         });
 

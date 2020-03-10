@@ -8,7 +8,6 @@ import android.os.Bundle;
 public class Tracker implements LocationListener {
 
     private Context mContext;
-
     private StalkerTrackingCallBack callBack;
     private  boolean inPlace;
     public  Tracker(Context context, StalkerTrackingCallBack s){
@@ -18,10 +17,9 @@ public class Tracker implements LocationListener {
 
 
 
-
     @Override
     public void onLocationChanged(Location location) {
-        if (callBack!= null){
+        if (callBack != null){
             callBack.onLocationsChanged(location );
         }
     }

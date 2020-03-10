@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     .setIdOrganization(Long.parseLong(org.getId()))
                     .setAuthenticated(false);
 
-            SimpleDateFormat format = new SimpleDateFormat("Y-M-d hh:mm:ss");
+            @SuppressLint("SimpleDateFormat") SimpleDateFormat format = new SimpleDateFormat("Y-M-d hh:mm:ss");
             Date date = Calendar.getInstance(Locale.getDefault()).getTime();
             String formattedDate = format.format(date);
             trackSignal.setDate_time(formattedDate.replace(" ", "T"));
@@ -225,6 +225,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 msg.setData(b);
                 error_handler.sendMessage(msg);
 //                Log.d(TAG, "onFailure: " + e.toString());
+
             }
 
             @Override
@@ -285,7 +286,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 default:
                     Toast.makeText(MainActivity.this, "Something failed!", Toast.LENGTH_SHORT).show();
             }
-
         }
     };
 
