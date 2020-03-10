@@ -1,29 +1,18 @@
 apply plugin: 'com.onesignal.androidsdk.onesignal-gradle-plugin'
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
-apply plugin: 'jacoco-android'
-
 buildscript {
     repositories {
         maven { url 'https://plugins.gradle.org/m2/'}
-        jcenter()
     }
     dependencies {
         classpath 'gradle.plugin.com.onesignal:onesignal-gradle-plugin:[0.12.4, 0.99.99]'
-        classpath 'com.dicedmelon.gradle:jacoco-android:0.1.4'
     }
 }
 
 repositories {
     maven { url 'https://maven.google.com' }
 
-}
-jacoco {
-    toolVersion = "0.8.4"
-}
-
-tasks.withType(Test) {
-    jacoco.includeNoLocationClasses = true
 }
 android {
     compileSdkVersion 28
@@ -42,11 +31,6 @@ android {
         ]
     }
     buildTypes {
-        debug {
-            applicationIdSuffix '.debug'
-            versionNameSuffix '-debug'
-            testCoverageEnabled true
-        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
@@ -55,11 +39,6 @@ android {
     compileOptions {
         sourceCompatibility = 1.8
         targetCompatibility = 1.8
-    }
-    flavorDimensions "mode"
-    productFlavors {
-        free {}
-        paid {}
     }
 }
 
@@ -83,4 +62,3 @@ dependencies {
     implementation group: 'com.unboundid', name: 'unboundid-ldapsdk', version: '4.0.14'
 
 }
-
