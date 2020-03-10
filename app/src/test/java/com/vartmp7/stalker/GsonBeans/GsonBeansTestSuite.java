@@ -6,6 +6,6 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 
 
-@Suite.SuiteClasses({LuogoTest.class, RettaTest.class})
+@Suite.SuiteClasses({LuogoTest.class, RettaTest.class,CoordinataTest.class})
 public class GsonBeansTestSuite {
 }

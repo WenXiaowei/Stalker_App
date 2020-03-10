@@ -1,13 +1,29 @@
+/*
+
+commando per avviare il container di sonar qube
+    docker run -d --name sonarqube -p 9000:9000 sonarqube
+ Comando da usare per far andare sonar qube
+ gradlew sonarqube -Dsonar.projectKey=Stalker_App -Dsonar.host.url=http://localhost:9000 -Dsonar.login=11ca1a408698561b7b343325b831cb3ad4b279bf
+*/
 apply plugin: 'com.onesignal.androidsdk.onesignal-gradle-plugin'
+
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
+
 buildscript {
     repositories {
         maven { url 'https://plugins.gradle.org/m2/'}
     }
     dependencies {
-        classpath 'gradle.plugin.com.onesignal:onesignal-gradle-plugin:[0.12.4, 0.99.99]'
+        classpath 'gradle.plugin.com.onesignal:onesignal-gradle-plugin:0.12.6'
+        classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.8"
+
     }
+}
+apply plugin: 'org.sonarqube'
+apply plugin: 'jacoco'
+jacoco {
+    toolVersion = "0.8.2"
 }
 
 repositories {
