@@ -8,7 +8,7 @@ jobs:
   build:    
     runs-on: ubuntu-latest
     env: 
-      DEV_ENV: test 
+      NODE_ENV: test 
     steps:
     - uses: actions/checkout@v1
     - name: set up JDK 1.8
