@@ -22,9 +22,7 @@ buildscript {
 }
 apply plugin: 'org.sonarqube'
 apply plugin: 'jacoco'
-jacoco {
-    toolVersion = "0.8.2"
-}
+
 
 repositories {
     maven { url 'https://maven.google.com' }
@@ -52,12 +50,42 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    testOptions {
+        unitTests.all {
+            jacoco {
+                version '0.8.0'
+            }
+        }
+    }
     compileOptions {
         sourceCompatibility = 1.8
         targetCompatibility = 1.8
     }
 }
+task createTestReport(type: JacocoReport, dependsOn: ['testDevDebugUnitTest', 'createDevDebugCoverageReport']) {
+    group = "Reporting"
 
+    reports {
+        xml.enabled = true
+        html.enabled = true
+    }
+
+    def fileFilter = ['**/R.class',
+                      '**/R$*.class',
+                      '**/BuildConfig.*',
+                      '**/*$ViewInjector*.*',
+                      '**/*$ViewBinder*.*',
+                      '**/*$MembersInjector*.*',
+                      '**/Manifest*.*',
+                      '**/*Test*.*',
+                      'android/**/*.*']
+    def debugTree = fileTree(dir: "${buildDir}/intermediates/classes/dev/debug", excludes: fileFilter)
+    def mainSrc = "${project.projectDir}/src/main/java"
+
+    sourceDirectories.from = files([mainSrc])
+    classDirectories.from = files([debugTree])
+    executionData.from = files("${project.buildDir}/jacoco/testDevDebugUnitTest.exec")
+}
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.appcompat:appcompat:1.1.0'
