@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     .setIdOrganization(Long.parseLong(org.getId()))
                     .setAuthenticated(false);
 
-            @SuppressLint("SimpleDateFormat") SimpleDateFormat format = new SimpleDateFormat("Y-M-d hh:mm:ss");
+            @SuppressLint("SimpleDateFormat") SimpleDateFormat format = new SimpleDateFormat("y-M-d hh:mm:ss");
             Date date = Calendar.getInstance(Locale.getDefault()).getTime();
             String formattedDate = format.format(date);
             trackSignal.setDate_time(formattedDate.replace(" ", "T"));
@@ -383,10 +383,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                             ldap.search();
                             Toast.makeText(MainActivity.this, "Logged", Toast.LENGTH_SHORT).show();
 //                            ((Button)findViewById(R.id.btnShowLoginDialog)).setText("logged");
-                        } catch (LDAPException | ExecutionException | InterruptedException e) {
+                        } catch (LDAPException e){}catch ( ExecutionException e){}catch (InterruptedException e) {
                             Toast.makeText(MainActivity.this, "Qualcosa è andato storto, ri " +
                                     "provare più tardi", Toast.LENGTH_SHORT).show();
-                            e.printStackTrace();
                         }
 
                     }

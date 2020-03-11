@@ -39,6 +39,11 @@ public class Coordinata {
     }
 
     @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
+    @Override
     public boolean equals(@Nullable Object obj) {
         if (obj instanceof Coordinata) {
             Coordinata c = (Coordinata) obj;

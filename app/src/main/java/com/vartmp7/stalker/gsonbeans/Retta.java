@@ -32,6 +32,11 @@ public class Retta {
     }
 
     @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
+    @Override
     public boolean equals(@Nullable Object obj) {
         if (obj instanceof Retta) {
             Retta c = (Retta) obj;

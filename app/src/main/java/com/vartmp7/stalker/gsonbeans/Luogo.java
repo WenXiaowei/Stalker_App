@@ -31,6 +31,10 @@ public class Luogo {
         return r1.intersezione(new Retta(coordinates.get(1), coordinates.get(3)));
     }
 
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
 
     public boolean isInPlace(Coordinata c){
         if (getCentro().getDistanceTo(c)< getRadius())
