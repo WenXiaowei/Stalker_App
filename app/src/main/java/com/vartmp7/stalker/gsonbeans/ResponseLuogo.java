@@ -1,6 +1,4 @@
-package com.vartmp7.stalker.GsonBeans;
-
-import android.util.Log;
+package com.vartmp7.stalker.gsonbeans;
 
 import androidx.annotation.NonNull;
 

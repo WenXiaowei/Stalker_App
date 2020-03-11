@@ -36,30 +36,21 @@ public class MainActivityTest {
     public GrantPermissionRule permissionRule = GrantPermissionRule
             .grant(android.Manifest.permission.ACCESS_FINE_LOCATION);
 
-    public static final long PAUSE=300l;
-
     @Test
     public void testStartTrackingWithUniPD() throws InterruptedException {
 
         onView(withId(R.id.s_scegliOrganizzazione)).perform(click());
-        Thread.sleep(PAUSE);
         onData(anything()).atPosition(1).perform(click());
         onView(withId(R.id.s_scegliOrganizzazione)).check(matches(withSpinnerText(containsString(
                 "UniPD"))));
-        Thread.sleep(PAUSE);
         onView(withId(R.id.btnShowLoginDialog)).check(matches(isDisplayed()));
         onView(withId(R.id.btnShowLoginDialog)).perform(click());
-        Thread.sleep(PAUSE);
         onView(withText(R.string.conferma)).inRoot(isDialog()) // <---
                 .check(matches(isDisplayed()))
                 .perform(click());
-        Thread.sleep(PAUSE);
         onView(withId(R.id.btnStartTracking)).check(matches(isDisplayed()));
         onView(withId(R.id.btnStartTracking)).check(matches(isClickable())).perform(click());
-        Thread.sleep(PAUSE);
         onView(withId(R.id.tvCurrentStatus)).check(matches(isDisplayed()));
-        Thread.sleep(PAUSE+500);
-
         onView(withText("UniPD ti sta tracciando!")).inRoot(new ToastMatcher()).check(matches(isDisplayed()));
 
     }

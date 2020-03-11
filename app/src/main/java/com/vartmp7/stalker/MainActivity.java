@@ -28,12 +28,12 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.unboundid.ldap.sdk.LDAPException;
-import com.vartmp7.stalker.GsonBeans.Coordinata;
-import com.vartmp7.stalker.GsonBeans.Luogo;
-import com.vartmp7.stalker.GsonBeans.Organizzazione;
-import com.vartmp7.stalker.GsonBeans.ResponseLuogo;
-import com.vartmp7.stalker.GsonBeans.ResponseOrganizzazione;
-import com.vartmp7.stalker.GsonBeans.TrackSignal;
+import com.vartmp7.stalker.gsonbeans.Coordinata;
+import com.vartmp7.stalker.gsonbeans.Luogo;
+import com.vartmp7.stalker.gsonbeans.Organizzazione;
+import com.vartmp7.stalker.gsonbeans.ResponseLuogo;
+import com.vartmp7.stalker.gsonbeans.ResponseOrganizzazione;
+import com.vartmp7.stalker.gsonbeans.TrackSignal;
 
 import org.jetbrains.annotations.NotNull;
 

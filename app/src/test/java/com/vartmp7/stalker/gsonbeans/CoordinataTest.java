@@ -1,11 +1,8 @@
-package com.vartmp7.stalker.GsonBeans;
+package com.vartmp7.stalker.gsonbeans;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-import org.junit.runners.Parameterized;
-
-import java.util.Collection;
 
 import static junit.framework.TestCase.assertEquals;
 
