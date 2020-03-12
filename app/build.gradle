@@ -53,7 +53,7 @@ android {
     testOptions {
         unitTests.all {
             jacoco {
-                version '0.8.0'
+                version '1.0.1'
             }
         }
     }
@@ -62,14 +62,19 @@ android {
         targetCompatibility = 1.8
     }
 }
-task createTestReport(type: JacocoReport, dependsOn: ['testDevDebugUnitTest', 'createDevDebugCoverageReport']) {
+task createTestReport(type: JacocoReport,
+//        dependsOn: ['createDevDebugCoverageReport']
+) {
     group = "Reporting"
 
     reports {
         xml.enabled = true
         html.enabled = true
     }
-
+/**
+ * gradlew sonarqube non funziona per questo errore:
+ * No files nor directories matching 'build/intermediates/classes/dev/debug'
+ */
     def fileFilter = ['**/R.class',
                       '**/R$*.class',
                       '**/BuildConfig.*',
@@ -79,12 +84,40 @@ task createTestReport(type: JacocoReport, dependsOn: ['testDevDebugUnitTest', 'c
                       '**/Manifest*.*',
                       '**/*Test*.*',
                       'android/**/*.*']
-    def debugTree = fileTree(dir: "${buildDir}/intermediates/classes/dev/debug", excludes: fileFilter)
+//    def debugTree = fileTree(dir: "${project.projectDir}/src/test/*/*Test.java", excludes: fileFilter)
+    def debugTree = fileTree(dir: "${buildDir}/../intermediates/classes/dev/debug", excludes: fileFilter)
     def mainSrc = "${project.projectDir}/src/main/java"
 
     sourceDirectories.from = files([mainSrc])
     classDirectories.from = files([debugTree])
     executionData.from = files("${project.buildDir}/jacoco/testDevDebugUnitTest.exec")
+//    def files = fileTree("${buildDir}/outputs/code-coverage/connected/flavors/DEV/").filter { it.isFile() }.files.name
+//    instrumentationFileName = "${buildDir}/outputs/code-coverage/connected/flavors/DEV/" + files[0];
+}
+sonarqube {
+    properties {
+
+        property "sonar.host.url", "http://localhost:9000"
+        property "sonar.username", "admin"
+        property "sonar.password", "admin"
+
+        property "sonar.projectKey", "com.vartmp7."
+        property "sonar.projectName", "StalkerApp"
+        property "sonar.projectVersion", "${version}"
+
+        property "sonar.sources", "src/main"
+//        property "sonar.sources", "src"
+
+        property "sonar.java.source", "7"
+        property "sonar.java.binaries", "build/intermediates/app_classes"
+
+        property "sonar.android.lint.report", "build/outputs/lint-results.xml"
+        property "sonar.jacoco.xmlReportPaths","build/test-results/testDebugUnitTest/TEST-*.xml"
+//        property "sonar.jacoco.reportPath","build/jacoco/testDebugUnitTest.exec"
+        property "sonar.coverage.reportPath", "build/test-results/testDebugUnitTest/TEST-*.xml"
+//        property 'sonar.coverage.jacoco.xmlReportPaths','build/test-results/testDebugUnitTest/TEST-*.xml'
+//        property "sonar.jacoco.itReportPath", instrumentationFileName
+    }
 }
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])

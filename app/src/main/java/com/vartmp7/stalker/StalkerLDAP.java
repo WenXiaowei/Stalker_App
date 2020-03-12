@@ -9,6 +9,7 @@ import com.unboundid.ldap.sdk.LDAPConnection;
 import com.unboundid.ldap.sdk.LDAPException;
 import com.unboundid.ldap.sdk.SearchResultEntry;
 
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 
@@ -35,14 +36,24 @@ public class StalkerLDAP {
 
     public void bind() throws LDAPException, ExecutionException, InterruptedException {
         this.connection = new LDAPConnection(serverAddress, serverPort);
-        FutureTask<BindResult> bindFutureTask = new FutureTask<>(() -> connection.bind(bindDN, bindPassword));
+        FutureTask<BindResult> bindFutureTask = new FutureTask<>(new Callable<BindResult>() {
+            @Override
+            public BindResult call() throws Exception {
+                return connection.bind(bindDN, bindPassword);
+            }
+        });
         new Thread(bindFutureTask).start();
         this.result = bindFutureTask.get();
 
 
     }
     public void search() throws ExecutionException, InterruptedException {
-        FutureTask<SearchResultEntry> searchFutureTask = new FutureTask<>(() -> connection.getEntry(bindDN));
+        FutureTask<SearchResultEntry> searchFutureTask = new FutureTask<>(new Callable<SearchResultEntry>() {
+            @Override
+            public SearchResultEntry call() throws Exception {
+                return connection.getEntry(bindDN);
+            }
+        });
         new Thread(searchFutureTask).start();
         this.entry = searchFutureTask.get();
 //        Log.d(TAG, "uid:" + entry.getAttributeValue("uid"));
