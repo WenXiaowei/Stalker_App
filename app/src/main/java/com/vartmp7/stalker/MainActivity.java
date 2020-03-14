@@ -59,6 +59,17 @@ import static com.vartmp7.stalker.Tools.getUnsafeOkHttpClient;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, View.OnClickListener {
 
+    /**
+     * Stalker
+     * P=3.1415926
+     *
+     * project google sign in client id
+     * 543529788745-mc7pagmter3bvr7i3e1vim0tjq0fhov6.apps.googleusercontent.com
+     *
+     *client secret:
+     * _g0uY5uQ87yD469NmjFJ4kS7
+     *
+     */
     public static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
     private final String TAG = "com.vartmp7.stalker.MainActivity";
     private Spinner sScegliOrganizzazione;
