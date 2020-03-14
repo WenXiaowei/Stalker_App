@@ -22,12 +22,12 @@ jobs:
     - name: Build debug APK
       run: sudo ./gradlew assembleDebug --stacktrace
     
-    - name: Coveralls Parallel
-      uses: coverallsapp/github-action@master
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        parallel: true
-        path-to-lcov: ./coverage/lcov.info # optional (default value)
+#     - name: Coveralls Parallel
+#       uses: coverallsapp/github-action@master
+#       with:
+#         github-token: ${{ secrets.GITHUB_TOKEN }}
+#         parallel: true
+#         path-to-lcov: ./coverage/lcov.info # optional (default value)
     - name: Upload APK
       uses: actions/upload-artifact@v1
       with:
