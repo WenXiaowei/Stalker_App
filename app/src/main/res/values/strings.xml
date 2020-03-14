@@ -17,4 +17,7 @@
     <string name="not_in_any_place">Non sei in nessun luogo tracciato dell\'organizzazione selezionata!</string>
     <string name="you_left">Hai lasciato %s</string>
     <string name="you_are_in">Sei in %s</string>
+    <string name="facebook_app_id">212692166599390</string><!--todo Da togliere successivamente   -->
+    <string name="fb_login_protocol_scheme">fb212692166599390</string>
+
 </resources>
