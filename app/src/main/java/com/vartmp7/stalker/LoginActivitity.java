@@ -28,6 +28,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.vartmp7.stalker.component.BaseActivity;
 
 public class LoginActivitity extends BaseActivity implements View.OnClickListener {
 

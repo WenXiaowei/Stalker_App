@@ -21,4 +21,11 @@
     <string name="fb_login_protocol_scheme">fb212692166599390</string>
     <string name="continua_senza_autenticazione">Continua senza autenticazione</string>
 
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="cronologia">Cronologia</string>
+    <string name="preferiti">Preferiti</string>
+    <string name="organizzazioni">Organizzazioni</string>
+    <string name="scegli">Scegli</string>
 </resources>

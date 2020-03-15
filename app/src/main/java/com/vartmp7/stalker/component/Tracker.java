@@ -1,4 +1,4 @@
-package com.vartmp7.stalker;
+package com.vartmp7.stalker.component;
 
 import android.content.Context;
 import android.location.Location;

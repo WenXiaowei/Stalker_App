@@ -1,4 +1,4 @@
-package com.vartmp7.stalker;
+package com.vartmp7.stalker.component;
 
 import android.util.Log;
 
@@ -14,7 +14,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 
 public class StalkerLDAP {
-    private static final String TAG = "com.vartmp7.stalker.StalkerLDAP";
+    private static final String TAG = "com.vartmp7.stalker.component.StalkerLDAP";
 
     private LDAPConnection connection;
     private BindResult result;
