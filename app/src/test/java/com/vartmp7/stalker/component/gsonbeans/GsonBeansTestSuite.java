@@ -1,4 +1,4 @@
-package com.vartmp7.stalker.gsonbeans;
+package com.vartmp7.stalker.component.gsonbeans;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_organizations"
+        android:icon="@drawable/list"
+        android:title="@string/organizzazioni" />
+
+    <item
+        android:id="@+id/navigation_status"
+        android:icon="@drawable/ic_home_black_24dp"
+        android:title="@string/title_home" />
+
+    <item
+        android:id="@+id/navigation_preferiti"
+        android:icon="@drawable/ic_notifications_black_24dp"
+        android:title="@string/preferiti" />
+    <item
+        android:id="@+id/navigation_cronologia"
+        android:icon="@drawable/ic_notifications_black_24dp"
+        android:title="@string/cronologia" />
+
+</menu>

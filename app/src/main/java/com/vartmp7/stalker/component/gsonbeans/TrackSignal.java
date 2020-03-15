@@ -1,4 +1,4 @@
-package com.vartmp7.stalker.gsonbeans;
+package com.vartmp7.stalker.component.gsonbeans;
 
 import android.util.Log;
 
@@ -36,8 +36,9 @@ public class TrackSignal {
         return this;
     }
     public String getUrlToPost(){
-        return MainActivity.SERVER + "organizations/" + idOrganization
-                + "/places/" + idPlace+ "/tracks";
+//        return MainActivity.SERVER + "organizations/" + idOrganization
+//                + "/places/" + idPlace+ "/tracks";
+        return null;
     }
 
 
