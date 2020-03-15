@@ -1,7 +1,6 @@
 package com.vartmp7.stalker;
 
 import android.content.Intent;
-import android.nfc.Tag;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -14,8 +13,6 @@ import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
-import com.facebook.login.Login;
-import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -31,10 +28,6 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.GoogleAuthProvider;
-
-import java.util.Arrays;
-import java.util.Collections;
 
 public class LoginActivitity extends BaseActivity implements View.OnClickListener {
 
@@ -107,6 +100,7 @@ public class LoginActivitity extends BaseActivity implements View.OnClickListene
         SignInButton signInButton = findViewById(R.id.btn_googleSignIn);
         signInButton.setSize(SignInButton.SIZE_STANDARD);
         signInButton.setOnClickListener(this);
+        findViewById(R.id.btnProcediSenzaAuth).setOnClickListener(this);
     }
 
     private void handleFacebookAccessToken(AccessToken token) {
@@ -147,35 +141,51 @@ public class LoginActivitity extends BaseActivity implements View.OnClickListene
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         callbackManager.onActivityResult(requestCode, resultCode, data);
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode==RC_SIGN_IN){
+        if (requestCode == RC_SIGN_IN) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             handleSignInResult(task);
         }
     }
+
     private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
         try {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
-            Log.d(TAG, "handleSignInResult: "+account.getDisplayName());
+//            Log.d(TAG, "handleSignInResult: " + account.getDisplayName());
             // Signed in successfully, show authenticated UI.
 //            updateUI(account);
         } catch (ApiException e) {
             // The ApiException status code indicates the detailed failure reason.
             // Please refer to the GoogleSignInStatusCodes class reference for more information.
-            Log.w(TAG, "signInResult:failed code=" + e.getStatusCode());
+//            Log.w(TAG, "signInResult:failed code=" + e.getStatusCode());
 //            updateUI(null);
         }
     }
-    private void googleSignIn(){
+
+    private void googleSignIn() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
+    private void googleSignOut() {
+        mGoogleSignInClient.signOut()
+                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Toast.makeText(LoginActivitity.this, "Successufully logout", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.btn_googleSignIn:
                 googleSignIn();
                 break;
+            case R.id.btnProcediSenzaAuth:
+                startActivity(new Intent(LoginActivitity.this, MainActivity.class));
+                break;
         }
     }
+
 }
