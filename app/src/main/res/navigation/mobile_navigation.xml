@@ -15,7 +15,13 @@
         android:id="@+id/navigation_status"
         android:name="com.vartmp7.stalker.ui.home.HomeFragment"
         android:label="@string/title_home"
-        tools:layout="@layout/fragment_status" />
+        tools:layout="@layout/fragment_status">
+        <argument
+            android:name="ID_ORG"
+            android:defaultValue="0"
+            app:argType="integer" />
+
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_preferiti"

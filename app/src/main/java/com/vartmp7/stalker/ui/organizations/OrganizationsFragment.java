@@ -34,7 +34,7 @@ public class OrganizationsFragment extends Fragment {
         init_data();
 
 
-        mAdapter = new OrganizationAdapter(list);
+        mAdapter = new OrganizationAdapter(getContext(),list);
         recyclerView = root.findViewById(R.id.rvListaOrganizzazioni);
 
         layoutManager = new LinearLayoutManager(getContext());
@@ -43,75 +43,16 @@ public class OrganizationsFragment extends Fragment {
 
         recyclerView.setAdapter(mAdapter);
 
+//        recyclerView.addItemDecoration(new LineDividerItemDecoration(this, R.drawable.line_divider));
 
         return root;
     }
 
     private  void init_data(){
         list = new ArrayList<>();
-        Organizzazione organizzazione = new Organizzazione().setName("UNIPD").setType("Both");
-        list.add(organizzazione);
-        organizzazione = new Organizzazione().setName("UNIPD2").setType("Both");
-        list.add(organizzazione);
-        organizzazione = new Organizzazione().setName("UNIPD3").setType("Both");
-        list.add(organizzazione);
-        organizzazione = new Organizzazione().setName("UNIPD3").setType("Both");
-        list.add(organizzazione);
-        organizzazione = new Organizzazione().setName("UNIPD3").setType("Both");
-        list.add(organizzazione);
-        organizzazione = new Organizzazione().setName("UNIPD3").setType("Both");
-        list.add(organizzazione);
-        organizzazione = new Organizzazione().setName("UNIPD3").setType("Both");
-        list.add(organizzazione);
-        organizzazione = new Organizzazione().setName("UNIPD3").setType("Both");
-        list.add(organizzazione);
-        organizzazione = new Organizzazione().setName("UNIPD3").setType("Both");
-        list.add(organizzazione);
-        organizzazione = new Organizzazione().setName("UNIPD3").setType("Both");
-        list.add(organizzazione);
-        organizzazione = new Organizzazione().setName("UNIPD3").setType("Both");
-        list.add(organizzazione);
-        organizzazione = new Organizzazione().setName("UNIPD3").setType("Both");
-        list.add(organizzazione);
-        organizzazione = new Organizzazione().setName("UNIPD3").setType("Both");
-        list.add(organizzazione);
-        organizzazione = new Organizzazione().setName("UNIPD3").setType("Both");
-        list.add(organizzazione);
-        organizzazione = new Organizzazione().setName("UNIPD3").setType("Both");
-        list.add(organizzazione);
-        organizzazione = new Organizzazione().setName("UNIPD3").setType("Both");
-        list.add(organizzazione);
-        organizzazione = new Organizzazione().setName("UNIPD3").setType("Both");
-        list.add(organizzazione);
-        organizzazione = new Organizzazione().setName("UNIPD3").setType("Both");
-        list.add(organizzazione);
-        organizzazione = new Organizzazione().setName("UNIPD3").setType("Both");
-        list.add(organizzazione);
-        organizzazione = new Organizzazione().setName("UNIPD3").setType("Both");
-        list.add(organizzazione);
-        organizzazione = new Organizzazione().setName("UNIPD3").setType("Both");
-        list.add(organizzazione);
-        organizzazione = new Organizzazione().setName("UNIPD3").setType("Both");
-        list.add(organizzazione);
-        organizzazione = new Organizzazione().setName("UNIPD3").setType("Both");
-        list.add(organizzazione);
-        organizzazione = new Organizzazione().setName("UNIPD3").setType("Both");
-        list.add(organizzazione);
-        organizzazione = new Organizzazione().setName("UNIPD3").setType("Both");
-        list.add(organizzazione);
-        organizzazione = new Organizzazione().setName("UNIPD3").setType("Both");
-        list.add(organizzazione);
-        organizzazione = new Organizzazione().setName("UNIPD3").setType("Both");
-        list.add(organizzazione);
-        organizzazione = new Organizzazione().setName("UNIPD3").setType("Both");
-        list.add(organizzazione);
-        organizzazione = new Organizzazione().setName("UNIPD3").setType("Both");
-        list.add(organizzazione);
-        organizzazione = new Organizzazione().setName("UNIPD3").setType("Both");
-        list.add(organizzazione);
-        organizzazione = new Organizzazione().setName("UNIPD3").setType("Both");
-        list.add(organizzazione);
-        organizzazione = new Organizzazione().setName("UNIPD3").setType("Both");
-        list.add(organizzazione);
+        for (int i=0; i<10; i++){
+            Organizzazione organizzazione = new Organizzazione().setId(String.valueOf(i)).setName("UNIPD"+i).setType("Both").setAddress("via Trieste "+i);
+            list.add(organizzazione);
+        }
     }
 }
