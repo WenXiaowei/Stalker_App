@@ -1,4 +1,4 @@
-package com.vartmp7.stalker.gsonbeans;
+package com.vartmp7.stalker.component.gsonbeans;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
