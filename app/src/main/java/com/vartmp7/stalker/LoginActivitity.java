@@ -151,8 +151,10 @@ public class LoginActivitity extends BaseActivity implements View.OnClickListene
     private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
         try {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
+
 //            Log.d(TAG, "handleSignInResult: " + account.getDisplayName());
             // Signed in successfully, show authenticated UI.
+
 //            updateUI(account);
         } catch (ApiException e) {
             // The ApiException status code indicates the detailed failure reason.
