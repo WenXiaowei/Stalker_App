@@ -1,7 +1,33 @@
 package com.vartmp7.stalker.component.gsonbeans;
 
 public class Organizzazione {
+    private String address;
+    private String city;
+    private String email;
+    private String id;
+    private String name;
+    private String nation;
+    private String phone_number;
+    private String postal_code;
+    private String region;
+    private String type;
+    private String ldap_common_name;
+    private String ldap_domain_component;
+    private String ldap_port;
+    private Boolean isPreferito=false;
 
+    public String getOrgInfo() {
+        return getName() + " presso: " + getAddress();
+    }
+
+    public Boolean getPreferito() {
+        return isPreferito;
+    }
+
+    public Organizzazione setPreferito(Boolean preferito) {
+        isPreferito = preferito;
+        return this;
+    }
     public String getAddress() {
         return address;
     }
@@ -119,32 +145,5 @@ public class Organizzazione {
         return this;
     }
 
-    private String address;
-    private String city;
-    private String email;
-    private String id;
-    private String name;
-    private String nation;
-    private String phone_number;
-    private String postal_code;
-    private String region;
-    private String type;
-    private String ldap_common_name;
-    private String ldap_domain_component;
-    private String ldap_port;
-    private Boolean isPreferito=false;
 
-
-    public String getOrgInfo() {
-        return getName() + " presso: " + getAddress();
-    }
-
-    public Boolean getPreferito() {
-        return isPreferito;
-    }
-
-    public Organizzazione setPreferito(Boolean preferito) {
-        isPreferito = preferito;
-        return this;
-    }
 }

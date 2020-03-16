@@ -29,7 +29,6 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
@@ -37,7 +36,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.vartmp7.stalker.component.BaseActivity;
 
-public class LoginActivitity extends BaseActivity implements View.OnClickListener {
+public class LoginActivity extends BaseActivity implements View.OnClickListener {
 
     private static final String TAG = "com.vartmp7.stalker.LoginActivitity";
     private static final int RC_SIGN_IN = 1;
@@ -140,7 +139,7 @@ public class LoginActivitity extends BaseActivity implements View.OnClickListene
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
-                            Toast.makeText(LoginActivitity.this, "Authentication failed.",
+                            Toast.makeText(LoginActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
 //                            updateUI(null);
                         }
@@ -209,7 +208,7 @@ public class LoginActivitity extends BaseActivity implements View.OnClickListene
                             } else {
                                 // If sign in fails, display a message to the user.
                                 Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                                Toast.makeText(LoginActivitity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(LoginActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
 
                             }
                         }
@@ -255,7 +254,7 @@ public class LoginActivitity extends BaseActivity implements View.OnClickListene
                             } else {
                                 // If sign in fails, display a message to the user.
                                 Log.w(TAG, "signInWithEmail:failure", task.getException());
-                                Toast.makeText(LoginActivitity.this, "Authentication failed.",
+                                Toast.makeText(LoginActivity.this, "Authentication failed.",
                                         Toast.LENGTH_SHORT).show();
 
                             }
@@ -292,7 +291,7 @@ public class LoginActivitity extends BaseActivity implements View.OnClickListene
                 .addOnCompleteListener(this, new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        Toast.makeText(LoginActivitity.this, "Successufully logout", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(LoginActivity.this, "Successufully logout", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -304,7 +303,7 @@ public class LoginActivitity extends BaseActivity implements View.OnClickListene
                 googleSignIn();
                 break;
             case R.id.btnProcediSenzaAuth:
-                Intent intent =new Intent(LoginActivitity.this, MainActivity.class);
+                Intent intent =new Intent(LoginActivity.this, MainActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
                 break;
