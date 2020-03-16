@@ -69,24 +69,29 @@
         android:id="@+id/btn_signIn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="23dp"
-        android:layout_marginTop="624dp"
-        android:layout_marginEnd="300dp"
-        android:layout_marginBottom="59dp"
+        android:layout_marginTop="8dp"
         android:layout_weight="1"
         android:text="@string/sign_in"
+        android:background="@drawable/refresh_btn_style"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btn_signUp"
+        app:layout_constraintHorizontal_bias="0.858"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/btnProcediSenzaAuth"
+        app:layout_constraintVertical_bias="0.034" />
 
     <Button
         android:id="@+id/btn_signUp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="108dp"
         android:layout_weight="1"
+        android:background="@drawable/refresh_btn_style"
         android:text="@string/sign_up"
-        tools:layout_editor_absoluteX="305dp"
-        tools:layout_editor_absoluteY="624dp" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnProcediSenzaAuth"
+        app:layout_constraintVertical_bias="0.034" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
