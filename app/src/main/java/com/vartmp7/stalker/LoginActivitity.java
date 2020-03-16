@@ -304,7 +304,9 @@ public class LoginActivitity extends BaseActivity implements View.OnClickListene
                 googleSignIn();
                 break;
             case R.id.btnProcediSenzaAuth:
-                startActivity(new Intent(LoginActivitity.this, MainActivity.class));
+                Intent intent =new Intent(LoginActivitity.this, MainActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
                 break;
             case R.id.btn_signUp:
                 Log.e(TAG,"cliccato btn signUp");

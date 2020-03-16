@@ -4,9 +4,14 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.vartmp7.stalker.component.gsonbeans.Organizzazione;
+
+import java.util.List;
+
 public class OrganizationsViewModel extends ViewModel {
 
     private MutableLiveData<String> mText;
+    private MutableLiveData<List<Organizzazione>> listOrganizzazione;
 
     public OrganizationsViewModel() {
         mText = new MutableLiveData<>();
