@@ -132,9 +132,19 @@ public class Organizzazione {
     private String ldap_common_name;
     private String ldap_domain_component;
     private String ldap_port;
+    private Boolean isPreferito=false;
 
 
     public String getOrgInfo() {
-        return getName()+" presso: "+getAddress();
+        return getName() + " presso: " + getAddress();
+    }
+
+    public Boolean getPreferito() {
+        return isPreferito;
+    }
+
+    public Organizzazione setPreferito(Boolean preferito) {
+        isPreferito = preferito;
+        return this;
     }
 }
