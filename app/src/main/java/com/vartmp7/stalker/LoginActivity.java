@@ -55,9 +55,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     @Override
     protected void onStart() {
         super.onStart();
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser != null) {
-            Log.d(TAG, currentUser.getDisplayName());
+        if (mAuth.getCurrentUser() != null || GoogleSignIn.getLastSignedInAccount(this) != null) {
+            goToMainActivity();
         }
     }
 
@@ -67,10 +66,10 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        signUpButton = (Button)findViewById(R.id.btn_signUp);
+        signUpButton = (Button) findViewById(R.id.btn_signUp);
         signUpButton.setOnClickListener(this);
 
-        signInButton = (Button)findViewById(R.id.btn_signIn);
+        signInButton = (Button) findViewById(R.id.btn_signIn);
         signInButton.setOnClickListener(this);
 
 // Initialize Firebase Auth
@@ -134,6 +133,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
                             FirebaseUser user = mAuth.getCurrentUser();
+                            goToMainActivity();
 //                            updateUI(user);
                             if (user != null)
                                 Log.d(TAG, "onComplete: " + user.getDisplayName());
@@ -150,10 +150,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 });
     }
 
-    public void logout() {
-        FirebaseAuth.getInstance().signOut();
 
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -168,7 +165,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
         try {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
-
+            goToMainActivity();
 //            Log.d(TAG, "handleSignInResult: " + account.getDisplayName());
             // Signed in successfully, show authenticated UI.
 
@@ -205,6 +202,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                                 // Sign in success, update UI with the signed-in user's information
                                 Log.d(TAG, "createUserWithEmail:success");
                                 FirebaseUser user = mAuth.getCurrentUser();
+                                goToMainActivity();
 
                             } else {
                                 // If sign in fails, display a message to the user.
@@ -227,7 +225,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
     }
 
-    private void showSignInDialog()  {
+    private void showSignInDialog() {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater inflater = getLayoutInflater();
@@ -246,12 +244,12 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 String password = etPassword.getText().toString().trim();
 
                 mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(
-                        task-> {
+                        task -> {
                             if (task.isSuccessful()) {
                                 // Sign in success, update UI with the signed-in user's information
                                 Log.d(TAG, "signInWithEmail:success");
                                 FirebaseUser user = mAuth.getCurrentUser();
-
+                                goToMainActivity();
                             } else {
                                 // If sign in fails, display a message to the user.
                                 Log.w(TAG, "signInWithEmail:failure", task.getException());
@@ -279,22 +277,16 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     }
 
 
-
     private void googleSignIn() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
 
-
-    private void googleSignOut() {
-        mGoogleSignInClient.signOut()
-                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        Toast.makeText(LoginActivity.this, "Successufully logout", Toast.LENGTH_SHORT).show();
-                    }
-                });
+    public void goToMainActivity() {
+        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
     }
 
     @Override
@@ -304,12 +296,10 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 googleSignIn();
                 break;
             case R.id.btnProcediSenzaAuth:
-                Intent intent =new Intent(LoginActivity.this, MainActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(intent);
+                goToMainActivity();
                 break;
             case R.id.btn_signUp:
-                Log.e(TAG,"cliccato btn signUp");
+                Log.e(TAG, "cliccato btn signUp");
                 showSignUpDialog();
                 break;
             case R.id.btn_signIn:
@@ -317,8 +307,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 break;
         }
     }
-
-
 
 
 }
