@@ -455,11 +455,11 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.snackbar.BaseTransientBottomBar;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.vartmp7.stalker.component.FirebasePreferitiRepository;
-import com.vartmp7.stalker.component.PreferitiRepository;
+import com.vartmp7.stalker.component.FirebaseFavoritesRepository;
+import com.vartmp7.stalker.component.FavoritesRepository;
+import com.vartmp7.stalker.component.OrganizationsRepository;
+import com.vartmp7.stalker.component.RESTOrganizationsRepository;
 import com.vartmp7.stalker.component.gsonbeans.Organizzazione;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -467,6 +467,8 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
+
+import okhttp3.OkHttpClient;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -488,9 +490,12 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        //TODO togliere le seguenti due righe che sono solo un test
-        PreferitiRepository preferityRepository = new FirebasePreferitiRepository("1",FirebaseFirestore.getInstance());
-        preferityRepository.addOrganizzazione(new Organizzazione().setId("12"));
+        //TODO togliere le seguenti 3 righe che sono solo un test
+        OkHttpClient httpClient= new OkHttpClient();
+        String serverUrl="";
+        OrganizationsRepository orgRepo = new RESTOrganizationsRepository(httpClient,serverUrl);
+        FavoritesRepository preferityRepository = new FirebaseFavoritesRepository("1",orgRepo,FirebaseFirestore.getInstance());
+        preferityRepository.addOrganizzazione(new Organizzazione().setId(12));
 
 
 

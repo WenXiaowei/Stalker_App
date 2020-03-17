@@ -15,15 +15,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class FirebasePreferitiRepository implements PreferitiRepository {
+public class FirebaseFavoritesRepository implements FavoritesRepository {
     public static final String TAG ="package com.vartmp7.stalker.component.ProvaPreferitiRepository";
     private static final String FIELDNAME_ID ="id";
-
+    private OrganizationsRepository organizationsRepo;
     private FirebaseFirestore db;
     private String userId;
 
-    public FirebasePreferitiRepository(String userId, FirebaseFirestore db) {
+    public FirebaseFavoritesRepository(String userId, OrganizationsRepository orgRepo,FirebaseFirestore db) {
         this.userId=userId;
+        this.organizationsRepo=orgRepo;
         this.db = db;
     }
     public void setUserID(String userId){
@@ -33,7 +34,7 @@ public class FirebasePreferitiRepository implements PreferitiRepository {
     @Override
     public void addOrganizzazione(Organizzazione organizzazione) {
     //TODO
-        // Create a new user with a first, middle, and last name
+
         Map<String, Object> org = new HashMap<>();
         org.put(FIELDNAME_ID,organizzazione.getId());
 
@@ -64,7 +65,10 @@ public class FirebasePreferitiRepository implements PreferitiRepository {
     @Override
     public LiveData<List<Organizzazione>> getOrganizzazioni() {
     //TODO
-    // ottiene le organizzazioni da Cloud Firestore db e le restituisce sottoforma di liveData
+    /* ottiene gli id delle organizzazioni da Cloud Firestore db, poi contatta l'OrganizationsRepository per ottenere tutte le info
+        delle organizzazioni, poi costruisce un livedata e lo ritorna.
+     */
+
         return null;
     }
 
