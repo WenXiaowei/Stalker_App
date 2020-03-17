@@ -5,6 +5,9 @@ import android.util.Log;
 import com.google.gson.annotations.Expose;
 import com.vartmp7.stalker.MainActivity;
 
+/**
+ * @author Xiaowei Wen, Lorenzo Taschin
+ */
 public class TrackSignal {
     private static final String TAG="com.vartmp7.stalker.GsonBeans.TrackSignal";
     // Annotazione expose usato indicare quale campo devo venir serializzato

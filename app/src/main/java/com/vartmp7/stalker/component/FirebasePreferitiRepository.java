@@ -15,6 +15,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * @author Xiaowei Wen, Lorenzo Taschin
+ */
 public class FirebasePreferitiRepository implements PreferitiRepository {
     public static final String TAG ="package com.vartmp7.stalker.component.ProvaPreferitiRepository";
     private static final String FIELDNAME_ID ="id";

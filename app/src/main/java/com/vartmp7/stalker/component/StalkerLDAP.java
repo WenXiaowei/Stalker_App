@@ -13,6 +13,9 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 
+/**
+ * @author Xiaowei Wen, Lorenzo Taschin
+ */
 public class StalkerLDAP {
     private static final String TAG = "com.vartmp7.stalker.component.StalkerLDAP";
 

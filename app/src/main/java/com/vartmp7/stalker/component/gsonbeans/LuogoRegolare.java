@@ -206,6 +206,9 @@ package com.vartmp7.stalker.component.gsonbeans;
 
 import java.util.List;
 
+/**
+ * @author Xiaowei Wen, Lorenzo Taschin
+ */
 public abstract class LuogoRegolare  extends  AbstractLuogo{
 
     private List<Coordinata> coordinate;

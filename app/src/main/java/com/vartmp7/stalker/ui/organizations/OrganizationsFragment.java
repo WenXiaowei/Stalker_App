@@ -51,7 +51,7 @@ public class OrganizationsFragment extends Fragment {
     private  void init_data(){
         list = new ArrayList<>();
         for (int i=0; i<10; i++){
-            Organizzazione organizzazione = new Organizzazione().setId(String.valueOf(i)).setName("UNIPD"+i).setType("Both").setAddress("via Trieste "+i);
+            Organizzazione organizzazione = new Organizzazione().setId(i).setName("UNIPD"+i).setType("Both").setAddress("via Trieste "+i);
             list.add(organizzazione);
         }
     }

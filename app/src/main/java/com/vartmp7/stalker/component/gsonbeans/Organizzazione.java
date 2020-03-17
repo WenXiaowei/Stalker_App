@@ -3,6 +3,9 @@ package com.vartmp7.stalker.component.gsonbeans;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author Xiaowei Wen, Lorenzo Taschin
+ */
 public class Organizzazione {
     private String address;
     private String city;

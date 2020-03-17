@@ -5,6 +5,9 @@ import androidx.annotation.Nullable;
 
 import java.util.List;
 
+/**
+ * @author Xiaowei Wen, Lorenzo Taschin
+ */
 public class LuogoQuadrilatero extends LuogoRegolare {
 
     private final int NUM_COORDINATE=4;

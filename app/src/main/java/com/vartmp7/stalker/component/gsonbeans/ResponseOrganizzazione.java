@@ -4,6 +4,9 @@ import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
 
+/**
+ * @author Xiaowei Wen, Lorenzo Taschin
+ */
 public class ResponseOrganizzazione {
 
     private ArrayList<Organizzazione> organizations;

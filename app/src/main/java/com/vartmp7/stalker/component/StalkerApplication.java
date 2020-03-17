@@ -6,6 +6,9 @@ import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 import com.onesignal.OneSignal;
 
+/**
+ * @author Xiaowei Wen, Lorenzo Taschin
+ */
 public class StalkerApplication extends Application {
     @Override
     public void onCreate() {

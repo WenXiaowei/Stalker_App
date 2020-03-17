@@ -5,6 +5,10 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+
+/**
+ * @author Xiaowei Wen, Lorenzo Taschin
+ */
 public class BaseActivity extends AppCompatActivity {
 
     @Override

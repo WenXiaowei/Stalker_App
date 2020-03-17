@@ -8,6 +8,9 @@ import com.vartmp7.stalker.component.gsonbeans.Organizzazione;
 
 import java.util.List;
 
+/**
+ * @author Xiaowei Wen, Lorenzo Taschin
+ */
 public class OrganizationsViewModel extends ViewModel {
 
     private MutableLiveData<String> mText;

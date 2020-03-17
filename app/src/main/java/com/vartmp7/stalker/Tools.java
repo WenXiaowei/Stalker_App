@@ -11,6 +11,9 @@ import javax.net.ssl.X509TrustManager;
 
 import okhttp3.OkHttpClient;
 
+/**
+ * @author Xiaowei Wen, Lorenzo Taschin
+ */
 public class Tools {
 
     public static OkHttpClient getUnsafeOkHttpClient(){

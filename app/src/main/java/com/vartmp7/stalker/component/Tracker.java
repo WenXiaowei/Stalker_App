@@ -5,6 +5,9 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.os.Bundle;
 
+/**
+ * @author Xiaowei Wen, Lorenzo Taschin
+ */
 public class Tracker implements LocationListener {
 
     private Context mContext;

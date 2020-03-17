@@ -476,6 +476,9 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+/**
+ * @author Xiaowei Wen, Lorenzo Taschin
+ */
 public class MainActivity extends AppCompatActivity {
     private GoogleSignInClient mGoogleSignInClient;
 
@@ -499,7 +502,7 @@ public class MainActivity extends AppCompatActivity {
 
         //TODO togliere le seguenti due righe che sono solo un test
         PreferitiRepository preferityRepository = new FirebasePreferitiRepository("1",FirebaseFirestore.getInstance());
-        preferityRepository.addOrganizzazione(new Organizzazione().setId("12"));
+        preferityRepository.addOrganizzazione(new Organizzazione().setId(12));
 
 
 

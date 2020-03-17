@@ -36,6 +36,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.vartmp7.stalker.component.BaseActivity;
 
+/**
+ * @author Xiaowei Wen, Lorenzo Taschin
+ */
 public class LoginActivity extends BaseActivity implements View.OnClickListener {
 
     private static final String TAG = "com.vartmp7.stalker.LoginActivitity";

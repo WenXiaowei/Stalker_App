@@ -3,6 +3,9 @@ package com.vartmp7.stalker.component.gsonbeans;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+/**
+ * @author Xiaowei Wen, Lorenzo Taschin
+ */
 
 public class Coordinata {
     private double latitude;//y

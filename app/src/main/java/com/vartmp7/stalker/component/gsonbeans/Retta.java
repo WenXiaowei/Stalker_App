@@ -3,7 +3,10 @@ package com.vartmp7.stalker.component.gsonbeans;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-public class Retta {
+public class
+/**
+ * @author Xiaowei Wen, Lorenzo Taschin
+ */Retta {
 
     private double m;
     private double q;

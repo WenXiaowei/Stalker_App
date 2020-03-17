@@ -15,6 +15,9 @@ import androidx.lifecycle.ViewModelProviders;
 import com.vartmp7.stalker.R;
 
 
+/**
+ * @author Xiaowei Wen, Lorenzo Taschin
+ */
 public class CronologiaFragment extends Fragment {
 
     private CronologiaViewModel dashboardViewModel;

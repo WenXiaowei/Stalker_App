@@ -24,6 +24,9 @@ import com.vartmp7.stalker.ui.organizations.OrganizationAdapter;
 import java.util.ArrayList;
 
 
+/**
+ * @author Xiaowei Wen, Lorenzo Taschin
+ */
 public class HomeFragment extends Fragment {
 
     private final static String TAG = "com.vartmp7.stalker.ui.home.HomeFragment";

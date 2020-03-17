@@ -206,6 +206,9 @@ package com.vartmp7.stalker.component.gsonbeans;
 
 import android.util.Log;
 
+/**
+ * @author Xiaowei Wen, Lorenzo Taschin
+ */
 public class WrongNumberOfCoordinates extends IllegalArgumentException{
 
     @Override

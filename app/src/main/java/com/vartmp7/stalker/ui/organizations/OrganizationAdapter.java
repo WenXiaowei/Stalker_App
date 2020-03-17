@@ -21,6 +21,9 @@ import com.vartmp7.stalker.component.gsonbeans.Organizzazione;
 
 import java.util.List;
 
+/**
+ * @author Xiaowei Wen, Lorenzo Taschin
+ */
 public class OrganizationAdapter extends RecyclerView.Adapter<OrganizationAdapter.ViewHolder> {
     private List<Organizzazione> listaOrganizzazione;
     private Context context;
@@ -46,7 +49,7 @@ public class OrganizationAdapter extends RecyclerView.Adapter<OrganizationAdapte
 
                 NavController navController = Navigation.findNavController(parent);
                 Bundle b = new Bundle();
-                b.putInt("ID_ORG", Integer.parseInt(org.getId()));
+                b.putLong("ID_ORG", org.getId());
                 navController.saveState();
                 navController.navigate(R.id.navigation_status, b);
             }

@@ -204,6 +204,10 @@
 
 package com.vartmp7.stalker.component.gsonbeans;
 
+/**
+ * @author  Xiaowei Wen, Lorenzo Taschin
+ *
+ */
 public abstract class AbstractLuogo {
     private long id;
     private String name;

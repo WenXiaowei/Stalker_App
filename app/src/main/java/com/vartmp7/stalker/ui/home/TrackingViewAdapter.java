@@ -19,6 +19,9 @@ import com.vartmp7.stalker.ui.organizations.OrganizationAdapter;
 
 import java.util.List;
 
+/**
+ * @author Xiaowei Wen, Lorenzo Taschin
+ */
 public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapter.ViewHolder> {
     private List<Organizzazione> listOrganizzazione;
     private Context context;

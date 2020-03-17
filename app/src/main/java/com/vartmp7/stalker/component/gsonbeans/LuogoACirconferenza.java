@@ -206,7 +206,7 @@ package com.vartmp7.stalker.component.gsonbeans;
 
 
 /**
- * @author Wen Xiaowei
+ * @author Xiaowei Wen, Lorenzo Taschin
  * @version 1.0
  * <p>
  * Usato per rappresentare dei luoghi con una forma di circonferenza.
