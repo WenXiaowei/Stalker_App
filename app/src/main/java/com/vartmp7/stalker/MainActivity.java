@@ -449,7 +449,9 @@
 package com.vartmp7.stalker;
 
 import android.content.Intent;
+
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -472,17 +474,24 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.LiveData;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import java.util.List;
+
+import io.reactivex.Observable;
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
 import okhttp3.OkHttpClient;
 
 /**
  * @author Xiaowei Wen, Lorenzo Taschin
  */
 public class MainActivity extends BaseActivity {
+    private static final String TAG = "com.vartmp7.stalker.MainActivity";
     private GoogleSignInClient mGoogleSignInClient;
 
     @Override
@@ -507,9 +516,34 @@ public class MainActivity extends BaseActivity {
         OkHttpClient httpClient= new OkHttpClient();
         String serverUrl="";
         OrganizationsRepository orgRepo = new RESTOrganizationsRepository(httpClient,serverUrl);
-        FavoritesRepository preferityRepository = new FirebaseFavoritesRepository("1",orgRepo,FirebaseFirestore.getInstance());
-        preferityRepository.addOrganizzazione(new Organizzazione().setId(12));
+        FavoritesRepository preferitiRepository = new FirebaseFavoritesRepository("1",orgRepo,FirebaseFirestore.getInstance());
+        LiveData<List<Organizzazione>> liveDataOrganizzazioni = preferitiRepository.getOrganizzazioni1();
+        liveDataOrganizzazioni.getValue().forEach(o->Log.d(TAG,""+o.getId()));
+        //preferitiRepository.addOrganizzazione(new Organizzazione().setId(12));
+        /*Observable<List<Organizzazione>> orgObservable = preferitiRepository.getOrganizzazioni();
+        Observer<List<Organizzazione>> orgObserver = new Observer<List<Organizzazione>>() {
+            @Override
+            public void onSubscribe(Disposable d) {
 
+            }
+
+            @Override
+            public void onNext(List<Organizzazione> organizzazioni) {
+                organizzazioni.forEach(o->Log.d(TAG,"asd+"+o.getId()));
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+        };
+        orgObservable.subscribe(orgObserver);*/
 
 
 

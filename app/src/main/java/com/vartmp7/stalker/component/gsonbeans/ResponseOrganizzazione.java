@@ -19,6 +19,7 @@ public class ResponseOrganizzazione {
         this.organizations = organizations;
     }
 
+    @Deprecated
     public String[] getDataForSpinner() {
         ArrayList<String> toRet = new ArrayList<>();
         toRet.add("Scegli un'organizzazione");

@@ -15,6 +15,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.reactivex.Observable;
+
 public class FirebaseFavoritesRepository implements FavoritesRepository {
     public static final String TAG ="package com.vartmp7.stalker.component.ProvaPreferitiRepository";
     private static final String FIELDNAME_ID ="id";
@@ -62,14 +64,13 @@ public class FirebaseFavoritesRepository implements FavoritesRepository {
     //TODO
     }
 
+
+
     @Override
     public LiveData<List<Organizzazione>> getOrganizzazioni() {
-    //TODO
-    /* ottiene gli id delle organizzazioni da Cloud Firestore db, poi contatta l'OrganizationsRepository per ottenere tutte le info
-        delle organizzazioni, poi costruisce un livedata e lo ritorna.
-     */
+        //chiamata a firebase
 
-        return null;
+        return organizationsRepo.getOrganizzazioni();
     }
 
     public void addStupidText(String stupidTextkey, String stupidTextValue){
