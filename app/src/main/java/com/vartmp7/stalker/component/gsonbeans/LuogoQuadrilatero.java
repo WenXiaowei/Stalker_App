@@ -16,6 +16,12 @@ public class LuogoQuadrilatero extends LuogoRegolare {
      * @param name       nome del luogo
      * @param coordinate elenco delle coordinate
      */
+
+
+    LuogoQuadrilatero(){
+        super(-1,null,null);
+    }
+
     LuogoQuadrilatero(long id, String name, List<Coordinata> coordinate) {
         super(id, name, coordinate);
 
