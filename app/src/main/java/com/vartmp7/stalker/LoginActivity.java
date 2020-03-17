@@ -63,6 +63,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
@@ -185,7 +186,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater inflater = getLayoutInflater();
         builder.setTitle(R.string.sign_up);
-        builder.setMessage("Iscriviti");
+        builder.setMessage("Registrati");
         builder.setView(inflater.inflate(R.layout.dialog_login, null));
         builder.setPositiveButton(getString(R.string.conferma), new DialogInterface.OnClickListener() {
             @Override
@@ -230,8 +231,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater inflater = getLayoutInflater();
-        builder.setTitle(R.string.sign_up);
-        builder.setMessage("Iscriviti");
+        builder.setTitle(R.string.sign_in);
+        builder.setMessage("Accedi");
         builder.setView(inflater.inflate(R.layout.dialog_login, null));
         builder.setPositiveButton(getString(R.string.conferma), new DialogInterface.OnClickListener() {
             @Override

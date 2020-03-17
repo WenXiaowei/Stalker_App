@@ -457,6 +457,10 @@ import android.widget.Toast;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.vartmp7.stalker.component.FirebasePreferitiRepository;
+import com.vartmp7.stalker.component.PreferitiRepository;
+import com.vartmp7.stalker.component.gsonbeans.Organizzazione;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
@@ -480,6 +484,18 @@ public class MainActivity extends AppCompatActivity {
 
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
+
+
+
+
+        //TODO togliere le seguenti due righe che sono solo un test
+        PreferitiRepository preferityRepository = new FirebasePreferitiRepository("1",FirebaseFirestore.getInstance());
+        preferityRepository.addOrganizzazione(new Organizzazione().setId("12"));
+
+
+
+
+
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
