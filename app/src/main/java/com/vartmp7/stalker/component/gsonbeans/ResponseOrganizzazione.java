@@ -16,7 +16,6 @@ public class ResponseOrganizzazione {
         this.organizations = organizations;
     }
 
-
     public String[] getDataForSpinner() {
         ArrayList<String> toRet = new ArrayList<>();
         toRet.add("Scegli un'organizzazione");

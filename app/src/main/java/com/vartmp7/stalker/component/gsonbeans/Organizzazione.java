@@ -1,10 +1,13 @@
 package com.vartmp7.stalker.component.gsonbeans;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Organizzazione {
     private String address;
     private String city;
     private String email;
-    private String id;
+    private long id;
     private String name;
     private String nation;
     private String phone_number;
@@ -15,6 +18,7 @@ public class Organizzazione {
     private String ldap_domain_component;
     private String ldap_port;
     private Boolean isPreferito=false;
+    private List<? extends AbstractLuogo> luoghi;
 
     public String getOrgInfo() {
         return getName() + " presso: " + getAddress();
@@ -55,11 +59,11 @@ public class Organizzazione {
         return this;
     }
 
-    public String getId() {
+    public long getId() {
         return id;
     }
 
-    public Organizzazione setId(String id) {
+    public Organizzazione setId(long id) {
         this.id = id;
         return this;
     }
@@ -146,4 +150,12 @@ public class Organizzazione {
     }
 
 
+    public List<? extends AbstractLuogo> getLuoghi() {
+        return luoghi;
+    }
+
+    public Organizzazione setLuoghi(List<? extends AbstractLuogo> luoghi) {
+        this.luoghi = luoghi;
+        return this;
+    }
 }
