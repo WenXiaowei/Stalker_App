@@ -13,7 +13,7 @@
 
     <item
         android:id="@+id/navigation_preferiti"
-        android:icon="@drawable/icon_preferiti"
+        android:icon="@drawable/icon_preferito_si"
         android:title="@string/preferiti" />
     <item
         android:id="@+id/navigation_cronologia"

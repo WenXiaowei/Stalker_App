@@ -2,6 +2,7 @@ package com.vartmp7.stalker.component.gsonbeans;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.Size;
 
 import java.util.List;
 
@@ -11,18 +12,16 @@ import java.util.List;
 public class LuogoQuadrilatero extends LuogoRegolare {
 
     private final int NUM_COORDINATE=4;
+
+    LuogoQuadrilatero(){
+        super(-1,null,null);
+    }
     /**
      * @param id         id del luogo
      * @param name       nome del luogo
      * @param coordinate elenco delle coordinate
      */
-
-
-    LuogoQuadrilatero(){
-        super(-1,null,null);
-    }
-
-    LuogoQuadrilatero(long id, String name, List<Coordinata> coordinate) {
+    LuogoQuadrilatero(long id, String name, @Size(4) List<Coordinata> coordinate) {
         super(id, name, coordinate);
 
         if (coordinate.size() != NUM_COORDINATE) throw new WrongNumberOfCoordinates();
@@ -33,6 +32,10 @@ public class LuogoQuadrilatero extends LuogoRegolare {
         if (coordinate.size() != NUM_COORDINATE) throw new WrongNumberOfCoordinates();
     }
 
+    @Override
+    public LuogoRegolare setCoordinate(List<Coordinata> coordinate) {
+        return super.setCoordinate(coordinate);
+    }
 
     public Coordinata getCentro() {
         Retta r1 = new Retta(getCoordinate().get(0), getCoordinate().get(2));
