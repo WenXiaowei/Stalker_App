@@ -11,22 +11,22 @@ import java.util.Collection;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(Parameterized.class)
-public class LuogoTest {
+public class LuogoQuadrilateroTest {
 
     private static final Double DELTA = 0.000011d;
-    private Luogo luogo;
+    private LuogoQuadrilatero luogoQuadrilatero;
     private Coordinata coordinata;
 
-    public LuogoTest(final Luogo l, final Coordinata c) {
-        this.luogo = l;
+    public LuogoQuadrilateroTest(final LuogoQuadrilatero l, final Coordinata c) {
+        this.luogoQuadrilatero = l;
         this.coordinata = c;
     }
 
 
     @Test
     public void provaGetCentroLuogo() {
-        assertEquals(coordinata.getLongitude(), luogo.getCentro().getLongitude(), DELTA);
-        assertEquals(coordinata.getLatitude(), luogo.getCentro().getLatitude(), DELTA);
+        assertEquals(coordinata.getLongitude(), luogoQuadrilatero.getCentro().getLongitude(), DELTA);
+        assertEquals(coordinata.getLatitude(), luogoQuadrilatero.getCentro().getLatitude(), DELTA);
     }
 
 
@@ -37,7 +37,7 @@ public class LuogoTest {
         torreArchimede.add(new Coordinata(45.411442, 11.887942));
         torreArchimede.add(new Coordinata(45.411108, 11.887787));
         torreArchimede.add(new Coordinata(45.411222, 11.887319));
-        Luogo t = new Luogo();
+        LuogoQuadrilatero t = new LuogoQuadrilatero();
         t.setCoordinate(torreArchimede);
 
 
@@ -46,7 +46,7 @@ public class LuogoTest {
         inail.add(new Coordinata(45.411846, 11.887572));
         inail.add(new Coordinata(45.411730, 11.887650));
         inail.add(new Coordinata(45.411544, 11.887106));
-        Luogo i = new Luogo();
+        LuogoQuadrilatero i = new LuogoQuadrilatero();
         i.setCoordinate(inail);
 
 
@@ -55,7 +55,7 @@ public class LuogoTest {
         dsea.add(new Coordinata(45.411702, 11.888113));
         dsea.add(new Coordinata(45.411341, 11.888381));
         dsea.add(new Coordinata(45.411284, 11.888224));
-        Luogo d= new Luogo();
+        LuogoQuadrilatero d= new LuogoQuadrilatero();
         d.setCoordinate(dsea);
 
         return Arrays.asList(new Object[][]{

@@ -448,12 +448,18 @@
 //}
 package com.vartmp7.stalker;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.vartmp7.stalker.component.FirebaseFavoritesRepository;
@@ -461,7 +467,9 @@ import com.vartmp7.stalker.component.FavoritesRepository;
 import com.vartmp7.stalker.component.OrganizationsRepository;
 import com.vartmp7.stalker.component.RESTOrganizationsRepository;
 import com.vartmp7.stalker.component.gsonbeans.Organizzazione;
+import com.google.firebase.auth.FirebaseAuth;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -471,6 +479,7 @@ import androidx.navigation.ui.NavigationUI;
 import okhttp3.OkHttpClient;
 
 public class MainActivity extends AppCompatActivity {
+    private GoogleSignInClient mGoogleSignInClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -484,7 +493,7 @@ public class MainActivity extends AppCompatActivity {
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
 
-        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
+//        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
 
 
@@ -501,7 +510,14 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build();
+        // Build a GoogleSignInClient with the options specified by gso.
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -511,12 +527,37 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.menuLogout:
-                Toast.makeText(MainActivity.this,"Hai fatto logout", Toast.LENGTH_SHORT).show();
+                if(FirebaseAuth.getInstance().getCurrentUser()!=null){
+                    logout();
+                }else{
+                    googleSignOut();
+                }
+                goToLoginActivity();
                 return false;
 //                break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void logout() {
+        FirebaseAuth.getInstance().signOut();
+
+    }
+
+    private void googleSignOut() {
+        mGoogleSignInClient.signOut()
+                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Toast.makeText(MainActivity.this, "Successufully logout", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+    public void goToLoginActivity() {
+        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
     }
 }
