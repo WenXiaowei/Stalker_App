@@ -726,16 +726,23 @@ public class MainActivity extends AppCompatActivity {
         FavoritesRepository preferitiRepository = new FirebaseFavoritesRepository("1",orgRepo,FirebaseFirestore.getInstance());
         //((FirebaseFavoritesRepository)preferitiRepository).initUserStorage("1");
         preferitiRepository.addOrganizzazione(new Organizzazione().setId(2));
-        LiveData<List<Organizzazione>> liveDataOrganizzazioni = preferitiRepository.getOrganizzazioni();
-        final Observer<List<Organizzazione>> observer = new Observer<List<Organizzazione>>() {
-
+         preferitiRepository.getOrganizzazioni().observe(this, new Observer<List<Organizzazione>>() {
             @Override
-            public void onChanged(List<Organizzazione> organizzazioni) {
-                organizzazioni.forEach(o->Log.d(TAG,""+o.getId()));
+            public void onChanged(List<Organizzazione> organizzaziones) {
+                Log.d(TAG, "Main activity onChanged: organizzazioni.size() = "+organizzaziones.size());
+                organizzaziones.forEach(o->Log.d(TAG,""+o.getId()));
             }
-        };
-        liveDataOrganizzazioni.observe(this,observer);
-        Log.d(TAG,"size:"+liveDataOrganizzazioni.getValue().size());
+        });
+//        final Observer<List<Organizzazione>> observer = new Observer<List<Organizzazione>>() {
+//
+//            @Override
+//            public void onChanged(List<Organizzazione> organizzazioni) {
+//                Log.d(TAG, "onChanged: organizzazioni.size() = "+organizzazioni.size());
+//                organizzazioni.forEach(o->Log.d(TAG,""+o.getId()));
+//            }
+//        };
+//        liveDataOrganizzazioni.observe(this,observer);
+//        Log.d(TAG,"size:"+liveDataOrganizzazioni.getValue().size());
 
 
 

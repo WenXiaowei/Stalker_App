@@ -226,39 +226,40 @@ import java.util.stream.Collectors;
 
 
 public class FirebaseFavoritesRepository implements FavoritesRepository {
-    public static final String TAG ="com.vartmp7.stalker.model.FirebaseFavoritesRepository";
-    private static final String FIELDNAME_ID ="id";
+    public static final String TAG = "com.vartmp7.stalker.model.FirebaseFavoritesRepository";
+    private static final String FIELDNAME_ID = "id";
     private static final String FIELDNAME_ORGANIZZAZIONI = "organizzazioni";
     private OrganizationsRepository organizationsRepo;
     private FirebaseFirestore db;
     private String userId;
     private MutableLiveData<List<Organizzazione>> mutableLiveDataOrganizzazioni;
 
-    public FirebaseFavoritesRepository(String userId, OrganizationsRepository orgRepo,FirebaseFirestore db) {
+    public FirebaseFavoritesRepository(String userId, OrganizationsRepository orgRepo, FirebaseFirestore db) {
         this.mutableLiveDataOrganizzazioni = new MutableLiveData<>(new ArrayList<Organizzazione>());
-        this.userId=userId;
-        this.organizationsRepo=orgRepo;
+        this.userId = userId;
+        this.organizationsRepo = orgRepo;
         this.db = db;
     }
-    public void setUserID(String userId){
-        this.userId=userId;
+
+    public void setUserID(String userId) {
+        this.userId = userId;
     }
 
 
-    public void initUserStorage(String userId){
-        Map<String,Object> userData = new HashMap<>();
+    public void initUserStorage(String userId) {
+        Map<String, Object> userData = new HashMap<>();
         userData.put(FIELDNAME_ORGANIZZAZIONI, new ArrayList<Long>());
         db.collection("utenti").document(userId).set(userData);
     }
 
     @Override
     public void addOrganizzazione(Organizzazione organizzazione) {
-    //TODO
+        //TODO
 
 
         db.collection("utenti").document(userId).
                 update(FIELDNAME_ORGANIZZAZIONI, FieldValue.arrayUnion(organizzazione.getId()))
-                .addOnSuccessListener(aVoid -> Log.w(TAG,"organizzazione aggiunta correttamente"))
+                .addOnSuccessListener(aVoid -> Log.w(TAG, "organizzazione aggiunta correttamente"))
                 .addOnFailureListener(e -> Log.w(TAG, "errore avvenuto aggiungendo organizzazione", e));
 
 
@@ -286,7 +287,7 @@ public class FirebaseFavoritesRepository implements FavoritesRepository {
 
         db.collection("utenti").document(userId).
                 update(FIELDNAME_ORGANIZZAZIONI, FieldValue.arrayRemove(organizzazione.getId()))
-                .addOnSuccessListener(aVoid -> Log.w(TAG,"organizzazione rimossa correttamente"))
+                .addOnSuccessListener(aVoid -> Log.w(TAG, "organizzazione rimossa correttamente"))
                 .addOnFailureListener(e -> Log.w(TAG, "errore avvenuto rimuovendo organizzazione", e));
 
 /*
@@ -315,60 +316,55 @@ public class FirebaseFavoritesRepository implements FavoritesRepository {
     }
 
 
-
     @Override
     public LiveData<List<Organizzazione>> getOrganizzazioni() {
         //chiamata a firebase
 
         db.collection("utenti").document(userId)
-                .get().addOnSuccessListener(documentSnapshot->{
-                    Map<String, Object> data = documentSnapshot.getData();
-                    try{
+                .get().addOnSuccessListener(documentSnapshot -> {
+            Map<String, Object> data = documentSnapshot.getData();
+            try {
 
-                        if(data!=null){
-                            final List<Long> organizzazioni= (List<Long>) data.get(FIELDNAME_ORGANIZZAZIONI);
-                            Log.w(TAG,organizzazioni.toString());
-                            if(organizzazioni!=null){
-                                Log.w(TAG,"organizzazioni ottenute correttamente");
-                                this.mutableLiveDataOrganizzazioni = new MutableLiveData<>(
-                                    organizationsRepo.getOrganizzazioni().getValue()
-                                            .stream()
-                                            .filter(o->{
-                                                    return true;/*
-                                                    boolean contained=false;
-                                                    for (Long orgId: organizzazioni){
-                                                        if(orgId==o.getId()){
-                                                            contained=true;
-                                                            break;
-                                                        }
-                                                    }
-                                                    return contained;*/
-                                            })
-                                            .collect(Collectors.toList())
-                                );
-                                this.mutableLiveDataOrganizzazioni.getValue().forEach(o->Log.w(TAG,""+o.getId()));
-                            }else{
-                                Log.w(TAG, "errore avvenuto nell'ottenimento delle organizzazioni: problemi con il documento");
-                            }
-
-                        }else{
-                            Log.w(TAG,"errore avvenuto nell'ottenimento delle organizzazioni: documento non esistente");
-                            this.mutableLiveDataOrganizzazioni=new MutableLiveData<>(new ArrayList<Organizzazione>());
-                        }
-
-
-
-
-                    }catch(ClassCastException e){
-                        Log.e(TAG,e.getMessage());
+                if (data != null) {
+                    final List<Long> organizzazioni = (List<Long>) data.get(FIELDNAME_ORGANIZZAZIONI);
+                    Log.w(TAG,"data got from firebase "+ organizzazioni.toString());
+                    if (organizzazioni != null) {
+                        Log.w(TAG, "organizzazioni ottenute correttamente");
+                        this.mutableLiveDataOrganizzazioni.postValue(
+                                organizationsRepo.getOrganizzazioni().getValue()
+                                .stream()
+                                .filter(o -> {
+                                    //return true;
+                                    boolean contained = false;
+                                    for (Long orgId : organizzazioni) {
+                                        if (orgId == o.getId()) {
+                                            contained = true;
+                                            break;
+                                        }
+                                    }
+                                    Log.d(TAG, "Filtering organization getOrganizzazioni: "+ contained);
+                                    return contained;
+                                })
+                                .collect(Collectors.toList()));
+                        Log.d(TAG, "getOrganizzazioni: organization "+this.mutableLiveDataOrganizzazioni.getValue().size());
+                        this.mutableLiveDataOrganizzazioni.getValue().forEach(o -> Log.w(TAG, "Logged prin" + o.getId()));
+                    } else {
+                        Log.w(TAG, "errore avvenuto nell'ottenimento delle organizzazioni: problemi con il documento");
                     }
-                })
-                .addOnFailureListener(e->Log.w(TAG, "errore avvenuto nell'ottenimento delle organizzazioni", e));
-        return this.mutableLiveDataOrganizzazioni;
 
+                } else {
+                    Log.w(TAG, "errore avvenuto nell'ottenimento delle organizzazioni: documento non esistente");
+                    this.mutableLiveDataOrganizzazioni = new MutableLiveData<>(new ArrayList<>());
+                }
+            } catch (ClassCastException e) {
+                Log.e(TAG, e.getMessage());
+            }
+        }).addOnFailureListener(e -> Log.w(TAG, "errore avvenuto nell'ottenimento delle organizzazioni", e));
+        Log.d(TAG, "getOrganizzazioni: before return mutableLiveDataOrganizzazioni.getValue().size()= " + this.mutableLiveDataOrganizzazioni.getValue().size());
+        return this.mutableLiveDataOrganizzazioni;
     }
 
-    public void addStupidText(String stupidTextkey, String stupidTextValue){
+    public void addStupidText(String stupidTextkey, String stupidTextValue) {
         // Create a new user with a first, middle, and last name
         Map<String, Object> stupidText = new HashMap<>();
         stupidText.put(stupidTextkey, stupidTextValue);
@@ -390,9 +386,6 @@ public class FirebaseFavoritesRepository implements FavoritesRepository {
                     }
                 });
     }
-
-
-
 
 
 }
