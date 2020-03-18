@@ -1,6 +1,7 @@
 package com.vartmp7.stalker.ui.home;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.vartmp7.stalker.R;
 import com.vartmp7.stalker.gsonbeans.Organizzazione;
+import com.vartmp7.stalker.ui.organizations.OrganizationsFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,17 +38,15 @@ public class HomeFragment extends Fragment {
     private RecyclerView.LayoutManager layoutManager;
 
     private ArrayList<Organizzazione> list;
+
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle b) {
-
-
         homeViewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
         View root = inflater.inflate(R.layout.fragment_status, container, false);
-        //final TextView textView = root.findViewById(R.id.text_home);
-
-        
 
         init_data();
-        mAdapter = new TrackingViewAdapter(getContext(),list);
+        homeViewModel.initi(list);
+        mAdapter = new TrackingViewAdapter(getContext(),homeViewModel.getListaOrganizzazione().getValue());
+
         recyclerView = root.findViewById(R.id.trackingRecycleView);
 
         layoutManager = new LinearLayoutManager(getContext());
@@ -54,18 +54,33 @@ public class HomeFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
 
         recyclerView.setAdapter(mAdapter);
+        addingNewOrganization();
 
         return root;
+    }
+
+    public void addingNewOrganization(){
+        Organizzazione org = (Organizzazione) getArguments().getSerializable("org");
+        if (org!=null){
+//            Log.d(TAG, "onCreateView: "+org);
+            list.add(org);
+            homeViewModel.addTrackingOrganizzazione(org);
+//            mAdapter = new TrackingViewAdapter(getContext(), list);
+//            recyclerView.setAdapter(mAdapter);
+        }
     }
 
     public void init_data(){
         list = new ArrayList<>();
         for (int i=0; i<3; i++){
             Organizzazione org = new Organizzazione()
-                    .setName("Unipd"+i)
-                    .setAddress("Via trieste"+i)
+                    .setId(i)
+                    .setName("Unipd "+i)
+                    .setAddress("Via trieste "+i)
                     .setPreferito(false);
             list.add(org);
         }
     }
+
+
 }

@@ -1,11 +1,16 @@
 package com.vartmp7.stalker.gsonbeans;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author Xiaowei Wen, Lorenzo Taschin
  */
-public class Organizzazione {
+public class Organizzazione implements Serializable {
     public static final String TAG ="com.vartmp7.stalker.gsonbeans.Organizzazione";
     private String address;
     private String city;
@@ -22,6 +27,54 @@ public class Organizzazione {
     private String ldap_port;
     private Boolean isPreferito=false;
     private List<? extends AbstractLuogo> luoghi;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Organizzazione)) return false;
+        Organizzazione that = (Organizzazione) o;
+        return getId() == that.getId() &&
+                getAddress().equals(that.getAddress()) &&
+                getCity().equals(that.getCity()) &&
+                getEmail().equals(that.getEmail()) &&
+                getName().equals(that.getName()) &&
+                Objects.equals(getNation(), that.getNation()) &&
+                Objects.equals(getPhone_number(), that.getPhone_number()) &&
+                Objects.equals(getPostal_code(), that.getPostal_code()) &&
+                Objects.equals(getRegion(), that.getRegion()) &&
+                getType().equals(that.getType()) &&
+                Objects.equals(getLdap_common_name(), that.getLdap_common_name()) &&
+                Objects.equals(getLdap_domain_component(), that.getLdap_domain_component()) &&
+                Objects.equals(getLdap_port(), that.getLdap_port()) &&
+                Objects.equals(isPreferito, that.isPreferito) &&
+                Objects.equals(getLuoghi(), that.getLuoghi());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getAddress(), getCity(), getEmail(), getId(), getName(), getNation(), getPhone_number(), getPostal_code(), getRegion(), getType(), getLdap_common_name(), getLdap_domain_component(), getLdap_port(), isPreferito, getLuoghi());
+    }
+
+    @Override
+    public String toString() {
+        return "Organizzazione{" +
+                "address='" + address + '\'' +
+                ", city='" + city + '\'' +
+                ", email='" + email + '\'' +
+                ", id=" + id +
+                ", name='" + name + '\'' +
+                ", nation='" + nation + '\'' +
+                ", phone_number='" + phone_number + '\'' +
+                ", postal_code='" + postal_code + '\'' +
+                ", region='" + region + '\'' +
+                ", type='" + type + '\'' +
+                ", ldap_common_name='" + ldap_common_name + '\'' +
+                ", ldap_domain_component='" + ldap_domain_component + '\'' +
+                ", ldap_port='" + ldap_port + '\'' +
+                ", isPreferito=" + isPreferito +
+                ", luoghi=" + luoghi +
+                '}';
+    }
 
     public String getOrgInfo() {
         return getName() + " presso: " + getAddress();
@@ -161,4 +214,6 @@ public class Organizzazione {
         this.luoghi = luoghi;
         return this;
     }
+
+
 }

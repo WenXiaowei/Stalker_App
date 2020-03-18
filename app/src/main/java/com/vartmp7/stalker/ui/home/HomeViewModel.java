@@ -16,8 +16,10 @@ import java.util.List;
 public class HomeViewModel extends ViewModel {
     public static final String TAG ="com.vartmp7.stalker.ui.home.HomeViewModel";
 
-    //private  LiveData<List<...>> ...
+    private MutableLiveData<List<Organizzazione>> listOrganizzazione;
 
+    public void initi(List<Organizzazione> list) {
+        listOrganizzazione= new MutableLiveData<>(list);
     public HomeViewModel(FavoritesRepository favRepo) {
 
         //mText = new MutableLiveData<>();
@@ -25,8 +27,11 @@ public class HomeViewModel extends ViewModel {
     }
 
 
+    public void addTrackingOrganizzazione(Organizzazione org){
+        listOrganizzazione.getValue().add(org);
+    }
 
-    /*public LiveData<List<...>> get...() {
-
-    }*/
+    public LiveData<List<Organizzazione>> getListaOrganizzazione(){
+        return listOrganizzazione;
+    }
 }

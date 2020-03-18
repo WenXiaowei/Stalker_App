@@ -8,9 +8,12 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.vartmp7.stalker.MainActivity;
 import com.vartmp7.stalker.R;
 import com.vartmp7.stalker.gsonbeans.Organizzazione;
 
@@ -22,7 +25,7 @@ public class OrganizationsFragment extends Fragment {
 
     private OrganizationsViewModel dashboardViewModel;
     private RecyclerView recyclerView;
-    private OrganizationAdapter mAdapter;
+    private OrganizationViewAdapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
     ArrayList<Organizzazione> list;
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -34,7 +37,11 @@ public class OrganizationsFragment extends Fragment {
         init_data();
 
 
-        mAdapter = new OrganizationAdapter(getContext(),list);
+
+        NavController navController = Navigation.findNavController(MainActivity.activity, R.id.nav_host_fragment);
+
+
+        mAdapter = new OrganizationViewAdapter(getContext(),navController,list);
         recyclerView = root.findViewById(R.id.rvListaOrganizzazioni);
 
         layoutManager = new LinearLayoutManager(getContext());
@@ -42,6 +49,8 @@ public class OrganizationsFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
 
         recyclerView.setAdapter(mAdapter);
+
+
 
 //        recyclerView.addItemDecoration(new LineDividerItemDecoration(this, R.drawable.line_divider));
 
@@ -55,4 +64,6 @@ public class OrganizationsFragment extends Fragment {
             list.add(organizzazione);
         }
     }
+
+
 }

@@ -204,53 +204,63 @@
 
 package com.vartmp7.stalker.gsonbeans;
 
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import com.vartmp7.stalker.gsonbeans.placecomponent.Coordinata;
 
-/**
- * @author Xiaowei Wen, Lorenzo Taschin
- * @version 1.0
- * <p>
- * Usato per rappresentare dei luoghi con una forma di circonferenza.
- */
-public class LuogoACirconferenza extends AbstractLuogo {
-    public static final String TAG ="com.vartmp7.stalker.gsonbeans.LuogoACirconferenza";
-    private Coordinata centro;
-    private Double raggio;
-    public LuogoACirconferenza(long id, String name){
-        super(id,name);
-    }
-    LuogoACirconferenza(long id, String name, Coordinata centro, double raggio) {
-        super(id, name);
-        this.centro = centro;
-        this.raggio = raggio;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+
+import java.util.Arrays;
+import java.util.Collection;
+
+import static junit.framework.TestCase.assertEquals;
+
+@RunWith(Parameterized.class)
+public class LuogoACirconferenzaTest {
+
+    private static final  double METERS=111320D;
+    private LuogoACirconferenza circonferenza;
+    private Coordinata punto;
+    private boolean isInside;
+
+    public LuogoACirconferenzaTest( LuogoACirconferenza circonferenza,Coordinata punto, boolean isInside) {
+        this.punto = punto;
+        this.circonferenza = circonferenza;
+        this.isInside = isInside;
     }
 
-    LuogoACirconferenza(long id, String name, Coordinata centro, double raggio, long num_max_people) {
-        super(id, name, num_max_people);
+    @Test
+    public void testIsInside(){
+       assertEquals(circonferenza.isInside(punto), isInside);
     }
 
-    @Override
-    boolean isInside(Coordinata c) {
-        double distanza = centro.getDistanceTo(c);
-        return distanza <= raggio;
-    }
 
-    public Coordinata getCentro() {
-        return centro;
-    }
+    @Parameterized.Parameters
+    public static Collection parametro() {
+        LuogoACirconferenza c1 = new LuogoACirconferenza(1,"Cerchio");
+        c1.setCentro(new Coordinata(0,0)).setRaggio(METERS);
 
-    public LuogoACirconferenza setCentro(Coordinata centro) {
-        this.centro = centro;
-        return this;
-    }
+        LuogoACirconferenza c2 = new LuogoACirconferenza(1,"Cerchio");
+        c2.setCentro(new Coordinata(0,0)).setRaggio(METERS);
 
-    public Double getRaggio() {
-        return raggio;
-    }
 
-    public LuogoACirconferenza setRaggio(Double raggio) {
-        this.raggio = raggio;
-        return this;
+        LuogoACirconferenza c3 = new LuogoACirconferenza(1,"Cerchio");
+        c3.setCentro(new Coordinata(0,0)).setRaggio(METERS);
+        LuogoACirconferenza c4 = new LuogoACirconferenza(1,"Cerchio");
+        c4.setCentro(new Coordinata(0,0)).setRaggio(METERS);
+        LuogoACirconferenza c5 = new LuogoACirconferenza(1,"Cerchio");
+        c5.setCentro(new Coordinata(0,0)).setRaggio(METERS);
+
+        return Arrays.asList(new Object[][]{
+                {c1, new Coordinata(0.5,0.5), true},
+                {c2, new Coordinata(2, 2),false},
+                {c3, new Coordinata(0,1),true},
+                {c4, new Coordinata(0.9,0),true},
+                {c3, new Coordinata(0.71,0.71),false},
+                {c3, new Coordinata(0.70,0.70),true}
+//                {, new Coordinata(45.411502, 11.888165), true}
+        });
     }
 }
