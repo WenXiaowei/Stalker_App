@@ -202,53 +202,81 @@
  *    limitations under the License.
  */
 
-package com.vartmp7.stalker.component.gsonbeans;
+package com.vartmp7.stalker.component.gsonbeans.place;
 
-import com.vartmp7.stalker.component.gsonbeans.Coordinata;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
-public class Lato {
-    private double startX;
-    private double startY;
-    private double endX;
-    private double endY;
+/**
+ * @author Xiaowei Wen, Lorenzo Taschin
+ */
 
-    public Lato(Coordinata a, Coordinata b) {
-        this.startX = a.getLongitude();
-        this.startY = a.getLatitude();
-        this.endX = b.getLongitude();
-        this.endY = b.getLatitude();
+public class Coordinata {
+    private double latitude;//y
+    private double longitude; //x
+
+    public Coordinata() {
+    }
+    public Coordinata(Coordinata c){
+        latitude=c.getLatitude();
+        longitude=c.getLongitude();
     }
 
-
-    public double getStartX() {
-        return startX;
+    public Coordinata(double latitudine, double longitude) {
+        this.latitude = latitudine;
+        this.longitude = longitude;
     }
 
-    public void setStartX(double startX) {
-        this.startX = startX;
+    public double getLatitude() {
+        return latitude;
     }
 
-    public double getStartY() {
-        return startY;
+    public void setLatitude(float latitude) {
+        this.latitude = latitude;
     }
 
-    public void setStartY(double startY) {
-        this.startY = startY;
+    public double getLongitude() {
+        return longitude;
     }
 
-    public double getEndX() {
-        return endX;
+    public void setLongitude(float longoitude) {
+        this.longitude = longoitude;
     }
 
-    public void setEndX(double endX) {
-        this.endX = endX;
+    @NonNull
+    @Override
+    public String toString() {
+        return "\nLongitude(x): " + getLongitude() +
+                "\nLatitude(y): " + getLatitude();
     }
 
-    public double getEndY() {
-        return endY;
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 
-    public void setEndY(double endY) {
-        this.endY = endY;
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if (obj instanceof Coordinata) {
+            Coordinata c = (Coordinata) obj;
+            return c.longitude == this.longitude && c.latitude == this.latitude;
+        }
+        return false;
     }
+    private double rad(double x){
+        return x*Math.PI/180;
+    }
+
+    public double getDistanceTo(final Coordinata c){
+
+        long R = 6378137; // Earth’s mean radius in meter
+        double dLat = rad(c.getLatitude() - getLatitude());
+        double dLong = rad(c.getLongitude() - getLongitude());
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(rad(getLatitude())) * Math.cos(rad(c.getLatitude())) *
+                        Math.sin(dLong / 2) * Math.sin(dLong / 2);
+        double c1 = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        double d = R * c1;
+        return d; // returns the distance in meter
+    };
 }

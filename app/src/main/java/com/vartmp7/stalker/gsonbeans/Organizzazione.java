@@ -1,6 +1,5 @@
 package com.vartmp7.stalker.component.gsonbeans;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**

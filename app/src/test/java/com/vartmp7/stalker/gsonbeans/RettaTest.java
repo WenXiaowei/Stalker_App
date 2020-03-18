@@ -1,5 +1,8 @@
-package com.vartmp7.stalker.component.gsonbeans;
+package com.vartmp7.stalker.gsonbeans;
 
+
+import com.vartmp7.stalker.gsonbeans.placecomponent.Coordinata;
+import com.vartmp7.stalker.gsonbeans.placecomponent.Retta;
 
 import org.junit.Before;
 import org.junit.Test;

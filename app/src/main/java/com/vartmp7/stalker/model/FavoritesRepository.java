@@ -207,7 +207,7 @@ package com.vartmp7.stalker.model;
 
 import androidx.lifecycle.LiveData;
 
-import com.vartmp7.stalker.component.gsonbeans.Organizzazione;
+import com.vartmp7.stalker.gsonbeans.Organizzazione;
 
 import java.util.List;
 

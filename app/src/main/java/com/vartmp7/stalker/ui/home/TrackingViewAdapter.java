@@ -1,12 +1,7 @@
 package com.vartmp7.stalker.ui.home;
 
-import android.content.ClipData;
-import android.content.ClipDescription;
 import android.content.Context;
-import android.util.Log;
-import android.view.DragEvent;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -26,7 +21,7 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.vartmp7.stalker.R;
-import com.vartmp7.stalker.component.gsonbeans.Organizzazione;
+import com.vartmp7.stalker.gsonbeans.Organizzazione;
 
 import java.util.List;
 

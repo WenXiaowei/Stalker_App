@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.vartmp7.stalker.component.gsonbeans.Organizzazione;
+import com.vartmp7.stalker.gsonbeans.Organizzazione;
 
 import java.util.List;
 

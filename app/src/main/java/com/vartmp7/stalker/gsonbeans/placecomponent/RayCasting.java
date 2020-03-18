@@ -200,199 +200,96 @@
  *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
- *
  */
 
-package com.vartmp7.stalker.model;
+package com.vartmp7.stalker.component.gsonbeans.place;
 
-import android.util.Log;
-
-import androidx.annotation.NonNull;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FieldValue;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.vartmp7.stalker.gsonbeans.Organizzazione;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
-
-public class FirebaseFavoritesRepository implements FavoritesRepository {
-    public static final String TAG ="package com.vartmp7.stalker.component.FirebaseFavoritesRepository";
-    private static final String FIELDNAME_ID ="id";
-    private static final String FIELDNAME_ORGANIZZAZIONI = "organizzazioni";
-    private OrganizationsRepository organizationsRepo;
-    private FirebaseFirestore db;
-    private String userId;
-    private MutableLiveData<List<Organizzazione>> mutableLiveDataOrganizzazioni;
-
-    public FirebaseFavoritesRepository(String userId, OrganizationsRepository orgRepo,FirebaseFirestore db) {
-        this.mutableLiveDataOrganizzazioni = new MutableLiveData<>(new ArrayList<Organizzazione>());
-        this.userId=userId;
-        this.organizationsRepo=orgRepo;
-        this.db = db;
-    }
-    public void setUserID(String userId){
-        this.userId=userId;
+public class RayCasting {
+    public static boolean isLatLngInside(List<Coordinata> latLngs, Coordinata latLng) {
+        return normalizeLatLngsAndProceed(latLngs, latLng);
     }
 
-
-    public void initUserStorage(String userId){
-        Map<String,Object> userData = new HashMap<>();
-        userData.put(FIELDNAME_ORGANIZZAZIONI, new ArrayList<Long>());
-        db.collection("utenti").document(userId).set(userData);
+    public static boolean isPointInside(List<Coordinata> coordinates, Coordinata point) {
+        return isPointInsideEdges(getEdgesFromPoints(coordinates), point);
     }
 
-    @Override
-    public void addOrganizzazione(Organizzazione organizzazione) {
-    //TODO
+    private static boolean normalizeLatLngsAndProceed(List<Coordinata> coordinate, Coordinata punto) {
+        if(coordinate.size() < 3) throw new RuntimeException("At least 3 latlngs are required");
 
+        double smallestLongitude = Double.MAX_VALUE, highestLongitude = Double.MIN_VALUE;
 
-        db.collection("utenti").document(userId).
-                update(FIELDNAME_ORGANIZZAZIONI, FieldValue.arrayUnion(organizzazione.getId()))
-                .addOnSuccessListener(aVoid -> Log.w(TAG,"organizzazione aggiunta correttamente"))
-                .addOnFailureListener(e -> Log.w(TAG, "errore avvenuto aggiungendo organizzazione", e));
+        for(Coordinata latLng : coordinate) {
+            if(latLng.getLongitude() < smallestLongitude) {
+                smallestLongitude = latLng.getLongitude();
+            } else if(latLng.getLongitude() > highestLongitude) {
+                highestLongitude = latLng.getLongitude();
+            }
+        }
 
+        if(punto.getLongitude() < smallestLongitude) {
+            smallestLongitude = punto.getLongitude();
+        } else if(punto.getLongitude() > highestLongitude) {
+            highestLongitude = punto.getLongitude();
+        }
 
-/*
-        // Add a new document with a generated ID
-        db.collection("utenti").document(userId).collection("organizzazioni")
-                .add(org)
-                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                    @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error adding document", e);
-                    }
-                });
-*/
+        if((highestLongitude - smallestLongitude) > 180) {
+            List<Coordinata> normalizedLatlngs = new ArrayList<>();
+            for(Coordinata latLng: coordinate) {
+                normalizedLatlngs.add(new Coordinata(latLng.getLatitude(), latLng.getLongitude() < 0 ? latLng.getLongitude() + 180 : latLng.getLongitude()));
+            }
+            punto = new Coordinata(punto.getLatitude(), punto.getLongitude() < 0 ? punto.getLongitude() + 180 : punto.getLongitude());
+            return isPointInsideEdges(getEdgesFromLatLngs(normalizedLatlngs), new Coordinata(punto));
+        } else {
+            return isPointInsideEdges(getEdgesFromLatLngs(coordinate), new Coordinata(punto));
+        }
     }
 
-    @Override
-    public void removeOrganizzazione(Organizzazione organizzazione) {
+    private static ArrayList<Lato> getEdgesFromLatLngs(List<Coordinata> latLngs) {
+        ArrayList<Lato> edges = new ArrayList<>();
+        for(int i = 0; i < latLngs.size(); i++) {
+            edges.add(new Lato(latLngs.get(i), i < latLngs.size()-1 ? latLngs.get(i+1) : latLngs.get(0)));
+        }
 
-        db.collection("utenti").document(userId).
-                update(FIELDNAME_ORGANIZZAZIONI, FieldValue.arrayRemove(organizzazione.getId()))
-                .addOnSuccessListener(aVoid -> Log.w(TAG,"organizzazione rimossa correttamente"))
-                .addOnFailureListener(e -> Log.w(TAG, "errore avvenuto rimuovendo organizzazione", e));
-
-/*
-        Map<String, Object> org = new HashMap<>();
-        org.put(FIELDNAME_ID,organizzazione.getId());
-        // remove a document with a generated ID
-        db.collection("utenti").document(userId).collection("organizzazioni")
-                .document(""+organizzazione.getId())
-                .delete()
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.w(TAG,"deleted with success");
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG,"failure: not deleted");
-                    }
-                });
-
-
- */
-
+        return edges;
     }
 
+    private static ArrayList<Lato> getEdgesFromPoints(List<Coordinata> points) {
+        ArrayList<Lato> edges = new ArrayList<>();
+        for(int i = 0; i < points.size(); i++) {
+            edges.add(new Lato(points.get(i), i < points.size()-1 ? points.get(i+1) : points.get(0)));
+        }
 
-
-    @Override
-    public LiveData<List<Organizzazione>> getOrganizzazioni() {
-        //chiamata a firebase
-
-        db.collection("utenti").document(userId)
-                .get().addOnSuccessListener(documentSnapshot->{
-                    Map<String, Object> data = documentSnapshot.getData();
-                    try{
-
-                        if(data!=null){
-                            final List<Long> organizzazioni= (List<Long>) data.get(FIELDNAME_ORGANIZZAZIONI);
-                            Log.w(TAG,organizzazioni.toString());
-                            if(organizzazioni!=null){
-                                Log.w(TAG,"organizzazioni ottenute correttamente");
-                                this.mutableLiveDataOrganizzazioni = new MutableLiveData<>(
-                                    organizationsRepo.getOrganizzazioni().getValue()
-                                            .stream()
-                                            .filter(o->{
-                                                    return true;/*
-                                                    boolean contained=false;
-                                                    for (Long orgId: organizzazioni){
-                                                        if(orgId==o.getId()){
-                                                            contained=true;
-                                                            break;
-                                                        }
-                                                    }
-                                                    return contained;*/
-                                            })
-                                            .collect(Collectors.toList())
-                                );
-                                this.mutableLiveDataOrganizzazioni.getValue().forEach(o->Log.w(TAG,""+o.getId()));
-                            }else{
-                                Log.w(TAG, "errore avvenuto nell'ottenimento delle organizzazioni: problemi con il documento");
-                            }
-
-                        }else{
-                            Log.w(TAG,"errore avvenuto nell'ottenimento delle organizzazioni: documento non esistente");
-                            this.mutableLiveDataOrganizzazioni=new MutableLiveData<>(new ArrayList<Organizzazione>());
-                        }
-
-
-
-
-                    }catch(ClassCastException e){
-                        Log.e(TAG,e.getMessage());
-                    }
-                })
-                .addOnFailureListener(e->Log.w(TAG, "errore avvenuto nell'ottenimento delle organizzazioni", e));
-        return this.mutableLiveDataOrganizzazioni;
-
+        return edges;
     }
 
-    public void addStupidText(String stupidTextkey, String stupidTextValue){
-        // Create a new user with a first, middle, and last name
-        Map<String, Object> stupidText = new HashMap<>();
-        stupidText.put(stupidTextkey, stupidTextValue);
+    /**
+     * Assuming that the passed edges form a closed polygon, this method
+     * tells whether the given point lies inside or outside the polygon
+     *
+     * @param edges
+     * @param point
+     * @return
+     */
+    private static boolean isPointInsideEdges(List<Lato> edges, Coordinata point) {
+//        Log.d("RAY CAST", "Point: " + point.getX() + "; " + point.getY());
+//        Log.d("RAY CAST", "Lines ******************");
+//        for(Lato edge : edges) {
+//            Log.d("RAY CAST", edge.getStartX() + "," + edge.getStartY() + "; " + edge.getEndX() + "," + edge.getEndY());
+//        }
+//        Log.d("RAY CAST", "Lines ******************");
+        int intersectionCount = 0;
 
+        for(Lato edge : edges) {
+            if(Retta.linesIntersect(edge.getStartX(), edge.getStartY(), edge.getEndX(), edge.getEndY(), point.getLongitude(), point.getLatitude(), Double.MAX_VALUE, Double.MAX_VALUE)) {
+                intersectionCount++;
+            }
+        }
 
-        // Add a new document with a generated ID
-        db.collection("stupidTexts")
-                .add(stupidText)
-                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                    @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error adding document", e);
-                    }
-                });
+        return (intersectionCount % 2 != 0);
     }
-
-
-
-
 
 }

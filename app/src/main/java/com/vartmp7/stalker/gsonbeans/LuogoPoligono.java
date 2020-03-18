@@ -206,6 +206,8 @@ package com.vartmp7.stalker.component.gsonbeans;
 
 import androidx.annotation.NonNull;
 
+import com.vartmp7.stalker.component.gsonbeans.place.Coordinata;
+
 import java.util.Arrays;
 import java.util.List;
 

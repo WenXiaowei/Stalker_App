@@ -1,7 +1,6 @@
 package com.vartmp7.stalker.ui.organizations;
 
 import android.content.Context;
-import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,12 +11,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.vartmp7.stalker.R;
-import com.vartmp7.stalker.component.gsonbeans.Organizzazione;
+import com.vartmp7.stalker.gsonbeans.Organizzazione;
 
 import java.util.List;
 

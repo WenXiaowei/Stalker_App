@@ -209,7 +209,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.gson.Gson;
-import com.vartmp7.stalker.component.gsonbeans.Organizzazione;
+import com.vartmp7.stalker.gsonbeans.Organizzazione;
 
 import java.util.Arrays;
 import java.util.List;

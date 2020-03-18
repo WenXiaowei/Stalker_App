@@ -236,12 +236,12 @@
 //import com.vartmp7.stalker.component.StalkerLDAP;
 //import com.vartmp7.stalker.component.StalkerTrackingCallBack;
 //import com.vartmp7.stalker.component.Tracker;
-//import com.vartmp7.stalker.component.gsonbeans.Coordinata;
-//import com.vartmp7.stalker.component.gsonbeans.Luogo;
-//import com.vartmp7.stalker.component.gsonbeans.Organizzazione;
-//import com.vartmp7.stalker.component.gsonbeans.ResponseLuogo;
-//import com.vartmp7.stalker.component.gsonbeans.ResponseOrganizzazione;
-//import com.vartmp7.stalker.component.gsonbeans.TrackSignal;
+//import com.vartmp7.stalker.gsonbeans.place.Coordinata;
+//import com.vartmp7.stalker.gsonbeans.Luogo;
+//import com.vartmp7.stalker.gsonbeans.Organizzazione;
+//import com.vartmp7.stalker.gsonbeans.ResponseLuogo;
+//import com.vartmp7.stalker.gsonbeans.ResponseOrganizzazione;
+//import com.vartmp7.stalker.gsonbeans.TrackSignal;
 //
 //import org.jetbrains.annotations.NotNull;
 //
@@ -675,7 +675,7 @@ import com.vartmp7.stalker.model.FavoritesRepository;
 import com.vartmp7.stalker.model.FirebaseFavoritesRepository;
 import com.vartmp7.stalker.model.OrganizationsRepository;
 
-import com.vartmp7.stalker.component.gsonbeans.Organizzazione;
+import com.vartmp7.stalker.gsonbeans.Organizzazione;
 import com.google.firebase.auth.FirebaseAuth;
 import com.vartmp7.stalker.model.RESTOrganizationsRepository;
 
