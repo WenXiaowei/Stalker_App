@@ -204,63 +204,15 @@
 
 package com.vartmp7.stalker.gsonbeans;
 
-
-import com.vartmp7.stalker.gsonbeans.placecomponent.Coordinata;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.runners.JUnit4;
+import org.meanbean.test.BeanTester;
+import org.meanbean.test.BeanVerification;
 
-import java.util.Arrays;
-import java.util.Collection;
-
-import static junit.framework.TestCase.assertEquals;
-
-@RunWith(Parameterized.class)
-public class LuogoACirconferenzaTest {
-
-    private static final double METERS = 111320D;
-    private LuogoACirconferenza circonferenza;
-    private Coordinata punto;
-    private boolean isInside;
-
-    public LuogoACirconferenzaTest(LuogoACirconferenza circonferenza, Coordinata punto, boolean isInside) {
-        this.punto = punto;
-        this.circonferenza = circonferenza;
-        this.isInside = isInside;
-    }
-
-    @Test
-    public void testIsInside() {
-        assertEquals(circonferenza.isInside(punto), isInside);
-    }
+@RunWith(JUnit4.class)
+public class OrganizzazioneTest {
 
 
-    @Parameterized.Parameters
-    public static Collection parametro() {
-        LuogoACirconferenza c1 = new LuogoACirconferenza(1, "Cerchio");
-        c1.setCentro(new Coordinata(0, 0)).setRaggio(METERS);
 
-        Coordinata coordinata =new Coordinata(0, 0);
-        LuogoACirconferenza c2 = new LuogoACirconferenza(1, "Cerchio",coordinata,METERS);
-
-
-        coordinata = new Coordinata(0, 0);
-        LuogoACirconferenza c3 = new LuogoACirconferenza(1, "Cerchio", coordinata, METERS,10);
-
-        LuogoACirconferenza c4 = new LuogoACirconferenza(1, "Cerchio");
-        c4.setCentro(new Coordinata(0, 0)).setRaggio(METERS);
-        LuogoACirconferenza c5 = new LuogoACirconferenza(1, "Cerchio");
-        c5.setCentro(new Coordinata(0, 0)).setRaggio(METERS);
-
-        return Arrays.asList(new Object[][]{
-                {c1, new Coordinata(0.5, 0.5), true},
-                {c2, new Coordinata(2, 2), false},
-                {c3, new Coordinata(0, 1), true},
-                {c4, new Coordinata(0.9, 0), true},
-                {c5, new Coordinata(0.71, 0.71), false},
-                {c5, new Coordinata(0.70, 0.70), true}
-//                {, new Coordinata(45.411502, 11.888165), true}
-        });
-    }
 }
