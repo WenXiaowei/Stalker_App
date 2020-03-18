@@ -250,7 +250,7 @@
 //                    b.putInt("REQ_CODE", req_code);
 //                    String str = response.body().string();
 //                    b.putString("MSG", str);
-//                } catch (NullPointerException e) {
+//                } catch (Null Coordinata erException e) {
 //                    b.putInt("CODE", FAIL_RESPONSE_CODE);
 //                } finally {
 //
@@ -462,7 +462,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.vartmp7.stalker.component.BaseActivity;
 import com.vartmp7.stalker.component.FirebaseFavoritesRepository;
 import com.vartmp7.stalker.component.FavoritesRepository;
 import com.vartmp7.stalker.component.OrganizationsRepository;
@@ -482,7 +481,7 @@ import okhttp3.OkHttpClient;
 /**
  * @author Xiaowei Wen, Lorenzo Taschin
  */
-public class MainActivity extends BaseActivity {
+public class MainActivity extends AppCompatActivity {
     private GoogleSignInClient mGoogleSignInClient;
 
     @Override

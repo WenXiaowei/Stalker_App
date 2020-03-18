@@ -14,20 +14,16 @@ import static org.junit.Assert.assertEquals;
 public class LuogoQuadrilateroTest {
 
     private static final Double DELTA = 0.000011d;
-    private LuogoQuadrilatero luogoQuadrilatero;
+    private LuogoPoligono luogoQuadrilatero;
     private Coordinata coordinata;
 
-    public LuogoQuadrilateroTest(final LuogoQuadrilatero l, final Coordinata c) {
+    public LuogoQuadrilateroTest(final LuogoPoligono l, final Coordinata c) {
         this.luogoQuadrilatero = l;
         this.coordinata = c;
     }
 
 
-    @Test
-    public void provaGetCentroLuogo() {
-        assertEquals(coordinata.getLongitude(), luogoQuadrilatero.getCentro().getLongitude(), DELTA);
-        assertEquals(coordinata.getLatitude(), luogoQuadrilatero.getCentro().getLatitude(), DELTA);
-    }
+
 
 
     @Parameterized.Parameters
@@ -37,7 +33,7 @@ public class LuogoQuadrilateroTest {
         torreArchimede.add(new Coordinata(45.411442, 11.887942));
         torreArchimede.add(new Coordinata(45.411108, 11.887787));
         torreArchimede.add(new Coordinata(45.411222, 11.887319));
-        LuogoQuadrilatero t = new LuogoQuadrilatero();
+        LuogoPoligono t = new LuogoPoligono();
         t.setCoordinate(torreArchimede);
 
 
@@ -46,7 +42,7 @@ public class LuogoQuadrilateroTest {
         inail.add(new Coordinata(45.411846, 11.887572));
         inail.add(new Coordinata(45.411730, 11.887650));
         inail.add(new Coordinata(45.411544, 11.887106));
-        LuogoQuadrilatero i = new LuogoQuadrilatero();
+        LuogoPoligono i = new LuogoPoligono();
         i.setCoordinate(inail);
 
 
@@ -55,7 +51,7 @@ public class LuogoQuadrilateroTest {
         dsea.add(new Coordinata(45.411702, 11.888113));
         dsea.add(new Coordinata(45.411341, 11.888381));
         dsea.add(new Coordinata(45.411284, 11.888224));
-        LuogoQuadrilatero d= new LuogoQuadrilatero();
+        LuogoPoligono d= new LuogoPoligono();
         d.setCoordinate(dsea);
 
         return Arrays.asList(new Object[][]{

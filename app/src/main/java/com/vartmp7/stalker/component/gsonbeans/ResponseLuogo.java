@@ -12,7 +12,7 @@ public class ResponseLuogo {
     private static final String TAG="com.vartmp7.stalker.GsonBeans.ResponseLuogo";
     private ArrayList<? extends AbstractLuogo> places;
 
-    public void setLuoghi(ArrayList<LuogoQuadrilatero> luoghi) {
+    public void setLuoghi(ArrayList<? extends AbstractLuogo> luoghi) {
         this.places = luoghi;
     }
     public int getPlacesLength(){return places.size();}
