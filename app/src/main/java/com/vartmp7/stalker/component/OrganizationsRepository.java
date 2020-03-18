@@ -6,8 +6,6 @@ import com.vartmp7.stalker.component.gsonbeans.Organizzazione;
 
 import java.util.List;
 
-import io.reactivex.Observable;
-
 public interface OrganizationsRepository {
 
     LiveData<List<Organizzazione>> getOrganizzazioni();

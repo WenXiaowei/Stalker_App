@@ -1,5 +1,5 @@
 package com.vartmp7.stalker.component;
-import io.reactivex.Observable;
+
 import android.annotation.SuppressLint;
 import android.graphics.drawable.Drawable;
 import android.net.wifi.aware.DiscoverySession;

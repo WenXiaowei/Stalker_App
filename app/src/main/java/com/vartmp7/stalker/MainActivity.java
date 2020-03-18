@@ -482,9 +482,6 @@ import androidx.navigation.ui.NavigationUI;
 
 import java.util.List;
 
-import io.reactivex.Observable;
-import io.reactivex.Observer;
-import io.reactivex.disposables.Disposable;
 import okhttp3.OkHttpClient;
 
 /**
@@ -512,14 +509,17 @@ public class MainActivity extends BaseActivity {
 
 
 
-        //TODO togliere le seguenti 3 righe che sono solo un test
+        //TODO togliere le seguenti  righe che sono solo un test
         OkHttpClient httpClient= new OkHttpClient();
         String serverUrl="";
         OrganizationsRepository orgRepo = new RESTOrganizationsRepository(httpClient,serverUrl);
         FavoritesRepository preferitiRepository = new FirebaseFavoritesRepository("1",orgRepo,FirebaseFirestore.getInstance());
-        LiveData<List<Organizzazione>> liveDataOrganizzazioni = preferitiRepository.getOrganizzazioni1();
-        liveDataOrganizzazioni.getValue().forEach(o->Log.d(TAG,""+o.getId()));
-        //preferitiRepository.addOrganizzazione(new Organizzazione().setId(12));
+        //((FirebaseFavoritesRepository)preferitiRepository).initUserStorage("1");
+        preferitiRepository.addOrganizzazione(new Organizzazione().setId(2));
+        LiveData<List<Organizzazione>> liveDataOrganizzazioni = preferitiRepository.getOrganizzazioni();
+        Log.d(TAG,"size:"+liveDataOrganizzazioni.getValue().size());
+        //liveDataOrganizzazioni.getValue().forEach(o->Log.d(TAG,""+o.getId()));
+
         /*Observable<List<Organizzazione>> orgObservable = preferitiRepository.getOrganizzazioni();
         Observer<List<Organizzazione>> orgObserver = new Observer<List<Organizzazione>>() {
             @Override
