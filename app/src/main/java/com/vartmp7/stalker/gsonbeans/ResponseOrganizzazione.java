@@ -8,6 +8,7 @@ import java.util.ArrayList;
  * @author Xiaowei Wen, Lorenzo Taschin
  */
 public class ResponseOrganizzazione {
+    public static final String TAG ="com.vartmp7.stalker.gsonbeans.ResponseOrganizzazione";
 
     private ArrayList<Organizzazione> organizations;
 

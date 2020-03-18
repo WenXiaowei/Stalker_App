@@ -211,6 +211,7 @@ import com.vartmp7.stalker.gsonbeans.placecomponent.Coordinata;
  *
  */
 public abstract class AbstractLuogo {
+    public static final String TAG ="com.vartmp7.stalker.gsonbeans.AbstractLuogo";
     private long id;
     private String name;
     private long num_max_people;

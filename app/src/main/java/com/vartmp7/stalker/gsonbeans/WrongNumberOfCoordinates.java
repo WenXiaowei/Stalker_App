@@ -210,6 +210,7 @@ import android.util.Log;
  * @author Xiaowei Wen, Lorenzo Taschin
  */
 public class WrongNumberOfCoordinates extends IllegalArgumentException{
+    public static final String TAG ="com.vartmp7.stalker.gsonbeans.WrongNumberOfCoordinates";
 
     @Override
     public void printStackTrace() {

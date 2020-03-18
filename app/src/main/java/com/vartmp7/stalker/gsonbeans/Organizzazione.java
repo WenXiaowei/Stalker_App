@@ -6,6 +6,7 @@ import java.util.List;
  * @author Xiaowei Wen, Lorenzo Taschin
  */
 public class Organizzazione {
+    public static final String TAG ="com.vartmp7.stalker.gsonbeans.Organizzazione";
     private String address;
     private String city;
     private String email;

@@ -208,6 +208,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 public class Retta {
+    public static final String TAG ="com.vartmp7.stalker.gsonbeans.placecomponent.Retta";
 
     private double m;
     private double q;

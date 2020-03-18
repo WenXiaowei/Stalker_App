@@ -209,6 +209,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RayCasting {
+    public static final String TAG ="com.vartmp7.stalker.gsonbeans.placecomponent.RayCasting";
     public static boolean isLatLngInside(List<Coordinata> latLngs, Coordinata latLng) {
         return normalizeLatLngsAndProceed(latLngs, latLng);
     }

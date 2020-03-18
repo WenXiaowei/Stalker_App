@@ -214,6 +214,7 @@ import com.onesignal.OneSignal;
  * @author Xiaowei Wen, Lorenzo Taschin
  */
 public class StalkerApplication extends Application {
+    public static final String TAG ="com.vartmp7.stalker.StalkerApplication";
     @Override
     public void onCreate() {
         super.onCreate();

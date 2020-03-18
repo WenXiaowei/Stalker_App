@@ -18,6 +18,7 @@ import java.util.ArrayList;
 
 
 public class OrganizationsFragment extends Fragment {
+    public static final String TAG ="com.vartmp7.stalker.ui.organizations.OrganizationsFragment";
 
     private OrganizationsViewModel dashboardViewModel;
     private RecyclerView recyclerView;

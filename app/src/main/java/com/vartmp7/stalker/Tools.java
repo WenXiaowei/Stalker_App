@@ -15,6 +15,7 @@ import okhttp3.OkHttpClient;
  * @author Xiaowei Wen, Lorenzo Taschin
  */
 public class Tools {
+    public static final String TAG ="com.vartmp7.stalker.tools";
 
     public static OkHttpClient getUnsafeOkHttpClient(){
         try {

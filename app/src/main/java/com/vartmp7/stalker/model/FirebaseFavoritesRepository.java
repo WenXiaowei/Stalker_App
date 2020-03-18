@@ -226,7 +226,7 @@ import java.util.stream.Collectors;
 
 
 public class FirebaseFavoritesRepository implements FavoritesRepository {
-    public static final String TAG ="package com.vartmp7.stalker.component.FirebaseFavoritesRepository";
+    public static final String TAG ="com.vartmp7.stalker.model.FirebaseFavoritesRepository";
     private static final String FIELDNAME_ID ="id";
     private static final String FIELDNAME_ORGANIZZAZIONI = "organizzazioni";
     private OrganizationsRepository organizationsRepo;

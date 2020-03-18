@@ -217,7 +217,7 @@ import java.util.List;
 import okhttp3.OkHttpClient;
 
 public class RESTOrganizationsRepository implements OrganizationsRepository {
-    private static final String TAG = "package com.vartmp7.stalker.component.RESTOrganizationsRepository";
+    private static final String TAG = "com.vartmp7.stalker.model.RESTOrganizationsRepository";
     private String serverUrl;
     private OkHttpClient httpClient;
     //private int FAIL_RESPONSE_CODE;

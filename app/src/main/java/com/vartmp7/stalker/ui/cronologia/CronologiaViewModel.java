@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel;
  * @author Xiaowei Wen, Lorenzo Taschin
  */
 public class CronologiaViewModel extends ViewModel {
+    public static final String TAG ="com.vartmp7.stalker.ui.cronologia.CronologiaViewModel";
 
     private MutableLiveData<String> mText;
 

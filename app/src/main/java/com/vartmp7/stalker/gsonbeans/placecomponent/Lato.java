@@ -205,6 +205,7 @@
 package com.vartmp7.stalker.gsonbeans.placecomponent;
 
 public class Lato {
+    public static final String TAG ="com.vartmp7.stalker.gsonbeans.placecomponent.lato";
     private double startX;
     private double startY;
     private double endX;

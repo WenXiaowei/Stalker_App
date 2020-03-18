@@ -212,6 +212,8 @@ import androidx.annotation.Nullable;
  */
 
 public class Coordinata {
+
+    public static final String TAG ="com.vartmp7.stalker.gsonbeans.placecomponent.Coordinata";
     private double latitude;//y
     private double longitude; //x
 

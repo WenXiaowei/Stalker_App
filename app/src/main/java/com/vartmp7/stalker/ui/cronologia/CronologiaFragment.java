@@ -19,6 +19,7 @@ import com.vartmp7.stalker.R;
  * @author Xiaowei Wen, Lorenzo Taschin
  */
 public class CronologiaFragment extends Fragment {
+    public static final String TAG ="com.vartmp7.stalker.ui.cronologia.CronologiaFragment";
 
     private CronologiaViewModel dashboardViewModel;
 

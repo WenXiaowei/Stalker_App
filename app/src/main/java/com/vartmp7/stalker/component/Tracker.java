@@ -9,7 +9,7 @@ import android.os.Bundle;
  * @author Xiaowei Wen, Lorenzo Taschin
  */
 public class Tracker implements LocationListener {
-
+    public static final String TAG ="com.vartmp7.stalker.component.Tracker";
     private Context mContext;
     private StalkerTrackingCallBack callBack;
     private  boolean inPlace;

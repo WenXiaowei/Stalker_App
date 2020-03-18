@@ -19,6 +19,7 @@ import com.vartmp7.stalker.R;
  * @author Xiaowei Wen, Lorenzo Taschin
  */
 public class PreferitiFragment extends Fragment {
+    public static final String TAG ="com.vartmp7.stalker.ui.preferiti.PreferitiFragment";
 
     private PreferitiViewModel preferitiViewModel;
 

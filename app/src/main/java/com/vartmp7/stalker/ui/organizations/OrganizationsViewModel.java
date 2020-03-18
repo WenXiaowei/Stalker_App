@@ -12,6 +12,7 @@ import java.util.List;
  * @author Xiaowei Wen, Lorenzo Taschin
  */
 public class OrganizationsViewModel extends ViewModel {
+    public static final String TAG ="com.vartmp7.stalker.ui.organizations.OrganizationsViewModel";
 
     private MutableLiveData<String> mText;
     private MutableLiveData<List<Organizzazione>> listOrganizzazione;

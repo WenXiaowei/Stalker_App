@@ -22,6 +22,7 @@ import java.util.List;
  * @author Xiaowei Wen, Lorenzo Taschin
  */
 public class OrganizationAdapter extends RecyclerView.Adapter<OrganizationAdapter.ViewHolder> {
+    public static final String TAG ="com.vartmp7.stalker.ui.organizations.OrganizationAdapter";
     private List<Organizzazione> listaOrganizzazione;
     private Context context;
     private static int currentPosition = -1;

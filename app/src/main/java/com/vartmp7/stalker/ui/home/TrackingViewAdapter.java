@@ -29,6 +29,7 @@ import java.util.List;
  * @author Xiaowei Wen, Lorenzo Taschin
  */
 public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapter.ViewHolder> {
+    public static final String TAG ="com.vartmp7.stalker.ui.home.TrackingViewAdapter";
     private List<Organizzazione> listOrganizzazione;
     private Context context;
 

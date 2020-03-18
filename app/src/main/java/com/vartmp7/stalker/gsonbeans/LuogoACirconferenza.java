@@ -214,6 +214,7 @@ import com.vartmp7.stalker.gsonbeans.placecomponent.Coordinata;
  * Usato per rappresentare dei luoghi con una forma di circonferenza.
  */
 public class LuogoACirconferenza extends AbstractLuogo {
+    public static final String TAG ="com.vartmp7.stalker.gsonbeans.LuogoACirconferenza";
     private Coordinata centro;
     private Double raggio;
 

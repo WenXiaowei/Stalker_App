@@ -216,6 +216,7 @@ import java.util.List;
  * @author Xiaowei Wen, Lorenzo Taschin
  */
 public class LuogoPoligono extends  AbstractLuogo{
+    public static final String TAG ="com.vartmp7.stalker.gsonbeans.LuogoPoligono";
 
     private List<Coordinata> coordinates;
 
