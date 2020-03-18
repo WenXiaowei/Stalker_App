@@ -3,7 +3,6 @@ package com.vartmp7.stalker.component.gsonbeans;
 import android.util.Log;
 
 import com.google.gson.annotations.Expose;
-import com.vartmp7.stalker.MainActivity;
 
 /**
  * @author Xiaowei Wen, Lorenzo Taschin
