@@ -5,4 +5,6 @@
     <color name="colorAccent">#D81B60</color>
     <color name="vartmp7blu">#191970</color>
     <color name="vartmp7bluChiaro">#1999FF</color>
+    <color name="black">@android:color/black</color>
+    <color name="white">@android:color/white</color>
 </resources>

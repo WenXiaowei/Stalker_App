@@ -47,11 +47,11 @@ public class OrganizationAdapter extends RecyclerView.Adapter<OrganizationAdapte
                 int position = viewHolder.getAdapterPosition();
                 Organizzazione org = listaOrganizzazione.get(position);
 
-                NavController navController = Navigation.findNavController(parent);
-                Bundle b = new Bundle();
-                b.putLong("ID_ORG", org.getId());
-                navController.saveState();
-                navController.navigate(R.id.navigation_status, b);
+//                NavController navController = Navigation.findNavController(parent);
+//                Bundle b = new Bundle();
+//                b.putLong("ID_ORG", org.getId());
+//                navController.saveState();
+//                navController.navigate(R.id.navigation_status, b);
             }
         });
         return viewHolder;

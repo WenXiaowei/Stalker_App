@@ -204,31 +204,51 @@
 
 package com.vartmp7.stalker.component.gsonbeans;
 
-import java.util.List;
+import com.vartmp7.stalker.component.gsonbeans.Coordinata;
 
-/**
- * @author Xiaowei Wen, Lorenzo Taschin
- */
-public abstract class LuogoRegolare  extends  AbstractLuogo{
+public class Lato {
+    private double startX;
+    private double startY;
+    private double endX;
+    private double endY;
 
-    private List<Coordinata> coordinate;
-
-    LuogoRegolare(long id, String name, List<Coordinata> coordinate){
-      super(id,name);
-        this.coordinate = coordinate;
-
-    }
-    LuogoRegolare(long id, String name, List<Coordinata> coordinate, long num_max_people) {
-       super(id,name,num_max_people);
-       this.coordinate = coordinate;
+    public Lato(Coordinata a, Coordinata b) {
+        this.startX = a.getLongitude();
+        this.startY = a.getLatitude();
+        this.endX = b.getLongitude();
+        this.endY = b.getLatitude();
     }
 
-    public List<Coordinata> getCoordinate() {
-        return coordinate;
+
+    public double getStartX() {
+        return startX;
     }
 
-    public LuogoRegolare setCoordinate(List<Coordinata> coordinate) {
-        this.coordinate = coordinate;
-        return this;
+    public void setStartX(double startX) {
+        this.startX = startX;
+    }
+
+    public double getStartY() {
+        return startY;
+    }
+
+    public void setStartY(double startY) {
+        this.startY = startY;
+    }
+
+    public double getEndX() {
+        return endX;
+    }
+
+    public void setEndX(double endX) {
+        this.endX = endX;
+    }
+
+    public double getEndY() {
+        return endY;
+    }
+
+    public void setEndY(double endY) {
+        this.endY = endY;
     }
 }

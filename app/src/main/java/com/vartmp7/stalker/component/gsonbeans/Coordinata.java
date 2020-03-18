@@ -13,6 +13,10 @@ public class Coordinata {
 
     public Coordinata() {
     }
+    public Coordinata(Coordinata c){
+        latitude=c.getLatitude();
+        longitude=c.getLongitude();
+    }
 
     public Coordinata(double latitudine, double longitude) {
         this.latitude = latitudine;
