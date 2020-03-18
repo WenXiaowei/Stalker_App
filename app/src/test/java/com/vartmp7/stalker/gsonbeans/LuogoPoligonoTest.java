@@ -2,6 +2,7 @@ package com.vartmp7.stalker.gsonbeans;
 
 import com.vartmp7.stalker.gsonbeans.placecomponent.Coordinata;
 
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
@@ -10,19 +11,24 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(Parameterized.class)
-public class LuogoQuadrilateroTest {
+public class LuogoPoligonoTest {
 
     private static final Double DELTA = 0.000011d;
-    private LuogoPoligono luogoQuadrilatero;
+    private LuogoPoligono luogo;
     private Coordinata coordinata;
 
-    public LuogoQuadrilateroTest(final LuogoPoligono l, final Coordinata c) {
-        this.luogoQuadrilatero = l;
+    public LuogoPoligonoTest(final LuogoPoligono l, final Coordinata c) {
+        this.luogo = l;
         this.coordinata = c;
     }
 
+    @Test
+    public void testProva(){
+        assertTrue(luogo.isInLuogo(coordinata));
+    }
 
 
 
