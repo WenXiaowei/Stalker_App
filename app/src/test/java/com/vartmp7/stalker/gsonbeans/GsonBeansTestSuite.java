@@ -5,7 +5,9 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses({LuogoPoligonoTest.class, RettaTest.class,CoordinataTest.class})
+@Suite.SuiteClasses({
+        LuogoPoligonoTest.class,
+        RettaTest.class,CoordinataTest.class})
 @Categories.ExcludeCategory
 public class GsonBeansTestSuite {
 }

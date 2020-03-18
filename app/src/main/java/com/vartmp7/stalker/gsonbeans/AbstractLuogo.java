@@ -253,5 +253,5 @@ public abstract class AbstractLuogo {
         return this;
     }
 
-    abstract boolean isInLuogo(Coordinata c);
+    abstract boolean isInside(Coordinata c);
 }

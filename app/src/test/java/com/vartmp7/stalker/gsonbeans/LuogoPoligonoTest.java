@@ -30,7 +30,7 @@ public class LuogoPoligonoTest {
 
     @Test
     public void testProva(){
-        assertEquals(luogo.isInLuogo(coordinata),inside);
+        assertEquals(luogo.isInside(coordinata),inside);
     }
     @Test
     public void testConstructor4params(){
