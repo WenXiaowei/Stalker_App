@@ -223,14 +223,14 @@ public class LuogoPoligono extends  AbstractLuogo{
     public LuogoPoligono(){
         super(0,null);
     }
-    LuogoPoligono(long id, String name, Coordinata... coordinate){
+    LuogoPoligono(long id, String name, List<Coordinata> coordinate){
       super(id,name);
-        this.coordinates = Arrays.asList(coordinate);
+        this.coordinates = coordinate;
 
     }
-    LuogoPoligono(long id, String name,  long num_max_people,Coordinata... coordinate) {
+    LuogoPoligono(long id, String name,  long num_max_people, List<Coordinata> coordinate) {
        super(id,name,num_max_people);
-       this.coordinates = Arrays.asList(coordinate);
+       this.coordinates = coordinate;
     }
 
     public List<Coordinata> getCoordinate() {
