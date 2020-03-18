@@ -202,11 +202,12 @@
  *    limitations under the License.
  */
 
-package com.vartmp7.stalker.component.gsonbeans;
+package com.vartmp7.stalker.gsonbeans;
 
 import androidx.annotation.NonNull;
 
-import com.vartmp7.stalker.component.gsonbeans.place.Coordinata;
+import com.vartmp7.stalker.gsonbeans.placecomponent.Coordinata;
+import com.vartmp7.stalker.gsonbeans.placecomponent.RayCasting;
 
 import java.util.Arrays;
 import java.util.List;

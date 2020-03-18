@@ -202,8 +202,10 @@
  *    limitations under the License.
  */
 
-package com.vartmp7.stalker.component.gsonbeans;
+package com.vartmp7.stalker.gsonbeans;
 
+
+import com.vartmp7.stalker.gsonbeans.placecomponent.Coordinata;
 
 /**
  * @author Xiaowei Wen, Lorenzo Taschin

@@ -202,7 +202,7 @@
  *    limitations under the License.
  */
 
-package com.vartmp7.stalker.component.gsonbeans;
+package com.vartmp7.stalker.gsonbeans;
 
 import android.util.Log;
 

@@ -202,7 +202,7 @@
  *    limitations under the License.
  */
 
-package com.vartmp7.stalker.component.gsonbeans.place;
+package com.vartmp7.stalker.gsonbeans.placecomponent;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
