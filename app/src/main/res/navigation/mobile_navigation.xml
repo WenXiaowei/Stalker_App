@@ -10,17 +10,22 @@
         android:id="@+id/navigation_organizations"
         android:name="com.vartmp7.stalker.ui.organizations.OrganizationsFragment"
         android:label="@string/organizzazioni"
-        tools:layout="@layout/fragment_organizations" />
+        tools:layout="@layout/fragment_organizations">
+
+        <action
+            android:id="@+id/action_navigation_organizations_to_navigation_status"
+            app:destination="@id/navigation_status"
+            app:enterAnim="@anim/fragment_fade_enter"
+            app:exitAnim="@anim/closing_animation" />
+    </fragment>
     <fragment
         android:id="@+id/navigation_status"
         android:name="com.vartmp7.stalker.ui.home.HomeFragment"
         android:label="@string/title_home"
         tools:layout="@layout/fragment_status">
         <argument
-            android:name="ID_ORG"
-            android:defaultValue="0"
-            app:argType="integer" />
-
+            android:name="org"
+            app:argType="com.vartmp7.stalker.gsonbeans.Organizzazione" />
     </fragment>
 
     <fragment

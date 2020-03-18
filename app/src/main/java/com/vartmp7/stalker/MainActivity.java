@@ -700,7 +700,7 @@ import okhttp3.OkHttpClient;
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "com.vartmp7.stalker.MainActivity";
     private GoogleSignInClient mGoogleSignInClient;
-
+    public  static MainActivity activity;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -717,7 +717,7 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(navView, navController);
 
 
-
+        activity= MainActivity.this;
 
         //TODO togliere le seguenti  righe che sono solo un test
         OkHttpClient httpClient= new OkHttpClient();
