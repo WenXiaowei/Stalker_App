@@ -213,6 +213,7 @@ import java.util.List;
 
 
 public interface FavoritesRepository {
+    void updateOrganizzazioni();
     void addOrganizzazione(Organizzazione organizzazione);
     void removeOrganizzazione(Organizzazione organizzazione);
     LiveData<List<Organizzazione>> getOrganizzazioni();

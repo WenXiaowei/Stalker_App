@@ -21,6 +21,7 @@ public class PreferitiViewModel extends ViewModel {
 
     public PreferitiViewModel(FavoritesRepository favRepo) {
         this.favRepo=favRepo;
+
         //mText = new MutableLiveData<>();
         //mText.setValue("This is notifications fragment");
 
@@ -31,6 +32,7 @@ public class PreferitiViewModel extends ViewModel {
             return;
         }
         //this.favRepo = new FirebaseFavoritesRepository();
+        this.favRepo.updateOrganizzazioni();
         this.liveDataOrganizzazioni = favRepo.getOrganizzazioni();
     }
 

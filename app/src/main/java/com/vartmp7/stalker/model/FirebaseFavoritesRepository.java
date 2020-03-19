@@ -209,7 +209,9 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -232,10 +234,19 @@ public class FirebaseFavoritesRepository implements FavoritesRepository {
     private OrganizationsRepository organizationsRepo;
     private FirebaseFirestore db;
     private String userId;
-    private MutableLiveData<List<Organizzazione>> mutableLiveDataOrganizzazioni;
+
+    private MutableLiveData<List<Long>> mutableliveDataOrgIds;
+    private LiveData<List<Organizzazione>> liveDataOrganizzazioni;
+    private MediatorLiveData<List<Organizzazione>> mediatorLiveDataOrganizzazioni;
+    private MutableLiveData<Boolean> RESTQueryExhausted;
+    private MutableLiveData<Boolean> firebaseQueryExhausted;
 
     public FirebaseFavoritesRepository(String userId, OrganizationsRepository orgRepo, FirebaseFirestore db) {
-        this.mutableLiveDataOrganizzazioni = new MutableLiveData<>(new ArrayList<Organizzazione>());
+        this.liveDataOrganizzazioni=orgRepo.getOrganizzazioni();
+        this.mutableliveDataOrgIds = new MutableLiveData<>();
+        this.mediatorLiveDataOrganizzazioni = new MediatorLiveData<>();
+        RESTQueryExhausted = new MutableLiveData<Boolean>(false);
+        firebaseQueryExhausted = new MutableLiveData<Boolean>(false);
         this.userId = userId;
         this.organizationsRepo = orgRepo;
         this.db = db;
@@ -261,25 +272,58 @@ public class FirebaseFavoritesRepository implements FavoritesRepository {
                 update(FIELDNAME_ORGANIZZAZIONI, FieldValue.arrayUnion(organizzazione.getId()))
                 .addOnSuccessListener(aVoid -> Log.w(TAG, "organizzazione aggiunta correttamente"))
                 .addOnFailureListener(e -> Log.w(TAG, "errore avvenuto aggiungendo organizzazione", e));
+    }
 
 
-/*
-        // Add a new document with a generated ID
-        db.collection("utenti").document(userId).collection("organizzazioni")
-                .add(org)
-                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                    @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error adding document", e);
+    public void updateOrganizzazioni(){
+        this.firebaseQueryExhausted.setValue(false);
+        this.RESTQueryExhausted.setValue(false);
+
+        db.collection("utenti").document(userId)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    Map<String, Object> data = documentSnapshot.getData();
+                    try {
+
+                        if (data != null) {
+                            final List<Long> orgIds = (List<Long>) data.get(FIELDNAME_ORGANIZZAZIONI);
+                            Log.w(TAG, "data got from firebase:");
+                            orgIds.forEach(l->Log.d(TAG,"orgId:"+l));
+                            mutableliveDataOrgIds.postValue(orgIds);
+                            firebaseQueryExhausted.postValue(true);
+                            //Log.w(TAG, "organizzazioni ottenute correttamente");
+                        }
+                    } catch (ClassCastException e) {
                     }
                 });
-*/
+
+        this.mediatorLiveDataOrganizzazioni.addSource(liveDataOrganizzazioni, new Observer<List<Organizzazione>>() {
+            @Override
+            public void onChanged(List<Organizzazione> organizzazioni) {
+                RESTQueryExhausted.postValue(true);
+            }
+        });
+
+        //this.liveDataOrganizzazioni = new MutableLiveData<>(organizationsRepo.getOrganizzazioni().getValue());
+
+        final Observer<Boolean> queryExhaustedObserver =  new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+
+                if(firebaseQueryExhausted.getValue() && RESTQueryExhausted.getValue()){
+                    final List<Long> orgIds = mutableliveDataOrgIds.getValue();
+                    mediatorLiveDataOrganizzazioni.postValue(
+                            liveDataOrganizzazioni.getValue()
+                                    .stream()
+                                    .filter(o-> orgIds.contains(o.getId()))
+                                    .collect(Collectors.toList())
+                    );
+                }
+            }
+        };
+        this.mediatorLiveDataOrganizzazioni.addSource(RESTQueryExhausted, queryExhaustedObserver);
+        this.mediatorLiveDataOrganizzazioni.addSource(firebaseQueryExhausted,queryExhaustedObserver);
+
     }
 
     @Override
@@ -309,15 +353,26 @@ public class FirebaseFavoritesRepository implements FavoritesRepository {
                         Log.w(TAG,"failure: not deleted");
                     }
                 });
-
-
  */
+    }
 
+    /*
+    @Override
+    public LiveData<List<Organizzazione>> getOrganizzazioni() {
+        return this.mutableLiveDataOrganizzazioni;
+    }
+    */
+    @Override
+    public LiveData<List<Organizzazione>> getOrganizzazioni() {
+        return this.mediatorLiveDataOrganizzazioni;
     }
 
 
-    @Override
-    public LiveData<List<Organizzazione>> getOrganizzazioni() {
+
+
+
+
+    /*public void updateOrganizzazioni() {
         //chiamata a firebase
 
         db.collection("utenti").document(userId)
@@ -328,29 +383,25 @@ public class FirebaseFavoritesRepository implements FavoritesRepository {
                 if (data != null) {
                     final List<Long> organizzazioni = (List<Long>) data.get(FIELDNAME_ORGANIZZAZIONI);
                     Log.w(TAG,"data got from firebase "+ organizzazioni.toString());
-                    if (organizzazioni != null) {
-                        Log.w(TAG, "organizzazioni ottenute correttamente");
-                        this.mutableLiveDataOrganizzazioni.postValue(
-                                organizationsRepo.getOrganizzazioni().getValue()
-                                .stream()
-                                .filter(o -> {
-                                    //return true;
-                                    boolean contained = false;
-                                    for (Long orgId : organizzazioni) {
-                                        if (orgId == o.getId()) {
-                                            contained = true;
-                                            break;
-                                        }
+                    Log.w(TAG, "organizzazioni ottenute correttamente");
+                    this.mutableLiveDataOrganizzazioni.postValue(
+                            organizationsRepo.getOrganizzazioni().getValue()
+                            .stream()
+                            .filter(o -> {
+                                //return true;
+                                boolean contained = false;
+                                for (Long orgId : organizzazioni) {
+                                    if (orgId == o.getId()) {
+                                        contained = true;
+                                        break;
                                     }
-                                    Log.d(TAG, "Filtering organization getOrganizzazioni: "+ contained);
-                                    return contained;
-                                })
-                                .collect(Collectors.toList()));
-                        Log.d(TAG, "getOrganizzazioni: organization "+this.mutableLiveDataOrganizzazioni.getValue().size());
-                        this.mutableLiveDataOrganizzazioni.getValue().forEach(o -> Log.w(TAG, "Logged prin" + o.getId()));
-                    } else {
-                        Log.w(TAG, "errore avvenuto nell'ottenimento delle organizzazioni: problemi con il documento");
-                    }
+                                }
+                                Log.d(TAG, "Filtering organization getOrganizzazioni: "+ contained);
+                                return contained;
+                            })
+                            .collect(Collectors.toList()));
+                    Log.d(TAG, "getOrganizzazioni: organization "+this.mutableLiveDataOrganizzazioni.getValue().size());
+                    this.mutableLiveDataOrganizzazioni.getValue().forEach(o -> Log.w(TAG, "Logged prin" + o.getId()));
 
                 } else {
                     Log.w(TAG, "errore avvenuto nell'ottenimento delle organizzazioni: documento non esistente");
@@ -361,8 +412,11 @@ public class FirebaseFavoritesRepository implements FavoritesRepository {
             }
         }).addOnFailureListener(e -> Log.w(TAG, "errore avvenuto nell'ottenimento delle organizzazioni", e));
         Log.d(TAG, "getOrganizzazioni: before return mutableLiveDataOrganizzazioni.getValue().size()= " + this.mutableLiveDataOrganizzazioni.getValue().size());
-        return this.mutableLiveDataOrganizzazioni;
-    }
+    }*/
+
+
+
+
 
     public void addStupidText(String stupidTextkey, String stupidTextValue) {
         // Create a new user with a first, middle, and last name

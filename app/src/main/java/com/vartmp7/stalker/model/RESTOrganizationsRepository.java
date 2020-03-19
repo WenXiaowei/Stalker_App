@@ -205,6 +205,9 @@
 
 package com.vartmp7.stalker.model;
 
+import android.annotation.SuppressLint;
+import android.os.AsyncTask;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
@@ -240,31 +243,39 @@ public class RESTOrganizationsRepository implements OrganizationsRepository {
         this.mutableLiveDataOrganizzazioni = new MutableLiveData<>();
     }
 
-    public void updateOrganizzazioni() {
-        mutableLiveDataOrganizzazioni.postValue(Arrays.asList(
-                new Organizzazione().setId(1).setName("UNIPD1").setType("Both").setAddress("Via trieste 1"),
-                new Organizzazione().setId(2).setName("UNIPD2").setType("Both").setAddress("Via trieste 1"),
-                new Organizzazione().setId(3).setName("UNIPD3").setType("private").setAddress("Via trieste 1"),
-                new Organizzazione().setId(4).setName("UNIPD4").setType("public").setAddress("Via trieste 1"),
-                new Organizzazione().setId(5).setName("UNIPD5").setType("Both").setAddress("Via trieste 1"),
-                new Organizzazione().setId(6).setName("UNIPD6").setType("Both").setAddress("Via trieste 1")
-        ));
-//        final Request request = new Request.Builder()
-//                .url(serverUrl)
-//                .build();
-//        Call call = httpClient.newCall(request);
-//        call.enqueue(new Callback() {
-//            @Override
-//            public void onFailure(@NotNull Call call, @NotNull IOException e) {
-//            }
-//            @Override
-//            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-//                ResponseOrganizzazione responseOrganizzazione = gson.fromJson(response.body().string(), ResponseOrganizzazione.class);
-//                mutableLiveDataOrganizzazioni.setValue(responseOrganizzazione.getOrganizations());
-//            }
-//        });
 
-    }
+    @SuppressLint("StaticFieldLeak")
+    @Override
+    public LiveData<List<Organizzazione>> getOrganizzazioni() {
+        //TODO togliere hardcoded-mock e decommentare codice per chiamata alle REST API
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                mutableLiveDataOrganizzazioni.setValue(Arrays.asList(
+                        new Organizzazione().setId(1),
+                        new Organizzazione().setId(2),
+                        new Organizzazione().setId(3),
+                        new Organizzazione().setId(4),
+                        new Organizzazione().setId(5)
+                ));
+            }
+
+            @Override
+            protected Void doInBackground(Void... voids) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+        }.execute();
+
+        /*final Request request = new Request.Builder()
+                .url(serverUrl)
+                .build();
+        Call call = httpClient.newCall(request);
 
     @Override
     public MutableLiveData<List<Organizzazione>> getOrganizzazioni() {
