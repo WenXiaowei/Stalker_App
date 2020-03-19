@@ -30,5 +30,10 @@
             app:layout_constraintTop_toBottomOf="@+id/textView"
             app:layout_constraintVertical_bias="0.0"
             tools:layout_editor_absoluteX="16dp"/>
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Aggiorna"
+            android:id="@+id/btnAggiorna"/>
 
 </LinearLayout>

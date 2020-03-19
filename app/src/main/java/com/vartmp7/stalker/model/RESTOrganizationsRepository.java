@@ -210,77 +210,65 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.google.gson.Gson;
 import com.vartmp7.stalker.gsonbeans.Organizzazione;
+import com.vartmp7.stalker.gsonbeans.ResponseOrganizzazione;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.ListIterator;
 
+import okhttp3.Call;
+import okhttp3.Callback;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class RESTOrganizationsRepository implements OrganizationsRepository {
     private static final String TAG = "com.vartmp7.stalker.model.RESTOrganizationsRepository";
-    private String serverUrl;
+    private String serverUrl="";
     private OkHttpClient httpClient;
-    //private int FAIL_RESPONSE_CODE;
     private Gson gson = new Gson();
 
     private MutableLiveData<List<Organizzazione>> mutableLiveDataOrganizzazioni;
-    
+
+
 
     public RESTOrganizationsRepository(OkHttpClient httpClient, String serverUrl) {
-        this.httpClient=httpClient;
-        this.mutableLiveDataOrganizzazioni = new MutableLiveData<List<Organizzazione>>();
+        this.httpClient = httpClient;
+        this.mutableLiveDataOrganizzazioni = new MutableLiveData<>();
     }
 
+    public void updateOrganizzazioni() {
+        mutableLiveDataOrganizzazioni.postValue(Arrays.asList(
+                new Organizzazione().setId(1).setName("UNIPD1").setType("Both").setAddress("Via trieste 1"),
+                new Organizzazione().setId(2).setName("UNIPD2").setType("Both").setAddress("Via trieste 1"),
+                new Organizzazione().setId(3).setName("UNIPD3").setType("private").setAddress("Via trieste 1"),
+                new Organizzazione().setId(4).setName("UNIPD4").setType("public").setAddress("Via trieste 1"),
+                new Organizzazione().setId(5).setName("UNIPD5").setType("Both").setAddress("Via trieste 1"),
+                new Organizzazione().setId(6).setName("UNIPD6").setType("Both").setAddress("Via trieste 1")
+        ));
+//        final Request request = new Request.Builder()
+//                .url(serverUrl)
+//                .build();
+//        Call call = httpClient.newCall(request);
+//        call.enqueue(new Callback() {
+//            @Override
+//            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+//            }
+//            @Override
+//            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+//                ResponseOrganizzazione responseOrganizzazione = gson.fromJson(response.body().string(), ResponseOrganizzazione.class);
+//                mutableLiveDataOrganizzazioni.setValue(responseOrganizzazione.getOrganizations());
+//            }
+//        });
+
+    }
 
     @Override
-    public LiveData<List<Organizzazione>> getOrganizzazioni() {
-        //TODO togliere hardcoded-mock e decommentare codice per chiamata alle REST API
-        this.mutableLiveDataOrganizzazioni.setValue(Arrays.asList(
-                new Organizzazione().setId(1),
-                new Organizzazione().setId(2),
-                new Organizzazione().setId(3),
-                new Organizzazione().setId(4),
-                new Organizzazione().setId(5)
-        ));
-
-        /*final Request request = new Request.Builder()
-                .url(serverUrl)
-                .build();
-        Call call = httpClient.newCall(request);
-
-        call.enqueue(new Callback() {
-
-            Message msg = new Message();
-            Bundle b = new Bundle();
-
-            @Override
-            public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                b.putInt("CODE", 0);
-                b.putString("ErrorMsg", e.getMessage());
-                msg.setData(b);
-                //error_handler.sendMessage(msg);
-                Log.d(TAG, "onFailure: " + e.toString());
-
-            }
-
-            @Override
-            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                try {
-                    int req_code = Integer.parseInt(Objects.requireNonNull(response.header("req_code")));
-                    b.putInt("REQ_CODE", req_code);
-                    ResponseOrganizzazione responseOrganizzazione = gson.fromJson(response.body().string(),ResponseOrganizzazione.class);
-                    mutableLiveDataOrganizzazioni.setValue(responseOrganizzazione.getOrganizations());
-                } catch (NullPointerException e) {
-                    b.putInt("CODE", FAIL_RESPONSE_CODE);
-                } finally {
-                    msg.setData(b);
-                   // handler.sendMessage(msg);
-                }
-            }
-        });
-        */
+    public MutableLiveData<List<Organizzazione>> getOrganizzazioni() {
         return this.mutableLiveDataOrganizzazioni;
-
     }
 
 
