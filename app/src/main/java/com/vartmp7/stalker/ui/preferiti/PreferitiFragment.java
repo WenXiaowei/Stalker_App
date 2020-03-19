@@ -1,10 +1,12 @@
 package com.vartmp7.stalker.ui.preferiti;
 
+import android.opengl.Visibility;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -36,12 +38,14 @@ public class PreferitiFragment extends Fragment {
     private PreferitiViewModel favViewModel;
     private PreferitiViewAdapter favViewAdapter;
     private RecyclerView favRecyclerView;
+    private ProgressBar favPbLoading;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_preferiti, container, false);
 
-        favRecyclerView = (RecyclerView) root.findViewById(R.id.preferitiRecyclerView);
+        this.favRecyclerView = (RecyclerView) root.findViewById(R.id.preferitiRecyclerView);
+        this.favPbLoading = (ProgressBar) root.findViewById(R.id.pb_loadingPreferiti);
         /*favViewModel =
                 ViewModelProviders.of(this).get(PreferitiViewModel.class);*/
          //TODO le seguenti righe vanno riviste
@@ -57,7 +61,7 @@ public class PreferitiFragment extends Fragment {
 
 
 
-
+        showProgressBar();
         favViewModel.init();
         favViewModel.getOrganizzazioni().observe(getViewLifecycleOwner(), new Observer<List<Organizzazione>>() {
             @Override
@@ -66,6 +70,7 @@ public class PreferitiFragment extends Fragment {
                 favViewAdapter.setOrganizzazioni(organizzazioni);
                 organizzazioni.forEach(o->Log.d(TAG,"o:"+o.getId()));
                 favViewAdapter.notifyDataSetChanged();
+                hideProgressBar();
             }
         });
 
@@ -82,4 +87,13 @@ public class PreferitiFragment extends Fragment {
         favRecyclerView.setLayoutManager(linearLayoutManager);
         favRecyclerView.setAdapter(favViewAdapter);
     }
+
+    private void showProgressBar(){
+        favPbLoading.setVisibility(View.VISIBLE);
+    }
+    private void hideProgressBar(){
+        favPbLoading.setVisibility(View.GONE);
+    }
+
+
 }
