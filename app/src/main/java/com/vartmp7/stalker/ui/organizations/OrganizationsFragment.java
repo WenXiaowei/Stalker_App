@@ -1,5 +1,6 @@
 package com.vartmp7.stalker.ui.organizations;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,59 +9,52 @@ import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
-import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.vartmp7.stalker.MainActivity;
 import com.vartmp7.stalker.R;
 import com.vartmp7.stalker.Tools;
 import com.vartmp7.stalker.gsonbeans.Organizzazione;
 import com.vartmp7.stalker.model.RESTOrganizationsRepository;
 
-import java.util.ArrayList;
-import java.util.List;
 
-
-public class OrganizationsFragment extends Fragment {
+public class OrganizationsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
     public static final String TAG = "com.vartmp7.stalker.ui.organizations.OrganizationsFragment";
 
-    private OrganizationsViewModel dashboardViewModel;
+    private OrganizationsViewModel organizzazioneViewModel;
     private RecyclerView recyclerView;
     private OrganizationViewAdapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
-    private Button btnAggiorna;
-    ArrayList<Organizzazione> list;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
         View root = inflater.inflate(R.layout.fragment_organizations, container, false);
+        swipeRefreshLayout = root.findViewById(R.id.srfl);
+        swipeRefreshLayout.setOnRefreshListener(this);
+        swipeRefreshLayout.setColorSchemeColors(Color.BLACK,
+                Color.GREEN, Color.MAGENTA);
 
-        btnAggiorna = root.findViewById(R.id.btnAggiorna);
 
         recyclerView = root.findViewById(R.id.rvListaOrganizzazioni);
-        btnAggiorna.setOnClickListener(v -> {
-            dashboardViewModel.updateData();
-            mAdapter.notifyDataSetChanged();
-//            dashboardViewModel.aggiungiOrganizzazione(new Organizzazione().setId(1).setName("UNIPD").setType("Both").setAddress("via Trieste "));
-            recyclerView.smoothScrollToPosition(dashboardViewModel.getOrganizationList().getValue().size()-1);
-        });
+//        btnAggiorna.setOnClickListener(v -> {
+//            organizzazioneViewModel.aggiungiOrganizzazione(new Organizzazione().setId(1).setName("UNIPD").setType("Both").setAddress("via Trieste "));
+//            mAdapter.notifyDataSetChanged();
+//        });
 
-         dashboardViewModel = new ViewModelProvider(getActivity()).get(OrganizationsViewModel.class);
+        organizzazioneViewModel = new ViewModelProvider(getActivity()).get(OrganizationsViewModel.class);
 
-        dashboardViewModel.initData(new RESTOrganizationsRepository(Tools.getUnsafeOkHttpClient(), ""));
-        init_data();
+        organizzazioneViewModel.initData(new RESTOrganizationsRepository(Tools.getUnsafeOkHttpClient(), "http://asdiad:5000"));
+
         setUpRecyclerView();
-        dashboardViewModel.getOrganizationList().observe(getActivity(), list -> mAdapter.notifyDataSetChanged());
-
-
+        organizzazioneViewModel.getOrganizationList().observe(getActivity(), list -> {
+            mAdapter.notifyDataSetChanged();
+            swipeRefreshLayout.setRefreshing(false);
+        });
 
 
         return root;
@@ -68,20 +62,17 @@ public class OrganizationsFragment extends Fragment {
 
     private void setUpRecyclerView() {
         mAdapter = new OrganizationViewAdapter(getContext(), Navigation.findNavController(getActivity(),
-                R.id.nav_host_fragment), dashboardViewModel.getOrganizationList().getValue());
+                R.id.nav_host_fragment), organizzazioneViewModel.getOrganizationList().getValue());
         layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(mAdapter);
-
     }
 
-    private void init_data() {
-        list = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            Organizzazione organizzazione = new Organizzazione().setId(i).setName("UNIPD" + i).setType("Both").setAddress("via Trieste " + i);
-            list.add(organizzazione);
-        }
-    }
 
+    @Override
+    public void onRefresh() {
+        swipeRefreshLayout.setRefreshing(true);
+        organizzazioneViewModel.updateData();
+    }
 
 }

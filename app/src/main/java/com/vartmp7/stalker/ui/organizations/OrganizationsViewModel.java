@@ -1,5 +1,6 @@
 package com.vartmp7.stalker.ui.organizations;
 
+import android.os.AsyncTask;
 import android.util.Log;
 import android.view.LayoutInflater;
 
@@ -46,14 +47,11 @@ public class OrganizationsViewModel extends ViewModel {
     }
 
     public void aggiungiOrganizzazione(final Organizzazione org) {
-        List<Organizzazione> l =  organizationList.getValue();
+        List<Organizzazione> l = organizationList.getValue();
         if (l==null)
-            Log.d(TAG, "aggiungiOrganizzazione: Lista = null");
-        else
-            Log.d(TAG, "aggiungiOrganizzazione: Lista != null");
-
+            l= new ArrayList<>();
         l.add(org);
-        organizationList.postValue(l);
+        organizationList.setValue(l);
     }
 
 }

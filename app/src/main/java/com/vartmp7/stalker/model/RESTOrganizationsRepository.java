@@ -207,18 +207,29 @@ package com.vartmp7.stalker.model;
 
 import android.annotation.SuppressLint;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.gson.Gson;
 import com.vartmp7.stalker.gsonbeans.Organizzazione;
+import com.vartmp7.stalker.gsonbeans.ResponseOrganizzazione;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
+import okhttp3.Call;
+import okhttp3.Callback;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class RESTOrganizationsRepository implements OrganizationsRepository {
     private static final String TAG = "com.vartmp7.stalker.model.RESTOrganizationsRepository";
@@ -230,7 +241,8 @@ public class RESTOrganizationsRepository implements OrganizationsRepository {
 
 
     public RESTOrganizationsRepository(OkHttpClient httpClient, String serverUrl) {
-        this.httpClient=httpClient;
+        this.httpClient = httpClient;
+        this.serverUrl = serverUrl;
         this.mutableLiveDataOrganizzazioni = new MutableLiveData<List<Organizzazione>>();
     }
 
@@ -240,12 +252,12 @@ public class RESTOrganizationsRepository implements OrganizationsRepository {
 //        updateOrganizzazioni();
 
         ArrayList<Organizzazione> l = new ArrayList<>();
-        l.add( new Organizzazione().setId(1).setName("UNIPD").setAddress("Via trieste").setType("Both"));
-        l.add( new Organizzazione().setId(2).setName("UNIPD").setAddress("Via trieste").setType("Both"));
-        l.add( new Organizzazione().setId(3).setName("UNIPD").setAddress("Via trieste").setType("Both"));
-        l.add( new Organizzazione().setId(4).setName("UNIPD").setAddress("Via trieste").setType("Both"));
-        l.add( new Organizzazione().setId(5).setName("UNIPD").setAddress("Via trieste").setType("Both"));
-        l.add( new Organizzazione().setId(6).setName("UNIPD").setAddress("Via trieste").setType("Both"));
+        l.add(new Organizzazione().setId(1).setName("UNIPD").setAddress("Via trieste").setType("Both"));
+        l.add(new Organizzazione().setId(2).setName("UNIPD").setAddress("Via trieste").setType("Both"));
+        l.add(new Organizzazione().setId(3).setName("UNIPD").setAddress("Via trieste").setType("Both"));
+        l.add(new Organizzazione().setId(4).setName("UNIPD").setAddress("Via trieste").setType("Both"));
+        l.add(new Organizzazione().setId(5).setName("UNIPD").setAddress("Via trieste").setType("Both"));
+        l.add(new Organizzazione().setId(6).setName("UNIPD").setAddress("Via trieste").setType("Both"));
 
         mutableLiveDataOrganizzazioni.setValue(l);
 
@@ -257,68 +269,43 @@ public class RESTOrganizationsRepository implements OrganizationsRepository {
     @Override
     public void updateOrganizzazioni() {
         //TODO togliere hardcoded-mock e decommentare codice per chiamata alle REST API
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                super.onPostExecute(aVoid);
 
-                mutableLiveDataOrganizzazioni.setValue(Arrays.asList(
-                        new Organizzazione().setId(1),
-                        new Organizzazione().setId(2),
-                        new Organizzazione().setId(3),
-                        new Organizzazione().setId(4),
-                        new Organizzazione().setId(5)
-                ));
-            }
-
-            @Override
-            protected Void doInBackground(Void... voids) {
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                return null;
-            }
-        }.execute();
-
-        /*
         final Request request = new Request.Builder()
                 .url(serverUrl)
                 .build();
         Call call = httpClient.newCall(request);
 
         call.enqueue(new Callback() {
-
-            Message msg = new Message();
-            Bundle b = new Bundle();
-
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                b.putInt("CODE", 0);
-                b.putString("ErrorMsg", e.getMessage());
-                msg.setData(b);
-                //error_handler.sendMessage(msg);
+                //todo gestire quando la richiesta fallisce
                 Log.d(TAG, "onFailure: " + e.toString());
-
+                List<Organizzazione> l = mutableLiveDataOrganizzazioni.getValue();
+                l.add(new Organizzazione().setId(1).setName("PAdova-1").setAddress("Via trieste").setType("Both"));
+                l.add(new Organizzazione().setId(2).setName("PAdova").setAddress("Via trieste").setType("Both"));
+                l.add(new Organizzazione().setId(3).setName("PAdova").setAddress("Via trieste").setType("Both"));
+                l.add(new Organizzazione().setId(4).setName("PAdova").setAddress("Via trieste").setType("Both"));
+                l.add(new Organizzazione().setId(5).setName("PAdova").setAddress("Via trieste").setType("Both"));
+                l.add(new Organizzazione().setId(6).setName("PAdova").setAddress("Via trieste").setType("Both"));
+                mutableLiveDataOrganizzazioni.postValue(l);
             }
 
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                try {
-                    int req_code = Integer.parseInt(Objects.requireNonNull(response.header("req_code")));
-                    b.putInt("REQ_CODE", req_code);
-                    ResponseOrganizzazione responseOrganizzazione = gson.fromJson(response.body().string(),ResponseOrganizzazione.class);
-                    mutableLiveDataOrganizzazioni.setValue(responseOrganizzazione.getOrganizations());
-                } catch (NullPointerException e) {
-                    b.putInt("CODE", FAIL_RESPONSE_CODE);
-                } finally {
-                    msg.setData(b);
-                   // handler.sendMessage(msg);
-                }
+                // todo non funziona perché array list non lo prende da mutableLiveData
+
+                List<Organizzazione> list = mutableLiveDataOrganizzazioni.getValue();
+                if (list == null)
+                    list = new ArrayList<>();
+                ResponseOrganizzazione responseOrganizzazione = gson.fromJson(response.body().string(), ResponseOrganizzazione.class);
+                // aggiungere nella nuova lista
+                list.addAll(responseOrganizzazione.getOrganizations());
+                list = list.stream().distinct().collect(Collectors.toList());
+                mutableLiveDataOrganizzazioni.postValue(list);
+
             }
         });
-        */
+
     }
 
 
