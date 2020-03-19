@@ -1,16 +1,17 @@
 package com.vartmp7.stalker;
 
+import com.vartmp7.stalker.gsonbeans.GsonBeansTestSuite;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+import org.junit.runners.Suite;
 
 import static junit.framework.TestCase.assertEquals;
 
-@RunWith(JUnit4.class)
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+        GsonBeansTestSuite.class
+})
 public class ExampleTest {
-
-    @Test
-    public void testCalculator(){
-        assertEquals(3+3,6);
-    }
 }
