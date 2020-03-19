@@ -213,40 +213,49 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.google.gson.Gson;
 import com.vartmp7.stalker.gsonbeans.Organizzazione;
-import com.vartmp7.stalker.gsonbeans.ResponseOrganizzazione;
 
-import org.jetbrains.annotations.NotNull;
-
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.ListIterator;
 
-import okhttp3.Call;
-import okhttp3.Callback;
 import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 
 public class RESTOrganizationsRepository implements OrganizationsRepository {
     private static final String TAG = "com.vartmp7.stalker.model.RESTOrganizationsRepository";
-    private String serverUrl="";
+    private String serverUrl;
     private OkHttpClient httpClient;
     private Gson gson = new Gson();
 
     private MutableLiveData<List<Organizzazione>> mutableLiveDataOrganizzazioni;
 
 
-
     public RESTOrganizationsRepository(OkHttpClient httpClient, String serverUrl) {
-        this.httpClient = httpClient;
-        this.mutableLiveDataOrganizzazioni = new MutableLiveData<>();
+        this.httpClient=httpClient;
+        this.mutableLiveDataOrganizzazioni = new MutableLiveData<List<Organizzazione>>();
     }
 
 
+    @Override
+    public MutableLiveData<List<Organizzazione>> getOrganizzazioni() {
+//        updateOrganizzazioni();
+
+        ArrayList<Organizzazione> l = new ArrayList<>();
+        l.add( new Organizzazione().setId(1).setName("UNIPD").setAddress("Via trieste").setType("Both"));
+        l.add( new Organizzazione().setId(2).setName("UNIPD").setAddress("Via trieste").setType("Both"));
+        l.add( new Organizzazione().setId(3).setName("UNIPD").setAddress("Via trieste").setType("Both"));
+        l.add( new Organizzazione().setId(4).setName("UNIPD").setAddress("Via trieste").setType("Both"));
+        l.add( new Organizzazione().setId(5).setName("UNIPD").setAddress("Via trieste").setType("Both"));
+        l.add( new Organizzazione().setId(6).setName("UNIPD").setAddress("Via trieste").setType("Both"));
+
+        mutableLiveDataOrganizzazioni.setValue(l);
+
+        return this.mutableLiveDataOrganizzazioni;
+
+    }
+
     @SuppressLint("StaticFieldLeak")
     @Override
-    public LiveData<List<Organizzazione>> getOrganizzazioni() {
+    public void updateOrganizzazioni() {
         //TODO togliere hardcoded-mock e decommentare codice per chiamata alle REST API
         new AsyncTask<Void, Void, Void>() {
             @Override
@@ -272,14 +281,43 @@ public class RESTOrganizationsRepository implements OrganizationsRepository {
             }
         }.execute();
 
-        /*final Request request = new Request.Builder()
+        /*
+        final Request request = new Request.Builder()
                 .url(serverUrl)
                 .build();
         Call call = httpClient.newCall(request);
 
-    @Override
-    public MutableLiveData<List<Organizzazione>> getOrganizzazioni() {
-        return this.mutableLiveDataOrganizzazioni;
+        call.enqueue(new Callback() {
+
+            Message msg = new Message();
+            Bundle b = new Bundle();
+
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                b.putInt("CODE", 0);
+                b.putString("ErrorMsg", e.getMessage());
+                msg.setData(b);
+                //error_handler.sendMessage(msg);
+                Log.d(TAG, "onFailure: " + e.toString());
+
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                try {
+                    int req_code = Integer.parseInt(Objects.requireNonNull(response.header("req_code")));
+                    b.putInt("REQ_CODE", req_code);
+                    ResponseOrganizzazione responseOrganizzazione = gson.fromJson(response.body().string(),ResponseOrganizzazione.class);
+                    mutableLiveDataOrganizzazioni.setValue(responseOrganizzazione.getOrganizations());
+                } catch (NullPointerException e) {
+                    b.putInt("CODE", FAIL_RESPONSE_CODE);
+                } finally {
+                    msg.setData(b);
+                   // handler.sendMessage(msg);
+                }
+            }
+        });
+        */
     }
 
 

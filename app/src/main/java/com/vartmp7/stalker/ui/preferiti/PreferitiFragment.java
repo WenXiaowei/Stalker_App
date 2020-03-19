@@ -43,7 +43,7 @@ public class PreferitiFragment extends Fragment {
 
         favRecyclerView = (RecyclerView) root.findViewById(R.id.preferitiRecyclerView);
         /*favViewModel =
-                ViewModelProviders.of(this).get(PreferitiViewModel.class);*/
+                  new ViewModelProvider(getActivity()).get(PreferitiViewModel.class);*/
          //TODO le seguenti righe vanno riviste
         OkHttpClient httpClient= new OkHttpClient();
         String serverUrl="";

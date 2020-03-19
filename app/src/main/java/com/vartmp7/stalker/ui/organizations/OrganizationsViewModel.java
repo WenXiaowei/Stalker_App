@@ -1,5 +1,6 @@
 package com.vartmp7.stalker.ui.organizations;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 
 import androidx.lifecycle.LiveData;
@@ -19,28 +20,37 @@ import javax.annotation.Nullable;
  * @author Xiaowei Wen, Lorenzo Taschin
  */
 public class OrganizationsViewModel extends ViewModel {
-    public static final String TAG ="com.vartmp7.stalker.ui.organizations.OrganizationsViewModel";
+    public static final String TAG = "com.vartmp7.stalker.ui.organizations.OrganizationsViewModel";
 
     private RESTOrganizationsRepository restOrganizationsRepository;
     private MutableLiveData<List<Organizzazione>> organizationList;
 
 
-
-    public void initData(RESTOrganizationsRepository orgRepo){
-        this.restOrganizationsRepository=orgRepo;
+    public void initData(RESTOrganizationsRepository orgRepo) {
+        if (organizationList != null) {
+            return;
+        }
+        this.restOrganizationsRepository = orgRepo;
         organizationList = restOrganizationsRepository.getOrganizzazioni();
+
     }
 
-    public void updateData(){
+    public void updateData() {
         restOrganizationsRepository.updateOrganizzazioni();
     }
 
-    public @Nullable MutableLiveData<List<Organizzazione>> getOrganizationList() {
+    public @Nullable
+    MutableLiveData<List<Organizzazione>> getOrganizationList() {
         return organizationList;
     }
 
-    public void aggiungiOrganizzazione(Organizzazione org){
-        List<Organizzazione> l = organizationList.getValue();
+    public void aggiungiOrganizzazione(final Organizzazione org) {
+        List<Organizzazione> l =  organizationList.getValue();
+        if (l==null)
+            Log.d(TAG, "aggiungiOrganizzazione: Lista = null");
+        else
+            Log.d(TAG, "aggiungiOrganizzazione: Lista != null");
+
         l.add(org);
         organizationList.postValue(l);
     }
