@@ -21,6 +21,7 @@ import com.vartmp7.stalker.model.FirebaseFavoritesRepository;
 import com.vartmp7.stalker.model.OrganizationsRepository;
 import com.vartmp7.stalker.model.RESTOrganizationsRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import okhttp3.OkHttpClient;
@@ -61,8 +62,9 @@ public class PreferitiFragment extends Fragment {
         favViewModel.getOrganizzazioni().observe(getViewLifecycleOwner(), new Observer<List<Organizzazione>>() {
             @Override
             public void onChanged(List<Organizzazione> organizzazioni) {
+                Log.d(TAG,"organizzazioni:");
                 favViewAdapter.setOrganizzazioni(organizzazioni);
-                //organizzazioni.forEach(o->Log.d(TAG,""+o.getId()));
+                organizzazioni.forEach(o->Log.d(TAG,"o:"+o.getId()));
                 favViewAdapter.notifyDataSetChanged();
             }
         });
@@ -74,7 +76,8 @@ public class PreferitiFragment extends Fragment {
     }
 
     private void initRecyclerView(){
-        favViewAdapter = new PreferitiViewAdapter(getContext(), favViewModel.getOrganizzazioni().getValue());
+        if(favViewModel.getOrganizzazioni().getValue()==null) Log.d(TAG,"è null!");
+       favViewAdapter = new PreferitiViewAdapter(getContext(), new ArrayList<Organizzazione>()/*favViewModel.getOrganizzazioni().getValue()*/);
         RecyclerView.LayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         favRecyclerView.setLayoutManager(linearLayoutManager);
         favRecyclerView.setAdapter(favViewAdapter);

@@ -205,6 +205,9 @@
 
 package com.vartmp7.stalker.model;
 
+import android.annotation.SuppressLint;
+import android.os.AsyncTask;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
@@ -232,16 +235,33 @@ public class RESTOrganizationsRepository implements OrganizationsRepository {
     }
 
 
+    @SuppressLint("StaticFieldLeak")
     @Override
     public LiveData<List<Organizzazione>> getOrganizzazioni() {
         //TODO togliere hardcoded-mock e decommentare codice per chiamata alle REST API
-        this.mutableLiveDataOrganizzazioni.setValue(Arrays.asList(
-                new Organizzazione().setId(1),
-                new Organizzazione().setId(2),
-                new Organizzazione().setId(3),
-                new Organizzazione().setId(4),
-                new Organizzazione().setId(5)
-        ));
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                mutableLiveDataOrganizzazioni.setValue(Arrays.asList(
+                        new Organizzazione().setId(1),
+                        new Organizzazione().setId(2),
+                        new Organizzazione().setId(3),
+                        new Organizzazione().setId(4),
+                        new Organizzazione().setId(5)
+                ));
+            }
+
+            @Override
+            protected Void doInBackground(Void... voids) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+        }.execute();
 
         /*final Request request = new Request.Builder()
                 .url(serverUrl)
