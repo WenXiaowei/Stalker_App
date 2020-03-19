@@ -655,6 +655,7 @@ package com.vartmp7.stalker;
 
 import android.content.Intent;
 
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -702,9 +703,17 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "com.vartmp7.stalker.MainActivity";
     private GoogleSignInClient mGoogleSignInClient;
     @Override
+    public Resources.Theme getTheme() {
+        Resources.Theme them = super.getTheme();
+        them.applyStyle(R.style.AppTheme,true);
+        return them;
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
@@ -806,6 +815,8 @@ public class MainActivity extends AppCompatActivity {
         if (!backButton) {
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         }
+        getApplication().setTheme(R.style.AppThemeNoActionBar);
+
         startActivity(intent);
     }
 }

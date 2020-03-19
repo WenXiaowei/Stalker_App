@@ -209,6 +209,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -264,6 +265,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Override
     protected void onStart() {
         super.onStart();
+
+        setTheme(R.style.AppThemeNoActionBar);
         if (mAuth.getCurrentUser() != null || GoogleSignIn.getLastSignedInAccount(this) != null) {
             goToMainActivity();
         }
@@ -271,9 +274,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
 
         signUpButton = (Button) findViewById(R.id.btn_signUp);
         signUpButton.setOnClickListener(this);
@@ -286,7 +289,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         callbackManager = CallbackManager.Factory.create();
 
         loginButton = (LoginButton) findViewById(R.id.login_button);
-        loginButton.setReadPermissions("email");
+        loginButton.setPermissions("email");
 
         // If using in a fragment
 //        loginButton.setFragment(this);
@@ -492,9 +495,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
 
+
     public void goToMainActivity() {
         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        getApplication().setTheme(R.style.AppTheme);
         startActivity(intent);
     }
 
