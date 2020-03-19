@@ -207,6 +207,8 @@ package com.vartmp7.stalker.gsonbeans;
 
 import com.vartmp7.stalker.gsonbeans.placecomponent.Coordinata;
 
+import java.util.Objects;
+
 /**
  * @author Xiaowei Wen, Lorenzo Taschin
  * @version 1.0
@@ -217,6 +219,21 @@ public class LuogoACirconferenza extends AbstractLuogo {
     public static final String TAG ="com.vartmp7.stalker.gsonbeans.LuogoACirconferenza";
     private Coordinata centro;
     private Double raggio;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof LuogoACirconferenza)) return false;
+        LuogoACirconferenza that = (LuogoACirconferenza) o;
+        return getCentro().equals(that.getCentro()) &&
+                getRaggio().equals(that.getRaggio());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getCentro(), getRaggio());
+    }
+
     public LuogoACirconferenza(long id, String name){
         super(id,name);
     }

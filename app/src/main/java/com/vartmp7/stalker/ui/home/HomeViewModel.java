@@ -20,6 +20,7 @@ public class HomeViewModel extends ViewModel {
 
     public void initi(List<Organizzazione> list) {
         listOrganizzazione= new MutableLiveData<>(list);
+    }
     public HomeViewModel(FavoritesRepository favRepo) {
 
         //mText = new MutableLiveData<>();

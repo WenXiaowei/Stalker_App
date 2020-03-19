@@ -207,12 +207,45 @@ package com.vartmp7.stalker.gsonbeans.placecomponent;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.util.Objects;
+
 public class Retta {
     public static final String TAG ="com.vartmp7.stalker.gsonbeans.placecomponent.Retta";
+
+    /**
+     * restituisce il coefficiente angolare della retta
+     * @return
+     */
+    public double getM() {
+        return m;
+    }
+
+    /**
+     * restituisce il termine noto della retta.
+     * @return
+     */
+    public double getQ() {
+        return q;
+    }
 
     private double m;
     private double q;
     private Coordinata a, b;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Retta)) return false;
+        Retta retta = (Retta) o;
+
+        return Double.compare(retta.m, m) == 0 &&
+                Double.compare(retta.q, q) == 0 ;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(m, q, a, b);
+    }
 
     public Retta(Coordinata c1, Coordinata c2) {
         this.m = (c2.getLatitude() - c1.getLatitude()) / (c2.getLongitude() - c1.getLongitude());
@@ -221,22 +254,22 @@ public class Retta {
         b = c2;
     }
 
-    public Retta(float coeffangolare, float q) {
+    public Retta(double coeffangolare, double q) {
         this.m = coeffangolare;
         this.q = q;
     }
 
-    /**
-     * calcola il segno del determinante
-     * @param c la coordinata del punto
-     * @return return un numero >0 se la coordinata c è a destra della retta (a,b)
-     *              un numero = 0 se la coordinata c appartiene alla retta (a,b)
-     *              un numero < 0 se la coordinata c è a sinistra della retta (a,b)
-     */
-
-    public double distanceToCoordinate(Coordinata c){
-        return (b.getLongitude()-c.getLongitude())-(a.getLatitude()-c.getLatitude())/(a.getLatitude()-c.getLatitude());
-    }
+//    /**
+//     * calcola il segno del determinante
+//     * @param c la coordinata del punto
+//     * @return return un numero >0 se la coordinata c è a destra della retta (a,b)
+//     *              un numero = 0 se la coordinata c appartiene alla retta (a,b)
+//     *              un numero < 0 se la coordinata c è a sinistra della retta (a,b)
+//     */
+//
+//    public double distanceToCoordinate(Coordinata c){
+//        return (b.getLongitude()-c.getLongitude())-(a.getLatitude()-c.getLatitude())/(a.getLatitude()-c.getLatitude());
+//    }
     public double calcoloLatitude(double longitude) {
         return this.m * longitude + this.q;
     }
@@ -249,28 +282,8 @@ public class Retta {
         return new Coordinata(calcoloLatitude(x),x);
     }
 
-    @Override
-    public int hashCode() {
-        return super.hashCode();
-    }
 
-    @Override
-    public boolean equals(@Nullable Object obj) {
-        if (obj instanceof Retta) {
-            Retta c = (Retta) obj;
-            return c.m == this.m && c.q == this.q;
-        }
-        return false;
-    }
 
-    @NonNull
-    @Override
-    public String toString() {
-        if (q<=0){
-            return  "y="+m+"x"+q;
-        }
-        return "y="+m+"x+"+q;
-    }
     public static boolean linesIntersect(final double X1, final double Y1, final double X2, final double Y2,
                                          final double X3, final double Y3, final double X4, final double Y4) {
         return ((relativeCCW(X1, Y1, X2, Y2, X3, Y3)

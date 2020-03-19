@@ -3,6 +3,7 @@ package com.vartmp7.stalker.gsonbeans;
 import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * @author Xiaowei Wen, Lorenzo Taschin
@@ -36,12 +37,16 @@ public class ResponseOrganizzazione {
         return organizations.size();
     }
 
-    @NonNull
     @Override
-    public String toString() {
-        StringBuilder builder= new StringBuilder();
-        for (Organizzazione org: organizations)
-            builder.append(org.getName());
-        return builder.toString();
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ResponseOrganizzazione)) return false;
+        ResponseOrganizzazione that = (ResponseOrganizzazione) o;
+        return getOrganizations().equals(that.getOrganizations());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getOrganizations());
     }
 }

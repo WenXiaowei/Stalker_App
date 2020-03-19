@@ -1,5 +1,5 @@
 /*
-
+clean test jacocoTestReport sonarqube
 commando per avviare il container di sonar qube
     docker run -d --name sonarqube -p 9000:9000 sonarqube
  Comando da usare per far andare sonar qube

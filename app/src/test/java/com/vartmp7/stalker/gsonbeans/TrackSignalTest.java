@@ -202,86 +202,72 @@
  *    limitations under the License.
  */
 
-package com.vartmp7.stalker.gsonbeans.placecomponent;
+package com.vartmp7.stalker.gsonbeans;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
-import java.util.Objects;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
-/**
- * @author Xiaowei Wen, Lorenzo Taschin
- */
+@RunWith(JUnit4.class)
+public class TrackSignalTest {
 
-public class Coordinata {
+    private  static final long idOrganization=1;
+    private  static final long idPlace=0;
+    private  static final boolean entered=false;
+    private  static final boolean authenticated=false;
+    private  static final long uid_number=1;
+    private  static final String username="username";
+    private  static final String surname="surname";
+    private  static final String date_time="2020-03-19";
 
-    public static final String TAG ="com.vartmp7.stalker.gsonbeans.placecomponent.Coordinata";
-    private double latitude=0;//y
-    private double longitude=0; //x
+    private static final TrackSignal trackSignal= new TrackSignal()
+            .setIdOrganization(idOrganization)
+            .setEntered(entered)
+            .setIdPlace(idPlace)
+            .setAuthenticated(authenticated)
+            .setUid_number(uid_number)
+            .setUsername(username)
+            .setSurname(surname)
+            .setDate_time(date_time);
 
-    public Coordinata() {
-    }
-    public Coordinata(Coordinata c){
-        latitude=c.getLatitude();
-        longitude=c.getLongitude();
-    }
-
-    public Coordinata(double latitudine, double longitude) {
-        this.latitude = latitudine;
-        this.longitude = longitude;
-    }
-
-    public double getLatitude() {
-        return latitude;
-    }
-
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
-    }
-
-    public double getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(double longoitude) {
-        this.longitude = longoitude;
-    }
-
-    @NonNull
-    @Override
-    public String toString() {
-        return "\nLongitude(x): " + getLongitude() +
-                "\nLatitude(y): " + getLatitude();
+    private TrackSignal signal ;
+    private TrackSignal signal2 ;
+    @Before
+    public void setUP(){
+        signal = new TrackSignal(entered, authenticated,uid_number,username, surname,date_time);
+        signal2= new TrackSignal()
+                .setIdOrganization(idOrganization)
+                .setEntered(entered)
+                .setIdPlace(idPlace)
+                .setAuthenticated(authenticated)
+                .setUid_number(uid_number)
+                .setUsername(username)
+                .setSurname(surname)
+                .setDate_time(date_time);
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Coordinata)) return false;
-        Coordinata that = (Coordinata) o;
-        return Double.compare(that.getLatitude(), getLatitude()) == 0 &&
-                Double.compare(that.getLongitude(), getLongitude()) == 0;
+    @Test
+    public void testEquals(){
+        assertEquals(signal2.hashCode(), trackSignal.hashCode());
+        assertEquals(signal2, trackSignal);
+        TrackSignal s = new TrackSignal(entered, authenticated,uid_number,username, surname,date_time);
+        assertNotNull(s.getUrlToPost());
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(getLatitude(), getLongitude());
+
+    @Test
+    public void testGetterSetter(){
+        assertEquals(signal2.getIdOrganization(), trackSignal.getIdOrganization());
+        assertEquals(signal2.isEntered(), trackSignal.isEntered());
+        assertEquals(signal2.getIdPlace(), trackSignal.getIdPlace());
+        assertEquals(signal2.isAuthenticated(), trackSignal.isAuthenticated());
+        assertEquals(signal2.getUid_number(), trackSignal.getUid_number());
+        assertEquals(signal2.getUsername(), trackSignal.getUsername());
+        assertEquals(signal2.getSurname(), trackSignal.getSurname());
+        assertEquals(signal2.getDate_time(), trackSignal.getDate_time());
     }
-
-    private double rad(double x){
-        return x*Math.PI/180;
-    }
-
-    public double getDistanceTo(final Coordinata c){
-
-        long R = 6378137; // Earth’s mean radius in meter
-        double dLat = rad(c.getLatitude() - getLatitude());
-        double dLong = rad(c.getLongitude() - getLongitude());
-        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                Math.cos(rad(getLatitude())) * Math.cos(rad(c.getLatitude())) *
-                        Math.sin(dLong / 2) * Math.sin(dLong / 2);
-        double c1 = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        double d = R * c1;
-        return d; // returns the distance in meter
-    };
 }
