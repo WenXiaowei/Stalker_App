@@ -284,7 +284,6 @@ public class FirebaseFavoritesRepository implements FavoritesRepository {
                 .addOnSuccessListener(documentSnapshot -> {
                     Map<String, Object> data = documentSnapshot.getData();
                     try {
-
                         if (data != null) {
                             final List<Long> orgIds = (List<Long>) data.get(FIELDNAME_ORGANIZZAZIONI);
                             Log.w(TAG, "data got from firebase:");
@@ -356,90 +355,11 @@ public class FirebaseFavoritesRepository implements FavoritesRepository {
  */
     }
 
-    /*
-    @Override
-    public LiveData<List<Organizzazione>> getOrganizzazioni() {
-        return this.mutableLiveDataOrganizzazioni;
-    }
-    */
     @Override
     public LiveData<List<Organizzazione>> getOrganizzazioni() {
         return this.mediatorLiveDataOrganizzazioni;
     }
 
-
-
-
-
-
-    /*public void updateOrganizzazioni() {
-        //chiamata a firebase
-
-        db.collection("utenti").document(userId)
-                .get().addOnSuccessListener(documentSnapshot -> {
-            Map<String, Object> data = documentSnapshot.getData();
-            try {
-
-                if (data != null) {
-                    final List<Long> organizzazioni = (List<Long>) data.get(FIELDNAME_ORGANIZZAZIONI);
-                    Log.w(TAG,"data got from firebase "+ organizzazioni.toString());
-                    Log.w(TAG, "organizzazioni ottenute correttamente");
-                    this.mutableLiveDataOrganizzazioni.postValue(
-                            organizationsRepo.getOrganizzazioni().getValue()
-                            .stream()
-                            .filter(o -> {
-                                //return true;
-                                boolean contained = false;
-                                for (Long orgId : organizzazioni) {
-                                    if (orgId == o.getId()) {
-                                        contained = true;
-                                        break;
-                                    }
-                                }
-                                Log.d(TAG, "Filtering organization getOrganizzazioni: "+ contained);
-                                return contained;
-                            })
-                            .collect(Collectors.toList()));
-                    Log.d(TAG, "getOrganizzazioni: organization "+this.mutableLiveDataOrganizzazioni.getValue().size());
-                    this.mutableLiveDataOrganizzazioni.getValue().forEach(o -> Log.w(TAG, "Logged prin" + o.getId()));
-
-                } else {
-                    Log.w(TAG, "errore avvenuto nell'ottenimento delle organizzazioni: documento non esistente");
-                    this.mutableLiveDataOrganizzazioni = new MutableLiveData<>(new ArrayList<>());
-                }
-            } catch (ClassCastException e) {
-                Log.e(TAG, e.getMessage());
-            }
-        }).addOnFailureListener(e -> Log.w(TAG, "errore avvenuto nell'ottenimento delle organizzazioni", e));
-        Log.d(TAG, "getOrganizzazioni: before return mutableLiveDataOrganizzazioni.getValue().size()= " + this.mutableLiveDataOrganizzazioni.getValue().size());
-    }*/
-
-
-
-
-
-    public void addStupidText(String stupidTextkey, String stupidTextValue) {
-        // Create a new user with a first, middle, and last name
-        Map<String, Object> stupidText = new HashMap<>();
-        stupidText.put(stupidTextkey, stupidTextValue);
-
-
-        // Add a new document with a generated ID
-        db.collection("stupidTexts")
-                .add(stupidText)
-                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                    @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error adding document", e);
-                    }
-                });
-    }
 
 
 }
