@@ -213,25 +213,34 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.google.gson.Gson;
 import com.vartmp7.stalker.gsonbeans.Organizzazione;
+import com.vartmp7.stalker.gsonbeans.ResponseOrganizzazione;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.ListIterator;
 
+import okhttp3.Call;
+import okhttp3.Callback;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class RESTOrganizationsRepository implements OrganizationsRepository {
     private static final String TAG = "com.vartmp7.stalker.model.RESTOrganizationsRepository";
-    private String serverUrl;
+    private String serverUrl="";
     private OkHttpClient httpClient;
-    //private int FAIL_RESPONSE_CODE;
     private Gson gson = new Gson();
 
     private MutableLiveData<List<Organizzazione>> mutableLiveDataOrganizzazioni;
-    
+
+
 
     public RESTOrganizationsRepository(OkHttpClient httpClient, String serverUrl) {
-        this.httpClient=httpClient;
-        this.mutableLiveDataOrganizzazioni = new MutableLiveData<List<Organizzazione>>();
+        this.httpClient = httpClient;
+        this.mutableLiveDataOrganizzazioni = new MutableLiveData<>();
     }
 
 
@@ -268,39 +277,9 @@ public class RESTOrganizationsRepository implements OrganizationsRepository {
                 .build();
         Call call = httpClient.newCall(request);
 
-        call.enqueue(new Callback() {
-
-            Message msg = new Message();
-            Bundle b = new Bundle();
-
-            @Override
-            public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                b.putInt("CODE", 0);
-                b.putString("ErrorMsg", e.getMessage());
-                msg.setData(b);
-                //error_handler.sendMessage(msg);
-                Log.d(TAG, "onFailure: " + e.toString());
-
-            }
-
-            @Override
-            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                try {
-                    int req_code = Integer.parseInt(Objects.requireNonNull(response.header("req_code")));
-                    b.putInt("REQ_CODE", req_code);
-                    ResponseOrganizzazione responseOrganizzazione = gson.fromJson(response.body().string(),ResponseOrganizzazione.class);
-                    mutableLiveDataOrganizzazioni.setValue(responseOrganizzazione.getOrganizations());
-                } catch (NullPointerException e) {
-                    b.putInt("CODE", FAIL_RESPONSE_CODE);
-                } finally {
-                    msg.setData(b);
-                   // handler.sendMessage(msg);
-                }
-            }
-        });
-        */
+    @Override
+    public MutableLiveData<List<Organizzazione>> getOrganizzazioni() {
         return this.mutableLiveDataOrganizzazioni;
-
     }
 
 

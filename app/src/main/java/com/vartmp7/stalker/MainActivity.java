@@ -700,7 +700,6 @@ import okhttp3.OkHttpClient;
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "com.vartmp7.stalker.MainActivity";
     private GoogleSignInClient mGoogleSignInClient;
-    public  static MainActivity activity;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -717,22 +716,20 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(navView, navController);
 
 
-        activity= MainActivity.this;
-
-        //TODO togliere le seguenti  righe che sono solo un test
-        OkHttpClient httpClient= new OkHttpClient();
-        String serverUrl="";
-        OrganizationsRepository orgRepo = new RESTOrganizationsRepository(httpClient,serverUrl);
-        FavoritesRepository preferitiRepository = new FirebaseFavoritesRepository("1",orgRepo,FirebaseFirestore.getInstance());
-        //((FirebaseFavoritesRepository)preferitiRepository).initUserStorage("1");
-        preferitiRepository.addOrganizzazione(new Organizzazione().setId(2));
-         preferitiRepository.getOrganizzazioni().observe(this, new Observer<List<Organizzazione>>() {
-            @Override
-            public void onChanged(List<Organizzazione> organizzaziones) {
-                Log.d(TAG, "Main activity onChanged: organizzazioni.size() = "+organizzaziones.size());
-                organizzaziones.forEach(o->Log.d(TAG,""+o.getId()));
-            }
-        });
+//        //TODO togliere le seguenti  righe che sono solo un test
+//        OkHttpClient httpClient= new OkHttpClient();
+//        String serverUrl="";
+//        OrganizationsRepository orgRepo = new RESTOrganizationsRepository(httpClient,serverUrl);
+//        FavoritesRepository preferitiRepository = new FirebaseFavoritesRepository("1",orgRepo,FirebaseFirestore.getInstance());
+//        //((FirebaseFavoritesRepository)preferitiRepository).initUserStorage("1");
+//        preferitiRepository.addOrganizzazione(new Organizzazione().setId(2));
+//         preferitiRepository.getOrganizzazioni().observe(this, new Observer<List<Organizzazione>>() {
+//            @Override
+//            public void onChanged(List<Organizzazione> organizzaziones) {
+//                Log.d(TAG, "Main activity onChanged: organizzazioni.size() = "+organizzaziones.size());
+//                organizzaziones.forEach(o->Log.d(TAG,""+o.getId()));
+//            }
+//        });
 //        final Observer<List<Organizzazione>> observer = new Observer<List<Organizzazione>>() {
 //
 //            @Override

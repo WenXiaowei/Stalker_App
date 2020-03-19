@@ -214,6 +214,7 @@ import java.util.List;
 public interface OrganizationsRepository {
 
     LiveData<List<Organizzazione>> getOrganizzazioni();
+    void updateOrganizzazioni();
 
     /*
     metodi più specifici, se in futuro si rendessero disponibili delle API più specifiche.

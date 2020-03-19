@@ -12,6 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.LiveData;
 import androidx.navigation.NavController;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -25,7 +26,7 @@ import java.util.List;
  */
 public class OrganizationViewAdapter extends RecyclerView.Adapter<OrganizationViewAdapter.ViewHolder> {
     public static final String TAG ="com.vartmp7.stalker.ui.organizations.OrganizationAdapter";
-    private List<Organizzazione> listaOrganizzazione;
+    private  List<Organizzazione> listaOrganizzazione;
     private Context context;
     private static int currentPosition = -1;
     private NavController navController;
