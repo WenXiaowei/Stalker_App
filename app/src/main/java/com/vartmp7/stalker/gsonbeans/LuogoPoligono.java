@@ -220,6 +220,13 @@ public class LuogoPoligono extends  AbstractLuogo{
 
     private List<Coordinata> coordinates;
 
+    @Override
+    public String toString() {
+        return "LuogoPoligono{" +
+                "coordinates=" + coordinates +
+                '}';
+    }
+
     public LuogoPoligono(){
         super(0,null);
     }
@@ -241,20 +248,7 @@ public class LuogoPoligono extends  AbstractLuogo{
         this.coordinates = coordinate;
         return this;
     }
-    @NonNull
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
 
-        for (Coordinata c : getCoordinate()) {
-            builder.append(c.toString());
-        }
-
-        return "\nid: " + getId() +
-                "\nNome: " + getName() +
-                "\nNum. Max Persone " + getNum_max_people() +
-                "\nCoordinate: " + builder.toString();
-    }
 
     /**
      * todo implementare l'algoritmo di ray casting

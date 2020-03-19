@@ -7,7 +7,10 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
         LuogoPoligonoTest.class,
-        RettaTest.class,CoordinataTest.class})
+        RettaTest.class,
+        LuogoACirconferenzaTest.class,
+        OrganizzazioneTest.class,
+        CoordinataTest.class})
 @Categories.ExcludeCategory
 public class GsonBeansTestSuite {
 }

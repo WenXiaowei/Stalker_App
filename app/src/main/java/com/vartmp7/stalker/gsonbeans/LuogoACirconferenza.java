@@ -228,6 +228,8 @@ public class LuogoACirconferenza extends AbstractLuogo {
 
     LuogoACirconferenza(long id, String name, Coordinata centro, double raggio, long num_max_people) {
         super(id, name, num_max_people);
+        this.centro = centro;
+        this.raggio = raggio;
     }
 
     @Override
