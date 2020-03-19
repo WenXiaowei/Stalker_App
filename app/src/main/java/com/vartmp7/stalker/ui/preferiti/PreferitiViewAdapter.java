@@ -205,33 +205,73 @@
 
 package com.vartmp7.stalker.ui.preferiti;
 
+import android.content.Context;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.vartmp7.stalker.R;
+import com.vartmp7.stalker.gsonbeans.Organizzazione;
+
+import java.util.List;
+
 public class PreferitiViewAdapter extends RecyclerView.Adapter<PreferitiViewAdapter.ViewHolder> {
+    private static final String TAG = "com.vartmp7.stalker.ui.preferiti.PreferitiViewAdapter";
+    private List<Organizzazione> organizzazioni;
+    //private Context context;
+
+    public void setOrganizzazioni(List<Organizzazione> organizzazioni) {
+        this.organizzazioni = organizzazioni;
+    }
+
+    public PreferitiViewAdapter(Context context, List<Organizzazione> organizzazioni) {
+        //this.context=context;
+        this.organizzazioni=organizzazioni;
+    }
+
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return null;
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_listitem, parent, false);
+        ViewHolder vh = new ViewHolder(view);
+        return vh;
+
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        // Set the name of the 'NicePlace'
+        Log.d(TAG,"org:"+organizzazioni.get(position).getId());
+        ((ViewHolder)holder).tvInfoOrganizzazione.setText(organizzazioni.get(position).getId()+" "+organizzazioni.get(position).getAddress());
+
+        // Set the image
+        /*RequestOptions defaultOptions = new RequestOptions()
+                .error(R.drawable.ic_launcher_background);
+        Glide.with(mContext)
+                .setDefaultRequestOptions(defaultOptions)
+                .load(mNicePlaces.get(i).getImageUrl())
+                .into(((ViewHolder)viewHolder).mImage);
+        */
 
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        return organizzazioni.size();
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder{
+        TextView tvInfoOrganizzazione;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
+            tvInfoOrganizzazione = (TextView) itemView.findViewById(R.id.tv_organizationListItem);
+
         }
     }
 }

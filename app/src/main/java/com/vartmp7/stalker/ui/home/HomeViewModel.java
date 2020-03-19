@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel;
 import com.vartmp7.stalker.gsonbeans.Organizzazione;
 import com.vartmp7.stalker.model.FavoritesRepository;
 import com.vartmp7.stalker.model.FirebaseFavoritesRepository;
+import com.vartmp7.stalker.model.OrganizationsRepository;
 
 import java.util.List;
 
@@ -19,8 +20,10 @@ public class HomeViewModel extends ViewModel {
     private MutableLiveData<List<Organizzazione>> listOrganizzazione;
 
     public void initi(List<Organizzazione> list) {
-        listOrganizzazione= new MutableLiveData<>(list);
-    public HomeViewModel(FavoritesRepository favRepo) {
+        listOrganizzazione = new MutableLiveData<>(list);
+    }
+
+    public HomeViewModel() {
 
         //mText = new MutableLiveData<>();
         //mText.setValue("This is home fragment");
