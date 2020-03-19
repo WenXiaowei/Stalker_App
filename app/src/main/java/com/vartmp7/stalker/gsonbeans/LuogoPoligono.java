@@ -204,18 +204,15 @@
 
 package com.vartmp7.stalker.gsonbeans;
 
-import androidx.annotation.NonNull;
-
 import com.vartmp7.stalker.gsonbeans.placecomponent.Coordinata;
 import com.vartmp7.stalker.gsonbeans.placecomponent.RayCasting;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
  * @author Xiaowei Wen, Lorenzo Taschin
  */
-public class LuogoPoligono extends  AbstractLuogo{
+public class LuogoPoligono extends  AbstractLuogo {
     public static final String TAG ="com.vartmp7.stalker.gsonbeans.LuogoPoligono";
 
     private List<Coordinata> coordinates;

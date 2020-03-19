@@ -202,86 +202,61 @@
  *    limitations under the License.
  */
 
-package com.vartmp7.stalker.gsonbeans.placecomponent;
+package com.vartmp7.stalker.gsonbeans;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import android.widget.ArrayAdapter;
 
-import java.util.Objects;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
-/**
- * @author Xiaowei Wen, Lorenzo Taschin
- */
+import java.util.ArrayList;
 
-public class Coordinata {
+import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertNotSame;
 
-    public static final String TAG ="com.vartmp7.stalker.gsonbeans.placecomponent.Coordinata";
-    private double latitude=0;//y
-    private double longitude=0; //x
+@RunWith(JUnit4.class)
+public class ResponseOrganizzazioneTest {
 
-    public Coordinata() {
-    }
-    public Coordinata(Coordinata c){
-        latitude=c.getLatitude();
-        longitude=c.getLongitude();
-    }
+    private ResponseOrganizzazione response;
+    ArrayList<Organizzazione> l;
 
-    public Coordinata(double latitudine, double longitude) {
-        this.latitude = latitudine;
-        this.longitude = longitude;
-    }
+    @Before
+    public void setUp(){
+        response = new ResponseOrganizzazione();
+         l = new ArrayList<>();
+        l.add(new Organizzazione().setName("UNIPD"));
 
-    public double getLatitude() {
-        return latitude;
+        response.setOrganizations(l);
     }
 
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
+    @Test
+    public void testResponse(){
+        assertEquals(l,l);
+        assertEquals(l.hashCode(),l.hashCode());
+        assertEquals(l, response.getOrganizations());
+
+        ResponseOrganizzazione re = new ResponseOrganizzazione();
+        re.setOrganizations(l);
+
+        assertEquals(response, re);
+
+
+        assertEquals(response.hashCode(), response.hashCode());
+
+
+        assertEquals(response.getOrganizzationsLength(),1);
+//        l.add(new Organizzazione().setName("boh"));
+
+        assertEquals(l, response.getOrganizations());
+
+        ArrayList<String> data = new ArrayList<>();
+        data.add("Scegli un'organizzazione");
+        data.add("UNIPD");
+
+        assertEquals(response.getDataForSpinner()[0],data.toArray(new String[0])[0]);
+        assertEquals(response.getDataForSpinner()[1],data.toArray(new String[0])[1]);
     }
 
-    public double getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(double longoitude) {
-        this.longitude = longoitude;
-    }
-
-    @NonNull
-    @Override
-    public String toString() {
-        return "\nLongitude(x): " + getLongitude() +
-                "\nLatitude(y): " + getLatitude();
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Coordinata)) return false;
-        Coordinata that = (Coordinata) o;
-        return Double.compare(that.getLatitude(), getLatitude()) == 0 &&
-                Double.compare(that.getLongitude(), getLongitude()) == 0;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getLatitude(), getLongitude());
-    }
-
-    private double rad(double x){
-        return x*Math.PI/180;
-    }
-
-    public double getDistanceTo(final Coordinata c){
-
-        long R = 6378137; // Earth’s mean radius in meter
-        double dLat = rad(c.getLatitude() - getLatitude());
-        double dLong = rad(c.getLongitude() - getLongitude());
-        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                Math.cos(rad(getLatitude())) * Math.cos(rad(c.getLatitude())) *
-                        Math.sin(dLong / 2) * Math.sin(dLong / 2);
-        double c1 = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        double d = R * c1;
-        return d; // returns the distance in meter
-    };
 }

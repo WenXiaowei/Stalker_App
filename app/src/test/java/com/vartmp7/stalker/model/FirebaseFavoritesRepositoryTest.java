@@ -202,86 +202,102 @@
  *    limitations under the License.
  */
 
-package com.vartmp7.stalker.gsonbeans.placecomponent;
+package com.vartmp7.stalker.model;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import android.util.Log;
 
-import java.util.Objects;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
-/**
- * @author Xiaowei Wen, Lorenzo Taschin
- */
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.vartmp7.stalker.gsonbeans.Organizzazione;
 
-public class Coordinata {
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.MockitoRule;
+import org.mockito.stubbing.Answer;
 
-    public static final String TAG ="com.vartmp7.stalker.gsonbeans.placecomponent.Coordinata";
-    private double latitude=0;//y
-    private double longitude=0; //x
+import java.util.ArrayList;
+import java.util.List;
 
-    public Coordinata() {
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
+
+@RunWith(MockitoJUnitRunner.class)
+public class FirebaseFavoritesRepositoryTest {
+
+    private static final String TAG="com.vartmp7.stalker.model.FirebaseFavoritesRepositoryTest";
+
+    private static final Organizzazione org1= new Organizzazione().setName("UNIPD").setAddress("Via trieste");
+    private static final Organizzazione org2= new Organizzazione().setName("UNIPD 2").setAddress("Via trieste 2");
+    private static final Organizzazione org3= new Organizzazione().setName("Alì").setAddress("Via roma 2");
+    @Mock
+    private FirebaseFavoritesRepository ffr;
+    @Mock
+    private FirebaseFirestore fbfs;
+    @Mock
+    private OrganizationsRepository or;
+
+    @Rule
+    public MockitoRule mockitoRule = MockitoJUnit.rule();
+
+
+    @Before
+    public void setUP(){
+//        MockitoAnnotations.initMocks(this);
+//        ffr = Mockito.mock(FirebaseFavoritesRepository.class);
+//        ffr.initUserStorage("1");
+//        ArrayList<Organizzazione> list = new ArrayList<>();
+//        list.add(org1);
+//        list.add(org2);
+//        list.add(org3);
+//        when(or.getOrganizzazioni()).thenReturn(new MutableLiveData<>(list));
+//
+//        doNothing().when(fbfs.collection("utenti")).document("organizzazioni").get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+//            @Override
+//            public void onSuccess(DocumentSnapshot documentSnapshot) {
+//                List<Organizzazione> l= ffr.getOrganizzazioni().getValue();
+//                l.add(org1);
+//                l.add(org2);
+//                l.add(org3);
+//            }
+//        });
+//
+//        doAnswer(new Answer() {
+//            @Override
+//            public Object answer(InvocationOnMock invocation) throws Throwable {
+//                return null;
+//            }
+//        });
+//
+//
+//
+//        LiveData<List<Organizzazione>> liveData = new MutableLiveData<>();
+//        when(ffr.getOrganizzazioni()).thenReturn(liveData);
+//
+
+
     }
-    public Coordinata(Coordinata c){
-        latitude=c.getLatitude();
-        longitude=c.getLongitude();
+
+
+    @Test
+    public void testGetOrganization(){
+//        Log.d(TAG, "testGetOrganization: "+
+//                ffr.getOrganizzazioni().getValue().toString());
+        assertTrue(true);
     }
 
-    public Coordinata(double latitudine, double longitude) {
-        this.latitude = latitudine;
-        this.longitude = longitude;
-    }
-
-    public double getLatitude() {
-        return latitude;
-    }
-
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
-    }
-
-    public double getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(double longoitude) {
-        this.longitude = longoitude;
-    }
-
-    @NonNull
-    @Override
-    public String toString() {
-        return "\nLongitude(x): " + getLongitude() +
-                "\nLatitude(y): " + getLatitude();
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Coordinata)) return false;
-        Coordinata that = (Coordinata) o;
-        return Double.compare(that.getLatitude(), getLatitude()) == 0 &&
-                Double.compare(that.getLongitude(), getLongitude()) == 0;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getLatitude(), getLongitude());
-    }
-
-    private double rad(double x){
-        return x*Math.PI/180;
-    }
-
-    public double getDistanceTo(final Coordinata c){
-
-        long R = 6378137; // Earth’s mean radius in meter
-        double dLat = rad(c.getLatitude() - getLatitude());
-        double dLong = rad(c.getLongitude() - getLongitude());
-        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                Math.cos(rad(getLatitude())) * Math.cos(rad(c.getLatitude())) *
-                        Math.sin(dLong / 2) * Math.sin(dLong / 2);
-        double c1 = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        double d = R * c1;
-        return d; // returns the distance in meter
-    };
 }

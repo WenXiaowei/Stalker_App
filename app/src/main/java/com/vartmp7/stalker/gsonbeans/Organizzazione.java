@@ -35,9 +35,6 @@ public class Organizzazione implements Serializable {
     public String getOrgInfo(){
         return name;
     }
-    public static String getTAG() {
-        return TAG;
-    }
 
     public String getAddress() {
         return address;
@@ -175,49 +172,32 @@ public class Organizzazione implements Serializable {
     }
 
     public Organizzazione(){}
-    public Organizzazione(String address, String city, String email, long id, String name, String nation, String phone_number, String postal_code, String region, String type, String ldap_common_name, String ldap_domain_component, String ldap_port, Boolean isPreferito, List<? extends AbstractLuogo> luoghi) {
-        this.address = address;
-        this.city = city;
-        this.email = email;
-        this.id = id;
-        this.name = name;
-        this.nation = nation;
-        this.phone_number = phone_number;
-        this.postal_code = postal_code;
-        this.region = region;
-        this.type = type;
-        this.ldap_common_name = ldap_common_name;
-        this.ldap_domain_component = ldap_domain_component;
-        this.ldap_port = ldap_port;
-        this.isPreferito = isPreferito;
-        this.luoghi = luoghi;
-    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Organizzazione)) return false;
         Organizzazione that = (Organizzazione) o;
-        return id == that.id &&
-                Objects.equals(address, that.address) &&
-                Objects.equals(city, that.city) &&
-                Objects.equals(email, that.email) &&
-                Objects.equals(name, that.name) &&
-                Objects.equals(nation, that.nation) &&
-                Objects.equals(phone_number, that.phone_number) &&
-                Objects.equals(postal_code, that.postal_code) &&
-                Objects.equals(region, that.region) &&
-                Objects.equals(type, that.type) &&
-                Objects.equals(ldap_common_name, that.ldap_common_name) &&
-                Objects.equals(ldap_domain_component, that.ldap_domain_component) &&
-                Objects.equals(ldap_port, that.ldap_port) &&
+        return getId() == that.getId() &&
+                Objects.equals(getAddress(), that.getAddress()) &&
+                Objects.equals(getCity(), that.getCity()) &&
+                Objects.equals(getEmail(), that.getEmail()) &&
+                Objects.equals(getName(), that.getName()) &&
+                Objects.equals(getNation(), that.getNation()) &&
+                Objects.equals(getPhone_number(), that.getPhone_number()) &&
+                Objects.equals(getPostal_code(), that.getPostal_code()) &&
+                Objects.equals(getRegion(), that.getRegion()) &&
+                Objects.equals(getType(), that.getType()) &&
+                Objects.equals(getLdap_common_name(), that.getLdap_common_name()) &&
+                Objects.equals(getLdap_domain_component(), that.getLdap_domain_component()) &&
+                Objects.equals(getLdap_port(), that.getLdap_port()) &&
                 Objects.equals(isPreferito, that.isPreferito) &&
-                Objects.equals(luoghi, that.luoghi);
+                Objects.equals(getLuoghi(), that.getLuoghi());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(address, city, email, id, name, nation, phone_number, postal_code, region, type, ldap_common_name, ldap_domain_component, ldap_port, isPreferito, luoghi);
+        return Objects.hash(getAddress(), getCity(), getEmail(), getId(), getName(), getNation(), getPhone_number(), getPostal_code(), getRegion(), getType(), getLdap_common_name(), getLdap_domain_component(), getLdap_port(), isPreferito, getLuoghi());
     }
 
     @Override

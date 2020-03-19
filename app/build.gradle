@@ -1,5 +1,5 @@
 /*
-
+clean test jacocoTestReport sonarqube
 commando per avviare il container di sonar qube
     docker run -d --name sonarqube -p 9000:9000 sonarqube
  Comando da usare per far andare sonar qube
@@ -155,4 +155,9 @@ dependencies {
     implementation group: 'com.unboundid', name: 'unboundid-ldapsdk', version: '4.0.14'
     implementation "androidx.recyclerview:recyclerview:1.1.0"
     implementation 'com.google.android.material:material:1.1.0'
+
+    // required if you want to use Mockito for unit tests
+    testCompile 'org.mockito:mockito-core:2.7.22'
+    // required if you want to use Mockito for Android tests
+    androidTestCompile 'org.mockito:mockito-android:2.7.22'
 }

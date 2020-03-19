@@ -4,6 +4,8 @@ import android.util.Log;
 
 import com.google.gson.annotations.Expose;
 
+import java.util.Objects;
+
 /**
  * @author Xiaowei Wen, Lorenzo Taschin
  */
@@ -25,7 +27,27 @@ public class TrackSignal {
     @Expose
     private String date_time;
 
-    public TrackSignal(boolean en,boolean au, long uid, String user, String sur, String date) {
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof TrackSignal)) return false;
+        TrackSignal that = (TrackSignal) o;
+        return getIdOrganization() == that.getIdOrganization() &&
+                getIdPlace() == that.getIdPlace() &&
+                isEntered() == that.isEntered() &&
+                isAuthenticated() == that.isAuthenticated() &&
+                getUid_number() == that.getUid_number() &&
+                Objects.equals(getUsername(), that.getUsername()) &&
+                Objects.equals(getSurname(), that.getSurname()) &&
+                Objects.equals(getDate_time(), that.getDate_time());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getIdOrganization(), getIdPlace(), isEntered(), isAuthenticated(), getUid_number(), getUsername(), getSurname(), getDate_time());
+    }
+
+    public TrackSignal(boolean en, boolean au, long uid, String user, String sur, String date) {
         entered = en;
         authenticated = au;
         uid_number = uid;
@@ -40,7 +62,7 @@ public class TrackSignal {
     public String getUrlToPost(){
 //        return MainActivity.SERVER + "organizations/" + idOrganization
 //                + "/places/" + idPlace+ "/tracks";
-        return null;
+        return "Ciao";
     }
 
 
@@ -85,7 +107,6 @@ public class TrackSignal {
     }
 
     public TrackSignal setUsername(String username) {
-        Log.d(TAG, "setUsername: "+username);
         this.username = username;
         return this;
     }
@@ -95,8 +116,6 @@ public class TrackSignal {
     }
 
     public TrackSignal setSurname(String surname) {
-
-        Log.d(TAG, "setUsername: "+surname);
         this.surname = surname;
         return this;
     }

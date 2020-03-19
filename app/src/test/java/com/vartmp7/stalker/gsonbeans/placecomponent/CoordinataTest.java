@@ -204,84 +204,78 @@
 
 package com.vartmp7.stalker.gsonbeans.placecomponent;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import com.vartmp7.stalker.gsonbeans.placecomponent.Coordinata;
 
-import java.util.Objects;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
+import org.junit.runners.Parameterized;
 
-/**
- * @author Xiaowei Wen, Lorenzo Taschin
- */
+import java.util.Arrays;
+import java.util.Collection;
 
-public class Coordinata {
+import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertTrue;
 
-    public static final String TAG ="com.vartmp7.stalker.gsonbeans.placecomponent.Coordinata";
-    private double latitude=0;//y
-    private double longitude=0; //x
+@RunWith(Parameterized.class)
+public class CoordinataTest {
 
-    public Coordinata() {
-    }
-    public Coordinata(Coordinata c){
-        latitude=c.getLatitude();
-        longitude=c.getLongitude();
-    }
+    private final static double DELTA_METRI=0.1d;
 
-    public Coordinata(double latitudine, double longitude) {
-        this.latitude = latitudine;
-        this.longitude = longitude;
-    }
+    private Coordinata c1, c2;
+    private double latitudine, longitudine;
 
-    public double getLatitude() {
-        return latitude;
+    public CoordinataTest(Coordinata c1, Coordinata c2, double latitudine, double longitudine) {
+        this.c1 = c1;
+        this.c2 = c2;
+        this.latitudine = latitudine;
+        this.longitudine = longitudine;
     }
 
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
+    @Test
+    public void testEquals(){
+        assertEquals(c1, c2);
+        assertEquals(c1.hashCode(), c2.hashCode());
     }
 
-    public double getLongitude() {
-        return longitude;
+    @Parameterized.Parameters
+    public static Collection<Object[]> data() {
+        Coordinata c = new Coordinata(1,1);
+        return Arrays.asList(new Object[][]{
+                {new Coordinata(0,1), new Coordinata(0,1),0,1,},
+                {new Coordinata(),new Coordinata(),0,0},
+                {c, new Coordinata(c),1,1},
+        });
     }
 
-    public void setLongitude(double longoitude) {
-        this.longitude = longoitude;
+    @Test
+    public void testToString(){
+        String s= "\nLongitude(x): "+longitudine+"\nLatitude(y): "+latitudine;
+
+        assertEquals(c1.toString(), s);
     }
 
-    @NonNull
-    @Override
-    public String toString() {
-        return "\nLongitude(x): " + getLongitude() +
-                "\nLatitude(y): " + getLatitude();
+
+    @Test
+    public void testGetters(){
+        assertEquals(c1.getLatitude(),latitudine);
+        assertEquals(c1.getLongitude(),longitudine);
+    }
+    @Test
+    public void testSetters(){
+        Coordinata c =new Coordinata();
+        c1.setLatitude(latitudine);
+        c1.setLongitude(longitudine);
+        assertEquals(c1.getLongitude(), longitudine);
+        assertEquals(c1.getLatitude(), latitudine);
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Coordinata)) return false;
-        Coordinata that = (Coordinata) o;
-        return Double.compare(that.getLatitude(), getLatitude()) == 0 &&
-                Double.compare(that.getLongitude(), getLongitude()) == 0;
+    @Test
+    public void distanzaTraCoordinate(){
+        Coordinata c1 = new Coordinata(45.411220, 11.887316);
+        Coordinata c2 = new Coordinata(45.411110, 11.887791);
+
+        assertEquals(c1.getDistanceTo(c2),39.04d,DELTA_METRI);
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(getLatitude(), getLongitude());
-    }
-
-    private double rad(double x){
-        return x*Math.PI/180;
-    }
-
-    public double getDistanceTo(final Coordinata c){
-
-        long R = 6378137; // Earth’s mean radius in meter
-        double dLat = rad(c.getLatitude() - getLatitude());
-        double dLong = rad(c.getLongitude() - getLongitude());
-        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                Math.cos(rad(getLatitude())) * Math.cos(rad(c.getLatitude())) *
-                        Math.sin(dLong / 2) * Math.sin(dLong / 2);
-        double c1 = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        double d = R * c1;
-        return d; // returns the distance in meter
-    };
 }

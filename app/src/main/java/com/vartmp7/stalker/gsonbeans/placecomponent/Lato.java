@@ -204,6 +204,8 @@
 
 package com.vartmp7.stalker.gsonbeans.placecomponent;
 
+import java.util.Objects;
+
 public class Lato {
     public static final String TAG ="com.vartmp7.stalker.gsonbeans.placecomponent.lato";
     private double startX;
@@ -218,6 +220,21 @@ public class Lato {
         this.endY = b.getLatitude();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Lato)) return false;
+        Lato lato = (Lato) o;
+        return Double.compare(lato.getStartX(), getStartX()) == 0 &&
+                Double.compare(lato.getStartY(), getStartY()) == 0 &&
+                Double.compare(lato.getEndX(), getEndX()) == 0 &&
+                Double.compare(lato.getEndY(), getEndY()) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getStartX(), getStartY(), getEndX(), getEndY());
+    }
 
     public double getStartX() {
         return startX;

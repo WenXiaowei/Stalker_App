@@ -1,6 +1,7 @@
 package com.vartmp7.stalker.gsonbeans;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -10,9 +11,9 @@ import java.util.ArrayList;
  */
 public class ResponseLuogo {
     private static final String TAG="com.vartmp7.stalker.GsonBeans.ResponseLuogo";
-    private ArrayList<? extends AbstractLuogo> places;
+    private List<? extends AbstractLuogo> places;
 
-    public void setLuoghi(ArrayList<? extends AbstractLuogo> luoghi) {
+    public void setLuoghi(List<AbstractLuogo> luoghi) {
         this.places = luoghi;
     }
     public int getPlacesLength(){return places.size();}
