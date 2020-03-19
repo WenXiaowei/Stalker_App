@@ -663,6 +663,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -757,7 +758,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.setting_menu, menu);
+        if (isUserLogged())
+            inflater.inflate(R.menu.setting_menu, menu);
+        else
+            inflater.inflate(R.menu.setting_menu_no_log,menu);
         return true;
     }
 
@@ -770,13 +774,19 @@ public class MainActivity extends AppCompatActivity {
                 }else{
                     googleSignOut();
                 }
-                goToLoginActivity();
+                goToLoginActivity(false);
                 return false;
-//                break;
+
+            case R.id.menuLogin:
+                goToLoginActivity(true);
+
         }
         return super.onOptionsItemSelected(item);
     }
 
+    private boolean isUserLogged(){
+        return FirebaseAuth.getInstance().getCurrentUser()!=null || GoogleSignIn.getLastSignedInAccount(MainActivity.this) != null;
+    }
     public void logout() {
         FirebaseAuth.getInstance().signOut();
 
@@ -791,9 +801,11 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
     }
-    public void goToLoginActivity() {
+    public void goToLoginActivity(boolean backButton) {
         Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        if (!backButton) {
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        }
         startActivity(intent);
     }
 }

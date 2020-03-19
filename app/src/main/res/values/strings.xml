@@ -2,7 +2,7 @@
     <string name="app_name">Stalker App</string>
     <string name="stalker">Stalker</string>
     <string name="seleziona_l_organizzazione">Seleziona l\'organizzazione:</string>
-    <string name="login">Login</string>
+
     <string name="sign_in">Sign in</string>
     <string name="sign_up">Sign up</string>
     <string name="nessun_organizzazione_ti_sta_stalkerando">Nessun\'organizzazione ti sta stalkerando!</string>
@@ -37,4 +37,5 @@
     <string name="indirizzo">Indirizzo:</string>
     <string name="email">Email:</string>
     <string name="logout">Logout</string>
+    <string name="login">Login</string>
 </resources>
