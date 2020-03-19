@@ -261,6 +261,7 @@ public class RESTOrganizationsRepository implements OrganizationsRepository {
             @Override
             protected void onPostExecute(Void aVoid) {
                 super.onPostExecute(aVoid);
+
                 mutableLiveDataOrganizzazioni.setValue(Arrays.asList(
                         new Organizzazione().setId(1),
                         new Organizzazione().setId(2),

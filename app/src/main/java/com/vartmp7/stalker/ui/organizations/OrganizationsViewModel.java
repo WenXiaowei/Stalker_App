@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.vartmp7.stalker.gsonbeans.Organizzazione;
 import com.vartmp7.stalker.gsonbeans.ResponseOrganizzazione;
+import com.vartmp7.stalker.model.OrganizationsRepository;
 import com.vartmp7.stalker.model.RESTOrganizationsRepository;
 
 import java.util.ArrayList;
@@ -22,7 +23,7 @@ import javax.annotation.Nullable;
 public class OrganizationsViewModel extends ViewModel {
     public static final String TAG = "com.vartmp7.stalker.ui.organizations.OrganizationsViewModel";
 
-    private RESTOrganizationsRepository restOrganizationsRepository;
+    private OrganizationsRepository restOrganizationsRepository;
     private MutableLiveData<List<Organizzazione>> organizationList;
 
 

@@ -47,8 +47,10 @@ public class OrganizationsFragment extends Fragment {
 
         recyclerView = root.findViewById(R.id.rvListaOrganizzazioni);
         btnAggiorna.setOnClickListener(v -> {
-//            dashboardViewModel.updateData();
-            dashboardViewModel.aggiungiOrganizzazione(new Organizzazione().setId(1).setName("UNIPD").setType("Both").setAddress("via Trieste "));
+            dashboardViewModel.updateData();
+            mAdapter.notifyDataSetChanged();
+//            dashboardViewModel.aggiungiOrganizzazione(new Organizzazione().setId(1).setName("UNIPD").setType("Both").setAddress("via Trieste "));
+            recyclerView.smoothScrollToPosition(dashboardViewModel.getOrganizationList().getValue().size()-1);
         });
 
          dashboardViewModel = new ViewModelProvider(getActivity()).get(OrganizationsViewModel.class);
@@ -56,12 +58,7 @@ public class OrganizationsFragment extends Fragment {
         dashboardViewModel.initData(new RESTOrganizationsRepository(Tools.getUnsafeOkHttpClient(), ""));
         init_data();
         setUpRecyclerView();
-        dashboardViewModel.getOrganizationList().observe(getActivity(), new Observer<List<Organizzazione>>() {
-            @Override
-            public void onChanged(List<Organizzazione> list) {
-                mAdapter.notifyDataSetChanged();
-            }
-        });
+        dashboardViewModel.getOrganizationList().observe(getActivity(), list -> mAdapter.notifyDataSetChanged());
 
 
 

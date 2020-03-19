@@ -7,13 +7,12 @@
     android:background="@drawable/background">
 
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="150dp"
+    <ImageView
+        android:layout_width="155dp"
+        android:layout_height="155dp"
         android:layout_marginBottom="28dp"
-        android:src="@drawable/login_header"
+        android:src="@drawable/icon_stalker_login"
         android:text="@string/stalker"
-        android:textSize="90dp"
         app:layout_constraintBottom_toTopOf="@+id/imageView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.496"

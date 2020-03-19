@@ -206,6 +206,7 @@
 package com.vartmp7.stalker.model;
 
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import com.vartmp7.stalker.gsonbeans.Organizzazione;
 
@@ -213,7 +214,7 @@ import java.util.List;
 
 public interface OrganizationsRepository {
 
-    LiveData<List<Organizzazione>> getOrganizzazioni();
+    MutableLiveData<List<Organizzazione>> getOrganizzazioni();
     void updateOrganizzazioni();
 
     /*
