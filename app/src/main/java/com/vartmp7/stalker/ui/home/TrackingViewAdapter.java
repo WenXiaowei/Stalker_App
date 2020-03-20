@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -72,7 +73,7 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
         arrowCloseRotation.setInterpolator(new LinearInterpolator());
 
         Glide.with(context)
-                .setDefaultRequestOptions(new RequestOptions().error(R.drawable.login_header))
+                .setDefaultRequestOptions(new RequestOptions().error(R.drawable.tracking_item_body_background))
                 .load(org.getImage_url())
                 .into(new CustomTarget<Drawable>() {
                     @Override
@@ -138,12 +139,12 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
         holder.tvNomeOrganizzazione.setText(org.getName());
         holder.ibtnExpandArrow.setImageResource(R.drawable.angular_arrow_left);
         holder.llTitle.setOnClickListener(v -> {
-            if (holder.llInformationToHide.getVisibility() != View.VISIBLE) {
+            if (holder.llInformationToHide.getVisibility() == View.GONE) {
                 holder.ibtnExpandArrow.setImageResource(R.drawable.angular_arrow_down);
                 Animation animation = AnimationUtils.loadAnimation(context, R.anim.slide_down_animation);
                 holder.llTitle.setBackground(null);
                 holder.llInformationToHide.setVisibility(View.VISIBLE);
-                holder.llInformationToHide.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+//                holder.llInformationToHide.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
                 holder.ibtnExpandArrow.startAnimation(arrowOpenRotation);
                 holder.llInformationToHide.startAnimation(animation);
             } else {
@@ -152,7 +153,7 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
                 holder.ibtnExpandArrow.setImageResource(R.drawable.angular_arrow_left);
                 holder.llInformationToHide.setVisibility(View.GONE);
                 holder.llTitle.setBackgroundResource(R.drawable.tracking_item_title_background);
-                holder.llInformationToHide.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0));
+//                holder.llInformationToHide.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0));
                 holder.llInformationToHide.startAnimation(animation);
             }
         });

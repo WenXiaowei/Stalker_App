@@ -252,7 +252,9 @@ public class RESTOrganizationsRepository implements OrganizationsRepository {
     public MutableLiveData<List<Organizzazione>> getOrganizzazioni() {
 //        updateOrganizzazioni();
 
-        ArrayList<Organizzazione> l = new ArrayList<>();
+        List<Organizzazione> l =mutableLiveDataOrganizzazioni.getValue();
+        if (l== null)
+            l = new ArrayList<>();
         l.add(new Organizzazione().setId(1).setName("UNIPD").setAddress("Via trieste").setType("Both")
                 .setImage_url("https://images.pexels.com/photos/1317712/pexels-photo-1317712.jpeg"));
         l.add(new Organizzazione().setId(2).setName("UNIPD").setAddress("Via trieste").setType("Both")
@@ -289,8 +291,7 @@ public class RESTOrganizationsRepository implements OrganizationsRepository {
                 Log.d(TAG, "onFailure: " + e.toString());
                 List<Organizzazione> l = mutableLiveDataOrganizzazioni.getValue();
                 l.add(new Organizzazione().setId(1).setName("PAdova-1").setAddress("Via trieste").setType("Both"));
-                Organizzazione a =l.get(1).setImage_url("https://images.unsplash.com/photo-1504639725590-34d0984388bd?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=60");
-                l.add(a);
+                l.get(1).setImage_url("https://images.unsplash.com/photo-1504639725590-34d0984388bd?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=60");
                 mutableLiveDataOrganizzazioni.postValue(l);
             }
 
