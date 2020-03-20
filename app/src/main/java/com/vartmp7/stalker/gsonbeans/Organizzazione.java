@@ -30,6 +30,17 @@ public class Organizzazione implements Serializable {
     private String ldap_domain_component;
     private String ldap_port;
     private Boolean isPreferito = false;
+    private String image_url;
+
+    public String getImage_url() {
+        return image_url;
+    }
+
+    public Organizzazione setImage_url(String image_url) {
+        this.image_url = image_url;
+        return this;
+    }
+
     private List<? extends AbstractLuogo> luoghi;
 
     public String getOrgInfo(){

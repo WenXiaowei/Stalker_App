@@ -1,6 +1,10 @@
 package com.vartmp7.stalker.ui.home;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,10 +20,16 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.Size;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.vartmp7.stalker.R;
 import com.vartmp7.stalker.gsonbeans.Organizzazione;
 
@@ -61,7 +71,21 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
         arrowCloseRotation.setDuration(500);
         arrowCloseRotation.setInterpolator(new LinearInterpolator());
 
+        Glide.with(context)
+                .setDefaultRequestOptions(new RequestOptions().error(R.drawable.login_header))
+                .load(org.getImage_url())
+                .into(new CustomTarget<Drawable>() {
+                    @Override
+                    public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
+                        resource.setAlpha(100);
+                        holder.llInformationToHide.setBackground(resource);
+                    }
 
+                    @Override
+                    public void onLoadCleared(@Nullable Drawable placeholder) {
+
+                    }
+                });
 //        holder.ibtnPreferito.setOnDragListener(new View.OnDragListener() {
 //            @Override
 //            public boolean onDrag(View v, DragEvent event) {
@@ -113,7 +137,7 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
         // fixme la rotazione freccia non è corretta.
         holder.tvNomeOrganizzazione.setText(org.getName());
         holder.ibtnExpandArrow.setImageResource(R.drawable.angular_arrow_left);
-        holder.ibtnExpandArrow.setOnClickListener(v -> {
+        holder.llTitle.setOnClickListener(v -> {
             if (holder.llInformationToHide.getVisibility() != View.VISIBLE) {
                 holder.ibtnExpandArrow.setImageResource(R.drawable.angular_arrow_down);
                 Animation animation = AnimationUtils.loadAnimation(context, R.anim.slide_down_animation);

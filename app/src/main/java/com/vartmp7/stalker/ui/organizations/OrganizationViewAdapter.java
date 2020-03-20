@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -16,6 +17,8 @@ import androidx.lifecycle.LiveData;
 import androidx.navigation.NavController;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.vartmp7.stalker.R;
 import com.vartmp7.stalker.gsonbeans.Organizzazione;
 
@@ -49,6 +52,13 @@ public class OrganizationViewAdapter extends RecyclerView.Adapter<OrganizationVi
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Organizzazione org = listaOrganizzazione.get(position);
+
+
+
+        Glide.with(context)
+                .setDefaultRequestOptions(new RequestOptions().error(R.drawable.icon_stalker))
+                .load(listaOrganizzazione.get(position).getImage_url())
+                .into(holder.ivIconOrganizzazione);
 
         holder.nomeOrganizzazione.setText(org.getName() + " " + org.getId());
         holder.tipoOrganizzazione.setText("tipo: " + org.getType());
@@ -103,6 +113,7 @@ public class OrganizationViewAdapter extends RecyclerView.Adapter<OrganizationVi
         Button btnTrackMe;
         LinearLayout llHidingInfo;
 
+        ImageView ivIconOrganizzazione;
         public ViewHolder(@NonNull View itemView) {
             // dati dell'organizzazione
             super(itemView);
@@ -111,6 +122,7 @@ public class OrganizationViewAdapter extends RecyclerView.Adapter<OrganizationVi
             btnTrackMe = itemView.findViewById(R.id.btnTrackMe);
             tvIndirizzo = itemView.findViewById(R.id.tvIndirizzo);
             llHidingInfo = itemView.findViewById(R.id.llHidingInformation);
+            ivIconOrganizzazione= itemView.findViewById(R.id.ivIconOrganizzazione);
 
         }
     }

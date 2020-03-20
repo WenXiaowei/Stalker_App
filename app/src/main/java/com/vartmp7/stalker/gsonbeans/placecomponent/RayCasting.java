@@ -267,14 +267,7 @@ public class RayCasting {
         return edges;
     }
 
-    /**
-     * Assuming that the passed edges form a closed polygon, this method
-     * tells whether the given point lies inside or outside the polygon
-     *
-     * @param edges
-     * @param point
-     * @return
-     */
+
     private static boolean isPointInsideEdges(List<Lato> edges, Coordinata point) {
 //        Log.d("RAY CAST", "Point: " + point.getX() + "; " + point.getY());
 //        Log.d("RAY CAST", "Lines ******************");

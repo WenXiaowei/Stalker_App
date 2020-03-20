@@ -215,6 +215,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.google.gson.Gson;
 import com.vartmp7.stalker.gsonbeans.Organizzazione;
 import com.vartmp7.stalker.gsonbeans.ResponseOrganizzazione;
+import com.vartmp7.stalker.ui.organizations.OrganizationsViewModel;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -252,12 +253,18 @@ public class RESTOrganizationsRepository implements OrganizationsRepository {
 //        updateOrganizzazioni();
 
         ArrayList<Organizzazione> l = new ArrayList<>();
-        l.add(new Organizzazione().setId(1).setName("UNIPD").setAddress("Via trieste").setType("Both"));
-        l.add(new Organizzazione().setId(2).setName("UNIPD").setAddress("Via trieste").setType("Both"));
-        l.add(new Organizzazione().setId(3).setName("UNIPD").setAddress("Via trieste").setType("Both"));
-        l.add(new Organizzazione().setId(4).setName("UNIPD").setAddress("Via trieste").setType("Both"));
-        l.add(new Organizzazione().setId(5).setName("UNIPD").setAddress("Via trieste").setType("Both"));
-        l.add(new Organizzazione().setId(6).setName("UNIPD").setAddress("Via trieste").setType("Both"));
+        l.add(new Organizzazione().setId(1).setName("UNIPD").setAddress("Via trieste").setType("Both")
+                .setImage_url("https://images.pexels.com/photos/1317712/pexels-photo-1317712.jpeg"));
+        l.add(new Organizzazione().setId(2).setName("UNIPD").setAddress("Via trieste").setType("Both")
+                .setImage_url("https://images.pexels.com/photos/1317712/pexels-photo-1317712.jpeg"));
+        l.add(new Organizzazione().setId(3).setName("UNIPD").setAddress("Via trieste").setType("Both")
+                .setImage_url("https://images.pexels.com/photos/1317712/pexels-photo-1317712.jpeg"));
+        l.add(new Organizzazione().setId(4).setName("UNIPD").setAddress("Via trieste").setType("Both")
+                .setImage_url("https://images.pexels.com/photos/1317712/pexels-photo-1317712.jpeg"));
+        l.add(new Organizzazione().setId(5).setName("UNIPD").setAddress("Via trieste").setType("Both")
+                .setImage_url("https://images.pexels.com/photos/1317712/pexels-photo-1317712.jpeg"));
+        l.add(new Organizzazione().setId(6).setName("UNIPD").setAddress("Via trieste").setType("Both")
+                .setImage_url("https://images.pexels.com/photos/1317712/pexels-photo-1317712.jpeg"));
 
         mutableLiveDataOrganizzazioni.setValue(l);
 
@@ -282,11 +289,8 @@ public class RESTOrganizationsRepository implements OrganizationsRepository {
                 Log.d(TAG, "onFailure: " + e.toString());
                 List<Organizzazione> l = mutableLiveDataOrganizzazioni.getValue();
                 l.add(new Organizzazione().setId(1).setName("PAdova-1").setAddress("Via trieste").setType("Both"));
-                l.add(new Organizzazione().setId(2).setName("PAdova").setAddress("Via trieste").setType("Both"));
-                l.add(new Organizzazione().setId(3).setName("PAdova").setAddress("Via trieste").setType("Both"));
-                l.add(new Organizzazione().setId(4).setName("PAdova").setAddress("Via trieste").setType("Both"));
-                l.add(new Organizzazione().setId(5).setName("PAdova").setAddress("Via trieste").setType("Both"));
-                l.add(new Organizzazione().setId(6).setName("PAdova").setAddress("Via trieste").setType("Both"));
+                Organizzazione a =l.get(1).setImage_url("https://images.unsplash.com/photo-1504639725590-34d0984388bd?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=60");
+                l.add(a);
                 mutableLiveDataOrganizzazioni.postValue(l);
             }
 
