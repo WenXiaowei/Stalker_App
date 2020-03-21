@@ -36,12 +36,16 @@ public class OrganizationViewAdapter extends RecyclerView.Adapter<OrganizationVi
     private NavController navController;
 
     public OrganizationViewAdapter(Context context, NavController controller, List<Organizzazione> list) {
-        listaOrganizzazione = list;
+        this.listaOrganizzazione = list;
         this.context = context;
         this.navController = controller;
     }
 
-//    private static int[] colors = new int[]{R.color.colorAccent, R.color.colorPrimary, R.color.colorPrimaryDark, R.color.vartmp7blu, R.color.vartmp7bluChiaro};
+    public void setData(List<Organizzazione> newData){
+        this.listaOrganizzazione = newData;
+        this.notifyDataSetChanged();
+    }
+
 
     @NonNull
     @Override
@@ -146,7 +150,7 @@ public class OrganizationViewAdapter extends RecyclerView.Adapter<OrganizationVi
                 //getting the position of the item to expand it
                 currentPosition = position;
                 //reloding the list
-                notifyDataSetChanged();
+               // notifyDataSetChanged();
             }
         });
 //            holder.numeroLuoghi = org.get
