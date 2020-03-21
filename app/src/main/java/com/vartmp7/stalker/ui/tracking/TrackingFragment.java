@@ -1,38 +1,31 @@
-package com.vartmp7.stalker.ui.home;
+package com.vartmp7.stalker.ui.tracking;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.vartmp7.stalker.R;
 import com.vartmp7.stalker.gsonbeans.Organizzazione;
-import com.vartmp7.stalker.ui.organizations.OrganizationsFragment;
-import com.vartmp7.stalker.ui.organizations.OrganizationsViewModel;
 
 import java.util.ArrayList;
-import java.util.List;
 
 
 /**
  * @author Xiaowei Wen, Lorenzo Taschin
  */
-public class HomeFragment extends Fragment {
+public class TrackingFragment extends Fragment {
 
     private final static String TAG = "com.vartmp7.stalker.ui.home.HomeFragment";
 
-    private HomeViewModel homeViewModel;
+    private TrackingViewModel trackingViewModel;
     private String id_newOrg;
 
     private TrackingViewAdapter mAdapter;
@@ -53,11 +46,11 @@ public class HomeFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_status, container, false);
         recyclerView = root.findViewById(R.id.trackingRecycleView);
 
-        homeViewModel = new ViewModelProvider(getActivity()).get(HomeViewModel.class);
-        homeViewModel.initi(list);
+        trackingViewModel = new ViewModelProvider(getActivity()).get(TrackingViewModel.class);
+        trackingViewModel.initi(list);
 
-        mAdapter = new TrackingViewAdapter(getContext(), homeViewModel.getListaOrganizzazione().getValue());
-        homeViewModel.getListaOrganizzazione().observe(getViewLifecycleOwner(), list -> mAdapter.notifyDataSetChanged());
+        mAdapter = new TrackingViewAdapter(getContext(), trackingViewModel.getListaOrganizzazione().getValue());
+        trackingViewModel.getListaOrganizzazione().observe(getViewLifecycleOwner(), list -> mAdapter.notifyDataSetChanged());
 
         layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
@@ -72,7 +65,7 @@ public class HomeFragment extends Fragment {
             Organizzazione org = (Organizzazione) getArguments().getSerializable("org");
             if (org != null) {
 //            Log.d(TAG, "onCreateView: "+org);
-                homeViewModel.addTrackingOrganizzazione(org);
+                trackingViewModel.addTrackingOrganizzazione(org);
 //            mAdapter = new TrackingViewAdapter(getContext(), list);
 //            recyclerView.setAdapter(mAdapter);
             }

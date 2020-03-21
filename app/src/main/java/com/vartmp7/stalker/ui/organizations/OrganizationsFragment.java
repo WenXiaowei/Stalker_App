@@ -52,7 +52,7 @@ public class OrganizationsFragment extends Fragment implements SwipeRefreshLayou
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         OrganizationsLocalSource localSource = new FileOrganizationsLocalSource("orgs.json",getContext());
-        OkHttpClient httpClient = new OkHttpClient();
+//        OkHttpClient httpClient = new OkHttpClient();
         OrganizationsWebSource webSource = new RESTOrganizationsWebSource(Tools.getUnsafeOkHttpClient(),"https://asdasd.com");
         OrganizationsRepository repository = new OrganizationsRepository(getViewLifecycleOwner(),localSource,webSource);
         organizzazioneViewModel = new ViewModelProvider(getActivity()).get(OrganizationsViewModel.class);
@@ -65,25 +65,11 @@ public class OrganizationsFragment extends Fragment implements SwipeRefreshLayou
         swipeRefreshLayout.setColorSchemeColors(Color.BLACK,
                 Color.GREEN, Color.MAGENTA);
 
-//        btnAggiorna = root.findViewById(R.id.btnAggiorna);
 
         recyclerView = root.findViewById(R.id.rvListaOrganizzazioni);
-//        btnAggiorna.setOnClickListener(v -> {
-//            Log.d(TAG,"refresh");
-//            Toast.makeText(getContext(), "aggiornate", Toast.LENGTH_SHORT).show();
-//            organizzazioneViewModel.refresh();
-//            //dashboardViewModel.updateData();
-//            mAdapter.notifyDataSetChanged();
-////            dashboardViewModel.aggiungiOrganizzazione(new Organizzazione().setId(1).setName("UNIPD").setType("Both").setAddress("via Trieste "));
-//            recyclerView.smoothScrollToPosition(organizzazioneViewModel.getOrganizationList().getValue().size()-1);
-//        });
 
 
         recyclerView = root.findViewById(R.id.rvListaOrganizzazioni);
-//        btnAggiorna.setOnClickListener(v -> {
-//            organizzazioneViewModel.aggiungiOrganizzazione(new Organizzazione().setId(1).setName("UNIPD").setType("Both").setAddress("via Trieste "));
-//            mAdapter.notifyDataSetChanged();
-//        });
 
         organizzazioneViewModel = new ViewModelProvider(getActivity()).get(OrganizationsViewModel.class);
 

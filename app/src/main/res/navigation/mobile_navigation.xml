@@ -20,7 +20,7 @@
     </fragment>
     <fragment
         android:id="@+id/navigation_status"
-        android:name="com.vartmp7.stalker.ui.home.HomeFragment"
+        android:name="com.vartmp7.stalker.ui.tracking.TrackingFragment"
         android:label="@string/title_home"
         tools:layout="@layout/fragment_status">
         <argument
