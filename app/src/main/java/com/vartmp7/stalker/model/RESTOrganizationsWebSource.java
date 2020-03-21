@@ -213,12 +213,21 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.google.gson.Gson;
 import com.vartmp7.stalker.gsonbeans.Organizzazione;
+import com.vartmp7.stalker.gsonbeans.ResponseOrganizzazione;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
+import okhttp3.Call;
+import okhttp3.Callback;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class RESTOrganizationsWebSource implements OrganizationsWebSource {
     private static final String TAG = "com.vartmp7.stalker.model.RESTOrganizationsRepository";
@@ -227,90 +236,56 @@ public class RESTOrganizationsWebSource implements OrganizationsWebSource {
     private Gson gson = new Gson();
 
 
-    static int count=0;
+    static int count = 0;
 
-    //private MutableLiveData<List<Organizzazione>> mutableLiveDataOrganizzazioni;
+    private MutableLiveData<List<Organizzazione>> mutableLiveDataOrganizzazioni;
 
 
-    public RESTOrganizationsWebSource(OkHttpClient httpClient, String serverUrl) {
-        this.httpClient=httpClient;
-        //this.mutableLiveDataOrganizzazioni = new MutableLiveData<List<Organizzazione>>();
+    public RESTOrganizationsWebSource(OkHttpClient httpClient,MutableLiveData<List<Organizzazione>> list ,String serverUrl) {
+        this.httpClient = httpClient;
+        this.serverUrl = serverUrl;
+        this.mutableLiveDataOrganizzazioni= list;
     }
 
-    @SuppressLint("StaticFieldLeak")
     @Override
     public MutableLiveData<List<Organizzazione>> getOrganizzazioni() {
         count++;
-        Log.e(TAG,count+"");
-        MutableLiveData<List<Organizzazione>> mutableLiveOrgs = new MutableLiveData<>();
+//        Log.e(TAG, count + "");
+
         //TODO togliere hardcoded-mock e decommentare codice per chiamata alle REST API
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                super.onPostExecute(aVoid);
-                ArrayList<Organizzazione> orgs = new ArrayList<>();
-                for (int i=0;i<5;i++){
-                    orgs.add(new Organizzazione().setId(count+i));
-                }
-                /*mutableLiveOrgs.postValue(Arrays.asList(
-                        new Organizzazione().setId(++count),
-                        new Organizzazione().setId(++count),
-                        new Organizzazione().setId(++count),
-                        new Organizzazione().setId(++count)
-                ));*/
-                mutableLiveOrgs.setValue(orgs);
-                Log.e(TAG,"ou"+Thread.currentThread().getId());
-            }
-
-            @Override
-            protected Void doInBackground(Void... voids) {
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                return null;
-            }
-        }.execute();
-
-        return mutableLiveOrgs;
-        /*
         final Request request = new Request.Builder()
                 .url(serverUrl)
                 .build();
         Call call = httpClient.newCall(request);
-
+//        MutableLiveData<List<Organizzazione>> mutableLiveOrgs = new MutableLiveData<>();
         call.enqueue(new Callback() {
-
-            Message msg = new Message();
-            Bundle b = new Bundle();
-
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                b.putInt("CODE", 0);
-                b.putString("ErrorMsg", e.getMessage());
-                msg.setData(b);
-                //error_handler.sendMessage(msg);
-                Log.d(TAG, "onFailure: " + e.toString());
+                List<Organizzazione> orgs = mutableLiveDataOrganizzazioni.getValue();
+                for (int i = 0; i < 5; i++) {
+                    orgs.add(new Organizzazione().setName("unipd " + i + count).setId(count + i)
+                            .setImage_url("https://cdn.discordapp.com/attachments/690970576415621201/691008560363995208/Schermata_2020-03-21_alle_20.41.13.png"));
+                }
+                /*
+                mutableLiveOrgs.postValue(Arrays.asList(
+                    new Organizzazione().setId(++count),
+                    new Organizzazione().setId(++count),
+                    new Organizzazione().setId(++count),
+                    new Organizzazione().setId(++count)
+                ));*/
 
+                mutableLiveDataOrganizzazioni.postValue(orgs);
             }
 
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                try {
-                    int req_code = Integer.parseInt(Objects.requireNonNull(response.header("req_code")));
-                    b.putInt("REQ_CODE", req_code);
-                    ResponseOrganizzazione responseOrganizzazione = gson.fromJson(response.body().string(),ResponseOrganizzazione.class);
-                    mutableLiveDataOrganizzazioni.setValue(responseOrganizzazione.getOrganizations());
-                } catch (NullPointerException e) {
-                    b.putInt("CODE", FAIL_RESPONSE_CODE);
-                } finally {
-                    msg.setData(b);
-                   // handler.sendMessage(msg);
-                }
+                ResponseOrganizzazione responseOrganizzazione = gson.fromJson(response.body().string(), ResponseOrganizzazione.class);
+//                mutableLiveDataOrganizzazioni.setValue(responseOrganizzazione.getOrganizations());
+
             }
         });
-        */
+
+        return mutableLiveDataOrganizzazioni;
     }
 
 

@@ -231,13 +231,13 @@ public class OrganizationsRepository {
     private OrganizationsLocalSource organizationsLocalSource;
     private OrganizationsWebSource organizationsWebSource;
 
-    //MutableLiveData<List<Organizzazione>> getOrganizzazioni();
 
 
     public OrganizationsRepository(LifecycleOwner lifeCycleOwner, OrganizationsLocalSource orgsLocalSource, OrganizationsWebSource orgsWebSource) {
         this.lifeCycleOwner = lifeCycleOwner;
         this.organizationsLocalSource = orgsLocalSource;
         this.organizationsWebSource = orgsWebSource;
+
         /*organizationsLocalSource.saveOrganizzazioni(Arrays.asList(
                 new Organizzazione().setId(1).setName("asd"),
                 new Organizzazione().setId(2).setName("ffff"),
@@ -259,8 +259,8 @@ public class OrganizationsRepository {
 
     public void refreshOrganizzazioni(){
         organizationsWebSource.getOrganizzazioni().observe(lifeCycleOwner, organizzazioni -> new Thread(() -> {
-            Log.d(TAG, "orgs");
-            organizzazioni.forEach(o -> Log.d(TAG, "org " + o.getId()));
+//            Log.d(TAG, "orgs");
+//            organizzazioni.forEach(o -> Log.d(TAG, "org " + o.getId()));
             organizationsLocalSource.saveOrganizzazioni(organizzazioni);
         }).start());
 

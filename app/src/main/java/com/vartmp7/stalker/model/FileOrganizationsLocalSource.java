@@ -230,49 +230,46 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
     private String fileName;
     private Context context;
     private Gson gson;
-    //List<Organizzazione> organizzazioni;
-    MutableLiveData<List<Organizzazione>> mLiveOrgs = new MutableLiveData<>();
+    //    List<Organizzazione> organizzazioni;
+    private MutableLiveData<List<Organizzazione>> mLiveOrgs;
 
-    public FileOrganizationsLocalSource(String fileName, Context context) {
+    public FileOrganizationsLocalSource(String fileName, Context context, MutableLiveData<List<Organizzazione>> org) {
         this.fileName = fileName;
         this.context = context;
         this.gson = new Gson();
-        this.mLiveOrgs.setValue(new ArrayList<>());
-        //this.organizzazioni=new ArrayList<>();
+//        this.mLiveOrgs.setValue(new ArrayList<>());
+        this.mLiveOrgs = org;
     }
 
-    @SuppressLint("StaticFieldLeak")
     @Override
     public LiveData<List<Organizzazione>> getOrganizzazioni() {
         //MutableLiveData<List<Organizzazione>> mLiveOrgs = new MutableLiveData<>();
         //this.mLiveOrgs.setValue(organizzazioni);
-        new AsyncTask<Void,Void,Void>(){
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                super.onPostExecute(aVoid);
-                //this.mLiveOrgs.setValue(organizzazioni);
 
-            }
-
+        new Thread() {
             @Override
-            protected Void doInBackground(Void... voids) {
-                try(BufferedReader br = new BufferedReader(new InputStreamReader(context.openFileInput(fileName)))) {
+            public void run() {
+                super.run();
+                try (BufferedReader br = new BufferedReader(new InputStreamReader(context.openFileInput(fileName)))) {
                     String orgStr = br.readLine().trim();
-                    Log.d(TAG,"file data:"+orgStr);
+//                    Log.d(TAG,"file data:"+orgStr);
+                    List<Organizzazione> organizzazioni = mLiveOrgs.getValue();
+                    if (organizzazioni==null)
+                        organizzazioni= new ArrayList<>();
                     ResponseOrganizzazione responseOrganizzazioni = gson.fromJson(orgStr, ResponseOrganizzazione.class);
-                    List<Organizzazione> orgs = responseOrganizzazioni.getOrganizations();
+//                    List<Organizzazione> orgs = mLiveOrgs.getValue();
+                    organizzazioni.addAll(responseOrganizzazioni.getOrganizations());
                     //organizzazioni.clear();
                     //organizzazioni.addAll(responseOrganizzazioni.getOrganizations());
-                    mLiveOrgs.postValue(orgs);
-                }catch (FileNotFoundException e) {
-                    Log.e(TAG,e.getMessage());
+                    mLiveOrgs.postValue(organizzazioni);
+                } catch (FileNotFoundException e) {
+                    Log.e(TAG, e.getMessage());
                 } catch (IOException e) {
-                    Log.e(TAG,e.getMessage());
+                    Log.e(TAG, e.getMessage());
                 }
-                return null;
-            }
-        }.execute();
 
+            }
+        }.start();
         return mLiveOrgs;
     }
 
@@ -280,9 +277,9 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
     public void saveOrganizzazione(Organizzazione org) {
 
         LiveData<List<Organizzazione>> liveOrgs = getOrganizzazioni();
-        if(liveOrgs!=null){
+        if (liveOrgs != null) {
             List<Organizzazione> orgs = liveOrgs.getValue();
-            if(orgs!=null){
+            if (orgs != null) {
                 orgs.add(org);
                 saveOrganizzazioni(orgs);
             }
@@ -292,19 +289,19 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
     @SuppressLint("StaticFieldLeak")
     @Override
     public void saveOrganizzazioni(List<Organizzazione> orgs) {
-        new AsyncTask<Void,Void,Void>(){
+        new AsyncTask<Void, Void, Void>() {
 
             @Override
             protected Void doInBackground(Void... voids) {
-                try(PrintWriter pw = new PrintWriter(context.openFileOutput(fileName,Context.MODE_PRIVATE))){
+                try (PrintWriter pw = new PrintWriter(context.openFileOutput(fileName, Context.MODE_PRIVATE))) {
                     ResponseOrganizzazione responseOrganizzazione = new ResponseOrganizzazione();
                     responseOrganizzazione.setOrganizations(orgs);
                     mLiveOrgs.postValue(orgs);
                     String jsonString = gson.toJson(responseOrganizzazione);
                     pw.println(jsonString);
                     pw.flush();
-                }catch(FileNotFoundException e){
-                    Log.e(TAG,"file not found");
+                } catch (FileNotFoundException e) {
+                    Log.e(TAG, "file not found");
                 }
                 //organizzazioni.clear();
                 //organizzazioni.addAll(orgs);
@@ -317,14 +314,13 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
     @Override
     public void removeOrganizzazione(Organizzazione org) {
         LiveData<List<Organizzazione>> liveOrgs = getOrganizzazioni();
-        if(liveOrgs!=null){
+        if (liveOrgs != null) {
             List<Organizzazione> orgs = liveOrgs.getValue();
             orgs.remove(org);
             saveOrganizzazioni(orgs);
         }
 
     }
-
 
 
 }

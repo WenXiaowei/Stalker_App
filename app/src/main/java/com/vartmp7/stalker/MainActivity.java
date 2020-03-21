@@ -655,6 +655,7 @@ package com.vartmp7.stalker;
 
 import android.content.Intent;
 
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.Menu;
@@ -672,6 +673,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.gson.Gson;
+import com.vartmp7.stalker.gsonbeans.ResponseOrganizzazione;
 
 
 import androidx.annotation.NonNull;
@@ -680,6 +683,11 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 
 /**
  * @author Xiaowei Wen, Lorenzo Taschin
@@ -752,7 +760,33 @@ public class MainActivity extends AppCompatActivity {
                 .build();
         // Build a GoogleSignInClient with the options specified by gso.
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+
+        setUpFirstStartUP();
     }
+    private boolean checkIsFirstStartUP(){
+        SharedPreferences preferences = getSharedPreferences("startup_data",MODE_PRIVATE);
+        return preferences.getBoolean("first_startup",false);
+    }
+    private void setUpFirstStartUP(){
+        if (checkIsFirstStartUP()){
+            File file = new File(MainActivity.this.getFilesDir(),"data");
+            if (!file.exists())
+                file.mkdir();
+            File orgJson = new File(file,"orgs.json");
+            try {
+                FileWriter writer = new FileWriter(orgJson);
+                String l = new Gson().toJson(new ResponseOrganizzazione());
+                writer.append(l);
+                writer.flush();
+                writer.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
+        }
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

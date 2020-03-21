@@ -73,7 +73,7 @@ public class OrganizationViewAdapter extends RecyclerView.Adapter<OrganizationVi
         holder.nomeOrganizzazione.setText(org.getName());
         holder.tipoOrganizzazione.setText(org.getType());
         holder.tvIndirizzo.setText(org.getAddress());
-        holder.tvElencoLuoghi.setText("\naaaaaaaaaaa\naaaaaaaaaaaaaaa\naaaaaaaaaaaaaa\naaaaaaaaaaaaaaaaa\naaaaaaaaaaaaaaaaaa\naaaaaaaaaaaaa");
+//        holder.tvElencoLuoghi.setText("\naaaaaaaaaaa");
         holder.btnTrackMe.setOnClickListener(v -> {
 //                int position = holder.getAdapterPosition();
 //                Organizzazione org = listaOrganizzazione.get(position);
