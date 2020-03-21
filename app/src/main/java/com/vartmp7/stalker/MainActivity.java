@@ -656,7 +656,6 @@ package com.vartmp7.stalker;
 import android.content.Intent;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -668,31 +667,17 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 
-import com.vartmp7.stalker.model.FavoritesRepository;
-import com.vartmp7.stalker.model.FirebaseFavoritesRepository;
-import com.vartmp7.stalker.model.OrganizationsRepository;
-
-import com.vartmp7.stalker.gsonbeans.Organizzazione;
 import com.google.firebase.auth.FirebaseAuth;
-import com.vartmp7.stalker.model.RESTOrganizationsRepository;
 
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Observer;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-
-import java.util.List;
-
-
-import okhttp3.OkHttpClient;
 
 /**
  * @author Xiaowei Wen, Lorenzo Taschin

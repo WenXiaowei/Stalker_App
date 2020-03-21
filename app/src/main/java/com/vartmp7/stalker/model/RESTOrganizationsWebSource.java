@@ -207,8 +207,8 @@ package com.vartmp7.stalker.model;
 
 import android.annotation.SuppressLint;
 import android.os.AsyncTask;
+import android.util.Log;
 
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.gson.Gson;
@@ -220,55 +220,46 @@ import java.util.List;
 
 import okhttp3.OkHttpClient;
 
-public class RESTOrganizationsRepository implements OrganizationsRepository {
+public class RESTOrganizationsWebSource implements OrganizationsWebSource {
     private static final String TAG = "com.vartmp7.stalker.model.RESTOrganizationsRepository";
     private String serverUrl;
     private OkHttpClient httpClient;
     private Gson gson = new Gson();
 
-    private MutableLiveData<List<Organizzazione>> mutableLiveDataOrganizzazioni;
+
+    static int count=0;
+
+    //private MutableLiveData<List<Organizzazione>> mutableLiveDataOrganizzazioni;
 
 
-    public RESTOrganizationsRepository(OkHttpClient httpClient, String serverUrl) {
+    public RESTOrganizationsWebSource(OkHttpClient httpClient, String serverUrl) {
         this.httpClient=httpClient;
-        this.mutableLiveDataOrganizzazioni = new MutableLiveData<List<Organizzazione>>();
-    }
-
-
-    @Override
-    public MutableLiveData<List<Organizzazione>> getOrganizzazioni() {
-//        updateOrganizzazioni();
-
-        ArrayList<Organizzazione> l = new ArrayList<>();
-        l.add( new Organizzazione().setId(1).setName("UNIPD").setAddress("Via trieste").setType("Both"));
-        l.add( new Organizzazione().setId(2).setName("UNIPD").setAddress("Via trieste").setType("Both"));
-        l.add( new Organizzazione().setId(3).setName("UNIPD").setAddress("Via trieste").setType("Both"));
-        l.add( new Organizzazione().setId(4).setName("UNIPD").setAddress("Via trieste").setType("Both"));
-        l.add( new Organizzazione().setId(5).setName("UNIPD").setAddress("Via trieste").setType("Both"));
-        l.add( new Organizzazione().setId(6).setName("UNIPD").setAddress("Via trieste").setType("Both"));
-
-        mutableLiveDataOrganizzazioni.setValue(l);
-
-        return this.mutableLiveDataOrganizzazioni;
-
+        //this.mutableLiveDataOrganizzazioni = new MutableLiveData<List<Organizzazione>>();
     }
 
     @SuppressLint("StaticFieldLeak")
     @Override
-    public void updateOrganizzazioni() {
+    public MutableLiveData<List<Organizzazione>> getOrganizzazioni() {
+        count++;
+        Log.e(TAG,count+"");
+        MutableLiveData<List<Organizzazione>> mutableLiveOrgs = new MutableLiveData<>();
         //TODO togliere hardcoded-mock e decommentare codice per chiamata alle REST API
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected void onPostExecute(Void aVoid) {
                 super.onPostExecute(aVoid);
-
-                mutableLiveDataOrganizzazioni.setValue(Arrays.asList(
-                        new Organizzazione().setId(1),
-                        new Organizzazione().setId(2),
-                        new Organizzazione().setId(3),
-                        new Organizzazione().setId(4),
-                        new Organizzazione().setId(5)
-                ));
+                ArrayList<Organizzazione> orgs = new ArrayList<>();
+                for (int i=0;i<5;i++){
+                    orgs.add(new Organizzazione().setId(count+i));
+                }
+                /*mutableLiveOrgs.postValue(Arrays.asList(
+                        new Organizzazione().setId(++count),
+                        new Organizzazione().setId(++count),
+                        new Organizzazione().setId(++count),
+                        new Organizzazione().setId(++count)
+                ));*/
+                mutableLiveOrgs.setValue(orgs);
+                Log.e(TAG,"ou"+Thread.currentThread().getId());
             }
 
             @Override
@@ -282,6 +273,7 @@ public class RESTOrganizationsRepository implements OrganizationsRepository {
             }
         }.execute();
 
+        return mutableLiveOrgs;
         /*
         final Request request = new Request.Builder()
                 .url(serverUrl)

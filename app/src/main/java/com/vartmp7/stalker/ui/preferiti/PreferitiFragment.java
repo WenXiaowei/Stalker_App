@@ -1,6 +1,5 @@
 package com.vartmp7.stalker.ui.preferiti;
 
-import android.opengl.Visibility;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,7 +10,6 @@ import android.widget.ProgressBar;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -19,9 +17,12 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.vartmp7.stalker.R;
 import com.vartmp7.stalker.gsonbeans.Organizzazione;
 import com.vartmp7.stalker.model.FavoritesRepository;
+import com.vartmp7.stalker.model.FileOrganizationsLocalSource;
 import com.vartmp7.stalker.model.FirebaseFavoritesRepository;
+import com.vartmp7.stalker.model.OrganizationsLocalSource;
 import com.vartmp7.stalker.model.OrganizationsRepository;
-import com.vartmp7.stalker.model.RESTOrganizationsRepository;
+import com.vartmp7.stalker.model.OrganizationsWebSource;
+import com.vartmp7.stalker.model.RESTOrganizationsWebSource;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,7 +52,11 @@ public class PreferitiFragment extends Fragment {
          //TODO le seguenti righe vanno riviste
         OkHttpClient httpClient= new OkHttpClient();
         String serverUrl="";
-        OrganizationsRepository orgRepo = new RESTOrganizationsRepository(httpClient,serverUrl);
+        OrganizationsLocalSource localSource = new FileOrganizationsLocalSource("orgs.json",getContext());
+        OrganizationsWebSource webSource = new RESTOrganizationsWebSource(httpClient,"asd");
+        OrganizationsRepository orgRepo = new OrganizationsRepository(getViewLifecycleOwner(),localSource,webSource);
+        //orgRepo.saveOrganizzazione(new Organizzazione());
+        //orgRepo.updateOrganizzazioni();
         FavoritesRepository preferitiRepository = new FirebaseFavoritesRepository("1",orgRepo, FirebaseFirestore.getInstance());
         //fine del todo
 
@@ -59,7 +64,7 @@ public class PreferitiFragment extends Fragment {
 
         //final TextView textView = root.findViewById(R.id.text_notifications);
 
-
+        Log.d(TAG,"onCreate");
 
         showProgressBar();
         favViewModel.init();
@@ -74,15 +79,13 @@ public class PreferitiFragment extends Fragment {
             }
         });
 
-
-
         initRecyclerView();
         return root;
     }
 
     private void initRecyclerView(){
         if(favViewModel.getOrganizzazioni().getValue()==null) Log.d(TAG,"è null!");
-       favViewAdapter = new PreferitiViewAdapter(getContext(), new ArrayList<Organizzazione>()/*favViewModel.getOrganizzazioni().getValue()*/);
+       favViewAdapter = new PreferitiViewAdapter(getContext(), new ArrayList<>()/*favViewModel.getOrganizzazioni().getValue()*/);
         RecyclerView.LayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         favRecyclerView.setLayoutManager(linearLayoutManager);
         favRecyclerView.setAdapter(favViewAdapter);

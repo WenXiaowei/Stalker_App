@@ -205,17 +205,66 @@
 
 package com.vartmp7.stalker.model;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.os.AsyncTask;
+import android.util.Log;
+
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 
 import com.vartmp7.stalker.gsonbeans.Organizzazione;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-public interface OrganizationsRepository {
+import java.util.concurrent.Executor;
 
-    MutableLiveData<List<Organizzazione>> getOrganizzazioni();
-    void updateOrganizzazioni();
+public class OrganizationsRepository {
+
+    private static final String TAG = "com.vartmp7.stalker.model.OrganizationsRepository";
+    private LifecycleOwner lifeCycleOwner;
+    private OrganizationsLocalSource organizationsLocalSource;
+    private OrganizationsWebSource organizationsWebSource;
+
+    //MutableLiveData<List<Organizzazione>> getOrganizzazioni();
+
+
+    public OrganizationsRepository(LifecycleOwner lifeCycleOwner, OrganizationsLocalSource orgsLocalSource, OrganizationsWebSource orgsWebSource) {
+        this.lifeCycleOwner = lifeCycleOwner;
+        this.organizationsLocalSource = orgsLocalSource;
+        this.organizationsWebSource = orgsWebSource;
+        /*organizationsLocalSource.saveOrganizzazioni(Arrays.asList(
+                new Organizzazione().setId(1).setName("asd"),
+                new Organizzazione().setId(2).setName("ffff"),
+                new Organizzazione().setId(3).setName("gg")
+        ));*/
+    }
+
+    public LiveData<List<Organizzazione>> getOrganizzazioni(){
+        return organizationsLocalSource.getOrganizzazioni();
+    }
+
+    public void saveOrganizzazione(Organizzazione o){
+
+    }
+    public void removeOrganizzazione(Organizzazione o){
+
+    }
+
+
+    public void refreshOrganizzazioni(){
+        organizationsWebSource.getOrganizzazioni().observe(lifeCycleOwner, organizzazioni -> new Thread(() -> {
+            Log.d(TAG, "orgs");
+            organizzazioni.forEach(o -> Log.d(TAG, "org " + o.getId()));
+            organizationsLocalSource.saveOrganizzazioni(organizzazioni);
+        }).start());
+
+    }
 
     /*
     metodi più specifici, se in futuro si rendessero disponibili delle API più specifiche.

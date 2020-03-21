@@ -31,9 +31,14 @@ public class OrganizationViewAdapter extends RecyclerView.Adapter<OrganizationVi
     private static int currentPosition = -1;
     private NavController navController;
     public OrganizationViewAdapter(Context context, NavController controller, List<Organizzazione> list) {
-        listaOrganizzazione = list;
+        this.listaOrganizzazione = list;
         this.context = context;
         this.navController = controller;
+    }
+
+    public void setData(List<Organizzazione> newData){
+        this.listaOrganizzazione = newData;
+        this.notifyDataSetChanged();
     }
 
 
@@ -86,7 +91,7 @@ public class OrganizationViewAdapter extends RecyclerView.Adapter<OrganizationVi
                 currentPosition = position;
 
                 //reloding the list
-                notifyDataSetChanged();
+               // notifyDataSetChanged();
             }
         });
 //            holder.numeroLuoghi = org.get

@@ -1,31 +1,32 @@
 package com.vartmp7.stalker.ui.organizations;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
-import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.vartmp7.stalker.MainActivity;
 import com.vartmp7.stalker.R;
-import com.vartmp7.stalker.Tools;
 import com.vartmp7.stalker.gsonbeans.Organizzazione;
-import com.vartmp7.stalker.model.RESTOrganizationsRepository;
+import com.vartmp7.stalker.model.FileOrganizationsLocalSource;
+import com.vartmp7.stalker.model.OrganizationsLocalSource;
+import com.vartmp7.stalker.model.OrganizationsRepository;
+import com.vartmp7.stalker.model.OrganizationsWebSource;
+import com.vartmp7.stalker.model.RESTOrganizationsWebSource;
 
 import java.util.ArrayList;
-import java.util.List;
+
+import okhttp3.OkHttpClient;
 
 
 public class OrganizationsFragment extends Fragment {
@@ -38,8 +39,26 @@ public class OrganizationsFragment extends Fragment {
     private Button btnAggiorna;
     ArrayList<Organizzazione> list;
 
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+
+    }
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
+
+        Log.d(TAG,"ciaoo");
+
+
+        OrganizationsLocalSource localSource = new FileOrganizationsLocalSource("orgs.json",getContext());
+        OkHttpClient httpClient = new OkHttpClient();
+        OrganizationsWebSource webSource = new RESTOrganizationsWebSource(httpClient,"asd");
+        OrganizationsRepository repository = new OrganizationsRepository(getViewLifecycleOwner(),localSource,webSource);
+        dashboardViewModel = new ViewModelProvider(getActivity()).get(OrganizationsViewModel.class);
+        dashboardViewModel.initData(repository);
 
         View root = inflater.inflate(R.layout.fragment_organizations, container, false);
 
@@ -47,22 +66,29 @@ public class OrganizationsFragment extends Fragment {
 
         recyclerView = root.findViewById(R.id.rvListaOrganizzazioni);
         btnAggiorna.setOnClickListener(v -> {
-            dashboardViewModel.updateData();
+            Log.d(TAG,"refresh");
+            Toast.makeText(getContext(), "aggiornate", Toast.LENGTH_SHORT).show();
+            dashboardViewModel.refresh();
+            //dashboardViewModel.updateData();
             mAdapter.notifyDataSetChanged();
 //            dashboardViewModel.aggiungiOrganizzazione(new Organizzazione().setId(1).setName("UNIPD").setType("Both").setAddress("via Trieste "));
             recyclerView.smoothScrollToPosition(dashboardViewModel.getOrganizationList().getValue().size()-1);
         });
 
-         dashboardViewModel = new ViewModelProvider(getActivity()).get(OrganizationsViewModel.class);
 
-        dashboardViewModel.initData(new RESTOrganizationsRepository(Tools.getUnsafeOkHttpClient(), ""));
-        init_data();
+
+        dashboardViewModel.aggiungiOrganizzazione(new Organizzazione().setId(13232));
+
+        //init_data();
         setUpRecyclerView();
-        dashboardViewModel.getOrganizationList().observe(getActivity(), list -> mAdapter.notifyDataSetChanged());
+        dashboardViewModel.getOrganizationList().observe(getActivity(), list ->{
+            Log.d(TAG,"orgs");
+            list.forEach(o->Log.d(TAG,"org:"+o));
+            mAdapter.setData(list);
+            mAdapter.notifyDataSetChanged();
+        });
 
-
-
-
+        Log.e(TAG,"ou"+Thread.currentThread().getId());
         return root;
     }
 
@@ -74,6 +100,7 @@ public class OrganizationsFragment extends Fragment {
         recyclerView.setAdapter(mAdapter);
 
     }
+
 
     private void init_data() {
         list = new ArrayList<>();
