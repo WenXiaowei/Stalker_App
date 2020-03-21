@@ -9,6 +9,7 @@ import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -40,11 +41,13 @@ public class PreferitiFragment extends Fragment {
     private PreferitiViewAdapter favViewAdapter;
     private RecyclerView favRecyclerView;
     private ProgressBar favPbLoading;
+    private MutableLiveData<List<Organizzazione>> listMutableLiveData;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_preferiti, container, false);
-
+        listMutableLiveData = new MutableLiveData<>();
+        listMutableLiveData.setValue(new ArrayList<>());
         this.favRecyclerView = (RecyclerView) root.findViewById(R.id.preferitiRecyclerView);
         this.favPbLoading = (ProgressBar) root.findViewById(R.id.pb_loadingPreferiti);
         /*favViewModel =
@@ -52,15 +55,15 @@ public class PreferitiFragment extends Fragment {
          //TODO le seguenti righe vanno riviste
         OkHttpClient httpClient= new OkHttpClient();
         String serverUrl="";
-//        OrganizationsLocalSource localSource = new FileOrganizationsLocalSource("orgs.json",getContext());
-//        OrganizationsWebSource webSource = new RESTOrganizationsWebSource(httpClient,"asd");
-//        OrganizationsRepository orgRepo = new OrganizationsRepository(getViewLifecycleOwner(),localSource,webSource);
+        OrganizationsLocalSource localSource = new FileOrganizationsLocalSource("orgs.json",getContext(), listMutableLiveData);
+        OrganizationsWebSource webSource = new RESTOrganizationsWebSource(httpClient,listMutableLiveData,"asd");
+        OrganizationsRepository orgRepo = new OrganizationsRepository(getViewLifecycleOwner(),localSource,webSource);
         //orgRepo.saveOrganizzazione(new Organizzazione());
         //orgRepo.updateOrganizzazioni();
-//        FavoritesRepository preferitiRepository = new FirebaseFavoritesRepository("1",orgRepo, FirebaseFirestore.getInstance());
+        FavoritesRepository preferitiRepository = new FirebaseFavoritesRepository("1",orgRepo, FirebaseFirestore.getInstance());
         //fine del todo
 
-//        this.favViewModel = new PreferitiViewModel(preferitiRepository);
+        this.favViewModel = new PreferitiViewModel(preferitiRepository);
 
         //final TextView textView = root.findViewById(R.id.text_notifications);
 
@@ -68,6 +71,7 @@ public class PreferitiFragment extends Fragment {
 
         showProgressBar();
         favViewModel.init();
+        initRecyclerView();
         favViewModel.getOrganizzazioni().observe(getViewLifecycleOwner(), new Observer<List<Organizzazione>>() {
             @Override
             public void onChanged(List<Organizzazione> organizzazioni) {
@@ -79,7 +83,6 @@ public class PreferitiFragment extends Fragment {
             }
         });
 
-        initRecyclerView();
         return root;
     }
 
