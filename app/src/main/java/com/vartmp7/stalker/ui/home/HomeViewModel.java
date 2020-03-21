@@ -28,7 +28,9 @@ public class HomeViewModel extends ViewModel {
 
 
     public void addTrackingOrganizzazione(Organizzazione org){
-        listOrganizzazione.getValue().add(org);
+        List<Organizzazione> l = listOrganizzazione.getValue();
+        l.add(org);
+        listOrganizzazione.setValue(l);
     }
 
     public LiveData<List<Organizzazione>> getListaOrganizzazione(){

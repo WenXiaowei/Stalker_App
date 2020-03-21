@@ -41,44 +41,51 @@ public class HomeFragment extends Fragment {
 
     private ArrayList<Organizzazione> list;
 
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle b) {
-        homeViewModel =  new ViewModelProvider(getActivity()).get(HomeViewModel.class);
-        View root = inflater.inflate(R.layout.fragment_status, container, false);
-
-        init_data();
-        homeViewModel.initi(list);
-        mAdapter = new TrackingViewAdapter(getContext(),homeViewModel.getListaOrganizzazione().getValue());
-
-        recyclerView = root.findViewById(R.id.trackingRecycleView);
-
-        layoutManager = new LinearLayoutManager(getContext());
-
-        recyclerView.setLayoutManager(layoutManager);
-
-        recyclerView.setAdapter(mAdapter);
-        addingNewOrganization();
-
-        return root;
-    }
-
-    public void addingNewOrganization(){
-        Organizzazione org = (Organizzazione) getArguments().getSerializable("org");
-        if (org!=null){
-//            Log.d(TAG, "onCreateView: "+org);
-            list.add(org);
-            homeViewModel.addTrackingOrganizzazione(org);
-//            mAdapter = new TrackingViewAdapter(getContext(), list);
-//            recyclerView.setAdapter(mAdapter);
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (list == null) {
+            init_data();
         }
     }
 
-    public void init_data(){
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle b) {
+        View root = inflater.inflate(R.layout.fragment_status, container, false);
+        recyclerView = root.findViewById(R.id.trackingRecycleView);
+
+        homeViewModel = new ViewModelProvider(getActivity()).get(HomeViewModel.class);
+        homeViewModel.initi(list);
+
+        mAdapter = new TrackingViewAdapter(getContext(), homeViewModel.getListaOrganizzazione().getValue());
+        homeViewModel.getListaOrganizzazione().observe(getViewLifecycleOwner(), list -> mAdapter.notifyDataSetChanged());
+
+        layoutManager = new LinearLayoutManager(getContext());
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(mAdapter);
+        addingNewOrganization();
+        return root;
+    }
+
+    public void addingNewOrganization() {
+        if (getArguments() != null) {
+
+            Organizzazione org = (Organizzazione) getArguments().getSerializable("org");
+            if (org != null) {
+//            Log.d(TAG, "onCreateView: "+org);
+                homeViewModel.addTrackingOrganizzazione(org);
+//            mAdapter = new TrackingViewAdapter(getContext(), list);
+//            recyclerView.setAdapter(mAdapter);
+            }
+        }
+    }
+
+    public void init_data() {
         list = new ArrayList<>();
-        for (int i=0; i<3; i++){
+        for (int i = 0; i < 3; i++) {
             Organizzazione org = new Organizzazione()
                     .setId(i)
-                    .setName("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa "+i)
-                    .setAddress("Via trieste "+i)
+                    .setName("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa " + i)
+                    .setAddress("Via trieste " + i)
                     .setPreferito(false)
                     .setImage_url("https://images.unsplash.com/photo-1504639725590-34d0984388bd?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=60");
             list.add(org);

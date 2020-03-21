@@ -45,6 +45,8 @@ public class OrganizationsFragment extends Fragment implements SwipeRefreshLayou
                 Color.GREEN, Color.MAGENTA);
 
 
+
+
         recyclerView = root.findViewById(R.id.rvListaOrganizzazioni);
 //        btnAggiorna.setOnClickListener(v -> {
 //            organizzazioneViewModel.aggiungiOrganizzazione(new Organizzazione().setId(1).setName("UNIPD").setType("Both").setAddress("via Trieste "));
@@ -53,15 +55,13 @@ public class OrganizationsFragment extends Fragment implements SwipeRefreshLayou
 
         organizzazioneViewModel = new ViewModelProvider(getActivity()).get(OrganizationsViewModel.class);
 
-        organizzazioneViewModel.initData(new RESTOrganizationsRepository(Tools.getUnsafeOkHttpClient(), MainActivity.URL_SERVER));
+        organizzazioneViewModel.initData(new RESTOrganizationsRepository(Tools.getUnsafeOkHttpClient(), "http://adasdasd"));
 
         setUpRecyclerView();
         organizzazioneViewModel.getOrganizationList().observe(getActivity(), list -> {
             mAdapter.notifyDataSetChanged();
             swipeRefreshLayout.setRefreshing(false);
         });
-
-
         return root;
     }
 
