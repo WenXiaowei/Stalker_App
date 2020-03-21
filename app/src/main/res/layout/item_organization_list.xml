@@ -1,57 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:orientation="vertical"
+    android:layout_height="wrap_content"
     android:layout_marginBottom="5dp"
-    android:layout_height="wrap_content">
+    android:orientation="vertical">
+
     <LinearLayout
+        android:id="@+id/llIconName"
         android:layout_width="match_parent"
-        android:orientation="vertical"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@drawable/tracking_item_title_background"
+        android:orientation="vertical">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:orientation="horizontal">
-            <ImageView
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/ivIconOrganizzazione"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
+                android:layout_margin="5dp"
+                android:contentDescription="@string/icon_dell_organizzazione"
                 android:src="@drawable/icon_stalker"
-                android:id="@+id/ivIconOrganizzazione"
-                android:contentDescription="@string/icon_dell_organizzazione" />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                app:civ_border_width="2dp" />
 
-                android:layout_weight="5"
-                android:id="@+id/tvNomeOrganizzazione"/>
             <TextView
-                android:layout_weight="1"
+                android:id="@+id/tvNomeOrganizzazione"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-light"
+                android:layout_marginStart="5dp"
+                android:layout_weight="5"
+                android:textSize="25sp" />
+
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/tvTipoOrganizzazione"/>
-            <Button
-                android:layout_weight="1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/scegli"
-                android:id="@+id/btnTrackMe"/>
+                android:orientation="vertical"
+                android:paddingEnd="10dp">
+
+                <Button
+                    android:id="@+id/btnTrackMe"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/scegli" />
+
+                <Button
+                    android:id="@+id/btnShowDetails"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/dettagli" />
+            </LinearLayout>
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/llHidingInformation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/llHidingInformation"
-            android:visibility="gone"
-            android:orientation="horizontal">
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="@string/elenco_luoghi"/>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/tvIndirizzo"/>
+            android:orientation="vertical"
+            android:padding="5dp"
+            android:visibility="gone">
+
+           <include layout="@layout/organization_details" />
+
         </LinearLayout>
     </LinearLayout>
 

@@ -213,6 +213,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.gson.Gson;
+import com.vartmp7.stalker.MainActivity;
 import com.vartmp7.stalker.gsonbeans.Organizzazione;
 import com.vartmp7.stalker.gsonbeans.ResponseOrganizzazione;
 import com.vartmp7.stalker.ui.organizations.OrganizationsViewModel;
@@ -255,7 +256,7 @@ public class RESTOrganizationsRepository implements OrganizationsRepository {
         List<Organizzazione> l =mutableLiveDataOrganizzazioni.getValue();
         if (l== null)
             l = new ArrayList<>();
-        l.add(new Organizzazione().setId(1).setName("UNIPD").setAddress("Via trieste").setType("Both")
+        l.add(new Organizzazione().setId(1).setName("UNIPD aaaaaaaaaaaaaaaaaaaaaaaaaaaaa").setAddress("Via trieste").setType("Both")
                 .setImage_url("https://images.pexels.com/photos/1317712/pexels-photo-1317712.jpeg"));
         l.add(new Organizzazione().setId(2).setName("UNIPD").setAddress("Via trieste").setType("Both")
                 .setImage_url("https://images.pexels.com/photos/1317712/pexels-photo-1317712.jpeg"));
@@ -281,6 +282,7 @@ public class RESTOrganizationsRepository implements OrganizationsRepository {
 
         final Request request = new Request.Builder()
                 .url(serverUrl)
+                .addHeader(MainActivity.TOKEN_NAME, MainActivity.TOKEN_VALUE)
                 .build();
         Call call = httpClient.newCall(request);
 

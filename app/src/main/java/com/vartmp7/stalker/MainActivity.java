@@ -701,6 +701,11 @@ import okhttp3.OkHttpClient;
  */
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "com.vartmp7.stalker.MainActivity";
+//    public static final String URL_SERVER="https://stalker-be.ddns.net/";
+    public static final String URL_SERVER="http::/localhost:5000";
+    public static final String TOKEN_NAME="Organization-Token";
+    public static final String TOKEN_VALUE="vartmp7";
+
     private GoogleSignInClient mGoogleSignInClient;
     @Override
     public Resources.Theme getTheme() {

@@ -5,9 +5,9 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
@@ -15,9 +15,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.vartmp7.stalker.MainActivity;
 import com.vartmp7.stalker.R;
 import com.vartmp7.stalker.Tools;
-import com.vartmp7.stalker.gsonbeans.Organizzazione;
 import com.vartmp7.stalker.model.RESTOrganizationsRepository;
 
 
@@ -29,6 +29,11 @@ public class OrganizationsFragment extends Fragment implements SwipeRefreshLayou
     private OrganizationViewAdapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
     private SwipeRefreshLayout swipeRefreshLayout;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -48,7 +53,7 @@ public class OrganizationsFragment extends Fragment implements SwipeRefreshLayou
 
         organizzazioneViewModel = new ViewModelProvider(getActivity()).get(OrganizationsViewModel.class);
 
-        organizzazioneViewModel.initData(new RESTOrganizationsRepository(Tools.getUnsafeOkHttpClient(), "http://asdiad:5000"));
+        organizzazioneViewModel.initData(new RESTOrganizationsRepository(Tools.getUnsafeOkHttpClient(), MainActivity.URL_SERVER));
 
         setUpRecyclerView();
         organizzazioneViewModel.getOrganizationList().observe(getActivity(), list -> {

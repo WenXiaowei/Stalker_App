@@ -6,7 +6,7 @@
     <string name="sign_in">Sign in</string>
     <string name="sign_up">Sign up</string>
     <string name="nessun_organizzazione_ti_sta_stalkerando">Nessun\'organizzazione ti sta stalkerando!</string>
-    <string name="status">Status</string>
+    <string name="status">Status </string>
     <string name="elenco_luoghi">Elenco Luoghi:</string>
     <string name="elenco_dei_luoghi_tracciati_per_l_organizzazione_selezionata">Elenco dei luoghi tracciati per l\'organizzazione selezionata:</string>
     <string name="start_track">Start Track</string>
@@ -19,7 +19,7 @@
     <string name="not_in_any_place">Non sei in nessun luogo tracciato dell\'organizzazione selezionata!</string>
     <string name="you_left">Hai lasciato %s</string>
     <string name="you_are_in">Sei in %s</string>
-    <string name="facebook_app_id">212692166599390</string><!--todo Da togliere successivamente   -->
+    <string name="facebook_app_id">212692166599390</string><!--todo Da togliere successivamente quando renderemo l'app pubblica   -->
     <string name="fb_login_protocol_scheme">fb212692166599390</string>
     <string name="continua_senza_autenticazione">Continua senza autenticazione</string>
 
@@ -39,4 +39,9 @@
     <string name="logout">Logout</string>
     <string name="login">Login</string>
     <string name="icon_dell_organizzazione">icon dell\'organizzazione</string>
+    <string name="dettagli">Dettagli</string>
+    <string name="nascondi">Nascondi</string>
+    <string name="tipo_organizzazione">Tipo Organizzazione: </string>
+    <string name="n_d">N.D.</string>
+    <string name="nessun_luogo_tracciabile_per_quest_organizzazione">Nessun luogo tracciabile per quest\'organizzazione</string>
 </resources>

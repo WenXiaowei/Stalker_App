@@ -77,7 +77,7 @@ public class HomeFragment extends Fragment {
         for (int i=0; i<3; i++){
             Organizzazione org = new Organizzazione()
                     .setId(i)
-                    .setName("Unipd "+i)
+                    .setName("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa "+i)
                     .setAddress("Via trieste "+i)
                     .setPreferito(false)
                     .setImage_url("https://images.unsplash.com/photo-1504639725590-34d0984388bd?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=60");

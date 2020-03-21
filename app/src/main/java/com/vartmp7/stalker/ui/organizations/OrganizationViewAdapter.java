@@ -41,7 +41,7 @@ public class OrganizationViewAdapter extends RecyclerView.Adapter<OrganizationVi
         this.navController = controller;
     }
 
-    private static int[] colors = new int[]{R.color.colorAccent, R.color.colorPrimary, R.color.colorPrimaryDark, R.color.vartmp7blu, R.color.vartmp7bluChiaro};
+//    private static int[] colors = new int[]{R.color.colorAccent, R.color.colorPrimary, R.color.colorPrimaryDark, R.color.vartmp7blu, R.color.vartmp7bluChiaro};
 
     @NonNull
     @Override
@@ -61,38 +61,83 @@ public class OrganizationViewAdapter extends RecyclerView.Adapter<OrganizationVi
                 .load(listaOrganizzazione.get(position).getImage_url())
                 .into(holder.ivIconOrganizzazione);
 
-        holder.llHidingInfo.setAlpha(0.9f);
-        holder.llHidingInfo.setBackgroundColor(colors[colorIndex]);
+//        holder.llHidingInfo.setAlpha(0.9f);
+//        holder.llIconName.setAlpha(0.9f);
+//        holder.llHidingInfo.setBackgroundColor(colors[colorIndex]);
+//        holder.llIconName.setBackgroundColor(colors[colorIndex]);
 
-        holder.nomeOrganizzazione.setText(org.getName() + " " + org.getId());
-        holder.tipoOrganizzazione.setText("tipo: " + org.getType());
-        holder.tvIndirizzo.setText(org.getOrgInfo());
-        holder.tvIndirizzo.setText("\naaaaaaaaaaa\naaaaaaaaaaaaaaa\naaaaaaaaaaaaaa\naaaaaaaaaaaaaaaaa\naaaaaaaaaaaaaaaaaa\naaaaaaaaaaaaa");
+        holder.nomeOrganizzazione.setText(org.getName());
+        holder.tipoOrganizzazione.setText(org.getType());
+        holder.tvIndirizzo.setText(org.getAddress());
+        holder.tvElencoLuoghi.setText("\naaaaaaaaaaa\naaaaaaaaaaaaaaa\naaaaaaaaaaaaaa\naaaaaaaaaaaaaaaaa\naaaaaaaaaaaaaaaaaa\naaaaaaaaaaaaa");
         holder.btnTrackMe.setOnClickListener(v -> {
 //                int position = holder.getAdapterPosition();
 //                Organizzazione org = listaOrganizzazione.get(position);
-//                Bundle b = new Bundle();
-//                b.putSerializable("org", org);
-//                navController.navigate(R.id.action_navigation_organizations_to_navigation_status,b);
+                Bundle b = new Bundle();
+                b.putSerializable("org", org);
+                navController.navigate(R.id.action_navigation_organizations_to_navigation_status,b);
+
+        });
+
+        holder.btnShowDetails.setOnClickListener(v->{
             if (holder.llHidingInfo.getVisibility() == View.GONE) {
-                holder.llHidingInfo.setVisibility(View.VISIBLE);
+                Animation slideDown = AnimationUtils.loadAnimation(context, R.anim.slide_down_animation);
+                slideDown.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+                        holder.llHidingInfo.setVisibility(View.VISIBLE);
+                        ((Button) v).setText(R.string.nascondi);
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+
+                    }
+                });
+                holder.llHidingInfo.startAnimation(slideDown);
             } else {
-                holder.llHidingInfo.setVisibility(View.GONE);
+                Animation closing = AnimationUtils.loadAnimation(context, R.anim.closing_animation);
+                closing.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {}
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        holder.llHidingInfo.setVisibility(View.GONE);
+                        ((Button) v).setText(R.string.dettagli);
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {}
+                });
+                holder.llHidingInfo.startAnimation(closing);
             }
-
-
         });
 
         if (currentPosition == position && holder.llHidingInfo.getVisibility() == View.INVISIBLE) {
             Animation slideDown = AnimationUtils.loadAnimation(context, R.anim.slide_down_animation);
-            holder.llHidingInfo.setVisibility(View.VISIBLE);
-            holder.tvIndirizzo.setVisibility(View.VISIBLE);
+            slideDown.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+                    holder.llHidingInfo.setVisibility(View.VISIBLE);
+                    holder.tvIndirizzo.setVisibility(View.VISIBLE);
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+
+                }
+            });
             holder.llHidingInfo.startAnimation(slideDown);
         } else if (currentPosition == position && holder.llHidingInfo.getVisibility() == View.VISIBLE) {
-            Animation closing = AnimationUtils.loadAnimation(context, R.anim.closing_animation);
-            holder.llHidingInfo.setVisibility(View.INVISIBLE);
-            holder.tvIndirizzo.setVisibility(View.INVISIBLE);
-            holder.llHidingInfo.startAnimation(closing);
+
             currentPosition = -1;
         }
         holder.nomeOrganizzazione.setOnClickListener(new View.OnClickListener() {
@@ -116,9 +161,9 @@ public class OrganizationViewAdapter extends RecyclerView.Adapter<OrganizationVi
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView nomeOrganizzazione;
-        TextView tipoOrganizzazione, tvIndirizzo;
-        Button btnTrackMe;
-        LinearLayout llHidingInfo;
+        TextView tipoOrganizzazione, tvIndirizzo, tvElencoLuoghi;
+        Button btnTrackMe, btnShowDetails;
+        LinearLayout llHidingInfo,llIconName;
 
         ImageView ivIconOrganizzazione;
 
@@ -131,6 +176,9 @@ public class OrganizationViewAdapter extends RecyclerView.Adapter<OrganizationVi
             tvIndirizzo = itemView.findViewById(R.id.tvIndirizzo);
             llHidingInfo = itemView.findViewById(R.id.llHidingInformation);
             ivIconOrganizzazione = itemView.findViewById(R.id.ivIconOrganizzazione);
+            btnShowDetails= itemView.findViewById(R.id.btnShowDetails);
+            llIconName = itemView.findViewById(R.id.llIconName);
+            tvElencoLuoghi = itemView.findViewById(R.id.tvElencoLuoghi);
 
         }
     }

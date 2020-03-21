@@ -36,6 +36,8 @@ import com.vartmp7.stalker.gsonbeans.Organizzazione;
 
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 /**
  * @author Xiaowei Wen, Lorenzo Taschin
  */
@@ -72,21 +74,14 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
         arrowCloseRotation.setDuration(500);
         arrowCloseRotation.setInterpolator(new LinearInterpolator());
 
+//        holder.tvElencoLuoghi.setText("\naaa\naaa\naaa\naaa\naaa\naaa\naaa\naaa\naaa\naaa\naaa\naaa\naaa\naaa\naaa");
         Glide.with(context)
-                .setDefaultRequestOptions(new RequestOptions().error(R.drawable.tracking_item_body_background))
+//                .setDefaultRequestOptions(new RequestOptions().error(R.drawable.tracking_item_body_background))
                 .load(org.getImage_url())
-                .into(new CustomTarget<Drawable>() {
-                    @Override
-                    public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
-                        resource.setAlpha(100);
-                        holder.llInformationToHide.setBackground(resource);
-                    }
-
-                    @Override
-                    public void onLoadCleared(@Nullable Drawable placeholder) {
-
-                    }
-                });
+//                .override(100, 600)
+//                .centerCrop()
+                .fitCenter()
+                .into(holder.civIconOrganizzazione);
 //        holder.ibtnPreferito.setOnDragListener(new View.OnDragListener() {
 //            @Override
 //            public boolean onDrag(View v, DragEvent event) {
@@ -140,21 +135,38 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
         holder.ibtnExpandArrow.setImageResource(R.drawable.angular_arrow_left);
         holder.llTitle.setOnClickListener(v -> {
             if (holder.llInformationToHide.getVisibility() == View.GONE) {
-                holder.ibtnExpandArrow.setImageResource(R.drawable.angular_arrow_down);
                 Animation animation = AnimationUtils.loadAnimation(context, R.anim.slide_down_animation);
-                holder.llTitle.setBackground(null);
-                holder.llInformationToHide.setVisibility(View.VISIBLE);
-//                holder.llInformationToHide.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                animation.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+                        holder.llInformationToHide.setVisibility(View.VISIBLE);
+                    }
+                    @Override
+                    public void onAnimationEnd(Animation animation) {}
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {}
+                });
+                holder.ibtnExpandArrow.setImageResource(R.drawable.angular_arrow_down);
                 holder.ibtnExpandArrow.startAnimation(arrowOpenRotation);
                 holder.llInformationToHide.startAnimation(animation);
             } else {
                 Animation animation = AnimationUtils.loadAnimation(context, R.anim.closing_animation);
-                holder.ibtnExpandArrow.startAnimation(arrowCloseRotation);
+
                 holder.ibtnExpandArrow.setImageResource(R.drawable.angular_arrow_left);
-                holder.llInformationToHide.setVisibility(View.GONE);
-                holder.llTitle.setBackgroundResource(R.drawable.tracking_item_title_background);
-//                holder.llInformationToHide.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0));
                 holder.llInformationToHide.startAnimation(animation);
+                holder.ibtnExpandArrow.startAnimation(arrowCloseRotation);
+                animation.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+                    }
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        holder.llInformationToHide.setVisibility(View.GONE);
+                    }
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+                    }
+                });
             }
         });
 
@@ -200,6 +212,7 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
         Switch sAnonimo;
         CardView cvTrackingitem;
         LinearLayout llInformationToHide, llTitle;
+        CircleImageView civIconOrganizzazione;
 
         public ViewHolder(@NonNull View v) {
             super(v);
@@ -215,6 +228,7 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
             llInformationToHide = v.findViewById(R.id.llHidingInformation);
             llTitle = v.findViewById(R.id.llTitle);
             ibtnExpandArrow = v.findViewById(R.id.ibtnExpand);
+            civIconOrganizzazione = v.findViewById(R.id.civIconOrganizzazione);
         }
     }
 
