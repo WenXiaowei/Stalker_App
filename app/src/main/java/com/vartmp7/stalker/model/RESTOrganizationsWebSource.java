@@ -209,106 +209,108 @@ import android.annotation.SuppressLint;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.gson.Gson;
-import com.vartmp7.stalker.MainActivity;
 import com.vartmp7.stalker.gsonbeans.Organizzazione;
-import com.vartmp7.stalker.gsonbeans.ResponseOrganizzazione;
-import com.vartmp7.stalker.ui.organizations.OrganizationsViewModel;
 
-import org.jetbrains.annotations.NotNull;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
-import okhttp3.Call;
-import okhttp3.Callback;
 import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 
-public class RESTOrganizationsRepository implements OrganizationsRepository {
+public class RESTOrganizationsWebSource implements OrganizationsWebSource {
     private static final String TAG = "com.vartmp7.stalker.model.RESTOrganizationsRepository";
     private String serverUrl;
     private OkHttpClient httpClient;
     private Gson gson = new Gson();
 
-    private MutableLiveData<List<Organizzazione>> mutableLiveDataOrganizzazioni;
+
+    static int count=0;
+
+    //private MutableLiveData<List<Organizzazione>> mutableLiveDataOrganizzazioni;
 
 
-    public RESTOrganizationsRepository(OkHttpClient httpClient, String serverUrl) {
-        this.httpClient = httpClient;
-        this.serverUrl = new String(serverUrl);
-        this.mutableLiveDataOrganizzazioni = new MutableLiveData<List<Organizzazione>>();
+    public RESTOrganizationsWebSource(OkHttpClient httpClient, String serverUrl) {
+        this.httpClient=httpClient;
+        //this.mutableLiveDataOrganizzazioni = new MutableLiveData<List<Organizzazione>>();
     }
 
-
+    @SuppressLint("StaticFieldLeak")
     @Override
     public MutableLiveData<List<Organizzazione>> getOrganizzazioni() {
-//        updateOrganizzazioni();
-
-        List<Organizzazione> l = mutableLiveDataOrganizzazioni.getValue();
-        if (l == null)
-            l = new ArrayList<>();
-        l.add(new Organizzazione().setId(1).setName("UNIPD aaaaaaaaaaaaaaaaaaaaaaaaaaaaa").setAddress("Via trieste").setType("Both")
-                .setImage_url("https://images.pexels.com/photos/1317712/pexels-photo-1317712.jpeg"));
-        l.add(new Organizzazione().setId(2).setName("UNIPD").setAddress("Via trieste").setType("Both")
-                .setImage_url("https://images.pexels.com/photos/1317712/pexels-photo-1317712.jpeg"));
-        l.add(new Organizzazione().setId(3).setName("UNIPD").setAddress("Via trieste").setType("Both")
-                .setImage_url("https://images.pexels.com/photos/1317712/pexels-photo-1317712.jpeg"));
-        l.add(new Organizzazione().setId(4).setName("UNIPD").setAddress("Via trieste").setType("Both")
-                .setImage_url("https://images.pexels.com/photos/1317712/pexels-photo-1317712.jpeg"));
-        l.add(new Organizzazione().setId(5).setName("UNIPD").setAddress("Via trieste").setType("Both")
-                .setImage_url("https://images.pexels.com/photos/1317712/pexels-photo-1317712.jpeg"));
-        l.add(new Organizzazione().setId(6).setName("UNIPD").setAddress("Via trieste").setType("Both")
-                .setImage_url("https://images.pexels.com/photos/1317712/pexels-photo-1317712.jpeg"));
-        mutableLiveDataOrganizzazioni.setValue(l);
-        return this.mutableLiveDataOrganizzazioni;
-    }
-
-    @Override
-    public void updateOrganizzazioni() {
+        count++;
+        Log.e(TAG,count+"");
+        MutableLiveData<List<Organizzazione>> mutableLiveOrgs = new MutableLiveData<>();
         //TODO togliere hardcoded-mock e decommentare codice per chiamata alle REST API
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                ArrayList<Organizzazione> orgs = new ArrayList<>();
+                for (int i=0;i<5;i++){
+                    orgs.add(new Organizzazione().setId(count+i));
+                }
+                /*mutableLiveOrgs.postValue(Arrays.asList(
+                        new Organizzazione().setId(++count),
+                        new Organizzazione().setId(++count),
+                        new Organizzazione().setId(++count),
+                        new Organizzazione().setId(++count)
+                ));*/
+                mutableLiveOrgs.setValue(orgs);
+                Log.e(TAG,"ou"+Thread.currentThread().getId());
+            }
 
+            @Override
+            protected Void doInBackground(Void... voids) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+        }.execute();
+
+        return mutableLiveOrgs;
+        /*
         final Request request = new Request.Builder()
                 .url(serverUrl)
-                .addHeader(MainActivity.TOKEN_NAME, MainActivity.TOKEN_VALUE)
                 .build();
         Call call = httpClient.newCall(request);
 
         call.enqueue(new Callback() {
+
+            Message msg = new Message();
+            Bundle b = new Bundle();
+
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                //todo gestire quando la richiesta fallisce
+                b.putInt("CODE", 0);
+                b.putString("ErrorMsg", e.getMessage());
+                msg.setData(b);
+                //error_handler.sendMessage(msg);
                 Log.d(TAG, "onFailure: " + e.toString());
-                List<Organizzazione> l = mutableLiveDataOrganizzazioni.getValue();
-                l.add(new Organizzazione().setId(1).setName("PAdova-1").setAddress("Via trieste").setType("Both"));
-                l.get(1).setImage_url("https://images.unsplash.com/photo-1504639725590-34d0984388bd?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=60");
-                mutableLiveDataOrganizzazioni.postValue(l);
+
             }
 
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                // todo non funziona perché array list non lo prende da mutableLiveData
-
-                List<Organizzazione> list = mutableLiveDataOrganizzazioni.getValue();
-                if (list == null)
-                    list = new ArrayList<>();
-                ResponseOrganizzazione responseOrganizzazione = gson.fromJson(response.body().string(), ResponseOrganizzazione.class);
-                // aggiungere nella nuova lista
-                list.addAll(responseOrganizzazione.getOrganizations());
-                list = list.stream().distinct().collect(Collectors.toList());
-                mutableLiveDataOrganizzazioni.postValue(list);
-
+                try {
+                    int req_code = Integer.parseInt(Objects.requireNonNull(response.header("req_code")));
+                    b.putInt("REQ_CODE", req_code);
+                    ResponseOrganizzazione responseOrganizzazione = gson.fromJson(response.body().string(),ResponseOrganizzazione.class);
+                    mutableLiveDataOrganizzazioni.setValue(responseOrganizzazione.getOrganizations());
+                } catch (NullPointerException e) {
+                    b.putInt("CODE", FAIL_RESPONSE_CODE);
+                } finally {
+                    msg.setData(b);
+                   // handler.sendMessage(msg);
+                }
             }
         });
-
+        */
     }
 
 

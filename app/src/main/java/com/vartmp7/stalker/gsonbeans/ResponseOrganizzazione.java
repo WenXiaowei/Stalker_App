@@ -3,6 +3,7 @@ package com.vartmp7.stalker.gsonbeans;
 import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -11,13 +12,13 @@ import java.util.Objects;
 public class ResponseOrganizzazione {
     public static final String TAG ="com.vartmp7.stalker.gsonbeans.ResponseOrganizzazione";
 
-    private ArrayList<Organizzazione> organizations;
+    private List<Organizzazione> organizations;
 
-    public ArrayList<Organizzazione> getOrganizations() {
+    public List<Organizzazione> getOrganizations() {
         return organizations;
     }
 
-    public void setOrganizations(ArrayList<Organizzazione> organizations) {
+    public void setOrganizations(List<Organizzazione> organizations) {
         this.organizations = organizations;
     }
 
