@@ -9,7 +9,6 @@ import androidx.lifecycle.ViewModel;
 import com.vartmp7.stalker.gsonbeans.Organizzazione;
 import com.vartmp7.stalker.model.OrganizationsRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Nullable;

@@ -41,11 +41,13 @@ public class OrganizationsFragment extends Fragment implements SwipeRefreshLayou
     private RecyclerView.LayoutManager layoutManager;
     private SwipeRefreshLayout swipeRefreshLayout;
 
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-    }
 
+
+    }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -57,8 +59,8 @@ public class OrganizationsFragment extends Fragment implements SwipeRefreshLayou
         OkHttpClient httpClient = new OkHttpClient();
         OrganizationsWebSource webSource = new RESTOrganizationsWebSource(httpClient,"asd");
         OrganizationsRepository repository = new OrganizationsRepository(getViewLifecycleOwner(),localSource,webSource);
-        organizzazioneViewModel = new ViewModelProvider(getActivity()).get(OrganizationsViewModel.class);
-        organizzazioneViewModel.initData(repository);
+        dashboardViewModel = new ViewModelProvider(getActivity()).get(OrganizationsViewModel.class);
+        dashboardViewModel.initData(repository);
 
         View root = inflater.inflate(R.layout.fragment_organizations, container, false);
         swipeRefreshLayout = root.findViewById(R.id.srfl);
@@ -90,10 +92,21 @@ public class OrganizationsFragment extends Fragment implements SwipeRefreshLayou
 
         organizzazioneViewModel = new ViewModelProvider(getActivity()).get(OrganizationsViewModel.class);
 
+<<<<<<<
         organizzazioneViewModel.initData(new OrganizationsRepository(getViewLifecycleOwner(),
                 new FileOrganizationsLocalSource("orgs.json", getContext()),
                 new RESTOrganizationsWebSource(Tools.getUnsafeOkHttpClient(),"https://casdasd")));
         //todo
+=======
+        //init_data();
+        setUpRecyclerView();
+        dashboardViewModel.getOrganizationList().observe(getActivity(), list ->{
+            Log.d(TAG,"orgs");
+            list.forEach(o->Log.d(TAG,"org:"+o));
+            mAdapter.setData(list);
+            mAdapter.notifyDataSetChanged();
+        });
+>>>>>>>
 
         setUpRecyclerView();
         organizzazioneViewModel.getOrganizationList().observe(getActivity(), list -> {
@@ -102,6 +115,7 @@ public class OrganizationsFragment extends Fragment implements SwipeRefreshLayou
             mAdapter.setData(list);
             swipeRefreshLayout.setRefreshing(false);
         });
+        Log.e(TAG,"ou"+Thread.currentThread().getId());
         return root;
     }
 

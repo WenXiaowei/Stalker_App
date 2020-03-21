@@ -41,7 +41,6 @@ public class OrganizationViewAdapter extends RecyclerView.Adapter<OrganizationVi
         this.navController = controller;
     }
 
-//    private static int[] colors = new int[]{R.color.colorAccent, R.color.colorPrimary, R.color.colorPrimaryDark, R.color.vartmp7blu, R.color.vartmp7bluChiaro};
     public void setData(List<Organizzazione> newData){
         this.listaOrganizzazione = newData;
         this.notifyDataSetChanged();
