@@ -31,6 +31,44 @@ public class Organizzazione implements Serializable {
     private String ldap_port;
     private Boolean isPreferito = false;
     private String image_url;
+    private boolean isTracking;
+    private boolean isExpanded, isLogged, isAnonimo;
+
+    public boolean isTracking() {
+        return isTracking;
+    }
+
+    public Organizzazione setTracking(boolean tracking) {
+        isTracking = tracking;
+        return this;
+    }
+
+    public boolean isExpanded() {
+        return isExpanded;
+    }
+
+    public Organizzazione setExpanded(boolean expanded) {
+        isExpanded = expanded;
+        return this;
+    }
+
+    public boolean isLogged() {
+        return isLogged;
+    }
+
+    public Organizzazione setLogged(boolean logged) {
+        isLogged = logged;
+        return this;
+    }
+
+    public boolean isAnonimo() {
+        return isAnonimo;
+    }
+
+    public Organizzazione setAnonimo(boolean anonimo) {
+        isAnonimo = anonimo;
+        return this;
+    }
 
     public String getImage_url() {
         return image_url;
