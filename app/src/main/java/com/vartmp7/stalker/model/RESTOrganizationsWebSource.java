@@ -261,7 +261,7 @@ public class RESTOrganizationsWebSource implements OrganizationsWebSource {
         call.enqueue(new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                List<Organizzazione> orgs = mutableLiveDataOrganizzazioni.getValue();
+                List<Organizzazione> orgs = new ArrayList<>();//mutableLiveDataOrganizzazioni.getValue();
                 for (int i = 0; i < 5; i++) {
                     orgs.add(new Organizzazione().setName("unipd " + i + count).setId(count + i)
                             .setImage_url("https://cdn.discordapp.com/attachments/690970576415621201/691008560363995208/Schermata_2020-03-21_alle_20.41.13.png"));

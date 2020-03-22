@@ -230,6 +230,7 @@ public class OrganizationsRepository {
     private LifecycleOwner lifeCycleOwner;
     private OrganizationsLocalSource organizationsLocalSource;
     private OrganizationsWebSource organizationsWebSource;
+    
 
 
 
@@ -258,12 +259,22 @@ public class OrganizationsRepository {
 
 
     public void refreshOrganizzazioni(){
-        organizationsWebSource.getOrganizzazioni().observe(lifeCycleOwner, organizzazioni -> new Thread(() -> {
-//            Log.d(TAG, "orgs");
-//            organizzazioni.forEach(o -> Log.d(TAG, "org " + o.getId()));
+        LiveData<List<Organizzazione>> resultFromWebCall = organizationsWebSource.getOrganizzazioni();
+        final Observer<List<Organizzazione>> webCallObserver = new Observer<List<Organizzazione>>(){
+            @Override
+            public void onChanged(List<Organizzazione> organizzazioni) {
+                organizationsLocalSource.saveOrganizzazioni(organizzazioni);
+            }
+        };
+        resultFromWebCall.removeObserver(webCallObserver);
+
+        /*resultFromWeb.observe(lifeCycleOwner, organizzazioni -> new Thread(() -> {
+            Log.d(TAG, "orgs");
+            organizzazioni.forEach(o -> Log.d(TAG, "org " + o.getId()));
             organizationsLocalSource.saveOrganizzazioni(organizzazioni);
         }).start());
-
+        resultFromWeb.removeObserver();
+*/
     }
 
     /*
