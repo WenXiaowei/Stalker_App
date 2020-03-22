@@ -765,26 +765,22 @@ public class MainActivity extends AppCompatActivity {
     }
     private boolean checkIsFirstStartUP(){
         SharedPreferences preferences = getSharedPreferences("startup_data",MODE_PRIVATE);
-        return preferences.getBoolean("first_startup",false);
+        return preferences.getBoolean("first_startup",true);
     }
     private void setUpFirstStartUP(){
-        if (checkIsFirstStartUP()){
-            File file = new File(MainActivity.this.getFilesDir(),"data");
-            if (!file.exists())
-                file.mkdir();
-            File orgJson = new File(file,"orgs.json");
-            try {
-                FileWriter writer = new FileWriter(orgJson);
-                String l = new Gson().toJson(new ResponseOrganizzazione());
-                writer.append(l);
-                writer.flush();
-                writer.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-
-        }
+//        if (checkIsFirstStartUP()){
+//            File orgJson = new File(MainActivity.this.getFilesDir(),"orgs.json");
+//            if (orgJson.)
+//            try {
+//                FileWriter writer = new FileWriter(orgJson);
+//                String l = new Gson().toJson(new ResponseOrganizzazione());
+//                writer.append(l);
+//                writer.flush();
+//                writer.close();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
     }
 
 

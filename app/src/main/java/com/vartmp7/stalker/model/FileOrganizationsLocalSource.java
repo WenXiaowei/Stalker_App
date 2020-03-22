@@ -214,14 +214,21 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.gson.Gson;
+import com.vartmp7.stalker.MainActivity;
 import com.vartmp7.stalker.gsonbeans.Organizzazione;
 import com.vartmp7.stalker.gsonbeans.ResponseOrganizzazione;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -250,22 +257,35 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
             @Override
             public void run() {
                 super.run();
-                try (BufferedReader br = new BufferedReader(new InputStreamReader(context.openFileInput(fileName)))) {
-                    String orgStr = br.readLine().trim();
-//                    Log.d(TAG,"file data:"+orgStr);
-                    List<Organizzazione> organizzazioni = mLiveOrgs.getValue();
-                    if (organizzazioni==null)
-                        organizzazioni= new ArrayList<>();
-                    ResponseOrganizzazione responseOrganizzazioni = gson.fromJson(orgStr, ResponseOrganizzazione.class);
+                FileInputStream fis = null;
+                try {
+                    Log.d(TAG, "run: lettura dal file");
+                    fis = context.openFileInput(fileName);
+                    InputStreamReader inputStreamReader =new InputStreamReader(fis, StandardCharsets.UTF_8);
+                    StringBuilder stringBuilder = new StringBuilder();
+                    try (BufferedReader reader = new BufferedReader(inputStreamReader)) {
+                        String line = reader.readLine();
+                        while (line != null) {
+                            stringBuilder.append(line).append('\n');
+                            line = reader.readLine();
+                        }
+                    } catch (IOException e) {
+                        Log.e(TAG, "run: Errore");
+                        // Error occurred when opening raw file for reading.
+                    } finally {
+                        String contents = stringBuilder.toString();
+                        List<Organizzazione> organizzazioni = mLiveOrgs.getValue();
+                        ResponseOrganizzazione responseOrganizzazioni = gson.fromJson(contents, ResponseOrganizzazione.class);
 //                    List<Organizzazione> orgs = mLiveOrgs.getValue();
-                    organizzazioni.addAll(responseOrganizzazioni.getOrganizations());
-                    //organizzazioni.clear();
-                    //organizzazioni.addAll(responseOrganizzazioni.getOrganizations());
-                    mLiveOrgs.postValue(organizzazioni);
+                        organizzazioni.addAll(responseOrganizzazioni.getOrganizations());
+                        //organizzazioni.clear();
+                        //organizzazioni.addAll(responseOrganizzazioni.getOrganizations());
+                        mLiveOrgs.postValue(organizzazioni);
+                        Log.d(TAG, "run: dati letti dal file");
+                    }
+
                 } catch (FileNotFoundException e) {
-                    Log.e(TAG, e.getMessage());
-                } catch (IOException e) {
-                    Log.e(TAG, e.getMessage());
+                    e.printStackTrace();
                 }
 
             }
@@ -293,18 +313,43 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
 
             @Override
             protected Void doInBackground(Void... voids) {
-                try (PrintWriter pw = new PrintWriter(context.openFileOutput(fileName, Context.MODE_PRIVATE))) {
-                    ResponseOrganizzazione responseOrganizzazione = new ResponseOrganizzazione();
-                    responseOrganizzazione.setOrganizations(orgs);
-                    mLiveOrgs.postValue(orgs);
-                    String jsonString = gson.toJson(responseOrganizzazione);
-                    pw.println(jsonString);
-                    pw.flush();
-                } catch (FileNotFoundException e) {
-                    Log.e(TAG, "file not found");
+                Log.e(TAG, "Creazione oggetto FILE");
+                File orgJson = new File(context.getFilesDir(), fileName);
+                if (!orgJson.exists()){
+                    try {
+                        orgJson.createNewFile();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    Log.d(TAG, "creazione file");
+                    Log.d(TAG, "doInBackground: "+orgJson.mkdir());
                 }
-                //organizzazioni.clear();
-                //organizzazioni.addAll(orgs);
+
+                try {
+                    FileWriter writer = new FileWriter(orgJson);
+                    String l = new Gson().toJson(new ResponseOrganizzazione().setOrganizations(mLiveOrgs.getValue()));
+                    Log.d(TAG, "saving data.");
+                    writer.append(l);
+                    writer.flush();
+                    writer.close();
+                } catch (IOException e) {
+                    Log.d(TAG, "Errore, file non trovato");
+                    e.printStackTrace();
+                }
+                Log.d(TAG, "doInBackground: finished saving data");
+
+//                try (PrintWriter pw = new PrintWriter(context.openFileOutput(fileName, Context.MODE_PRIVATE))) {
+//                    ResponseOrganizzazione responseOrganizzazione = new ResponseOrganizzazione();
+//                    responseOrganizzazione.setOrganizations(orgs);
+//                    mLiveOrgs.postValue(orgs);
+//                    String jsonString = gson.toJson(responseOrganizzazione);
+//                    pw.println(jsonString);
+//                    pw.flush();
+//                } catch (FileNotFoundException e) {
+//                    Log.e(TAG, "file not found");
+//                }
+//                //organizzazioni.clear();
+//                //organizzazioni.addAll(orgs);
                 return null;
             }
         }.execute();

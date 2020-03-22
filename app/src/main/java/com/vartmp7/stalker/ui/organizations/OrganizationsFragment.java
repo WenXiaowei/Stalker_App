@@ -59,7 +59,7 @@ public class OrganizationsFragment extends Fragment implements SwipeRefreshLayou
         OrganizationsRepository repository = new OrganizationsRepository(getViewLifecycleOwner(), localSource, webSource);
         organizzazioneViewModel = new ViewModelProvider(getActivity()).get(OrganizationsViewModel.class);
         organizzazioneViewModel.initData(repository);
-        organizzazioneViewModel.refresh();
+//        organizzazioneViewModel.refresh();
 
         View root = inflater.inflate(R.layout.fragment_organizations, container, false);
         swipeRefreshLayout = root.findViewById(R.id.srfl);
@@ -70,11 +70,12 @@ public class OrganizationsFragment extends Fragment implements SwipeRefreshLayou
 
         setUpRecyclerView();
         organizzazioneViewModel.getOrganizationList().observe(getActivity(), list -> {
-            Log.d(TAG,"arrivo qua"+list);
+//            Log.d(TAG,"arrivo qua"+list);
             mAdapter.notifyDataSetChanged();
             mAdapter.setData(list);
             swipeRefreshLayout.setRefreshing(false);
         });
+//        onRefresh();
         return root;
     }
 
@@ -84,6 +85,11 @@ public class OrganizationsFragment extends Fragment implements SwipeRefreshLayou
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(mAdapter);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
     }
 
     @Override
