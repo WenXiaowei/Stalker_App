@@ -204,14 +204,6 @@
 
 package com.vartmp7.stalker.model;
 
-import android.util.Log;
-
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.vartmp7.stalker.gsonbeans.Organizzazione;
 
@@ -220,21 +212,11 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.MockitoRule;
-import org.mockito.stubbing.Answer;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class FirebaseFavoritesRepositoryTest {
@@ -245,7 +227,7 @@ public class FirebaseFavoritesRepositoryTest {
     private static final Organizzazione org2= new Organizzazione().setName("UNIPD 2").setAddress("Via trieste 2");
     private static final Organizzazione org3= new Organizzazione().setName("Alì").setAddress("Via roma 2");
     @Mock
-    private FirebaseFavoritesRepository ffr;
+    private FirebaseFavoritesSource ffr;
     @Mock
     private FirebaseFirestore fbfs;
     @Mock

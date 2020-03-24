@@ -46,7 +46,7 @@ public class TrackingFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_status, container, false);
         recyclerView = root.findViewById(R.id.trackingRecycleView);
 
-        trackingViewModel = new ViewModelProvider(getActivity()).get(TrackingViewModel.class);
+        trackingViewModel = new ViewModelProvider(requireActivity()).get(TrackingViewModel.class);
         trackingViewModel.initi(list);
 
         mAdapter = new TrackingViewAdapter(getContext(), trackingViewModel.getListaOrganizzazione().getValue());

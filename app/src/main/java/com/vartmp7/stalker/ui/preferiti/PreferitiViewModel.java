@@ -1,12 +1,10 @@
 package com.vartmp7.stalker.ui.preferiti;
 
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.vartmp7.stalker.gsonbeans.Organizzazione;
-import com.vartmp7.stalker.model.FavoritesRepository;
+import com.vartmp7.stalker.model.FavoritesSource;
 
 import java.util.List;
 
@@ -15,11 +13,11 @@ import java.util.List;
  */
 public class PreferitiViewModel extends ViewModel {
     public static final String TAG ="com.vartmp7.stalker.ui.preferiti.PreferitiViewModel";
-    private FavoritesRepository favRepo;
+    private FavoritesSource favRepo;
     private LiveData<List<Organizzazione>> liveDataOrganizzazioni;
 
 
-    public PreferitiViewModel(FavoritesRepository favRepo) {
+    public PreferitiViewModel(FavoritesSource favRepo) {
         this.favRepo=favRepo;
 
         //mText = new MutableLiveData<>();

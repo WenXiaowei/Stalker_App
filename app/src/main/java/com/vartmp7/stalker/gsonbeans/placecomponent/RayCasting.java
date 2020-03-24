@@ -210,15 +210,44 @@ import java.util.List;
 
 public class RayCasting {
     public static final String TAG ="com.vartmp7.stalker.gsonbeans.placecomponent.RayCasting";
-    public static boolean isLatLngInside(List<Coordinata> latLngs, Coordinata latLng) {
-        return normalizeLatLngsAndProceed(latLngs, latLng);
+
+    private List<Coordinata> coordinates;
+    private Coordinata point;
+    public RayCasting(List<Coordinata> coordinates, Coordinata point){
+        this.coordinates= coordinates;
+        this.point = point;
     }
 
-    public static boolean isPointInside(List<Coordinata> coordinates, Coordinata point) {
+
+    public  boolean isPointInside() {
         return isPointInsideEdges(getEdgesFromPoints(coordinates), point);
     }
 
-    private static boolean normalizeLatLngsAndProceed(List<Coordinata> coordinate, Coordinata punto) {
+
+
+    private  ArrayList<Lato> getEdgesFromPoints(List<Coordinata> points) {
+        ArrayList<Lato> edges = new ArrayList<>();
+        for(int i = 0; i < points.size(); i++) {
+            edges.add(new Lato(points.get(i), i < points.size()-1 ? points.get(i+1) : points.get(0)));
+        }
+
+        return edges;
+    }
+
+
+    private  boolean isPointInsideEdges(List<Lato> lati, Coordinata point) {
+        int intersectionCount = 0;
+
+        for(Lato edge : lati) {
+            Retta r = new Retta(new Coordinata(edge.getStartX(), edge.getStartY()),
+                    new Coordinata(edge.getEndX(), edge.getEndY()));
+            if(r.linesIntersect(point)) {
+                intersectionCount++;
+            }
+        }
+        return (intersectionCount % 2 != 0);
+    }
+    private  boolean normalizeLatLngsAndProceed(List<Coordinata> coordinate, Coordinata punto) {
         if(coordinate.size() < 3) throw new RuntimeException("At least 3 latlngs are required");
 
         double smallestLongitude = Double.MAX_VALUE, highestLongitude = Double.MIN_VALUE;
@@ -249,7 +278,7 @@ public class RayCasting {
         }
     }
 
-    private static ArrayList<Lato> getEdgesFromLatLngs(List<Coordinata> latLngs) {
+    private  ArrayList<Lato> getEdgesFromLatLngs(List<Coordinata> latLngs) {
         ArrayList<Lato> edges = new ArrayList<>();
         for(int i = 0; i < latLngs.size(); i++) {
             edges.add(new Lato(latLngs.get(i), i < latLngs.size()-1 ? latLngs.get(i+1) : latLngs.get(0)));
@@ -257,33 +286,4 @@ public class RayCasting {
 
         return edges;
     }
-
-    private static ArrayList<Lato> getEdgesFromPoints(List<Coordinata> points) {
-        ArrayList<Lato> edges = new ArrayList<>();
-        for(int i = 0; i < points.size(); i++) {
-            edges.add(new Lato(points.get(i), i < points.size()-1 ? points.get(i+1) : points.get(0)));
-        }
-
-        return edges;
-    }
-
-
-    private static boolean isPointInsideEdges(List<Lato> edges, Coordinata point) {
-//        Log.d("RAY CAST", "Point: " + point.getX() + "; " + point.getY());
-//        Log.d("RAY CAST", "Lines ******************");
-//        for(Lato edge : edges) {
-//            Log.d("RAY CAST", edge.getStartX() + "," + edge.getStartY() + "; " + edge.getEndX() + "," + edge.getEndY());
-//        }
-//        Log.d("RAY CAST", "Lines ******************");
-        int intersectionCount = 0;
-
-        for(Lato edge : edges) {
-            if(Retta.linesIntersect(edge.getStartX(), edge.getStartY(), edge.getEndX(), edge.getEndY(), point.getLongitude(), point.getLatitude(), Double.MAX_VALUE, Double.MAX_VALUE)) {
-                intersectionCount++;
-            }
-        }
-
-        return (intersectionCount % 2 != 0);
-    }
-
 }

@@ -200,6 +200,7 @@
  *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
+ *
  */
 
 package com.vartmp7.stalker.model;
@@ -210,28 +211,10 @@ import com.vartmp7.stalker.gsonbeans.Organizzazione;
 
 import java.util.List;
 
-public class ConcreteTrackRepository implements TrackRepository {
 
-
-
-
-    @Override
-    public void updateOrganizzazioni() {
-
-    }
-
-    @Override
-    public void addOrganizzazione(Organizzazione organizzazione) {
-
-    }
-
-    @Override
-    public void removeOrganizzazione(Organizzazione organizzazione) {
-
-    }
-
-    @Override
-    public LiveData<List<Organizzazione>> getOrganizzazioni() {
-        return null;
-    }
+public interface FavoritesSource {
+    void updateOrganizzazioni();
+    void addOrganizzazione(Organizzazione organizzazione);
+    void removeOrganizzazione(Organizzazione organizzazione);
+    LiveData<List<Organizzazione>> getOrganizzazioni();
 }

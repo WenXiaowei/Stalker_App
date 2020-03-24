@@ -222,6 +222,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -280,6 +281,9 @@ public class RESTOrganizationsWebSource implements OrganizationsWebSource {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 ResponseOrganizzazione responseOrganizzazione = gson.fromJson(response.body().string(), ResponseOrganizzazione.class);
+                List<Organizzazione> list = responseOrganizzazione.getOrganizations();
+                list.stream().map(Organizzazione::getId).collect(Collectors.toList());
+
 //                mutableLiveDataOrganizzazioni.setValue(responseOrganizzazione.getOrganizations());
 
             }
