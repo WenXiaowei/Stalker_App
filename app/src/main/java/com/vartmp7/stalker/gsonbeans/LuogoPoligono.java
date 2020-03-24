@@ -187,7 +187,7 @@
  *       same "printed page" as the copyright notice for easier
  *       identification within third-party archives.
  *
- *    Copyright [yyyy] [name of copyright owner]
+ *    Copyright [2020] [VartTmp7]
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -212,6 +212,8 @@ import java.util.List;
 /**
  * @author Xiaowei Wen, Lorenzo Taschin
  */
+
+
 public class LuogoPoligono extends  AbstractLuogo {
     public static final String TAG ="com.vartmp7.stalker.gsonbeans.LuogoPoligono";
 
