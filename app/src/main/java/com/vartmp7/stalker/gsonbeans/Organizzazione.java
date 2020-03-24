@@ -29,8 +29,49 @@ public class Organizzazione implements Serializable {
     private String ldap_common_name;
     private String ldap_domain_component;
     private String ldap_port;
-    private Boolean isPreferito = false;
     private String image_url;
+    private List<? extends AbstractLuogo> luoghi;
+    private boolean isPreferito = false;
+    private boolean isTracking = false;
+    private boolean isExpanded = false;
+    private boolean isLogged = false;
+    private boolean isAnonimo = false;
+
+    public boolean isTracking() {
+        return isTracking;
+    }
+
+    public Organizzazione setTracking(boolean tracking) {
+        isTracking = tracking;
+        return this;
+    }
+
+    public boolean isExpanded() {
+        return isExpanded;
+    }
+
+    public Organizzazione setExpanded(boolean expanded) {
+        isExpanded = expanded;
+        return this;
+    }
+
+    public boolean isLogged() {
+        return isLogged;
+    }
+
+    public Organizzazione setLogged(boolean logged) {
+        isLogged = logged;
+        return this;
+    }
+
+    public boolean isAnonimo() {
+        return isAnonimo;
+    }
+
+    public Organizzazione setAnonimo(boolean anonimo) {
+        isAnonimo = anonimo;
+        return this;
+    }
 
     public String getImage_url() {
         return image_url;
@@ -41,9 +82,8 @@ public class Organizzazione implements Serializable {
         return this;
     }
 
-    private List<? extends AbstractLuogo> luoghi;
 
-    public String getOrgInfo(){
+    public String getOrgInfo() {
         return name;
     }
 
@@ -182,7 +222,8 @@ public class Organizzazione implements Serializable {
         return this;
     }
 
-    public Organizzazione(){}
+    public Organizzazione() {
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -202,7 +243,6 @@ public class Organizzazione implements Serializable {
                 Objects.equals(getLdap_common_name(), that.getLdap_common_name()) &&
                 Objects.equals(getLdap_domain_component(), that.getLdap_domain_component()) &&
                 Objects.equals(getLdap_port(), that.getLdap_port()) &&
-                Objects.equals(isPreferito, that.isPreferito) &&
                 Objects.equals(getLuoghi(), that.getLuoghi());
     }
 

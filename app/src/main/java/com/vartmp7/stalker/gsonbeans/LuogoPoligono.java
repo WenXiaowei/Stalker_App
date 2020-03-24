@@ -254,6 +254,6 @@ public class LuogoPoligono extends  AbstractLuogo {
      */
     @Override
     boolean isInside(Coordinata c) {
-        return RayCasting.isPointInside(getCoordinate(),c);
+        return new RayCasting(getCoordinate(), c).isPointInside();
     }
 }

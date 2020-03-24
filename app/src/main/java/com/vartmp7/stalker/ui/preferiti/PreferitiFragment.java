@@ -17,9 +17,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.vartmp7.stalker.R;
 import com.vartmp7.stalker.gsonbeans.Organizzazione;
-import com.vartmp7.stalker.model.FavoritesRepository;
+import com.vartmp7.stalker.model.FavoritesSource;
 import com.vartmp7.stalker.model.FileOrganizationsLocalSource;
-import com.vartmp7.stalker.model.FirebaseFavoritesRepository;
+import com.vartmp7.stalker.model.FirebaseFavoritesSource;
 import com.vartmp7.stalker.model.OrganizationsLocalSource;
 import com.vartmp7.stalker.model.OrganizationsRepository;
 import com.vartmp7.stalker.model.OrganizationsWebSource;
@@ -60,7 +60,7 @@ public class PreferitiFragment extends Fragment {
         OrganizationsRepository orgRepo = new OrganizationsRepository(getViewLifecycleOwner(),localSource,webSource);
         //orgRepo.saveOrganizzazione(new Organizzazione());
         //orgRepo.updateOrganizzazioni();
-        FavoritesRepository preferitiRepository = new FirebaseFavoritesRepository("1",orgRepo, FirebaseFirestore.getInstance());
+        FavoritesSource preferitiRepository = new FirebaseFavoritesSource("1",orgRepo, FirebaseFirestore.getInstance());
         //fine del todo
 
         this.favViewModel = new PreferitiViewModel(preferitiRepository);

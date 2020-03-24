@@ -212,6 +212,10 @@ import java.util.Objects;
 public class Retta {
     public static final String TAG ="com.vartmp7.stalker.gsonbeans.placecomponent.Retta";
 
+    private double m;
+    private double q;
+    private Coordinata a, b;
+
     /**
      * restituisce il coefficiente angolare della retta
      * @return
@@ -228,9 +232,7 @@ public class Retta {
         return q;
     }
 
-    private double m;
-    private double q;
-    private Coordinata a, b;
+
 
     @Override
     public boolean equals(Object o) {
@@ -284,14 +286,19 @@ public class Retta {
 
 
 
-    public static boolean linesIntersect(final double X1, final double Y1, final double X2, final double Y2,
-                                         final double X3, final double Y3, final double X4, final double Y4) {
+    public boolean linesIntersect(final Coordinata c) {
+        final double X4= Double.MAX_VALUE, Y4=Double.MIN_VALUE;
+        final double X3= c.getLongitude(), Y3= c.getLatitude();
+        final double X1= a.getLongitude(); final double Y1=a.getLatitude();
+        final double X2= b.getLongitude(); final double Y2= b.getLatitude();
+
+
         return ((relativeCCW(X1, Y1, X2, Y2, X3, Y3)
-                * relativeCCW(X1, Y1, X2, Y2, X4, Y4) <= 0) && (relativeCCW(X3,
-                Y3, X4, Y4, X1, Y1)
+                * relativeCCW(X1, Y1, X2, Y2, X4, Y4) <= 0) &&
+                (relativeCCW(X3, Y3, X4, Y4, X1, Y1)
                 * relativeCCW(X3, Y3, X4, Y4, X2, Y2) <= 0));
     }
-    private static int relativeCCW(final double X1, final double Y1, double X2, double Y2, double PX,
+    private int relativeCCW(final double X1, final double Y1, double X2, double Y2, double PX,
                                    double PY) {
         X2 -= X1;
         Y2 -= Y1;

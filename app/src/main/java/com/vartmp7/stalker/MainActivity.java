@@ -711,7 +711,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        if (!isUserLogged() && !getSharedPreferences("stalker", MODE_PRIVATE).getBoolean("not_login",false))
+            goToLoginActivity(false);
         BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
@@ -761,31 +762,9 @@ public class MainActivity extends AppCompatActivity {
         // Build a GoogleSignInClient with the options specified by gso.
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
-        setUpFirstStartUP();
-    }
-    private boolean checkIsFirstStartUP(){
-        SharedPreferences preferences = getSharedPreferences("startup_data",MODE_PRIVATE);
-        return preferences.getBoolean("first_startup",false);
-    }
-    private void setUpFirstStartUP(){
-        if (checkIsFirstStartUP()){
-            File file = new File(MainActivity.this.getFilesDir(),"data");
-            if (!file.exists())
-                file.mkdir();
-            File orgJson = new File(file,"orgs.json");
-            try {
-                FileWriter writer = new FileWriter(orgJson);
-                String l = new Gson().toJson(new ResponseOrganizzazione());
-                writer.append(l);
-                writer.flush();
-                writer.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
 
-
-        }
     }
+
 
 
     @Override
@@ -809,7 +788,6 @@ public class MainActivity extends AppCompatActivity {
                 }
                 goToLoginActivity(false);
                 return false;
-
             case R.id.menuLogin:
                 goToLoginActivity(true);
 
@@ -822,7 +800,6 @@ public class MainActivity extends AppCompatActivity {
     }
     public void logout() {
         FirebaseAuth.getInstance().signOut();
-
     }
 
     private void googleSignOut() {

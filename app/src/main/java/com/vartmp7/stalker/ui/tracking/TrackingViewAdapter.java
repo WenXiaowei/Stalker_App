@@ -47,7 +47,6 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_tracking, parent, false);
         TrackingViewAdapter.ViewHolder viewHolder = new TrackingViewAdapter.ViewHolder(view);
-
         return viewHolder;
     }
 

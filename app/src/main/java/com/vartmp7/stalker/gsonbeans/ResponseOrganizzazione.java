@@ -18,8 +18,9 @@ public class ResponseOrganizzazione {
         return organizations;
     }
 
-    public void setOrganizations(List<Organizzazione> organizations) {
+    public ResponseOrganizzazione setOrganizations(List<Organizzazione> organizations) {
         this.organizations = organizations;
+        return this;
     }
 
     @Deprecated

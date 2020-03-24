@@ -207,15 +207,11 @@ package com.vartmp7.stalker.model;
 
 import android.util.Log;
 
-import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.vartmp7.stalker.gsonbeans.Organizzazione;
@@ -227,7 +223,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 
-public class FirebaseFavoritesRepository implements FavoritesRepository {
+public class FirebaseFavoritesSource implements FavoritesSource {
     public static final String TAG = "com.vartmp7.stalker.model.FirebaseFavoritesRepository";
     private static final String FIELDNAME_ID = "id";
     private static final String FIELDNAME_ORGANIZZAZIONI = "organizzazioni";
@@ -235,13 +231,19 @@ public class FirebaseFavoritesRepository implements FavoritesRepository {
     private FirebaseFirestore db;
     private String userId;
 
+    /*
+    pescare da firebase e restituire una lista di id che sono i preferiti. (get)
+    e dare la possibilita' di dato un id di dire che non è più preferito. dato un id, toglierlo dalla lista
+    dei preferiti
+    aggiungere un id alla lista dei preferito su firebase firestore
+     */
     private MutableLiveData<List<Long>> mutableliveDataOrgIds;
     private LiveData<List<Organizzazione>> liveDataOrganizzazioni;
     private MediatorLiveData<List<Organizzazione>> mediatorLiveDataOrganizzazioni;
     private MutableLiveData<Boolean> organizationsQueryExhausted;
     private MutableLiveData<Boolean> firebaseQueryExhausted;
 
-    public FirebaseFavoritesRepository(String userId, OrganizationsRepository orgRepo, FirebaseFirestore db) {
+    public FirebaseFavoritesSource(String userId, OrganizationsRepository orgRepo, FirebaseFirestore db) {
         this.liveDataOrganizzazioni=orgRepo.getOrganizzazioni();
         this.mutableliveDataOrgIds = new MutableLiveData<>();
         this.mediatorLiveDataOrganizzazioni = new MediatorLiveData<>();

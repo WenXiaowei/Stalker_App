@@ -11,7 +11,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
 
 import com.vartmp7.stalker.R;
 
@@ -22,15 +21,15 @@ import com.vartmp7.stalker.R;
 public class CronologiaFragment extends Fragment {
     public static final String TAG ="com.vartmp7.stalker.ui.cronologia.CronologiaFragment";
 
-    private CronologiaViewModel dashboardViewModel;
+    private CronologiaViewModel cronologiaViewModel;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        dashboardViewModel =
-                new ViewModelProvider(getActivity()).get(CronologiaViewModel.class);
+        cronologiaViewModel =
+                new ViewModelProvider(requireActivity()).get(CronologiaViewModel.class);
         View root = inflater.inflate(R.layout.fragment_cronologia, container, false);
         final TextView textView = root.findViewById(R.id.text_dashboard);
-        dashboardViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
+        cronologiaViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
                 textView.setText(s);
