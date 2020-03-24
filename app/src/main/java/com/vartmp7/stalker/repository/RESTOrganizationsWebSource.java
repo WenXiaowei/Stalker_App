@@ -203,18 +203,87 @@
  *
  */
 
-package com.vartmp7.stalker.model;
+package com.vartmp7.stalker.repository;
 
-import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
+import com.google.gson.Gson;
 import com.vartmp7.stalker.gsonbeans.Organizzazione;
+import com.vartmp7.stalker.gsonbeans.ResponseOrganizzazione;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+
+public class RESTOrganizationsWebSource implements OrganizationsWebSource {
+    private static final String TAG = "com.vartmp7.stalker.repository.RESTOrganizationsRepository";
+    private String serverUrl;
+    private OkHttpClient httpClient;
+    private Gson gson = new Gson();
 
 
-public interface FavoritesSource {
-    void updateOrganizzazioni();
-    void addOrganizzazione(Organizzazione organizzazione);
-    void removeOrganizzazione(Organizzazione organizzazione);
-    LiveData<List<Organizzazione>> getOrganizzazioni();
+    static int count = 0;
+
+    private MutableLiveData<List<Organizzazione>> mutableLiveDataOrganizzazioni;
+
+
+    public RESTOrganizationsWebSource(OkHttpClient httpClient,MutableLiveData<List<Organizzazione>> list ,String serverUrl) {
+        this.httpClient = httpClient;
+        this.serverUrl = serverUrl;
+        this.mutableLiveDataOrganizzazioni= list;
+    }
+
+    @Override
+    public MutableLiveData<List<Organizzazione>> getOrganizzazioni() {
+        count++;
+//        Log.e(TAG, count + "");
+
+        //TODO togliere hardcoded-mock e decommentare codice per chiamata alle REST API
+        final Request request = new Request.Builder()
+                .url(serverUrl)
+                .build();
+        Call call = httpClient.newCall(request);
+//        MutableLiveData<List<Organizzazione>> mutableLiveOrgs = new MutableLiveData<>();
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                List<Organizzazione> orgs = mutableLiveDataOrganizzazioni.getValue();
+
+                orgs.add(new Organizzazione().setName("unipd " + count).setId(count )
+                    .setImage_url("https://cdn.discordapp.com/attachments/690970576415621201/691008560363995208/Schermata_2020-03-21_alle_20.41.13.png"));
+
+                /*
+                mutableLiveOrgs.postValue(Arrays.asList(
+                    new Organizzazione().setId(++count),
+                    new Organizzazione().setId(++count),
+                    new Organizzazione().setId(++count),
+                    new Organizzazione().setId(++count)
+                ));*/
+
+                mutableLiveDataOrganizzazioni.postValue(orgs);
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                ResponseOrganizzazione responseOrganizzazione = gson.fromJson(response.body().string(), ResponseOrganizzazione.class);
+                List<Organizzazione> list = responseOrganizzazione.getOrganizations();
+                list.stream().map(Organizzazione::getId).collect(Collectors.toList());
+
+//                mutableLiveDataOrganizzazioni.setValue(responseOrganizzazione.getOrganizations());
+
+            }
+        });
+
+        return mutableLiveDataOrganizzazioni;
+    }
+
+
 }

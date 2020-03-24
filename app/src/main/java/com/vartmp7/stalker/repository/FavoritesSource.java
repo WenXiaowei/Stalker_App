@@ -200,86 +200,21 @@
  *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
+ *
  */
 
-package com.vartmp7.stalker.model;
+package com.vartmp7.stalker.repository;
 
-import com.google.firebase.firestore.FirebaseFirestore;
+import androidx.lifecycle.LiveData;
+
 import com.vartmp7.stalker.gsonbeans.Organizzazione;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.mockito.junit.MockitoRule;
-
-import static org.junit.Assert.assertTrue;
-
-@RunWith(MockitoJUnitRunner.class)
-public class FirebaseFavoritesRepositoryTest {
-
-    private static final String TAG="com.vartmp7.stalker.model.FirebaseFavoritesRepositoryTest";
-
-    private static final Organizzazione org1= new Organizzazione().setName("UNIPD").setAddress("Via trieste");
-    private static final Organizzazione org2= new Organizzazione().setName("UNIPD 2").setAddress("Via trieste 2");
-    private static final Organizzazione org3= new Organizzazione().setName("Alì").setAddress("Via roma 2");
-    @Mock
-    private FirebaseFavoritesSource ffr;
-    @Mock
-    private FirebaseFirestore fbfs;
-    @Mock
-    private OrganizationsRepository or;
-
-    @Rule
-    public MockitoRule mockitoRule = MockitoJUnit.rule();
+import java.util.List;
 
 
-    @Before
-    public void setUP(){
-//        MockitoAnnotations.initMocks(this);
-//        ffr = Mockito.mock(FirebaseFavoritesRepository.class);
-//        ffr.initUserStorage("1");
-//        ArrayList<Organizzazione> list = new ArrayList<>();
-//        list.add(org1);
-//        list.add(org2);
-//        list.add(org3);
-//        when(or.getOrganizzazioni()).thenReturn(new MutableLiveData<>(list));
-//
-//        doNothing().when(fbfs.collection("utenti")).document("organizzazioni").get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-//            @Override
-//            public void onSuccess(DocumentSnapshot documentSnapshot) {
-//                List<Organizzazione> l= ffr.getOrganizzazioni().getValue();
-//                l.add(org1);
-//                l.add(org2);
-//                l.add(org3);
-//            }
-//        });
-//
-//        doAnswer(new Answer() {
-//            @Override
-//            public Object answer(InvocationOnMock invocation) throws Throwable {
-//                return null;
-//            }
-//        });
-//
-//
-//
-//        LiveData<List<Organizzazione>> liveData = new MutableLiveData<>();
-//        when(ffr.getOrganizzazioni()).thenReturn(liveData);
-//
-
-
-    }
-
-
-    @Test
-    public void testGetOrganization(){
-//        Log.d(TAG, "testGetOrganization: "+
-//                ffr.getOrganizzazioni().getValue().toString());
-        assertTrue(true);
-    }
-
+public interface FavoritesSource {
+    void updateOrganizzazioni();
+    void addOrganizzazione(Organizzazione organizzazione);
+    void removeOrganizzazione(Organizzazione organizzazione);
+    LiveData<List<Organizzazione>> getOrganizzazioni();
 }

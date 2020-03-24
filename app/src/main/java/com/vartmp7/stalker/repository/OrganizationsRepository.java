@@ -203,94 +203,77 @@
  *
  */
 
-package com.vartmp7.stalker.model;
+package com.vartmp7.stalker.repository;
 
-import android.annotation.SuppressLint;
-import android.os.AsyncTask;
-import android.util.Log;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.LiveData;
 
-import androidx.lifecycle.MutableLiveData;
-
-import com.google.gson.Gson;
 import com.vartmp7.stalker.gsonbeans.Organizzazione;
-import com.vartmp7.stalker.gsonbeans.ResponseOrganizzazione;
 
-import org.jetbrains.annotations.NotNull;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+public class OrganizationsRepository {
 
-public class RESTOrganizationsWebSource implements OrganizationsWebSource {
-    private static final String TAG = "com.vartmp7.stalker.model.RESTOrganizationsRepository";
-    private String serverUrl;
-    private OkHttpClient httpClient;
-    private Gson gson = new Gson();
+    private static final String TAG = "com.vartmp7.stalker.repository.OrganizationsRepository";
+    private LifecycleOwner lifeCycleOwner;
+    private OrganizationsLocalSource organizationsLocalSource;
+    private OrganizationsWebSource organizationsWebSource;
+    
 
 
-    static int count = 0;
 
-    private MutableLiveData<List<Organizzazione>> mutableLiveDataOrganizzazioni;
+    public OrganizationsRepository(LifecycleOwner lifeCycleOwner, OrganizationsLocalSource orgsLocalSource, OrganizationsWebSource orgsWebSource) {
+        this.lifeCycleOwner = lifeCycleOwner;
+        this.organizationsLocalSource = orgsLocalSource;
+        this.organizationsWebSource = orgsWebSource;
 
-
-    public RESTOrganizationsWebSource(OkHttpClient httpClient,MutableLiveData<List<Organizzazione>> list ,String serverUrl) {
-        this.httpClient = httpClient;
-        this.serverUrl = serverUrl;
-        this.mutableLiveDataOrganizzazioni= list;
+        /*organizationsLocalSource.saveOrganizzazioni(Arrays.asList(
+                new Organizzazione().setId(1).setName("asd"),
+                new Organizzazione().setId(2).setName("ffff"),
+                new Organizzazione().setId(3).setName("gg")
+        ));*/
+    }
+    public LiveData<List<Organizzazione>> getOrganizzazioni(){
+        return organizationsLocalSource.getOrganizzazioni();
     }
 
-    @Override
-    public MutableLiveData<List<Organizzazione>> getOrganizzazioni() {
-        count++;
-//        Log.e(TAG, count + "");
+    public void saveOrganizzazione(){
+    }
+    public void removeOrganizzazione(Organizzazione o){
 
-        //TODO togliere hardcoded-mock e decommentare codice per chiamata alle REST API
-        final Request request = new Request.Builder()
-                .url(serverUrl)
-                .build();
-        Call call = httpClient.newCall(request);
-//        MutableLiveData<List<Organizzazione>> mutableLiveOrgs = new MutableLiveData<>();
-        call.enqueue(new Callback() {
-            @Override
-            public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                List<Organizzazione> orgs = mutableLiveDataOrganizzazioni.getValue();
-
-                orgs.add(new Organizzazione().setName("unipd " + count).setId(count )
-                    .setImage_url("https://cdn.discordapp.com/attachments/690970576415621201/691008560363995208/Schermata_2020-03-21_alle_20.41.13.png"));
-
-                /*
-                mutableLiveOrgs.postValue(Arrays.asList(
-                    new Organizzazione().setId(++count),
-                    new Organizzazione().setId(++count),
-                    new Organizzazione().setId(++count),
-                    new Organizzazione().setId(++count)
-                ));*/
-
-                mutableLiveDataOrganizzazioni.postValue(orgs);
-            }
-
-            @Override
-            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                ResponseOrganizzazione responseOrganizzazione = gson.fromJson(response.body().string(), ResponseOrganizzazione.class);
-                List<Organizzazione> list = responseOrganizzazione.getOrganizations();
-                list.stream().map(Organizzazione::getId).collect(Collectors.toList());
-
-//                mutableLiveDataOrganizzazioni.setValue(responseOrganizzazione.getOrganizations());
-
-            }
-        });
-
-        return mutableLiveDataOrganizzazioni;
     }
 
+
+    public void refreshOrganizzazioni(){
+        LiveData<List<Organizzazione>> resultFromWebCall = organizationsWebSource.getOrganizzazioni();
+        organizationsLocalSource.saveOrganizzazioni(resultFromWebCall.getValue());
+//        final Observer<List<Organizzazione>> webCallObserver = new Observer<List<Organizzazione>>(){
+//            @Override
+//            public void onChanged(List<Organizzazione> organizzazioni) {
+//                Log.d(TAG, " refreshorganizzazione: onChanged: Observer triggered");
+//
+//            }
+//        };
+//        resultFromWebCall.removeObserver(webCallObserver);
+
+        /*resultFromWeb.observe(lifeCycleOwner, organizzazioni -> new Thread(() -> {
+            Log.d(TAG, "orgs");
+            organizzazioni.forEach(o -> Log.d(TAG, "org " + o.getId()));
+            organizationsLocalSource.saveOrganizzazioni(organizzazioni);
+        }).start());
+        resultFromWeb.removeObserver();
+*/
+    }
+
+    /*
+    metodi più specifici, se in futuro si rendessero disponibili delle API più specifiche.
+    Potrebbero avere senso per occupare meno banda e alleggerire il carico lato server,
+
+    param: lista degli id delle organizzazioni
+    List<Organizzazione> getOrganizzazioni(List<String> organizationIds);
+
+    param: id di un'organizzazione
+    Organizzazione getOrganizzazione(List<String> organizationId);
+    */
 
 }

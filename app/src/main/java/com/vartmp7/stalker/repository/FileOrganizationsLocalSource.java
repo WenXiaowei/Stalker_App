@@ -203,18 +203,16 @@
  *
  */
 
-package com.vartmp7.stalker.model;
+package com.vartmp7.stalker.repository;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
-import android.os.AsyncTask;
-import android.telephony.gsm.GsmCellLocation;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.gson.Gson;
-import com.unboundid.util.Mutable;
 import com.vartmp7.stalker.gsonbeans.Organizzazione;
 import com.vartmp7.stalker.gsonbeans.ResponseOrganizzazione;
 
@@ -222,62 +220,130 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.util.Arrays;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
-public class JSONOrganizationsRepository{}
-/*
-public class JSONOrganizationsRepository implements OrganizationsRepository {
-    private static final String TAG ="package com.vartmp7.stalker.model.JSONOrganizationsRepository";
-    private Gson gson = new Gson();
-    private Context context;
+
+public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
+    private static final String TAG = "com.vartmp7.stalker.repository.FileOrganizationsRepository";
     private String fileName;
-    private MutableLiveData<List<Organizzazione>> mutableLiveDataOrganizzazioni;
-    public JSONOrganizationsRepository(Context context,String fileName) {
-        this.context=context;
+    private Context context;
+    private Gson gson;
+    //    List<Organizzazione> organizzazioni;
+    private MutableLiveData<List<Organizzazione>> mLiveOrgs;
+
+    public FileOrganizationsLocalSource(String fileName, Context context, MutableLiveData<List<Organizzazione>> org) {
         this.fileName = fileName;
-        mutableLiveDataOrganizzazioni=new MutableLiveData<>();
+        this.context = context;
+        this.gson = new Gson();
+//        this.mLiveOrgs.setValue(new ArrayList<>());
+        this.mLiveOrgs = org;
     }
 
     @Override
     public LiveData<List<Organizzazione>> getOrganizzazioni() {
-        return this.mutableLiveDataOrganizzazioni;
-    }
+        //MutableLiveData<List<Organizzazione>> mLiveOrgs = new MutableLiveData<>();
+        //this.mLiveOrgs.setValue(organizzazioni);
 
+        new Thread() {
+            @Override
+            public void run() {
+                super.run();
+                FileInputStream fis = null;
+                try {
+//                    Log.d(TAG, "run: lettura dal file");
+                    fis = context.openFileInput(fileName);
+                    InputStreamReader inputStreamReader =new InputStreamReader(fis, StandardCharsets.UTF_8);
+                    StringBuilder stringBuilder = new StringBuilder();
+                    try (BufferedReader reader = new BufferedReader(inputStreamReader)) {
+                        String line = reader.readLine();
+                        while (line != null) {
+                            stringBuilder.append(line).append('\n');
+                            line = reader.readLine();
+                        }
+                    } catch (IOException e) {
+//                        Log.e(TAG, "run: Errore");
+                        // Error occurred when opening raw file for reading.
+                    } finally {
+                        String contents = stringBuilder.toString();
+                        List<Organizzazione> organizzazioni = mLiveOrgs.getValue();
+                        ResponseOrganizzazione responseOrganizzazioni = gson.fromJson(contents, ResponseOrganizzazione.class);
+//                    List<Organizzazione> orgs = mLiveOrgs.getValue();
+                        organizzazioni.addAll(responseOrganizzazioni.getOrganizations());
+                        //organizzazioni.clear();
+                        //organizzazioni.addAll(responseOrganizzazioni.getOrganizations());
+                        mLiveOrgs.postValue(organizzazioni);
+//                        Log.d(TAG, "run: dati letti dal file");
+                    }
+
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }.start();
+        return mLiveOrgs;
+    }
 
     @Override
-    public void updateOrganizzazioni() {
-        try(BufferedReader br = new BufferedReader(new InputStreamReader(context.openFileInput(fileName)))) {
-            String orgStr = br.readLine().trim();
-            Log.d(TAG,"file data:"+orgStr);
-            ResponseOrganizzazione responseOrganizzazioni = gson.fromJson(orgStr, ResponseOrganizzazione.class);
-            List<Organizzazione> organizzazioni = responseOrganizzazioni.getOrganizations();
-            this.mutableLiveDataOrganizzazioni.setValue(organizzazioni);
-        }catch (FileNotFoundException e) {
-            Log.e(TAG,e.getMessage());
-        } catch (IOException e) {
-            Log.e(TAG,e.getMessage());
-        }
+    public void saveOrganizzazione(Organizzazione org) {
 
+        LiveData<List<Organizzazione>> liveOrgs = getOrganizzazioni();
+        if (liveOrgs != null) {
+            List<Organizzazione> orgs = liveOrgs.getValue();
+            if (orgs != null) {
+                orgs.add(org);
+                saveOrganizzazioni(orgs);
+            }
+        }
     }
 
-    public void saveOrganizzazioni(List<Organizzazione> organizzazioni){
-        try(PrintWriter pw = new PrintWriter(context.openFileOutput(fileName,Context.MODE_PRIVATE))){
-            String jsonString = gson.toJson(organizzazioni);
-            pw.println(jsonString);
-            pw.flush();
+    @SuppressLint("StaticFieldLeak")
+    @Override
+    public void saveOrganizzazioni(List<Organizzazione> orgs) {
+       new Thread(){
+           @Override
+           public void run() {
+               super.run();
+               File orgJson = new File(context.getFilesDir(), fileName);
+               if (!orgJson.exists()){
+                   try {
+                       orgJson.createNewFile();
+                   } catch (IOException e) {
+                       e.printStackTrace();
+                   }
+                   Log.d(TAG, "creazione file");
+                   Log.d(TAG, "doInBackground: "+orgJson.mkdir());
+               }
 
-        }catch(FileNotFoundException e){
-            Log.e(TAG,"file not found");
+               try {
+                   FileWriter writer = new FileWriter(orgJson);
+                   String l = new Gson().toJson(new ResponseOrganizzazione().setOrganizations(mLiveOrgs.getValue()));
+                   Log.d(TAG, "saving data.");
+                   writer.append(l);
+                   writer.flush();
+                   writer.close();
+               } catch (IOException e) {
+                   Log.d(TAG, "Errore, file non trovato");
+                   e.printStackTrace();
+               }
+               Log.d(TAG, "doInBackground: finished saving data");
+           }
+       }.start();
+    }
+
+    @Override
+    public void removeOrganizzazione(Organizzazione org) {
+        LiveData<List<Organizzazione>> liveOrgs = getOrganizzazioni();
+        if (liveOrgs != null) {
+            List<Organizzazione> orgs = liveOrgs.getValue();
+            orgs.remove(org);
+            saveOrganizzazioni(orgs);
         }
-
 
     }
 
 
 }
-*/

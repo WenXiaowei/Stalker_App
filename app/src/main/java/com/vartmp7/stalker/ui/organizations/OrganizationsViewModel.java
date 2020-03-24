@@ -1,13 +1,10 @@
 package com.vartmp7.stalker.ui.organizations;
 
-import android.os.AsyncTask;
-import android.util.Log;
-
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.vartmp7.stalker.gsonbeans.Organizzazione;
-import com.vartmp7.stalker.model.OrganizationsRepository;
+import com.vartmp7.stalker.repository.OrganizationsRepository;
 
 import java.util.List;
 

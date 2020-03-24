@@ -203,7 +203,7 @@
  *
  */
 
-package com.vartmp7.stalker.model;
+package com.vartmp7.stalker.repository;
 
 import androidx.lifecycle.LiveData;
 

@@ -203,89 +203,165 @@
  *
  */
 
-package com.vartmp7.stalker.model;
+package com.vartmp7.stalker.repository;
 
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.os.AsyncTask;
 import android.util.Log;
 
-import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.vartmp7.stalker.gsonbeans.Organizzazione;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
-
-import java.util.concurrent.Executor;
-
-public class OrganizationsRepository {
-
-    private static final String TAG = "com.vartmp7.stalker.model.OrganizationsRepository";
-    private LifecycleOwner lifeCycleOwner;
-    private OrganizationsLocalSource organizationsLocalSource;
-    private OrganizationsWebSource organizationsWebSource;
-    
+import java.util.Map;
+import java.util.stream.Collectors;
 
 
-
-    public OrganizationsRepository(LifecycleOwner lifeCycleOwner, OrganizationsLocalSource orgsLocalSource, OrganizationsWebSource orgsWebSource) {
-        this.lifeCycleOwner = lifeCycleOwner;
-        this.organizationsLocalSource = orgsLocalSource;
-        this.organizationsWebSource = orgsWebSource;
-
-        /*organizationsLocalSource.saveOrganizzazioni(Arrays.asList(
-                new Organizzazione().setId(1).setName("asd"),
-                new Organizzazione().setId(2).setName("ffff"),
-                new Organizzazione().setId(3).setName("gg")
-        ));*/
-    }
-    public LiveData<List<Organizzazione>> getOrganizzazioni(){
-        return organizationsLocalSource.getOrganizzazioni();
-    }
-
-    public void saveOrganizzazione(){
-    }
-    public void removeOrganizzazione(Organizzazione o){
-
-    }
-
-
-    public void refreshOrganizzazioni(){
-        LiveData<List<Organizzazione>> resultFromWebCall = organizationsWebSource.getOrganizzazioni();
-        organizationsLocalSource.saveOrganizzazioni(resultFromWebCall.getValue());
-//        final Observer<List<Organizzazione>> webCallObserver = new Observer<List<Organizzazione>>(){
-//            @Override
-//            public void onChanged(List<Organizzazione> organizzazioni) {
-//                Log.d(TAG, " refreshorganizzazione: onChanged: Observer triggered");
-//
-//            }
-//        };
-//        resultFromWebCall.removeObserver(webCallObserver);
-
-        /*resultFromWeb.observe(lifeCycleOwner, organizzazioni -> new Thread(() -> {
-            Log.d(TAG, "orgs");
-            organizzazioni.forEach(o -> Log.d(TAG, "org " + o.getId()));
-            organizationsLocalSource.saveOrganizzazioni(organizzazioni);
-        }).start());
-        resultFromWeb.removeObserver();
-*/
-    }
+public class FirebaseFavoritesSource implements FavoritesSource {
+    public static final String TAG = "com.vartmp7.stalker.repository.FirebaseFavoritesRepository";
+    private static final String FIELDNAME_ID = "id";
+    private static final String FIELDNAME_ORGANIZZAZIONI = "organizzazioni";
+    private OrganizationsRepository organizationsRepo;
+    private FirebaseFirestore db;
+    private String userId;
 
     /*
-    metodi più specifici, se in futuro si rendessero disponibili delle API più specifiche.
-    Potrebbero avere senso per occupare meno banda e alleggerire il carico lato server,
+    pescare da firebase e restituire una lista di id che sono i preferiti. (get)
+    e dare la possibilita' di dato un id di dire che non è più preferito. dato un id, toglierlo dalla lista
+    dei preferiti
+    aggiungere un id alla lista dei preferito su firebase firestore
+     */
+    private MutableLiveData<List<Long>> mutableliveDataOrgIds;
+    private LiveData<List<Organizzazione>> liveDataOrganizzazioni;
+    private MediatorLiveData<List<Organizzazione>> mediatorLiveDataOrganizzazioni;
+    private MutableLiveData<Boolean> organizationsQueryExhausted;
+    private MutableLiveData<Boolean> firebaseQueryExhausted;
 
-    param: lista degli id delle organizzazioni
-    List<Organizzazione> getOrganizzazioni(List<String> organizationIds);
+    public FirebaseFavoritesSource(String userId, OrganizationsRepository orgRepo, FirebaseFirestore db) {
+        this.liveDataOrganizzazioni=orgRepo.getOrganizzazioni();
+        this.mutableliveDataOrgIds = new MutableLiveData<>();
+        this.mediatorLiveDataOrganizzazioni = new MediatorLiveData<>();
+        organizationsQueryExhausted = new MutableLiveData<Boolean>(false);
+        firebaseQueryExhausted = new MutableLiveData<Boolean>(false);
+        this.userId = userId;
+        this.organizationsRepo = orgRepo;
+        this.db = db;
+    }
 
-    param: id di un'organizzazione
-    Organizzazione getOrganizzazione(List<String> organizationId);
-    */
+    public void setUserID(String userId) {
+        this.userId = userId;
+    }
+
+
+    public void initUserStorage(String userId) {
+        Map<String, Object> userData = new HashMap<>();
+        userData.put(FIELDNAME_ORGANIZZAZIONI, new ArrayList<Long>());
+        db.collection("utenti").document(userId).set(userData);
+    }
+
+    @Override
+    public void addOrganizzazione(Organizzazione organizzazione) {
+        //TODO
+
+
+        db.collection("utenti").document(userId).
+                update(FIELDNAME_ORGANIZZAZIONI, FieldValue.arrayUnion(organizzazione.getId()))
+                .addOnSuccessListener(aVoid -> Log.w(TAG, "organizzazione aggiunta correttamente"))
+                .addOnFailureListener(e -> Log.w(TAG, "errore avvenuto aggiungendo organizzazione", e));
+    }
+
+
+    public void updateOrganizzazioni(){
+        this.firebaseQueryExhausted.setValue(false);
+        this.organizationsQueryExhausted.setValue(false);
+
+        db.collection("utenti").document(userId)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    Map<String, Object> data = documentSnapshot.getData();
+                    try {
+                        if (data != null) {
+                            final List<Long> orgIds = (List<Long>) data.get(FIELDNAME_ORGANIZZAZIONI);
+                            Log.w(TAG, "data got from firebase:");
+                            orgIds.forEach(l->Log.d(TAG,"orgId:"+l));
+                            mutableliveDataOrgIds.postValue(orgIds);
+                            firebaseQueryExhausted.postValue(true);
+                            //Log.w(TAG, "organizzazioni ottenute correttamente");
+                        }
+                    } catch (ClassCastException e) {
+                    }
+                });
+
+        this.mediatorLiveDataOrganizzazioni.addSource(liveDataOrganizzazioni, new Observer<List<Organizzazione>>() {
+            @Override
+            public void onChanged(List<Organizzazione> organizzazioni) {
+               organizationsQueryExhausted.postValue(true);
+            }
+        });
+
+        //this.liveDataOrganizzazioni = new MutableLiveData<>(organizationsRepo.getOrganizzazioni().getValue());
+
+        final Observer<Boolean> queryExhaustedObserver =  new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+
+                if(firebaseQueryExhausted.getValue() && organizationsQueryExhausted.getValue()){
+                    final List<Long> orgIds = mutableliveDataOrgIds.getValue();
+                    mediatorLiveDataOrganizzazioni.postValue(
+                            liveDataOrganizzazioni.getValue()
+                                    .stream()
+                                    .filter(o-> orgIds.contains(o.getId()))
+                                    .collect(Collectors.toList())
+                    );
+                }
+            }
+        };
+        this.mediatorLiveDataOrganizzazioni.addSource(organizationsQueryExhausted, queryExhaustedObserver);
+        this.mediatorLiveDataOrganizzazioni.addSource(firebaseQueryExhausted,queryExhaustedObserver);
+
+    }
+
+    @Override
+    public void removeOrganizzazione(Organizzazione organizzazione) {
+
+        db.collection("utenti").document(userId).
+                update(FIELDNAME_ORGANIZZAZIONI, FieldValue.arrayRemove(organizzazione.getId()))
+                .addOnSuccessListener(aVoid -> Log.w(TAG, "organizzazione rimossa correttamente"))
+                .addOnFailureListener(e -> Log.w(TAG, "errore avvenuto rimuovendo organizzazione", e));
+
+/*
+        Map<String, Object> org = new HashMap<>();
+        org.put(FIELDNAME_ID,organizzazione.getId());
+        // remove a document with a generated ID
+        db.collection("utenti").document(userId).collection("organizzazioni")
+                .document(""+organizzazione.getId())
+                .delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.w(TAG,"deleted with success");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG,"failure: not deleted");
+                    }
+                });
+ */
+    }
+
+    @Override
+    public LiveData<List<Organizzazione>> getOrganizzazioni() {
+        return this.mediatorLiveDataOrganizzazioni;
+    }
+
+
 
 }
