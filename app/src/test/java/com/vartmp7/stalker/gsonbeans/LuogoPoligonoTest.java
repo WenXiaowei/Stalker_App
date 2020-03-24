@@ -238,7 +238,7 @@ public class LuogoPoligonoTest {
     }
     @Test
     public void testConstructor4params(){
-        LuogoPoligono l = new LuogoPoligono(luogo.getId(),luogo.getName(),luogo.getNum_max_people(), luogo.getCoordinate());
+        LuogoPoligono l = new LuogoPoligono(luogo.getId(),luogo.getName(),luogo.getNum_max_people(),luogo.getCoordinate());
 
         assertEquals(l.getId(),luogo.getId() );
         assertEquals(l.getName(), luogo.getName());
@@ -247,7 +247,7 @@ public class LuogoPoligonoTest {
     }
     @Test
     public void testConstructor3params(){
-        LuogoPoligono l = new LuogoPoligono(luogo.getId(),luogo.getName(), luogo.getCoordinate());
+        LuogoPoligono l = new LuogoPoligono(luogo.getId(),luogo.getName(),  luogo.getCoordinate());
 
         assertEquals(l.getId(),luogo.getId() );
         assertEquals(l.getName(), luogo.getName());

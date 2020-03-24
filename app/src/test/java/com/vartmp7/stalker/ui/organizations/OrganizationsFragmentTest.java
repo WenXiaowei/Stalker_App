@@ -187,7 +187,7 @@
  *       same "printed page" as the copyright notice for easier
  *       identification within third-party archives.
  *
- *    Copyright [yyyy] [name of copyright owner]
+ *    Copyright [2020] [VartTmp7]
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -202,63 +202,10 @@
  *    limitations under the License.
  */
 
-package com.vartmp7.stalker.gsonbeans;
+package com.vartmp7.stalker.ui.organizations;
 
-import com.vartmp7.stalker.gsonbeans.placecomponent.RayCasting;
-import androidx.annotation.NonNull;
+import static org.junit.Assert.*;
 
-import com.vartmp7.stalker.gsonbeans.AbstractLuogo;
-import com.vartmp7.stalker.gsonbeans.placecomponent.Coordinata;
+public class OrganizationsFragmentTest {
 
-import java.util.Arrays;
-import java.util.List;
-
-/**
- * @author Xiaowei Wen, Lorenzo Taschin
- */
-public class LuogoPoligono extends AbstractLuogo {
-
-    private List<Coordinata> coordinates;
-
-    public LuogoPoligono(){
-        super(0,null);
-    }
-    LuogoPoligono(long id, String name, List<Coordinata> coordinate){
-        super(id,name);
-        this.coordinates =coordinate;
-
-    }
-    LuogoPoligono(long id, String name,  long num_max_people,List<Coordinata> coordinate) {
-        super(id,name,num_max_people);
-        this.coordinates = coordinate;
-    }
-
-    public List<Coordinata> getCoordinate() {
-        return coordinates;
-    }
-
-    public LuogoPoligono setCoordinate(List<Coordinata> coordinate) {
-        this.coordinates = coordinate;
-        return this;
-    }
-    @NonNull
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-
-        for (Coordinata c : getCoordinate()) {
-            builder.append(c.toString());
-        }
-
-        return "\nid: " + getId() +
-                "\nNome: " + getName() +
-                "\nNum. Max Persone " + getNum_max_people() +
-                "\nCoordinate: " + builder.toString();
-    }
-
-
-    @Override
-    boolean isInside(Coordinata c) {
-        return RayCasting.isPointInside(getCoordinate(),c);
-    }
 }
