@@ -204,11 +204,13 @@
 
 package com.vartmp7.stalker;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.Log;
@@ -241,6 +243,9 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.unboundid.ldap.sdk.controls.ManageDsaITRequestControl;
+
+import java.security.Permission;
 
 
 /**
@@ -260,6 +265,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     private GoogleSignInClient mGoogleSignInClient;
 
+    private static final int REQ_COARSE_LOCATION=1;
+    private static final int REQ_FINE_LOCATION=2;
+    private static final int REQ_INTERNET=3;
 
     //    keytool -exportcert -alias YOUR_RELEASE_KEY_ALIAS -keystore YOUR_RELEASE_KEY_PATH | openssl sha1 -binary | openssl base64
     @Override
@@ -324,12 +332,33 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
                 .build();
-        // Build a GoogleSignInClient with the options specified by gso.
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
         SignInButton signInButton = findViewById(R.id.btn_googleSignIn);
         signInButton.setSize(SignInButton.SIZE_STANDARD);
         signInButton.setOnClickListener(this);
         findViewById(R.id.btnProcediSenzaAuth).setOnClickListener(this);
+
+
+        requestPermissions(Manifest.permission.INTERNET, REQ_INTERNET);
+        requestPermissions(Manifest.permission.ACCESS_COARSE_LOCATION, REQ_COARSE_LOCATION);
+        requestPermissions(Manifest.permission.ACCESS_FINE_LOCATION, REQ_FINE_LOCATION);
+
+    }
+    public void requestPermissions(String permission, int code){
+        if ((checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED)){
+            requestPermissions(new String[]{permission},code);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+
+        switch (requestCode){
+            case REQ_COARSE_LOCATION | REQ_FINE_LOCATION | REQ_INTERNET:
+                if (grantResults.length==1 && grantResults[0]!= PackageManager.PERMISSION_GRANTED)
+                    requestPermissions(permissions[0],requestCode);
+                break;
+        }
     }
 
     private void handleFacebookAccessToken(AccessToken token) {

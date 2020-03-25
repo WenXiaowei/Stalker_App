@@ -207,13 +207,10 @@ package com.vartmp7.stalker.ui.tracking;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.text.Layout;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
 import android.widget.Button;
@@ -239,7 +236,6 @@ import com.vartmp7.stalker.gsonbeans.Organizzazione;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-import java.util.zip.Inflater;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -295,13 +291,13 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
                     showLoginDialog();
                     break;
                 case R.id.ibtnAddToPreferiti:
-                    holder.ibtnPreferito.setImageResource(!org.getPreferito() ? R.drawable.icon_preferito_si : R.drawable.icon_preferito_no);
+                    holder.ibtnPreferito.setImageResource(!org.isPreferito() ? R.drawable.icon_preferito_si : R.drawable.icon_preferito_no);
                     RotateAnimation rotate1 = new RotateAnimation(0, 216, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
                     rotate1.setDuration(500);
                     rotate1.setInterpolator(new LinearInterpolator());
                     holder.ibtnPreferito.startAnimation(rotate1);
-                    org.setPreferito(!org.getPreferito());
-                    viewModel.updateOrganizzazione(org.setPreferito(!org.getPreferito()));
+                    org.setPreferito(!org.isPreferito());
+                    viewModel.updateOrganizzazione(org.setPreferito(!org.isPreferito()));
                     break;
                 case R.id.sAnonymousSwitch:
                     holder.sAnonimo.isActivated();
@@ -332,7 +328,7 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
 
 //        holder.tvElencoLuoghi =
         holder.tvIndirizzo.setText(org.getAddress());
-        holder.ibtnPreferito.setImageResource(org.getPreferito() ? R.drawable.icon_preferito_si : R.drawable.icon_preferito_no);
+        holder.ibtnPreferito.setImageResource(org.isPreferito() ? R.drawable.icon_preferito_si : R.drawable.icon_preferito_no);
 
         holder.ibtnPreferito.setOnClickListener(listener);
 

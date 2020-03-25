@@ -202,172 +202,125 @@
  *    limitations under the License.
  */
 
-/*
-clean test jacocoTestReport sonarqube
-commando per avviare il container di sonar qube
-    docker run -d --name sonarqube -p 9000:9000 sonarqube
- Comando da usare per far andare sonar qube
- gradlew sonarqube -Dsonar.projectKey=Stalker_App -Dsonar.host.url=http://localhost:9000 -Dsonar.login=11ca1a408698561b7b343325b831cb3ad4b279bf
-*/
-apply plugin: 'com.onesignal.androidsdk.onesignal-gradle-plugin'
-apply plugin: 'com.android.application'
-apply plugin: 'com.google.gms.google-services'
+package com.vartmp7.stalker;
 
 
-buildscript {
-    repositories {
-        maven { url 'https://plugins.gradle.org/m2/'}
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewParent;
+
+import androidx.test.espresso.ViewInteraction;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.filters.LargeTest;
+import androidx.test.rule.ActivityTestRule;
+
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeMatcher;
+import org.hamcrest.core.IsInstanceOf;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static androidx.test.espresso.matcher.ViewMatchers.withClassName;
+import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.is;
+
+@LargeTest
+@RunWith(AndroidJUnit4.class)
+public class MainActivityTest3 {
+
+    @Rule
+    public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class);
+
+    @Test
+    public void mainActivityTest3() {
+        ViewInteraction fg = onView(
+                allOf(withText("Sign in"),
+                        childAtPosition(
+                                allOf(withId(R.id.btn_googleSignIn),
+                                        childAtPosition(
+                                                withClassName(is("androidx.constraintlayout.widget.ConstraintLayout")),
+                                                3)),
+                                0),
+                        isDisplayed()));
+        fg.perform(click());
+
+        ViewInteraction appCompatButton = onView(
+                allOf(withId(R.id.btnTrackMe), withText("Scegli"),
+                        childAtPosition(
+                                childAtPosition(
+                                        withClassName(is("android.widget.LinearLayout")),
+                                        2),
+                                0),
+                        isDisplayed()));
+        appCompatButton.perform(click());
+
+        ViewInteraction linearLayout = onView(
+                allOf(withId(R.id.llTitle),
+                        childAtPosition(
+                                childAtPosition(
+                                        withId(R.id.llTrackingItem),
+                                        0),
+                                0),
+                        isDisplayed()));
+        linearLayout.perform(click());
+
+        ViewInteraction appCompatButton2 = onView(
+                allOf(withId(R.id.btnStartTracking), withText("Tracciami"),
+                        childAtPosition(
+                                childAtPosition(
+                                        withId(R.id.llHidingInformation),
+                                        2),
+                                0),
+                        isDisplayed()));
+        appCompatButton2.perform(click());
+
+        ViewInteraction imageButton = onView(
+                allOf(withId(R.id.ibtnTrackingOn),
+                        childAtPosition(
+                                allOf(withId(R.id.llTitle),
+                                        childAtPosition(
+                                                IsInstanceOf.<View>instanceOf(android.widget.LinearLayout.class),
+                                                0)),
+                                2),
+                        isDisplayed()));
+        imageButton.check(matches(isDisplayed()));
+
+        ViewInteraction imageButton2 = onView(
+                allOf(withId(R.id.ibtnTrackingOn),
+                        childAtPosition(
+                                allOf(withId(R.id.llTitle),
+                                        childAtPosition(
+                                                IsInstanceOf.<View>instanceOf(android.widget.LinearLayout.class),
+                                                0)),
+                                2),
+                        isDisplayed()));
+        imageButton2.check(matches(isDisplayed()));
     }
-    dependencies {
-        classpath 'gradle.plugin.com.onesignal:onesignal-gradle-plugin:0.12.6'
-        classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.8"
 
+    private static Matcher<View> childAtPosition(
+            final Matcher<View> parentMatcher, final int position) {
+
+        return new TypeSafeMatcher<View>() {
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("Child at position " + position + " in parent ");
+                parentMatcher.describeTo(description);
+            }
+
+            @Override
+            public boolean matchesSafely(View view) {
+                ViewParent parent = view.getParent();
+                return parent instanceof ViewGroup && parentMatcher.matches(parent)
+                        && view.equals(((ViewGroup) parent).getChildAt(position));
+            }
+        };
     }
-}
-apply plugin: 'org.sonarqube'
-apply plugin: 'jacoco-android'
-
-
-repositories {
-    maven { url 'https://maven.google.com' }
-
-}
-android {
-    compileSdkVersion 28
-    buildToolsVersion "28.0.3"
-    defaultConfig {
-        applicationId "com.vartmp7.stalker"
-        minSdkVersion 28
-        targetSdkVersion 28
-        versionCode 1
-        versionName "1.0"
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        manifestPlaceholders = [
-                onesignal_app_id: '0549f894-64ee-40c5-8045-b00f6d70ed4f',
-                // Project number pulled from dashboard, local value is ignored.
-                onesignal_google_project_number: 'REMOTE'
-        ]
-    }
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
-        debug {
-            testCoverageEnabled true
-        }
-    }
-//
-//    testOptions {
-//        unitTests.all {
-//            jacoco {
-//                version '1.0.1'
-//            }
-//        }
-//    }
-    compileOptions {
-        sourceCompatibility = 1.8
-        targetCompatibility = 1.8
-    }
-}
-
-task createTestReport(type: JacocoReport, dependsOn: ['createDevDebugCoverageReport']) {
-    group = "Reporting"
-
-    reports {
-        xml.enabled = true
-        html.enabled = true
-    }
-/**
- * gradlew sonarqube non funziona per questo errore:
- * No files nor directories matching 'build/intermediates/classes/dev/debug'
- */
-    def fileFilter = ['**/R.class',
-                      '**/R$*.class',
-                      '**/BuildConfig.*',
-                      '**/*$ViewInjector*.*',
-                      '**/*$ViewBinder*.*',
-                      '**/*$MembersInjector*.*',
-                      '**/Manifest*.*',
-                      '**/*Test*.*',
-                      'android/**/*.*']
-    def debugTree = fileTree(dir: "${project.projectDir}/src/test/*/*Test.java", excludes: fileFilter)
-    //def debugTree = fileTree(dir: "${buildDir}/intermediates/classes/dev/debug", excludes: fileFilter)
-    def mainSrc = "${project.projectDir}/src/main/java"
-    //def mainSrc = "${project.projectDir}/app/src/main/java"
-
-    sourceDirectories.from = files([mainSrc])
-    classDirectories.from = files([debugTree])
-    executionData.from = files("${project.buildDir}/jacoco/testDevDebugUnitTest.exec")
-    def files = fileTree("${buildDir}/outputs/code-coverage/connected/flavors/DEV/").filter { it.isFile() }.files.name
-    def instrumentationFileName = "${buildDir}/outputs/code-coverage/connected/flavors/DEV/" + files[0];
-}
-
-sonarqube {
-    properties {
-
-        property "sonar.host.url", "http:localhost:9000"
-        property "sonar.username", "admin"
-        property "sonar.password", "admin"
-
-        property "sonar.projectKey", "StalkerApp"
-        property "sonar.projectName", "StalkerApp"
-        property "sonar.projectVersion", "${version}"
-
-        property "sonar.sources", "src/main"
-
-        property "sonar.java.source", "7"
-        property "sonar.java.binaries", "build/intermediates/app_classes"
-
-        property "sonar.android.lint.report", "build/outputs/lint-results.xml"
-        property "sonar.jacoco.xmlReportPaths","build/reports/jacoco/jacocoTestDebugUnitTestReport/jacocoTestDebugUnitTestReport.xml"
-        property "sonar.jacoco.reportPath","build/jacocotestDebugUnitTest.exec"
-        property "sonar.coverage.reportPath", "build/reports/jacoco/jacocoTestDebugUnitTestReport/jacocoTestDebugUnitTestReport.xml"
-        property "sonar.jacoco.reportPath", "build/reports/jacoco/jacocoTestDebugUnitTestReport/jacocoTestDebugUnitTestReport.xml"
-        property 'sonar.coverage.jacoco.xmlReportPaths','build/reports/jacoco/jacocoTestDebugUnitTestReport/jacocoTestDebugUnitTestReport.xml'
-        //property "sonar.jacoco.itReportPath", instrumentationFileName
-    }
-}
-dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
-    androidTestImplementation 'androidx.test:runner:1.2.0'
-    androidTestImplementation 'androidx.test:rules:1.2.0'
-    testImplementation 'junit:junit:4.13'
-    testImplementation("com.squareup.okhttp3:mockwebserver:4.4.0")
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
-
-    implementation 'com.google.android.material:material:1.1.0'
-    implementation 'androidx.vectordrawable:vectordrawable:1.1.0'
-    implementation 'androidx.navigation:navigation-fragment:2.2.1'
-    implementation 'androidx.navigation:navigation-ui:2.2.1'
-    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
-//    androidTestImplementation 'com.android.support.test.uiautomator:uiautomator-v18:2.0.0'
-
-    implementation "androidx.cardview:cardview:1.0.0"
-    implementation 'com.google.android.gms:play-services-auth:17.0.0'
-    implementation 'com.facebook.android:facebook-android-sdk:5.15.3'
-    implementation 'com.google.firebase:firebase-auth:19.3.0'
-    implementation 'com.google.firebase:firebase-analytics:17.2.3'
-    implementation 'com.google.firebase:firebase-firestore:21.4.1'
-    implementation 'com.google.code.gson:gson:2.8.6'
-
-    implementation 'com.squareup.okhttp3:okhttp:4.4.0'
-    implementation 'com.onesignal:OneSignal:3.12.6'
-    implementation group: 'com.unboundid', name: 'unboundid-ldapsdk', version: '4.0.14'
-    implementation "androidx.recyclerview:recyclerview:1.1.0"
-    implementation 'com.google.android.material:material:1.1.0'
-
-    // required if you want to use Mockito for unit tests
-    testImplementation 'org.mockito:mockito-core:2.7.22'
-    // required if you want to use Mockito for Android tests
-    androidTestImplementation 'org.mockito:mockito-android:2.7.22'
-    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
-    implementation 'de.hdodenhof:circleimageview:3.1.0'
-    implementation 'com.github.bumptech.glide:glide:4.11.0'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
-
-
 }

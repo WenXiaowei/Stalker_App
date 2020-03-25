@@ -204,7 +204,6 @@
 
 package com.vartmp7.stalker.ui.tracking;
 
-import android.graphics.Canvas;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -212,9 +211,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -224,7 +221,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.vartmp7.stalker.R;
 import com.vartmp7.stalker.gsonbeans.Organizzazione;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -259,7 +255,7 @@ public class TrackingFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(mAdapter);
 
-        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,ItemTouchHelper.RIGHT ) {
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
                 return false;
@@ -267,15 +263,15 @@ public class TrackingFragment extends Fragment {
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-               Organizzazione o = mAdapter.getOrganizationAt(viewHolder.getAdapterPosition());
-               o.setTracking(false);
-               o.setTrackingActive(false);
-               trackingViewModel.updateOrganizzazione(o);
-               mAdapter.notifyItemChanged(viewHolder.getAdapterPosition());
+                Organizzazione o = mAdapter.getOrganizationAt(viewHolder.getAdapterPosition());
+                o.setTracking(false);
+                o.setTrackingActive(false);
+                trackingViewModel.updateOrganizzazione(o);
+                mAdapter.notifyItemChanged(viewHolder.getAdapterPosition());
                 Toast.makeText(requireContext(), "Organizzazione eliminata!", Toast.LENGTH_SHORT).show();
             }
         }).attachToRecyclerView(recyclerView);
-        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,ItemTouchHelper.LEFT) {
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
                 return false;
@@ -283,17 +279,18 @@ public class TrackingFragment extends Fragment {
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-               Organizzazione o = mAdapter.getOrganizationAt(viewHolder.getAdapterPosition());
-                o.setPreferito(!o.getPreferito());
-               trackingViewModel.updateOrganizzazione(o);
-               mAdapter.notifyItemChanged(viewHolder.getAdapterPosition());
-                Toast.makeText(requireContext(), "Organizzazione aggiunta ai preferiti!", Toast.LENGTH_SHORT).show();
+                Organizzazione o = mAdapter.getOrganizationAt(viewHolder.getAdapterPosition());
+                mAdapter.notifyItemChanged(viewHolder.getAdapterPosition());
+                o.setPreferito(!o.isPreferito());
+                trackingViewModel.updateOrganizzazione(o);
+                Toast.makeText(requireContext(), o.isPreferito()? getString(R.string.organizzazione_added_to_favorite):
+                        getString(R.string.organizzazione_removed_from_favorite), Toast.LENGTH_SHORT).show();
+
             }
         }).attachToRecyclerView(recyclerView);
 
         return root;
     }
-
 
 
 }

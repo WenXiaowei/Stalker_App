@@ -409,7 +409,7 @@ public class Organizzazione implements Serializable {
         return this;
     }
 
-    public Boolean getPreferito() {
+    public Boolean isPreferito() {
         return isPreferito;
     }
 

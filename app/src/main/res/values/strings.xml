@@ -203,14 +203,14 @@
   -->
 
 <resources>
-    <string name="app_name">Stalker App</string>
+    <string name="app_name">Stalker</string>
     <string name="stalker">Stalker</string>
     <string name="seleziona_l_organizzazione">Seleziona l\'organizzazione:</string>
 
-    <string name="sign_in">Sign in</string>
-    <string name="sign_up">Sign up</string>
+    <string name="sign_in">Accedi</string>
+    <string name="sign_up">Registrati</string>
     <string name="nessun_organizzazione_ti_sta_stalkerando">Nessun\'organizzazione ti sta stalkerando!</string>
-    <string name="status">Status </string>
+    <string name="status">Status</string>
     <string name="elenco_luoghi">Elenco Luoghi:</string>
     <string name="elenco_dei_luoghi_tracciati_per_l_organizzazione_selezionata">Elenco dei luoghi tracciati per l\'organizzazione selezionata:</string>
     <string name="start_track">Start Track</string>
@@ -226,7 +226,6 @@
     <string name="facebook_app_id">212692166599390</string><!--todo Da togliere successivamente quando renderemo l'app pubblica   -->
     <string name="fb_login_protocol_scheme">fb212692166599390</string>
     <string name="continua_senza_autenticazione">Continua senza autenticazione</string>
-
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
@@ -249,4 +248,6 @@
     <string name="n_d">N.D.</string>
     <string name="nessun_luogo_tracciabile_per_quest_organizzazione">Nessun luogo tracciabile per quest\'organizzazione</string>
     <string name="attualmente_sei_in">Attualmente sei in:</string>
+    <string name="organizzazione_added_to_favorite">Organizzazione aggiunta ai preferiti!</string>
+    <string name="organizzazione_removed_from_favorite">Organizzazione rimosso dai preferiti</string>
 </resources>

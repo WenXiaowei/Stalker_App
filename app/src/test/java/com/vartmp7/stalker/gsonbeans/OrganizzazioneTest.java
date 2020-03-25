@@ -204,13 +204,10 @@
 
 package com.vartmp7.stalker.gsonbeans;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-import org.meanbean.test.BeanTester;
-import org.meanbean.test.BeanVerification;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -283,7 +280,7 @@ public class OrganizzazioneTest {
         assertEquals(org.getLdap_common_name(),organizzazione.getLdap_common_name());
         assertEquals(org.getLdap_domain_component(),organizzazione.getLdap_domain_component());
         assertEquals(org.getLdap_port(),organizzazione.getLdap_port());
-        assertEquals(org.getPreferito(),organizzazione.getPreferito());
+        assertEquals(org.isPreferito(),organizzazione.isPreferito());
         assertEquals(org.getLuoghi(),organizzazione.getLuoghi());
         assertEquals(org.hashCode(), organizzazione.hashCode());
     }
