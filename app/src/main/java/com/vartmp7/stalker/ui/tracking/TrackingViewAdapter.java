@@ -204,7 +204,11 @@
 
 package com.vartmp7.stalker.ui.tracking;
 
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.text.Layout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -213,22 +217,29 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Size;
+import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.unboundid.ldap.sdk.LDAPException;
 import com.vartmp7.stalker.R;
+import com.vartmp7.stalker.component.StalkerLDAP;
 import com.vartmp7.stalker.gsonbeans.Organizzazione;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.zip.Inflater;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -236,15 +247,19 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * @author Xiaowei Wen, Lorenzo Taschin
  */
 public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapter.ViewHolder> {
-    public static final String TAG ="com.vartmp7.stalker.ui.home.TrackingViewAdapter";
+    public static final String TAG = "com.vartmp7.stalker.ui.home.TrackingViewAdapter";
     private List<Organizzazione> listOrganizzazione;
     private Context context;
+    private TrackingViewModel viewModel;
 
-    public TrackingViewAdapter(Context context) {
+
+    public TrackingViewAdapter(Context context, TrackingViewModel viewModel) {
         listOrganizzazione = new ArrayList<>();
         this.context = context;
+        this.viewModel = viewModel;
     }
-    public void setList(List<Organizzazione> org){
+
+    public void setList(List<Organizzazione> org) {
         this.listOrganizzazione = org;
         notifyDataSetChanged();
     }
@@ -261,140 +276,112 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
     @Size
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-
         Organizzazione org = listOrganizzazione.get(position);
-        if (!org.isTracking())
-            return;
-        RotateAnimation arrowOpenRotation = new RotateAnimation(0, -90f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-        arrowOpenRotation.setDuration(500);
-        arrowOpenRotation.setInterpolator(new LinearInterpolator());
-        RotateAnimation arrowCloseRotation = new RotateAnimation(0, 90f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-        arrowCloseRotation.setDuration(500);
-        arrowCloseRotation.setInterpolator(new LinearInterpolator());
 
-//        holder.tvElencoLuoghi.setText("\naaa\naaa\naaa\naaa\naaa\naaa\naaa\naaa\naaa\naaa\naaa\naaa\naaa\naaa\naaa");
-        Glide.with(context)
-//                .setDefaultRequestOptions(new RequestOptions().error(R.drawable.tracking_item_body_background))
-                .load(org.getImage_url())
-//                .override(100, 600)
-//                .centerCrop()
-                .fitCenter()
-                .into(holder.civIconOrganizzazione);
-//        holder.ibtnPreferito.setOnDragListener(new View.OnDragListener() {
-//            @Override
-//            public boolean onDrag(View v, DragEvent event) {
-////                Log.d("DRAGEVENT", "onDrag: " + event);
-//                switch (event.getAction()) {
-//                    case DragEvent.ACTION_DRAG_STARTED:
-//                        Log.d("DRAGEVENT", "onDrag: started");
-//                        break;
-//                    case DragEvent.ACTION_DRAG_ENDED:
-//
-//                        Log.d("DRAGEVENT", "onDrag: ended");
-//                        break;
-//                }
-//                return false;
-//            }
-//        });
-//        holder.ibtnPreferito.setOnTouchListener(new View.OnTouchListener() {
-//
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-//                    ClipData data = ClipData.newPlainText("", "");
-//                    View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(holder.ibtnPreferito);
-//
-//                    holder.ibtnPreferito.startDrag(data, shadowBuilder, holder.ibtnPreferito, 0);
-//                    holder.ibtnPreferito.setVisibility(View.INVISIBLE);
-//                    return true;
-//                } else {
-//                    return false;
-//                }
-//            }
-//
-//        });
-//        holder.ibtnPreferito.setOnLongClickListener(new View.OnLongClickListener() {
-//            @Override
-//            public boolean onLongClick(View v) {
-//                ClipData.Item item = new ClipData.Item((CharSequence)v.getTag());
-//                String[] mimeTypes = {ClipDescription.MIMETYPE_TEXT_PLAIN};
-//
-//                ClipData dragData = new ClipData(v.getTag().toString(),mimeTypes, item);
-//                View.DragShadowBuilder myShadow = new View.DragShadowBuilder(holder.ibtnPreferito);
-//
-//                v.startDrag(dragData,myShadow,null,0);
-//                return true;
-//            }
-//        });
-
-
-        // fixme la rotazione freccia non è corretta.
-        holder.tvNomeOrganizzazione.setText(org.getName());
-        holder.ibtnExpandArrow.setImageResource(R.drawable.angular_arrow_left);
-        holder.llTitle.setOnClickListener(v -> {
-            if (holder.llInformationToHide.getVisibility() == View.GONE) {
-                Animation animation = AnimationUtils.loadAnimation(context, R.anim.slide_down_animation);
-                animation.setAnimationListener(new Animation.AnimationListener() {
-                    @Override
-                    public void onAnimationStart(Animation animation) {
+        View.OnClickListener listener = v -> {
+            switch (v.getId()){
+                case R.id.btnStartTracking:
+                    viewModel.updateOrganizzazione(org.setTrackingActive(!org.isTrackingActive()));
+                    notifyItemChanged(position);
+                    break;
+                case R.id.llTitle:
+                    if (holder.llInformationToHide.getVisibility() == View.GONE) {
                         holder.llInformationToHide.setVisibility(View.VISIBLE);
-                    }
-                    @Override
-                    public void onAnimationEnd(Animation animation) {}
-                    @Override
-                    public void onAnimationRepeat(Animation animation) {}
-                });
-                holder.ibtnExpandArrow.setImageResource(R.drawable.angular_arrow_down);
-                holder.ibtnExpandArrow.startAnimation(arrowOpenRotation);
-                holder.llInformationToHide.startAnimation(animation);
-            } else {
-                Animation animation = AnimationUtils.loadAnimation(context, R.anim.closing_animation);
-
-                holder.ibtnExpandArrow.setImageResource(R.drawable.angular_arrow_left);
-                holder.llInformationToHide.startAnimation(animation);
-                holder.ibtnExpandArrow.startAnimation(arrowCloseRotation);
-                animation.setAnimationListener(new Animation.AnimationListener() {
-                    @Override
-                    public void onAnimationStart(Animation animation) {
-                    }
-                    @Override
-                    public void onAnimationEnd(Animation animation) {
+                    } else {
                         holder.llInformationToHide.setVisibility(View.GONE);
                     }
-                    @Override
-                    public void onAnimationRepeat(Animation animation) {
-                    }
-                });
+                    break;
+                case R.id.btnLoginLDAP:
+                    showLoginDialog();
+                    break;
+                case R.id.ibtnAddToPreferiti:
+                    holder.ibtnPreferito.setImageResource(!org.getPreferito() ? R.drawable.icon_preferito_si : R.drawable.icon_preferito_no);
+                    RotateAnimation rotate1 = new RotateAnimation(0, 216, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+                    rotate1.setDuration(500);
+                    rotate1.setInterpolator(new LinearInterpolator());
+                    holder.ibtnPreferito.startAnimation(rotate1);
+                    org.setPreferito(!org.getPreferito());
+                    viewModel.updateOrganizzazione(org.setPreferito(!org.getPreferito()));
+                    break;
+                case R.id.sAnonymousSwitch:
+                    holder.sAnonimo.isActivated();
+                    viewModel.updateOrganizzazione(org.setAnonimo(holder.sAnonimo.isActivated()));
+                    break;
             }
-        });
+        };
+
+
+        Glide.with(context)
+                .load(org.getImage_url())
+                .fitCenter()
+                .into(holder.civIconOrganizzazione);
+
+        holder.btnTracciami.setOnClickListener(listener);
+
+        if (org.isTrackingActive()) {
+            holder.ibtnTrackingStatus.setImageResource(R.drawable.ic_tracking_on);
+            holder.btnTracciami.setText(R.string.stop);
+        } else {
+            holder.ibtnTrackingStatus.setImageResource(R.drawable.ic_tracking_off);
+            holder.btnTracciami.setText(R.string.track_me);
+        }
+
+
+        holder.tvNomeOrganizzazione.setText(org.getName());
+        holder.llTitle.setOnClickListener(listener);
 
 //        holder.tvElencoLuoghi =
         holder.tvIndirizzo.setText(org.getAddress());
         holder.ibtnPreferito.setImageResource(org.getPreferito() ? R.drawable.icon_preferito_si : R.drawable.icon_preferito_no);
 
-        holder.ibtnPreferito.setOnClickListener(v -> {
-            holder.ibtnPreferito.setImageResource(!org.getPreferito() ? R.drawable.icon_preferito_si : R.drawable.icon_preferito_no);
-            RotateAnimation rotate1 = new RotateAnimation(0, 216, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-            rotate1.setDuration(500);
-            rotate1.setInterpolator(new LinearInterpolator());
-            holder.ibtnPreferito.startAnimation(rotate1);
-            org.setPreferito(!org.getPreferito());
-//            notifyItemChanged(position);
+        holder.ibtnPreferito.setOnClickListener(listener);
 
-//            Animation slidingOut = AnimationUtils.loadAnimation(context, R.anim.sliding_out_anim);
-//            holder.cvTrackingitem.setVisibility(View.INVISIBLE);
-//            holder.cvTrackingitem.startAnimation(slidingOut);
-////            holder.llTrackingitem.setVisibility(View.INVISIBLE);
-//            listOrganizzazione.remove(position);
-//
-//
+        holder.btnLoginLDAP.setOnClickListener(listener);
 
-//
+        holder.sAnonimo.setOnClickListener(listener);
+    }
 
+    public void showLoginDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(R.string.login);
+        builder.setMessage("Fai accesso all'organizzazione che hai scelto");
+        builder.setView(LayoutInflater.from(context).inflate(R.layout.dialog_login, null));
+        builder.setPositiveButton(context.getString(R.string.conferma), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Dialog d = (Dialog) dialog;
+                        EditText etUsername = d.findViewById(R.id.etUsername);
+                        EditText etPassword = d.findViewById(R.id.etPassword);
+                        StalkerLDAP ldap = new StalkerLDAP("10.0.2.2", 389,
+                                etUsername.getText().toString(), etPassword.getText().toString());
+                        try {
+                            ldap.bind();
+                            ldap.search();
+                            Toast.makeText(context, "Logged", Toast.LENGTH_SHORT).show();
+//                            ((Button)findViewById(R.id.btnShowLoginDialog)).setText("logged");
+                        } catch (LDAPException e) {
 
+                        } catch (ExecutionException e) {
+                        } catch (InterruptedException e) {
+                            Toast.makeText(context, "Qualcosa è andato storto, ri " +
+                                    "provare più tardi", Toast.LENGTH_SHORT).show();
+                        }
+
+                    }
+                }
+        );
+
+        builder.setNegativeButton(R.string.annulla, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
         });
+        builder.create().show();
 
-
+    }
+    public Organizzazione getOrganizationAt(int pos){
+        return listOrganizzazione.get(pos);
     }
 
     @Override
@@ -402,30 +389,30 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
         return listOrganizzazione.size();
     }
 
+
     static class ViewHolder extends RecyclerView.ViewHolder {
 
         TextView tvNomeOrganizzazione, tvStatusCorrente, tvElencoLuoghi, tvIndirizzo;
         Button btnTracciami, btnLoginLDAP;
-        ImageButton ibtnPreferito, ibtnExpandArrow;
+        ImageButton ibtnPreferito, ibtnTrackingStatus;
         Switch sAnonimo;
         CardView cvTrackingitem;
         LinearLayout llInformationToHide, llTitle;
         CircleImageView civIconOrganizzazione;
-
         public ViewHolder(@NonNull View v) {
             super(v);
             tvIndirizzo = v.findViewById(R.id.tvIndirizzo);
             tvNomeOrganizzazione = v.findViewById(R.id.tvNomeOrganizzazione);
             tvStatusCorrente = v.findViewById(R.id.tvCurrentStatus);
             tvElencoLuoghi = v.findViewById(R.id.tvElencoLuoghi);
-            btnTracciami = v.findViewById(R.id.btnTrackMe);
+            btnTracciami = v.findViewById(R.id.btnStartTracking);
             btnLoginLDAP = v.findViewById(R.id.btnLoginLDAP);
             ibtnPreferito = v.findViewById(R.id.ibtnAddToPreferiti);
             sAnonimo = v.findViewById(R.id.sAnonymousSwitch);
             cvTrackingitem = v.findViewById(R.id.llTrackingItem);
             llInformationToHide = v.findViewById(R.id.llHidingInformation);
             llTitle = v.findViewById(R.id.llTitle);
-            ibtnExpandArrow = v.findViewById(R.id.ibtnExpand);
+            ibtnTrackingStatus = v.findViewById(R.id.ibtnTrackingOn);
             civIconOrganizzazione = v.findViewById(R.id.civIconOrganizzazione);
         }
     }

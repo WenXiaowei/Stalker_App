@@ -580,46 +580,7 @@
 //            requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, 0);
 //    }
 //
-//    public void showLoginDialog() {
-//        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-//        LayoutInflater inflater = getLayoutInflater();
-//        builder.setTitle(R.string.login);
-//        builder.setMessage("Fai accesso all'organizzazione che hai scelto");
-//        builder.setView(inflater.inflate(R.layout.dialog_login, null));
-//        builder.setPositiveButton(getString(R.string.conferma), new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
 //
-//                        Dialog d = (Dialog) dialog;
-//                        EditText etUsername = d.findViewById(R.id.etUsername);
-//                        EditText etPassword = d.findViewById(R.id.etPassword);
-//
-//                        ldap = new StalkerLDAP("10.0.2.2", 389,
-//                                etUsername.getText().toString(), etPassword.getText().toString());
-//                        try {
-//                            ldap.bind();
-//                            ldap.search();
-//                            Toast.makeText(MainActivity.this, "Logged", Toast.LENGTH_SHORT).show();
-////                            ((Button)findViewById(R.id.btnShowLoginDialog)).setText("logged");
-//                        } catch (LDAPException e){}catch ( ExecutionException e){}catch (InterruptedException e) {
-//                            Toast.makeText(MainActivity.this, "Qualcosa è andato storto, ri " +
-//                                    "provare più tardi", Toast.LENGTH_SHORT).show();
-//                        }
-//
-//                    }
-//                }
-//
-//        );
-//
-//        builder.setNegativeButton(R.string.annulla, new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialog, int which) {
-//                dialog.dismiss();
-//            }
-//        });
-//        builder.create().show();
-//
-//    }
 //
 //    private void trackingSwitch() {
 //        locationManager.removeUpdates(tracker);

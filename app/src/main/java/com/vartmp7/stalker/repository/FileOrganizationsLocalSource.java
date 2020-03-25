@@ -227,6 +227,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
@@ -244,6 +245,14 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
 //        this.mLiveOrgs.setValue(new ArrayList<>());
         this.mLiveOrgs = org;
     }
+
+    @Override
+    public void updateOrganizzazione(Organizzazione o) {
+        List<Organizzazione> l = mLiveOrgs.getValue();
+        Organizzazione org = l.stream().filter(organizzazione -> o.getId() == organizzazione.getId()).findFirst().get();
+        org=o;
+    }
+
 
     @Override
     public LiveData<List<Organizzazione>> getOrganizzazioni() {

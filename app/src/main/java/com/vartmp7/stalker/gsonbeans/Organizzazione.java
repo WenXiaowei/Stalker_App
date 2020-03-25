@@ -240,6 +240,7 @@ public class Organizzazione implements Serializable {
     private boolean isExpanded = false;
     private boolean isLogged = false;
     private boolean isAnonimo = false;
+    private boolean isTrackingActive=false;
 
     public boolean isTracking() {
         return isTracking;
@@ -477,4 +478,12 @@ public class Organizzazione implements Serializable {
     }
 
 
+    public boolean isTrackingActive() {
+        return isTrackingActive;
+    }
+
+    public Organizzazione setTrackingActive(boolean trackingActive) {
+        isTrackingActive = trackingActive;
+        return this;
+    }
 }

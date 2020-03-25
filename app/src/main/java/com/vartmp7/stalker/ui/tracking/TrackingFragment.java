@@ -204,15 +204,20 @@
 
 package com.vartmp7.stalker.ui.tracking;
 
+import android.graphics.Canvas;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -220,6 +225,7 @@ import com.vartmp7.stalker.R;
 import com.vartmp7.stalker.gsonbeans.Organizzazione;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 
@@ -231,49 +237,61 @@ public class TrackingFragment extends Fragment {
     private final static String TAG = "com.vartmp7.stalker.ui.home.HomeFragment";
 
     private TrackingViewModel trackingViewModel;
-    private String id_newOrg;
-
+    private MutableLiveData<List<Organizzazione>> organizationToTrack;
     private TrackingViewAdapter mAdapter;
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
 
-    private ArrayList<Organizzazione> list;
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-    }
-
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle b) {
-        View root = inflater.inflate(R.layout.fragment_status, container, false);
+        View root = inflater.inflate(R.layout.fragment_tracking, container, false);
         recyclerView = root.findViewById(R.id.trackingRecycleView);
 
+        organizationToTrack = new MutableLiveData<>();
+
         trackingViewModel = new ViewModelProvider(requireActivity()).get(TrackingViewModel.class);
-
-
-        mAdapter = new TrackingViewAdapter(getContext());
+        mAdapter = new TrackingViewAdapter(getContext(), trackingViewModel);
         trackingViewModel.getListOrganizzazione().observe(getViewLifecycleOwner(),
-                list ->mAdapter.setList(list.stream().filter(Organizzazione::isTracking).collect(Collectors.toList())));
+                list -> {
+                    mAdapter.setList(list.stream().filter(Organizzazione::isTracking).collect(Collectors.toList()));
+                    organizationToTrack.postValue(list.stream().filter(Organizzazione::isTrackingActive).collect(Collectors.toList()));
+                });
         layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(mAdapter);
-//        addingNewOrganization();
+
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,ItemTouchHelper.RIGHT ) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+               Organizzazione o = mAdapter.getOrganizationAt(viewHolder.getAdapterPosition());
+               o.setTracking(false);
+               o.setTrackingActive(false);
+               trackingViewModel.updateOrganizzazione(o);
+                Toast.makeText(requireContext(), "Organizzazione eliminata!", Toast.LENGTH_SHORT).show();
+            }
+        }).attachToRecyclerView(recyclerView);
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,ItemTouchHelper.LEFT) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+               Organizzazione o = mAdapter.getOrganizationAt(viewHolder.getAdapterPosition());
+                o.setPreferito(!o.getPreferito());
+               trackingViewModel.updateOrganizzazione(o);
+               mAdapter.notifyItemChanged(viewHolder.getAdapterPosition());
+                Toast.makeText(requireContext(), "Organizzazione aggiunta ai preferiti!", Toast.LENGTH_SHORT).show();
+            }
+        }).attachToRecyclerView(recyclerView);
+
         return root;
     }
-//
-//    public void addingNewOrganization() {
-//        if (getArguments() != null) {
-//
-//            Organizzazione org = (Organizzazione) getArguments().getSerializable("org");
-//            if (org != null) {
-////            Log.d(TAG, "onCreateView: "+org);
-//                trackingViewModel.addTrackingOrganizzazione(org);
-////            mAdapter = new TrackingViewAdapter(getContext(), list);
-////            recyclerView.setAdapter(mAdapter);
-//            }
-//        }
-//    }
 
 
 

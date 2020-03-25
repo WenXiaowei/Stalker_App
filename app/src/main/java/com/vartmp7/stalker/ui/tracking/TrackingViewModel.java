@@ -204,6 +204,8 @@
 
 package com.vartmp7.stalker.ui.tracking;
 
+import android.app.Presentation;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -221,16 +223,13 @@ public class TrackingViewModel extends ViewModel {
     public static final String TAG ="com.vartmp7.stalker.ui.home.HomeViewModel";
 
     private OrganizationsRepository repository = OrganizationsRepository.getIstance();
-
     private MediatorLiveData<List<Organizzazione>> listMediatorLiveData;
-
 
     public LiveData<List<Organizzazione>> getListOrganizzazione(){
         return repository.getOrganizzazioni();
     }
-
-    public TrackingViewModel() {
+    public void updateOrganizzazione(Organizzazione o){
+        repository.updateOrganizzazione(o);
     }
-
 
 }

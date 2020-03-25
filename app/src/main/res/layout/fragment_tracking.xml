@@ -1,4 +1,4 @@
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~                                  Apache License
   ~                            Version 2.0, January 2004
   ~                         http://www.apache.org/licenses/
@@ -202,51 +202,44 @@
   ~    limitations under the License.
   -->
 
-<resources>
-    <string name="app_name">Stalker App</string>
-    <string name="stalker">Stalker</string>
-    <string name="seleziona_l_organizzazione">Seleziona l\'organizzazione:</string>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.vartmp7.stalker.ui.tracking.TrackingFragment">
 
-    <string name="sign_in">Sign in</string>
-    <string name="sign_up">Sign up</string>
-    <string name="nessun_organizzazione_ti_sta_stalkerando">Nessun\'organizzazione ti sta stalkerando!</string>
-    <string name="status">Status </string>
-    <string name="elenco_luoghi">Elenco Luoghi:</string>
-    <string name="elenco_dei_luoghi_tracciati_per_l_organizzazione_selezionata">Elenco dei luoghi tracciati per l\'organizzazione selezionata:</string>
-    <string name="start_track">Start Track</string>
-    <string name="agg">Agg.</string>
-    <string name="username">Username</string>
-    <string name="password">Password</string>
-    <string name="annulla">Annulla</string>
-    <string name="stop">Stop</string>
-    <string name="conferma">Conferma</string>
-    <string name="not_in_any_place">Non sei in nessun luogo tracciato dell\'organizzazione selezionata!</string>
-    <string name="you_left">Hai lasciato %s</string>
-    <string name="you_are_in">Sei in %s</string>
-    <string name="facebook_app_id">212692166599390</string><!--todo Da togliere successivamente quando renderemo l'app pubblica   -->
-    <string name="fb_login_protocol_scheme">fb212692166599390</string>
-    <string name="continua_senza_autenticazione">Continua senza autenticazione</string>
 
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
-    <string name="cronologia">Cronologia</string>
-    <string name="preferiti">Preferiti</string>
-    <string name="organizzazioni">Organizzazioni</string>
-    <string name="scegli">Scegli</string>
-    <string name="il_traccimento_non_ancora_attivo">Il traccimento non è ancora attivo!</string>
-    <string name="track_me">Tracciami</string>
-    <string name="login_ldap">Login LDAP</string>
-    <string name="anonimo_question">Anonimo?</string>
-    <string name="indirizzo">Indirizzo:</string>
-    <string name="email">Email:</string>
-    <string name="logout">Logout</string>
-    <string name="login">Login</string>
-    <string name="icon_dell_organizzazione">icon dell\'organizzazione</string>
-    <string name="dettagli">Dettagli</string>
-    <string name="nascondi">Nascondi</string>
-    <string name="tipo_organizzazione">Tipo Organizzazione: </string>
-    <string name="n_d">N.D.</string>
-    <string name="nessun_luogo_tracciabile_per_quest_organizzazione">Nessun luogo tracciabile per quest\'organizzazione</string>
-    <string name="attualmente_sei_in">Attualmente sei in:</string>
-</resources>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/attualmente_sei_in"
+            android:textSize="25dp"
+            android:textAlignment="center"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Nessun'organizzazione ti sta tracciando"
+            android:textSize="15dp"/>
+
+    </LinearLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/trackingRecycleView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:listitem="@layout/item_tracking" />
+
+</LinearLayout>

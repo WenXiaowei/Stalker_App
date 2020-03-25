@@ -230,6 +230,10 @@ public class OrganizationsRepository {
         return instance;
     }
 
+    public void updateOrganizzazione(Organizzazione o){
+       organizationsLocalSource.updateOrganizzazione(o);
+    }
+
     public synchronized static OrganizationsRepository init( OrganizationsLocalSource orgsLocalSource, OrganizationsWebSource orgsWebSource, FavoritesSource fa){
         if (instance == null){
             instance = new OrganizationsRepository( orgsLocalSource,  orgsWebSource,fa);

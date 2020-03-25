@@ -202,51 +202,8 @@
   ~    limitations under the License.
   -->
 
-<resources>
-    <string name="app_name">Stalker App</string>
-    <string name="stalker">Stalker</string>
-    <string name="seleziona_l_organizzazione">Seleziona l\'organizzazione:</string>
-
-    <string name="sign_in">Sign in</string>
-    <string name="sign_up">Sign up</string>
-    <string name="nessun_organizzazione_ti_sta_stalkerando">Nessun\'organizzazione ti sta stalkerando!</string>
-    <string name="status">Status </string>
-    <string name="elenco_luoghi">Elenco Luoghi:</string>
-    <string name="elenco_dei_luoghi_tracciati_per_l_organizzazione_selezionata">Elenco dei luoghi tracciati per l\'organizzazione selezionata:</string>
-    <string name="start_track">Start Track</string>
-    <string name="agg">Agg.</string>
-    <string name="username">Username</string>
-    <string name="password">Password</string>
-    <string name="annulla">Annulla</string>
-    <string name="stop">Stop</string>
-    <string name="conferma">Conferma</string>
-    <string name="not_in_any_place">Non sei in nessun luogo tracciato dell\'organizzazione selezionata!</string>
-    <string name="you_left">Hai lasciato %s</string>
-    <string name="you_are_in">Sei in %s</string>
-    <string name="facebook_app_id">212692166599390</string><!--todo Da togliere successivamente quando renderemo l'app pubblica   -->
-    <string name="fb_login_protocol_scheme">fb212692166599390</string>
-    <string name="continua_senza_autenticazione">Continua senza autenticazione</string>
-
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
-    <string name="cronologia">Cronologia</string>
-    <string name="preferiti">Preferiti</string>
-    <string name="organizzazioni">Organizzazioni</string>
-    <string name="scegli">Scegli</string>
-    <string name="il_traccimento_non_ancora_attivo">Il traccimento non è ancora attivo!</string>
-    <string name="track_me">Tracciami</string>
-    <string name="login_ldap">Login LDAP</string>
-    <string name="anonimo_question">Anonimo?</string>
-    <string name="indirizzo">Indirizzo:</string>
-    <string name="email">Email:</string>
-    <string name="logout">Logout</string>
-    <string name="login">Login</string>
-    <string name="icon_dell_organizzazione">icon dell\'organizzazione</string>
-    <string name="dettagli">Dettagli</string>
-    <string name="nascondi">Nascondi</string>
-    <string name="tipo_organizzazione">Tipo Organizzazione: </string>
-    <string name="n_d">N.D.</string>
-    <string name="nessun_luogo_tracciabile_per_quest_organizzazione">Nessun luogo tracciabile per quest\'organizzazione</string>
-    <string name="attualmente_sei_in">Attualmente sei in:</string>
-</resources>
+<vector android:height="24dp" android:tint="#1999FF"
+    android:viewportHeight="24.0" android:viewportWidth="24.0"
+    android:width="24dp" xmlns:android="http://schemas.android.com/apk/res/android">
+    <path android:fillColor="#FF000000" android:pathData="M12,8c-2.21,0 -4,1.79 -4,4s1.79,4 4,4 4,-1.79 4,-4 -1.79,-4 -4,-4zM20.94,11c-0.46,-4.17 -3.77,-7.48 -7.94,-7.94L13,1h-2v2.06C6.83,3.52 3.52,6.83 3.06,11L1,11v2h2.06c0.46,4.17 3.77,7.48 7.94,7.94L11,23h2v-2.06c4.17,-0.46 7.48,-3.77 7.94,-7.94L23,13v-2h-2.06zM12,19c-3.87,0 -7,-3.13 -7,-7s3.13,-7 7,-7 7,3.13 7,7 -3.13,7 -7,7z"/>
+</vector>

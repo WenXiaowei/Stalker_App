@@ -226,7 +226,7 @@
         android:id="@+id/navigation_status"
         android:name="com.vartmp7.stalker.ui.tracking.TrackingFragment"
         android:label="@string/title_home"
-        tools:layout="@layout/fragment_status">
+        tools:layout="@layout/fragment_tracking">
         <argument
             android:name="org"
             app:argType="com.vartmp7.stalker.gsonbeans.Organizzazione" />
