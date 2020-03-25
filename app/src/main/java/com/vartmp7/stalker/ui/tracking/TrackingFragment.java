@@ -271,6 +271,7 @@ public class TrackingFragment extends Fragment {
                o.setTracking(false);
                o.setTrackingActive(false);
                trackingViewModel.updateOrganizzazione(o);
+               mAdapter.notifyItemChanged(viewHolder.getAdapterPosition());
                 Toast.makeText(requireContext(), "Organizzazione eliminata!", Toast.LENGTH_SHORT).show();
             }
         }).attachToRecyclerView(recyclerView);
