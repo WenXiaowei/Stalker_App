@@ -222,7 +222,9 @@ public class OrganizationsRepository {
     private OrganizationsLocalSource organizationsLocalSource;
     private OrganizationsWebSource organizationsWebSource;
     private FavoritesSource organizationFavoritesSource;
+
     private static OrganizationsRepository instance;
+
     public static @Nullable OrganizationsRepository getIstance(){
         if (instance==null){
             throw new AssertionError("You have to call init first!");
@@ -255,6 +257,10 @@ public class OrganizationsRepository {
     }
     public LiveData<List<Organizzazione>> getOrganizzazioni(){
         return organizationsLocalSource.getOrganizzazioni();
+    }
+
+    public LiveData<List<Long>> getPreferiti(){
+        return organizationFavoritesSource.getOrganizzazioni();
     }
 
     public void saveOrganizzazione(){

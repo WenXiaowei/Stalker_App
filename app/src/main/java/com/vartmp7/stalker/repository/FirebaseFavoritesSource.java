@@ -267,7 +267,10 @@ public class FirebaseFavoritesSource implements FavoritesSource {
     public void addOrganizzazione(Long orgId) {
         db.collection("utenti").document(userId).
                 update(FIELDNAME_ORGANIZZAZIONI, FieldValue.arrayUnion(orgId))
-                .addOnSuccessListener(aVoid -> Log.w(TAG, "organizzazione aggiunta correttamente"))
+                .addOnSuccessListener(aVoid ->{
+                    Log.w(TAG, "organizzazione aggiunta correttamente");
+                    List<Long> ids = mutableliveDataOrgIds.getValue();
+                })
                 .addOnFailureListener(e -> Log.w(TAG, "errore avvenuto aggiungendo organizzazione", e));
     }
 
@@ -352,7 +355,8 @@ public class FirebaseFavoritesSource implements FavoritesSource {
  */
     }
 
-    @Override
+
+
     public LiveData<List<Long>> getOrganizzazioni() {
         db.collection("utenti").document(userId)
                 .get()
@@ -370,6 +374,25 @@ public class FirebaseFavoritesSource implements FavoritesSource {
                     }
                 });
         return this.mutableliveDataOrgIds;
+    }
+
+    @Override
+    public void refresh() {
+        db.collection("utenti").document(userId)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    Map<String, Object> data = documentSnapshot.getData();
+                    try {
+                        if (data != null) {
+                            final List<Long> orgIds = (List<Long>) data.get(FIELDNAME_ORGANIZZAZIONI);
+                            Log.w(TAG, "data got from firebase:");
+                            orgIds.forEach(l->Log.d(TAG,"orgId:"+l));
+                            mutableliveDataOrgIds.setValue(orgIds);
+                            Log.w(TAG, "id delle org preferite ottenuti correttamente");
+                        }
+                    } catch (ClassCastException e) {
+                    }
+                });
     }
 
 

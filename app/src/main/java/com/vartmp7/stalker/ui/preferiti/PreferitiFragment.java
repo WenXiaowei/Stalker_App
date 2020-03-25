@@ -261,10 +261,12 @@ public class PreferitiFragment extends Fragment {
         String serverUrl="";
         OrganizationsLocalSource localSource = new FileOrganizationsLocalSource("orgs.json",getContext(), listMutableLiveData);
         OrganizationsWebSource webSource = new RESTOrganizationsWebSource(httpClient,listMutableLiveData,"asd");
-        OrganizationsRepository orgRepo = OrganizationsRepository.getIstance();
+
         //orgRepo.saveOrganizzazione(new Organizzazione());
         //orgRepo.updateOrganizzazioni();
-//        FavoritesSource preferitiRepository = new FirebaseFavoritesSource("1",orgRepo, FirebaseFirestore.getInstance());
+        FavoritesSource favoritesSource = new FirebaseFavoritesSource("1",FirebaseFirestore.getInstance());
+        OrganizationsRepository.init(localSource,webSource,favoritesSource);
+        OrganizationsRepository orgRepo = OrganizationsRepository.getIstance();
         //fine del todo
 
         this.favViewModel = new PreferitiViewModel(orgRepo);
@@ -274,7 +276,7 @@ public class PreferitiFragment extends Fragment {
         Log.d(TAG,"onCreate");
 
         showProgressBar();
-        favViewModel.init();
+        //favViewModel.init();
         initRecyclerView();
         favViewModel.getOrganizzazioni().observe(getViewLifecycleOwner(), new Observer<List<Organizzazione>>() {
             @Override

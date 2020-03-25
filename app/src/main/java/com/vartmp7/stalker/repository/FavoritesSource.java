@@ -216,4 +216,6 @@ public interface FavoritesSource {
     void addOrganizzazione(Long orgId);
     void removeOrganizzazione(Long orgId);
     LiveData<List<Long>> getOrganizzazioni();
+
+    void refresh();
 }

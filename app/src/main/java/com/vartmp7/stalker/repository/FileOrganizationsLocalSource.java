@@ -223,6 +223,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -283,7 +284,9 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
                         List<Organizzazione> organizzazioni = mLiveOrgs.getValue();
                         ResponseOrganizzazione responseOrganizzazioni = gson.fromJson(contents, ResponseOrganizzazione.class);
 //                    List<Organizzazione> orgs = mLiveOrgs.getValue();
-                        organizzazioni.addAll(responseOrganizzazioni.getOrganizations().stream().distinct().collect(Collectors.toList()));
+                        if(responseOrganizzazioni==null)
+                            organizzazioni.addAll(new ArrayList<>());
+                        else organizzazioni.addAll(responseOrganizzazioni.getOrganizations().stream().distinct().collect(Collectors.toList()));
                         //organizzazioni.clear();
                         //organizzazioni.addAll(responseOrganizzazioni.getOrganizations());
                         mLiveOrgs.postValue(organizzazioni.stream().distinct().collect(Collectors.toList()));
@@ -322,7 +325,7 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
 
         executorService.execute(new Runnable() {
             @Override
-            public void run() {
+            public synchronized void run() {
                 File orgJson = new File(context.getFilesDir(), fileName);
                 if (!orgJson.exists()){
                     try {
