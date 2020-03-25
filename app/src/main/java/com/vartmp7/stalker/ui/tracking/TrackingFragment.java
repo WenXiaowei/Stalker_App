@@ -220,6 +220,7 @@ import com.vartmp7.stalker.R;
 import com.vartmp7.stalker.gsonbeans.Organizzazione;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 
 /**
@@ -241,9 +242,7 @@ public class TrackingFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (list == null) {
-            init_data();
-        }
+
     }
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle b) {
@@ -251,43 +250,31 @@ public class TrackingFragment extends Fragment {
         recyclerView = root.findViewById(R.id.trackingRecycleView);
 
         trackingViewModel = new ViewModelProvider(requireActivity()).get(TrackingViewModel.class);
-        trackingViewModel.initi(list);
 
-        mAdapter = new TrackingViewAdapter(getContext(), trackingViewModel.getListaOrganizzazione().getValue());
-        trackingViewModel.getListaOrganizzazione().observe(getViewLifecycleOwner(), list -> mAdapter.notifyDataSetChanged());
 
+        mAdapter = new TrackingViewAdapter(getContext());
+        trackingViewModel.getListOrganizzazione().observe(getViewLifecycleOwner(),
+                list ->mAdapter.setList(list.stream().filter(Organizzazione::isTracking).collect(Collectors.toList())));
         layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(mAdapter);
-        addingNewOrganization();
+//        addingNewOrganization();
         return root;
     }
+//
+//    public void addingNewOrganization() {
+//        if (getArguments() != null) {
+//
+//            Organizzazione org = (Organizzazione) getArguments().getSerializable("org");
+//            if (org != null) {
+////            Log.d(TAG, "onCreateView: "+org);
+//                trackingViewModel.addTrackingOrganizzazione(org);
+////            mAdapter = new TrackingViewAdapter(getContext(), list);
+////            recyclerView.setAdapter(mAdapter);
+//            }
+//        }
+//    }
 
-    public void addingNewOrganization() {
-        if (getArguments() != null) {
-
-            Organizzazione org = (Organizzazione) getArguments().getSerializable("org");
-            if (org != null) {
-//            Log.d(TAG, "onCreateView: "+org);
-                trackingViewModel.addTrackingOrganizzazione(org);
-//            mAdapter = new TrackingViewAdapter(getContext(), list);
-//            recyclerView.setAdapter(mAdapter);
-            }
-        }
-    }
-
-    public void init_data() {
-        list = new ArrayList<>();
-        for (int i = 0; i < 3; i++) {
-            Organizzazione org = new Organizzazione()
-                    .setId(i)
-                    .setName("UNIPD " + i)
-                    .setAddress("Via trieste " + i)
-                    .setPreferito(false)
-                    .setImage_url("https://images.unsplash.com/photo-1504639725590-34d0984388bd?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=60");
-            list.add(org);
-        }
-    }
 
 
 }

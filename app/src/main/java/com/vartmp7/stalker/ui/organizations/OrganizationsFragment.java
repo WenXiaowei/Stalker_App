@@ -255,9 +255,8 @@ public class OrganizationsFragment extends Fragment implements SwipeRefreshLayou
         OrganizationsLocalSource localSource = new FileOrganizationsLocalSource("orgs.json", getContext(),list);
 
         OrganizationsWebSource webSource = new RESTOrganizationsWebSource(Tools.getUnsafeOkHttpClient(), list,"https://asdasd.com");
-        OrganizationsRepository repository = new OrganizationsRepository(getViewLifecycleOwner(), localSource, webSource);
         organizzazioneViewModel = new ViewModelProvider(getActivity()).get(OrganizationsViewModel.class);
-        organizzazioneViewModel.initData(repository);
+        organizzazioneViewModel.initData(OrganizationsRepository.getIstance());
 //        organizzazioneViewModel.refresh();
 
         View root = inflater.inflate(R.layout.fragment_organizations, container, false);

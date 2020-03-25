@@ -261,13 +261,13 @@ public class PreferitiFragment extends Fragment {
         String serverUrl="";
         OrganizationsLocalSource localSource = new FileOrganizationsLocalSource("orgs.json",getContext(), listMutableLiveData);
         OrganizationsWebSource webSource = new RESTOrganizationsWebSource(httpClient,listMutableLiveData,"asd");
-        OrganizationsRepository orgRepo = new OrganizationsRepository(getViewLifecycleOwner(),localSource,webSource);
+        OrganizationsRepository orgRepo = OrganizationsRepository.getIstance();
         //orgRepo.saveOrganizzazione(new Organizzazione());
         //orgRepo.updateOrganizzazioni();
-        FavoritesSource preferitiRepository = new FirebaseFavoritesSource("1",orgRepo, FirebaseFirestore.getInstance());
+//        FavoritesSource preferitiRepository = new FirebaseFavoritesSource("1",orgRepo, FirebaseFirestore.getInstance());
         //fine del todo
 
-        this.favViewModel = new PreferitiViewModel(preferitiRepository);
+        this.favViewModel = new PreferitiViewModel(orgRepo);
 
         //final TextView textView = root.findViewById(R.id.text_notifications);
 

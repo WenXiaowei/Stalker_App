@@ -206,25 +206,42 @@ package com.vartmp7.stalker.repository;
 
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import com.vartmp7.stalker.gsonbeans.Organizzazione;
 
 import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.annotation.Nullable;
 
 public class OrganizationsRepository {
 
     private static final String TAG = "com.vartmp7.stalker.repository.OrganizationsRepository";
-    private LifecycleOwner lifeCycleOwner;
+
     private OrganizationsLocalSource organizationsLocalSource;
     private OrganizationsWebSource organizationsWebSource;
-    
+    private FavoritesSource organizationFavoritesSource;
+    private static OrganizationsRepository instance;
+    public static @Nullable OrganizationsRepository getIstance(){
+        if (instance==null){
+            throw new AssertionError("You have to call init first!");
+        }
+        return instance;
+    }
+
+    public synchronized static OrganizationsRepository init( OrganizationsLocalSource orgsLocalSource, OrganizationsWebSource orgsWebSource, FavoritesSource fa){
+        if (instance == null){
+            instance = new OrganizationsRepository( orgsLocalSource,  orgsWebSource,fa);
+        }
+        return instance;
+    }
 
 
-
-    public OrganizationsRepository(LifecycleOwner lifeCycleOwner, OrganizationsLocalSource orgsLocalSource, OrganizationsWebSource orgsWebSource) {
-        this.lifeCycleOwner = lifeCycleOwner;
+    private OrganizationsRepository( OrganizationsLocalSource orgsLocalSource, OrganizationsWebSource orgsWebSource,FavoritesSource fa) {
         this.organizationsLocalSource = orgsLocalSource;
         this.organizationsWebSource = orgsWebSource;
+        this.organizationFavoritesSource = fa;
 
         /*organizationsLocalSource.saveOrganizzazioni(Arrays.asList(
                 new Organizzazione().setId(1).setName("asd"),
@@ -238,6 +255,8 @@ public class OrganizationsRepository {
 
     public void saveOrganizzazione(){
     }
+
+    // in teoria il metodo non serve
     public void removeOrganizzazione(Organizzazione o){
 
     }

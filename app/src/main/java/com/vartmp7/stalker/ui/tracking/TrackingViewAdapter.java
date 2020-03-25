@@ -227,6 +227,7 @@ import com.bumptech.glide.Glide;
 import com.vartmp7.stalker.R;
 import com.vartmp7.stalker.gsonbeans.Organizzazione;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -239,10 +240,13 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
     private List<Organizzazione> listOrganizzazione;
     private Context context;
 
-    public TrackingViewAdapter(Context context, List<Organizzazione> list) {
-        super();
-        listOrganizzazione = list;
+    public TrackingViewAdapter(Context context) {
+        listOrganizzazione = new ArrayList<>();
         this.context = context;
+    }
+    public void setList(List<Organizzazione> org){
+        this.listOrganizzazione = org;
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -257,8 +261,10 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
     @Size
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Organizzazione org = listOrganizzazione.get(position);
 
+        Organizzazione org = listOrganizzazione.get(position);
+        if (!org.isTracking())
+            return;
         RotateAnimation arrowOpenRotation = new RotateAnimation(0, -90f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
         arrowOpenRotation.setDuration(500);
         arrowOpenRotation.setInterpolator(new LinearInterpolator());

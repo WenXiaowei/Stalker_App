@@ -653,8 +653,6 @@
 package com.vartmp7.stalker;
 
 import android.content.Intent;
-
-import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.Menu;
@@ -662,47 +660,50 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-
-
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.gson.Gson;
-import com.vartmp7.stalker.gsonbeans.ResponseOrganizzazione;
-
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.MutableLiveData;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.vartmp7.stalker.gsonbeans.Organizzazione;
+import com.vartmp7.stalker.repository.FavoritesSource;
+import com.vartmp7.stalker.repository.FileOrganizationsLocalSource;
+import com.vartmp7.stalker.repository.FirebaseFavoritesSource;
+import com.vartmp7.stalker.repository.OrganizationsLocalSource;
+import com.vartmp7.stalker.repository.OrganizationsRepository;
+import com.vartmp7.stalker.repository.OrganizationsWebSource;
+import com.vartmp7.stalker.repository.RESTOrganizationsWebSource;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Xiaowei Wen, Lorenzo Taschin
  */
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "com.vartmp7.stalker.MainActivity";
-//    public static final String URL_SERVER="https://stalker-be.ddns.net/";
-    public static final String URL_SERVER="http::/localhost:5000";
-    public static final String TOKEN_NAME="Organization-Token";
-    public static final String TOKEN_VALUE="vartmp7";
+    //    public static final String URL_SERVER="https://stalker-be.ddns.net/";
+    public static final String URL_SERVER = "http::/localhost:5000";
+    public static final String TOKEN_NAME = "Organization-Token";
+    public static final String TOKEN_VALUE = "vartmp7";
 
     private GoogleSignInClient mGoogleSignInClient;
+
     @Override
     public Resources.Theme getTheme() {
         Resources.Theme them = super.getTheme();
-        them.applyStyle(R.style.AppTheme,true);
+        them.applyStyle(R.style.AppTheme, true);
         return them;
     }
 
@@ -710,7 +711,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        if (!isUserLogged() && !getSharedPreferences("stalker", MODE_PRIVATE).getBoolean("not_login",false))
+        if (!isUserLogged() && !getSharedPreferences("stalker", MODE_PRIVATE).getBoolean("not_login", false))
             goToLoginActivity(false);
         BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
@@ -749,10 +750,13 @@ public class MainActivity extends AppCompatActivity {
 //        liveDataOrganizzazioni.observe(this,observer);
 //        Log.d(TAG,"size:"+liveDataOrganizzazioni.getValue().size());
 
+        MutableLiveData<List<Organizzazione>> list = new MutableLiveData<>(new ArrayList<>());
+        OrganizationsLocalSource localSource = new FileOrganizationsLocalSource("orgs.json", this, list);
+        FavoritesSource preferitiRepository = new FirebaseFavoritesSource("1", FirebaseFirestore.getInstance());
+//        FavoritesSource preferitiRepository = new FirebaseFavoritesSource(getUserId(), FirebaseFirestore.getInstance());
 
-
-
-
+        OrganizationsWebSource webSource = new RESTOrganizationsWebSource(Tools.getUnsafeOkHttpClient(), list, "https://asdasd.com");
+        OrganizationsRepository repository = OrganizationsRepository.init(localSource, webSource, preferitiRepository);
 
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -765,14 +769,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         if (isUserLogged())
             inflater.inflate(R.menu.setting_menu, menu);
         else
-            inflater.inflate(R.menu.setting_menu_no_log,menu);
+            inflater.inflate(R.menu.setting_menu_no_log, menu);
         return true;
     }
 
@@ -780,9 +783,9 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menuLogout:
-                if(FirebaseAuth.getInstance().getCurrentUser()!=null){
+                if (FirebaseAuth.getInstance().getCurrentUser() != null) {
                     logout();
-                }else{
+                } else {
                     googleSignOut();
                 }
                 goToLoginActivity(false);
@@ -794,9 +797,18 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private boolean isUserLogged(){
-        return FirebaseAuth.getInstance().getCurrentUser()!=null || GoogleSignIn.getLastSignedInAccount(MainActivity.this) != null;
+    private String getUserId() {
+        if (FirebaseAuth.getInstance().getCurrentUser() != null)
+            return FirebaseAuth.getInstance().getCurrentUser().getUid();
+        if (GoogleSignIn.getLastSignedInAccount(MainActivity.this) != null)
+            return GoogleSignIn.getLastSignedInAccount(MainActivity.this).getId();
+        return "";
     }
+
+    private boolean isUserLogged() {
+        return FirebaseAuth.getInstance().getCurrentUser() != null || GoogleSignIn.getLastSignedInAccount(MainActivity.this) != null;
+    }
+
     public void logout() {
         FirebaseAuth.getInstance().signOut();
     }
@@ -810,6 +822,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
     }
+
     public void goToLoginActivity(boolean backButton) {
         Intent intent = new Intent(MainActivity.this, LoginActivity.class);
         if (!backButton) {

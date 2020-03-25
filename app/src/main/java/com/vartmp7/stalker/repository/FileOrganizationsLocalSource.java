@@ -224,6 +224,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
     private static final String TAG = "com.vartmp7.stalker.repository.FileOrganizationsRepository";
@@ -302,35 +305,50 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
     @SuppressLint("StaticFieldLeak")
     @Override
     public void saveOrganizzazioni(List<Organizzazione> orgs) {
-       new Thread(){
-           @Override
-           public void run() {
-               super.run();
-               File orgJson = new File(context.getFilesDir(), fileName);
-               if (!orgJson.exists()){
-                   try {
-                       orgJson.createNewFile();
-                   } catch (IOException e) {
-                       e.printStackTrace();
-                   }
-                   Log.d(TAG, "creazione file");
-                   Log.d(TAG, "doInBackground: "+orgJson.mkdir());
-               }
+//       new Thread(){
+//
+//       }.start();
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
 
-               try {
-                   FileWriter writer = new FileWriter(orgJson);
-                   String l = new Gson().toJson(new ResponseOrganizzazione().setOrganizations(mLiveOrgs.getValue()));
-                   Log.d(TAG, "saving data.");
-                   writer.append(l);
-                   writer.flush();
-                   writer.close();
-               } catch (IOException e) {
-                   Log.d(TAG, "Errore, file non trovato");
-                   e.printStackTrace();
-               }
-               Log.d(TAG, "doInBackground: finished saving data");
-           }
-       }.start();
+        executorService.execute(new Runnable() {
+            @Override
+            public void run() {
+                File orgJson = new File(context.getFilesDir(), fileName);
+                if (!orgJson.exists()){
+                    try {
+                        orgJson.createNewFile();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    Log.d(TAG, "creazione file");
+                    Log.d(TAG, "doInBackground: "+orgJson.mkdir());
+                }
+
+                try {
+                    FileWriter writer = new FileWriter(orgJson);
+                    // todo quest'istruzione delle volte, genera un concurrentModificationException
+                    String l = new Gson().toJson(new ResponseOrganizzazione().setOrganizations(mLiveOrgs.getValue()));
+                    Log.d(TAG, "saving data.");
+                    writer.write("");
+                    writer.close();
+                    writer= new FileWriter(orgJson);
+
+                    writer.append(l);
+                    writer.flush();
+                    writer.close();
+                } catch (IOException e) {
+                    Log.d(TAG, "Errore, file non trovato");
+                    e.printStackTrace();
+                }
+                Log.d(TAG, "doInBackground: finished saving data");
+            }
+        });
+        executorService.shutdown();
+        try {
+            executorService.awaitTermination(1, TimeUnit.MINUTES);
+        } catch (InterruptedException e) {
+//            e.printStackTrace();
+        }
     }
 
     @Override
