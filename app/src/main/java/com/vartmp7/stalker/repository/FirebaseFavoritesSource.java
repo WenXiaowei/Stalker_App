@@ -237,19 +237,18 @@ public class FirebaseFavoritesSource implements FavoritesSource {
     aggiungere un id alla lista dei preferito su firebase firestore
      */
     private MutableLiveData<List<Long>> mutableliveDataOrgIds;
-    private LiveData<List<Organizzazione>> liveDataOrganizzazioni;
-    private MediatorLiveData<List<Organizzazione>> mediatorLiveDataOrganizzazioni;
-    private MutableLiveData<Boolean> organizationsQueryExhausted;
-    private MutableLiveData<Boolean> firebaseQueryExhausted;
+    //private LiveData<List<Organizzazione>> liveDataOrganizzazioni;
+   // private MediatorLiveData<List<Organizzazione>> mediatorLiveDataOrganizzazioni;
+    //private MutableLiveData<Boolean> organizationsQueryExhausted;
+    //private MutableLiveData<Boolean> firebaseQueryExhausted;
 
-    public FirebaseFavoritesSource(String userId, OrganizationsRepository orgRepo, FirebaseFirestore db) {
-        this.liveDataOrganizzazioni=orgRepo.getOrganizzazioni();
+    public FirebaseFavoritesSource(String userId, FirebaseFirestore db) {
         this.mutableliveDataOrgIds = new MutableLiveData<>();
-        this.mediatorLiveDataOrganizzazioni = new MediatorLiveData<>();
-        organizationsQueryExhausted = new MutableLiveData<Boolean>(false);
-        firebaseQueryExhausted = new MutableLiveData<Boolean>(false);
+        //this.mediatorLiveDataOrganizzazioni = new MediatorLiveData<>();
+        //organizationsQueryExhausted = new MutableLiveData<Boolean>(false);
+        //firebaseQueryExhausted = new MutableLiveData<Boolean>(false);
         this.userId = userId;
-        this.organizationsRepo = orgRepo;
+        //this.organizationsRepo = orgRepo;
         this.db = db;
     }
 
@@ -265,18 +264,15 @@ public class FirebaseFavoritesSource implements FavoritesSource {
     }
 
     @Override
-    public void addOrganizzazione(Organizzazione organizzazione) {
-        //TODO
-
-
+    public void addOrganizzazione(Long orgId) {
         db.collection("utenti").document(userId).
-                update(FIELDNAME_ORGANIZZAZIONI, FieldValue.arrayUnion(organizzazione.getId()))
+                update(FIELDNAME_ORGANIZZAZIONI, FieldValue.arrayUnion(orgId))
                 .addOnSuccessListener(aVoid -> Log.w(TAG, "organizzazione aggiunta correttamente"))
                 .addOnFailureListener(e -> Log.w(TAG, "errore avvenuto aggiungendo organizzazione", e));
     }
 
-
-    public void updateOrganizzazioni(){
+/*
+    public void updateOrganizzazioni(List<Long> orgIds){
         this.firebaseQueryExhausted.setValue(false);
         this.organizationsQueryExhausted.setValue(false);
 
@@ -304,7 +300,7 @@ public class FirebaseFavoritesSource implements FavoritesSource {
             }
         });
 
-        //this.liveDataOrganizzazioni = new MutableLiveData<>(organizationsRepo.getOrganizzazioni().getValue());
+        this.liveDataOrganizzazioni = new MutableLiveData<>(organizationsRepo.getOrganizzazioni().getValue());
 
         final Observer<Boolean> queryExhaustedObserver =  new Observer<Boolean>() {
             @Override
@@ -324,16 +320,16 @@ public class FirebaseFavoritesSource implements FavoritesSource {
         this.mediatorLiveDataOrganizzazioni.addSource(organizationsQueryExhausted, queryExhaustedObserver);
         this.mediatorLiveDataOrganizzazioni.addSource(firebaseQueryExhausted,queryExhaustedObserver);
 
+
     }
+*/
 
     @Override
-    public void removeOrganizzazione(Organizzazione organizzazione) {
-
+    public void removeOrganizzazione(Long orgId) {
         db.collection("utenti").document(userId).
-                update(FIELDNAME_ORGANIZZAZIONI, FieldValue.arrayRemove(organizzazione.getId()))
+                update(FIELDNAME_ORGANIZZAZIONI, FieldValue.arrayRemove(orgId))
                 .addOnSuccessListener(aVoid -> Log.w(TAG, "organizzazione rimossa correttamente"))
                 .addOnFailureListener(e -> Log.w(TAG, "errore avvenuto rimuovendo organizzazione", e));
-
 /*
         Map<String, Object> org = new HashMap<>();
         org.put(FIELDNAME_ID,organizzazione.getId());
@@ -357,8 +353,23 @@ public class FirebaseFavoritesSource implements FavoritesSource {
     }
 
     @Override
-    public LiveData<List<Organizzazione>> getOrganizzazioni() {
-        return this.mediatorLiveDataOrganizzazioni;
+    public LiveData<List<Long>> getOrganizzazioni() {
+        db.collection("utenti").document(userId)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    Map<String, Object> data = documentSnapshot.getData();
+                    try {
+                        if (data != null) {
+                            final List<Long> orgIds = (List<Long>) data.get(FIELDNAME_ORGANIZZAZIONI);
+                            Log.w(TAG, "data got from firebase:");
+                            orgIds.forEach(l->Log.d(TAG,"orgId:"+l));
+                            mutableliveDataOrgIds.postValue(orgIds);
+                            Log.w(TAG, "id delle org preferite ottenuti correttamente");
+                        }
+                    } catch (ClassCastException e) {
+                    }
+                });
+        return this.mutableliveDataOrgIds;
     }
 
 

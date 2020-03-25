@@ -212,8 +212,8 @@ import java.util.List;
 
 
 public interface FavoritesSource {
-    void updateOrganizzazioni();
-    void addOrganizzazione(Organizzazione organizzazione);
-    void removeOrganizzazione(Organizzazione organizzazione);
-    LiveData<List<Organizzazione>> getOrganizzazioni();
+    //void updateOrganizzazioni(List<Long> orgIds);
+    void addOrganizzazione(Long orgId);
+    void removeOrganizzazione(Long orgId);
+    LiveData<List<Long>> getOrganizzazioni();
 }
