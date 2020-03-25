@@ -227,6 +227,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
     private static final String TAG = "com.vartmp7.stalker.repository.FileOrganizationsRepository";
@@ -273,10 +274,10 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
                         List<Organizzazione> organizzazioni = mLiveOrgs.getValue();
                         ResponseOrganizzazione responseOrganizzazioni = gson.fromJson(contents, ResponseOrganizzazione.class);
 //                    List<Organizzazione> orgs = mLiveOrgs.getValue();
-                        organizzazioni.addAll(responseOrganizzazioni.getOrganizations());
+                        organizzazioni.addAll(responseOrganizzazioni.getOrganizations().stream().distinct().collect(Collectors.toList()));
                         //organizzazioni.clear();
                         //organizzazioni.addAll(responseOrganizzazioni.getOrganizations());
-                        mLiveOrgs.postValue(organizzazioni);
+                        mLiveOrgs.postValue(organizzazioni.stream().distinct().collect(Collectors.toList()));
 //                        Log.d(TAG, "run: dati letti dal file");
                     }
 
@@ -304,7 +305,7 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
 
     @SuppressLint("StaticFieldLeak")
     @Override
-    public void saveOrganizzazioni(List<Organizzazione> orgs) {
+    public synchronized void saveOrganizzazioni(List<Organizzazione> orgs) {
 //       new Thread(){
 //
 //       }.start();
@@ -329,11 +330,7 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
                     // todo quest'istruzione delle volte, genera un concurrentModificationException
                     String l = new Gson().toJson(new ResponseOrganizzazione().setOrganizations(mLiveOrgs.getValue()));
                     Log.d(TAG, "saving data.");
-                    writer.write("");
-                    writer.close();
-                    writer= new FileWriter(orgJson);
-
-                    writer.append(l);
+                    writer.write(l);
                     writer.flush();
                     writer.close();
                 } catch (IOException e) {

@@ -240,7 +240,6 @@ public class OrganizationsFragment extends Fragment implements SwipeRefreshLayou
     private RecyclerView recyclerView;
     private OrganizationViewAdapter mAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
-    private MutableLiveData<List<Organizzazione>> list;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -249,45 +248,33 @@ public class OrganizationsFragment extends Fragment implements SwipeRefreshLayou
     }
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
-        list = new MutableLiveData<>();
-        list.setValue(new ArrayList<>());
-        OrganizationsLocalSource localSource = new FileOrganizationsLocalSource("orgs.json", getContext(),list);
-
-        OrganizationsWebSource webSource = new RESTOrganizationsWebSource(Tools.getUnsafeOkHttpClient(), list,"https://asdasd.com");
-        organizzazioneViewModel = new ViewModelProvider(getActivity()).get(OrganizationsViewModel.class);
-        organizzazioneViewModel.initData(OrganizationsRepository.getIstance());
-//        organizzazioneViewModel.refresh();
-
         View root = inflater.inflate(R.layout.fragment_organizations, container, false);
+        organizzazioneViewModel = new ViewModelProvider(requireActivity()).get(OrganizationsViewModel.class);
+        organizzazioneViewModel.initData(OrganizationsRepository.getIstance());
+
         swipeRefreshLayout = root.findViewById(R.id.srfl);
         swipeRefreshLayout.setOnRefreshListener(this);
         swipeRefreshLayout.setColorSchemeColors(Color.BLACK, Color.GREEN, Color.MAGENTA);
-
         recyclerView = root.findViewById(R.id.rvListaOrganizzazioni);
 
         setUpRecyclerView();
-        organizzazioneViewModel.getOrganizationList().observe(getActivity(), list -> {
-//            Log.d(TAG,"arrivo qua"+list);
+        organizzazioneViewModel.getOrganizationList().observe(requireActivity(), list -> {
             mAdapter.notifyDataSetChanged();
             mAdapter.setData(list);
             swipeRefreshLayout.setRefreshing(false);
         });
-//        onRefresh();
+
+
+
         return root;
     }
 
     private void setUpRecyclerView() {
-        mAdapter = new OrganizationViewAdapter(getContext(), Navigation.findNavController(getActivity(),
-                R.id.nav_host_fragment), organizzazioneViewModel.getOrganizationList().getValue());
+        mAdapter = new OrganizationViewAdapter(getContext(), Navigation.findNavController(requireActivity(),
+                R.id.nav_host_fragment));
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(mAdapter);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
     }
 
     @Override

@@ -267,14 +267,15 @@ public class RESTOrganizationsWebSource implements OrganizationsWebSource {
                     new Organizzazione().setId(++count)
                 ));*/
 
-                mutableLiveDataOrganizzazioni.postValue(orgs);
+                mutableLiveDataOrganizzazioni.postValue(orgs.stream().distinct().collect(Collectors.toList()));
             }
 
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 ResponseOrganizzazione responseOrganizzazione = gson.fromJson(response.body().string(), ResponseOrganizzazione.class);
+                // todo filtrare le organizzazioni.
                 List<Organizzazione> list = responseOrganizzazione.getOrganizations();
-                list.stream().map(Organizzazione::getId).collect(Collectors.toList());
+                list.stream().distinct().map(Organizzazione::getId).collect(Collectors.toList());
 
 //                mutableLiveDataOrganizzazioni.setValue(responseOrganizzazione.getOrganizations());
 

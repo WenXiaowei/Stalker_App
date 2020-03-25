@@ -227,6 +227,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.vartmp7.stalker.R;
 import com.vartmp7.stalker.gsonbeans.Organizzazione;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -236,27 +237,24 @@ public class OrganizationViewAdapter extends RecyclerView.Adapter<OrganizationVi
     public static final String TAG = "com.vartmp7.stalker.ui.organizations.OrganizationAdapter";
     private List<Organizzazione> listaOrganizzazione;
     private Context context;
-    private static int currentPosition = -1;
     private NavController navController;
 
-    public OrganizationViewAdapter(Context context, NavController controller, List<Organizzazione> list) {
-        this.listaOrganizzazione = list;
+    public OrganizationViewAdapter(Context context, NavController controller) {
         this.context = context;
         this.navController = controller;
     }
 
     public void setData(List<Organizzazione> newData){
-        this.listaOrganizzazione = newData;
+//        this.listaOrganizzazione= new ArrayList<>();
+        this.listaOrganizzazione= newData;
         this.notifyDataSetChanged();
     }
-
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_organization_list, parent, false);
-
         return new ViewHolder(view);
     }
 
@@ -269,21 +267,13 @@ public class OrganizationViewAdapter extends RecyclerView.Adapter<OrganizationVi
                 .load(listaOrganizzazione.get(position).getImage_url())
                 .into(holder.ivIconOrganizzazione);
 
-//        holder.llHidingInfo.setAlpha(0.9f);
-//        holder.llIconName.setAlpha(0.9f);
-//        holder.llHidingInfo.setBackgroundColor(colors[colorIndex]);
-//        holder.llIconName.setBackgroundColor(colors[colorIndex]);
-
         holder.nomeOrganizzazione.setText(org.getName());
         holder.tipoOrganizzazione.setText(org.getType());
         holder.tvIndirizzo.setText(org.getAddress());
-//        holder.tvElencoLuoghi.setText("\naaaaaaaaaaa");
         holder.btnTrackMe.setOnClickListener(v -> {
 //                int position = holder.getAdapterPosition();
 //                Organizzazione org = listaOrganizzazione.get(position);
                 org.setTracking(true);
-//                Bundle b = new Bundle();
-//                b.putSerializable("org", org);
                 navController.navigate(R.id.action_navigation_organizations_to_navigation_status);
 
         });
@@ -326,7 +316,7 @@ public class OrganizationViewAdapter extends RecyclerView.Adapter<OrganizationVi
             }
         });
 
-        if (currentPosition == position && holder.llHidingInfo.getVisibility() == View.INVISIBLE) {
+        if (holder.llHidingInfo.getVisibility() == View.INVISIBLE) {
             Animation slideDown = AnimationUtils.loadAnimation(context, R.anim.slide_down_animation);
             slideDown.setAnimationListener(new Animation.AnimationListener() {
                 @Override
@@ -345,21 +335,7 @@ public class OrganizationViewAdapter extends RecyclerView.Adapter<OrganizationVi
                 }
             });
             holder.llHidingInfo.startAnimation(slideDown);
-        } else if (currentPosition == position && holder.llHidingInfo.getVisibility() == View.VISIBLE) {
-
-            currentPosition = -1;
         }
-        holder.nomeOrganizzazione.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //getting the position of the item to expand it
-                currentPosition = position;
-                //reloding the list
-               // notifyDataSetChanged();
-            }
-        });
-//            holder.numeroLuoghi = org.get
-
 
     }
 
