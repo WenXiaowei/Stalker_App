@@ -209,6 +209,8 @@ import androidx.annotation.Nullable;
 
 import com.vartmp7.stalker.gsonbeans.placecomponent.Coordinata;
 
+import java.util.Objects;
+
 public class Retta {
 
     private double m;
@@ -261,17 +263,19 @@ public class Retta {
     }
 
     @Override
-    public int hashCode() {
-        return super.hashCode();
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Retta)) return false;
+        Retta retta = (Retta) o;
+        return Double.compare(retta.getM(), getM()) == 0 &&
+                Double.compare(retta.getQ(), getQ()) == 0 &&
+                Objects.equals(a, retta.a) &&
+                Objects.equals(b, retta.b);
     }
 
     @Override
-    public boolean equals(@Nullable Object obj) {
-        if (obj instanceof Retta) {
-            Retta c = (Retta) obj;
-            return c.m == this.m && c.q == this.q;
-        }
-        return false;
+    public int hashCode() {
+        return Objects.hash(getM(), getQ(), a, b);
     }
 
     @NonNull

@@ -227,6 +227,11 @@ public class LatoTest {
         this.x2 = x2;
         this.y2 = y2;
     }
+    @Test
+    public void testLato(){
+
+    }
+
 
     @Parameterized.Parameters
     public static Collection<Object[]> data() {

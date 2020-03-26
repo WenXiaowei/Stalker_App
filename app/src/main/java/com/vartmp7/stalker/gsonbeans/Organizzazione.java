@@ -242,6 +242,7 @@ public class Organizzazione implements Serializable {
     private boolean isAnonimo = false;
     private boolean isTrackingActive=false;
 
+
     public boolean isTracking() {
         return isTracking;
     }
