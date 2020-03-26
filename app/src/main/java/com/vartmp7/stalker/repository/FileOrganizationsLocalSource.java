@@ -258,7 +258,8 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
         if (pos!=-1){
             l.remove(pos);
             l.add(pos, o);
-            mLiveOrgs.postValue(l);
+            saveOrganizzazioni(l);
+            mLiveOrgs.setValue(l);
         }
     }
 
