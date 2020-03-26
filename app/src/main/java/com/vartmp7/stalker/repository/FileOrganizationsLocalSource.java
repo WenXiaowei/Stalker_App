@@ -331,9 +331,7 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
     @SuppressLint("StaticFieldLeak")
     @Override
     public synchronized void saveOrganizzazioni(List<Organizzazione> orgs) {
-//       new Thread(){
-//
-//       }.start();
+
         ExecutorService executorService = Executors.newSingleThreadExecutor();
 
         executorService.execute(new Runnable() {

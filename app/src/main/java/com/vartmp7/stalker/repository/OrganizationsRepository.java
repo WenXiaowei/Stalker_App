@@ -204,16 +204,11 @@
 
 package com.vartmp7.stalker.repository;
 
-import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 
 import com.vartmp7.stalker.gsonbeans.Organizzazione;
 
 import java.util.List;
-import java.util.stream.Collectors;
-
-import javax.annotation.Nullable;
 
 public class OrganizationsRepository {
 
@@ -222,10 +217,9 @@ public class OrganizationsRepository {
     private OrganizationsLocalSource organizationsLocalSource;
     private OrganizationsWebSource organizationsWebSource;
     private FavoritesSource organizationFavoritesSource;
-
     private static OrganizationsRepository instance;
 
-    public static @Nullable OrganizationsRepository getIstance(){
+    public static synchronized OrganizationsRepository getIstance(){
         if (instance==null){
             throw new AssertionError("You have to call init first!");
         }
@@ -236,7 +230,7 @@ public class OrganizationsRepository {
        organizationsLocalSource.updateOrganizzazione(o);
     }
 
-    public synchronized static OrganizationsRepository init( OrganizationsLocalSource orgsLocalSource, OrganizationsWebSource orgsWebSource, FavoritesSource fa){
+    public synchronized static OrganizationsRepository init(OrganizationsLocalSource orgsLocalSource, OrganizationsWebSource orgsWebSource, FavoritesSource fa){
         if (instance == null){
             instance = new OrganizationsRepository( orgsLocalSource,  orgsWebSource,fa);
         }
@@ -244,7 +238,7 @@ public class OrganizationsRepository {
     }
 
 
-    private OrganizationsRepository( OrganizationsLocalSource orgsLocalSource, OrganizationsWebSource orgsWebSource,FavoritesSource fa) {
+    protected OrganizationsRepository( OrganizationsLocalSource orgsLocalSource, OrganizationsWebSource orgsWebSource,FavoritesSource fa) {
         this.organizationsLocalSource = orgsLocalSource;
         this.organizationsWebSource = orgsWebSource;
         this.organizationFavoritesSource = fa;

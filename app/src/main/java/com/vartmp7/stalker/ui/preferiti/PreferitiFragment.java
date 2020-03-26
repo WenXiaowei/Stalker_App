@@ -259,11 +259,12 @@ public class PreferitiFragment extends Fragment {
          //TODO le seguenti righe vanno riviste
         OkHttpClient httpClient= new OkHttpClient();
         String serverUrl="";
-        OrganizationsLocalSource localSource = new FileOrganizationsLocalSource("orgs.json",getContext(), listMutableLiveData);
-        OrganizationsWebSource webSource = new RESTOrganizationsWebSource(httpClient,listMutableLiveData,"asd");
 
         //orgRepo.saveOrganizzazione(new Organizzazione());
         //orgRepo.updateOrganizzazioni();
+        // fixme queste tre istanziazioni non servono più, e non serve neanche fare init, basta getInstance - Wen
+        OrganizationsLocalSource localSource = new FileOrganizationsLocalSource("orgs.json",getContext(), listMutableLiveData);
+        OrganizationsWebSource webSource = new RESTOrganizationsWebSource(httpClient,listMutableLiveData,"asd");
         FavoritesSource favoritesSource = new FirebaseFavoritesSource("1",FirebaseFirestore.getInstance());
         OrganizationsRepository.init(localSource,webSource,favoritesSource);
         OrganizationsRepository orgRepo = OrganizationsRepository.getIstance();

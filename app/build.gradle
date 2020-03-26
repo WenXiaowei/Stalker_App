@@ -208,6 +208,10 @@ commando per avviare il container di sonar qube
     docker run -d --name sonarqube -p 9000:9000 sonarqube
  Comando da usare per far andare sonar qube
  gradlew sonarqube -Dsonar.projectKey=Stalker_App -Dsonar.host.url=http://localhost:9000 -Dsonar.login=11ca1a408698561b7b343325b831cb3ad4b279bf
+
+
+gradlew clean test jacocoTestDebugUnitTestReport sonarqube
+
 */
 apply plugin: 'com.onesignal.androidsdk.onesignal-gradle-plugin'
 apply plugin: 'com.android.application'

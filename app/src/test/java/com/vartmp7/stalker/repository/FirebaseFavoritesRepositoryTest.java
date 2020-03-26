@@ -218,7 +218,7 @@ import org.mockito.junit.MockitoRule;
 
 import static org.junit.Assert.assertTrue;
 
-@RunWith(MockitoJUnitRunner.class)
+//@RunWith(MockitoJUnitRunner.class)
 public class FirebaseFavoritesRepositoryTest {
 
     private static final String TAG="com.vartmp7.stalker.model.FirebaseFavoritesRepositoryTest";
@@ -237,7 +237,7 @@ public class FirebaseFavoritesRepositoryTest {
     public MockitoRule mockitoRule = MockitoJUnit.rule();
 
 
-    @Before
+//    @Before
     public void setUP(){
 //        MockitoAnnotations.initMocks(this);
 //        ffr = Mockito.mock(FirebaseFavoritesRepository.class);
@@ -275,7 +275,7 @@ public class FirebaseFavoritesRepositoryTest {
     }
 
 
-    @Test
+
     public void testGetOrganization(){
 //        Log.d(TAG, "testGetOrganization: "+
 //                ffr.getOrganizzazioni().getValue().toString());
