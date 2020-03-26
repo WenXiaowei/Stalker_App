@@ -279,7 +279,7 @@ public class PreferitiFragment extends Fragment  implements SwipeRefreshLayout.O
 
         Log.d(TAG,"onCreate");
 
-        //favViewModel.init();
+        favViewModel.init();
         initRecyclerView();
         favViewModel.getOrganizzazioni().observe(getViewLifecycleOwner(), new Observer<List<Organizzazione>>() {
             @Override
@@ -298,7 +298,9 @@ public class PreferitiFragment extends Fragment  implements SwipeRefreshLayout.O
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 Organizzazione o = favViewAdapter.getOrganizationAt(viewHolder.getAdapterPosition());
-                favViewAdapter.notifyItemChanged(viewHolder.getAdapterPosition());
+                favViewModel.removeFromPreferiti(o);
+                favViewAdapter.notifyItemRemoved(viewHolder.getAdapterPosition());
+
                 Toast.makeText(requireContext(), getString(R.string.organizzazione_removed_from_favorite), Toast.LENGTH_SHORT).show();
 
             }

@@ -205,49 +205,49 @@
 
 package com.vartmp7.stalker.ui.organizations;
 
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
+//import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
+//import androidx.lifecycle.LiveData;
+//import androidx.lifecycle.MutableLiveData;
+//import androidx.lifecycle.Observer;
+//
+//import com.vartmp7.stalker.gsonbeans.Organizzazione;
+//import com.vartmp7.stalker.repository.OrganizationsRepository;
+//
+//import org.junit.Before;
+//import org.junit.Rule;
+//import org.junit.Test;
+//import org.junit.runner.RunWith;
+//import org.junit.runners.JUnit4;
+//import org.mockito.Mock;
+//import org.mockito.MockitoAnnotations;
+//
+//import java.util.List;
+//
+//import static org.mockito.Mockito.when;
+//
+//@RunWith(JUnit4.class)
+//public class OrganizationsViewModelTest {
+//    @Rule
+//    public InstantTaskExecutorRule instantExecutorRule = new InstantTaskExecutorRule();
 
-import com.vartmp7.stalker.gsonbeans.Organizzazione;
-import com.vartmp7.stalker.repository.OrganizationsRepository;
-
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-
-import java.util.List;
-
-import static org.mockito.Mockito.when;
-
-@RunWith(JUnit4.class)
-public class OrganizationsViewModelTest {
-    @Rule
-    public InstantTaskExecutorRule instantExecutorRule = new InstantTaskExecutorRule();
-
-    @Mock
-    OrganizationsRepository orgRepo;
-
-    private OrganizationsViewModel orgViewModel;
-    @Mock
-    Observer<List<Organizzazione>> observer;
-
-    @Before
-    public void setUp(){
-        MockitoAnnotations.initMocks(this);
-        orgViewModel = new OrganizationsViewModel();
-        orgViewModel.initData(orgRepo);
-        orgViewModel.getOrganizationList().observeForever(observer);
-    }
-
-    @Test
-    public void shouldfetchData(){
-        when(orgRepo.getOrganizzazioni()).thenReturn(new MutableLiveData<List<Organizzazione>>());
-    }
-
-}
+//    @Mock
+//    OrganizationsRepository orgRepo;
+//
+//    private OrganizationsViewModel orgViewModel;
+//    @Mock
+//    Observer<List<Organizzazione>> observer;
+//
+//    @Before
+//    public void setUp(){
+//        MockitoAnnotations.initMocks(this);
+//        orgViewModel = new OrganizationsViewModel();
+//        orgViewModel.initData(orgRepo);
+//        orgViewModel.getOrganizationList().observeForever(observer);
+//    }
+//
+//    @Test
+//    public void shouldfetchData(){
+//        when(orgRepo.getOrganizzazioni()).thenReturn(new MutableLiveData<List<Organizzazione>>());
+//    }
+//
+//}

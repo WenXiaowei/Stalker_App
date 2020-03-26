@@ -291,7 +291,7 @@ public class PreferitiViewModel extends ViewModel {
         this.mediatorLiveDataOrganizzazioni.addSource(firebaseQueryExhausted,queryExhaustedObserver);
     }
     public void removeFromPreferiti(Organizzazione org){
-        orgRepo.removeFromPreferiti(org.getId());
+        orgRepo.removeFromPreferiti(org);
     }
     public LiveData<List<Organizzazione>> getOrganizzazioni() {
         return this.mediatorLiveDataOrganizzazioni;
