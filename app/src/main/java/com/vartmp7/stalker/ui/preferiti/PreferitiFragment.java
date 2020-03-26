@@ -234,6 +234,7 @@ import com.vartmp7.stalker.repository.RESTOrganizationsWebSource;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import okhttp3.OkHttpClient;
 
@@ -284,8 +285,9 @@ public class PreferitiFragment extends Fragment  implements SwipeRefreshLayout.O
         favViewModel.getOrganizzazioni().observe(getViewLifecycleOwner(), new Observer<List<Organizzazione>>() {
             @Override
             public void onChanged(List<Organizzazione> organizzazioni) {
-                favViewAdapter.setOrganizzazioni(organizzazioni);
-                preferitiSwipeLayout.setRefreshing(false);
+                favViewAdapter.setOrganizzazioni(organizzazioni.stream().filter(Organizzazione::isPreferito).collect(Collectors.toList()));
+                Log.e(TAG, "onChanged: refresh" );
+//                preferitiSwipeLayout.setRefreshing(false);
             }
         });
 
@@ -319,7 +321,7 @@ public class PreferitiFragment extends Fragment  implements SwipeRefreshLayout.O
 
     @Override
     public void onRefresh() {
-            preferitiSwipeLayout.setRefreshing(true);
+//            preferitiSwipeLayout.setRefreshing(true);
             favViewModel.refresh();
     }
 }
