@@ -286,8 +286,10 @@ public class TrackingFragment extends Fragment {
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 Organizzazione o = mAdapter.getOrganizationAt(viewHolder.getAdapterPosition());
                 mAdapter.notifyItemChanged(viewHolder.getAdapterPosition());
-                o.setPreferito(!o.isPreferito());
-                trackingViewModel.updateOrganizzazione(o);
+                if(o.isPreferito())
+                    trackingViewModel.removePreferito(o);
+                else trackingViewModel.addPreferito(o);
+
                 Toast.makeText(requireContext(), o.isPreferito()? getString(R.string.organizzazione_added_to_favorite):
                         getString(R.string.organizzazione_removed_from_favorite), Toast.LENGTH_SHORT).show();
 

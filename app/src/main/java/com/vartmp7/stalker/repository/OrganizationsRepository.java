@@ -257,6 +257,19 @@ public class OrganizationsRepository {
         return organizationFavoritesSource.getOrganizzazioni();
     }
 
+    public void addToPreferiti(Organizzazione org){
+        org.setPreferito(true);
+        updateOrganizzazione(org);
+        organizationFavoritesSource.addOrganizzazione(org.getId());
+    }
+
+    public void removeFromPreferiti(Organizzazione org){
+        org.setPreferito(false);
+        updateOrganizzazione(org);
+        organizationFavoritesSource.removeOrganizzazione(org.getId());
+    }
+
+
     public void saveOrganizzazione(){
     }
 
@@ -264,6 +277,8 @@ public class OrganizationsRepository {
     public void removeOrganizzazione(Organizzazione o){
 
     }
+
+
 
 
     public void refreshOrganizzazioni(){
@@ -285,6 +300,16 @@ public class OrganizationsRepository {
         }).start());
         resultFromWeb.removeObserver();
 */
+    }
+
+    public void addToActiveTracking(Organizzazione o) {
+        o.setTrackingActive(true);
+        updateOrganizzazione(o);
+    }
+
+    public void addToTracking(Organizzazione o) {
+        o.setTracking(true);
+        updateOrganizzazione(o);
     }
 
     /*

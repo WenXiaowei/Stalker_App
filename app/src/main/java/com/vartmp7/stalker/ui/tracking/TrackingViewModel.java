@@ -232,4 +232,14 @@ public class TrackingViewModel extends ViewModel {
     public void setRepository(OrganizationsRepository repository) {
         this.repository = repository;
     }
+
+
+    public void removePreferito(Organizzazione o) {
+        repository.removeFromPreferiti(o);
+    }
+
+    public void addPreferito(Organizzazione o) {
+        repository.addToPreferiti(o);
+    }
+
 }

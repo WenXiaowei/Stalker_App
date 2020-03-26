@@ -187,7 +187,7 @@
  *       same "printed page" as the copyright notice for easier
  *       identification within third-party archives.
  *
- *    Copyright [2020] [VartTmp7]
+ *    Copyright [yyyy] [name of copyright owner]
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -200,99 +200,54 @@
  *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
+ *
  */
 
-package com.vartmp7.stalker.ui.preferiti;
+package com.vartmp7.stalker.ui.organizations;
 
-import android.util.Log;
-
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModel;
 
 import com.vartmp7.stalker.gsonbeans.Organizzazione;
-import com.vartmp7.stalker.repository.FavoritesSource;
 import com.vartmp7.stalker.repository.OrganizationsRepository;
 
-import java.util.Arrays;
-import java.util.Collections;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+
 import java.util.List;
-import java.util.stream.Collectors;
 
-/**
- * @author Xiaowei Wen, Lorenzo Taschin
- */
-public class PreferitiViewModel extends ViewModel {
-    public static final String TAG ="com.vartmp7.stalker.ui.preferiti.PreferitiViewModel";
-    private OrganizationsRepository orgRepo;
+import static org.mockito.Mockito.when;
 
-    private LiveData<List<Long>> mutableliveDataOrgIds;
-    private LiveData<List<Organizzazione>> liveDataOrganizzazioni;
-    private MediatorLiveData<List<Organizzazione>> mediatorLiveDataOrganizzazioni;
-    private MutableLiveData<Boolean> organizationsQueryExhausted;
-    private MutableLiveData<Boolean> firebaseQueryExhausted;
+@RunWith(JUnit4.class)
+public class OrganizationsViewModelTest {
+    @Rule
+    public InstantTaskExecutorRule instantExecutorRule = new InstantTaskExecutorRule();
 
+    @Mock
+    OrganizationsRepository orgRepo;
 
+    private OrganizationsViewModel orgViewModel;
+    @Mock
+    Observer<List<Organizzazione>> observer;
 
-
-    public PreferitiViewModel(OrganizationsRepository orgRepo) {
-        this.orgRepo=orgRepo;
+    @Before
+    public void setUp(){
+        MockitoAnnotations.initMocks(this);
+        orgViewModel = new OrganizationsViewModel();
+        orgViewModel.initData(orgRepo);
+        orgViewModel.getOrganizationList().observeForever(observer);
     }
 
-    public void init(){
-        this.mediatorLiveDataOrganizzazioni = new MediatorLiveData<>();
-        //this.liveDataOrganizzazioni = orgRepo.getOrganizzazioni();
-        //this.mutableliveDataOrgIds = orgRepo.getPreferiti();
-        this.firebaseQueryExhausted = new MutableLiveData<>(false);
-        this.organizationsQueryExhausted = new MutableLiveData<>(false);
-        refresh();
+    @Test
+    public void shouldfetchData(){
+        when(orgRepo.getOrganizzazioni()).thenReturn(new MutableLiveData<List<Organizzazione>>());
     }
 
-    public void refresh(){
-        //MutableLiveData<List<Organizzazione>> listOrgs= new MutableLiveData<>();
-        this.firebaseQueryExhausted.setValue(false);
-        this.organizationsQueryExhausted.setValue(false);
-
-        this.liveDataOrganizzazioni = orgRepo.getOrganizzazioni();
-        this.mutableliveDataOrgIds = orgRepo.getPreferiti();
-
-
-
-        this.mediatorLiveDataOrganizzazioni.addSource(liveDataOrganizzazioni, organizzazioni ->{
-            Log.e(TAG,"PORCODIOOO");
-            organizationsQueryExhausted.setValue(true);
-        });
-        this.mediatorLiveDataOrganizzazioni.addSource(mutableliveDataOrgIds, orgIds->{
-                Log.e(TAG,"CANN DIOOO");
-                firebaseQueryExhausted.setValue(true);
-        });
-        //orgRepo.refreshOrganizzazioni();
-
-        //listOrgs.setValue(Arrays.asList(new Organizzazione().setId(1212)));
-
-
-        final Observer<Boolean> queryExhaustedObserver =  new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean aBoolean) {
-                Log.e(TAG,"cambiamento");
-                if(firebaseQueryExhausted.getValue() && organizationsQueryExhausted.getValue()){
-                    final List<Long> orgIds = mutableliveDataOrgIds.getValue();
-                    mediatorLiveDataOrganizzazioni.postValue(
-                            liveDataOrganizzazioni.getValue()
-                                    .stream()
-                                    .filter(o-> orgIds.contains(o.getId()))
-                                    .collect(Collectors.toList())
-                    );
-                }
-            }
-        };
-        this.mediatorLiveDataOrganizzazioni.addSource(organizationsQueryExhausted, queryExhaustedObserver);
-        this.mediatorLiveDataOrganizzazioni.addSource(firebaseQueryExhausted,queryExhaustedObserver);
-    }
-
-    public LiveData<List<Organizzazione>> getOrganizzazioni() {
-        return this.mediatorLiveDataOrganizzazioni;
-    }
 }
