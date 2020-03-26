@@ -257,6 +257,8 @@ public class RESTOrganizationsWebSource implements OrganizationsWebSource {
                 List<Organizzazione> orgs = mutableLiveDataOrganizzazioni.getValue();
 
                 orgs.add(new Organizzazione().setName("unipd " + count).setId(count)
+                        .setTracking(true)
+                        .setTrackingActive(true)
                     .setImage_url("https://cdn.discordapp.com/attachments/690970576415621201/691008560363995208/Schermata_2020-03-21_alle_20.41.13.png"));
 
                 /*

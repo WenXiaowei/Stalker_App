@@ -250,8 +250,16 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
     @Override
     public void updateOrganizzazione(Organizzazione o) {
         List<Organizzazione> l = mLiveOrgs.getValue();
-        Organizzazione org = l.stream().filter(organizzazione -> o.getId() == organizzazione.getId()).findFirst().get();
-        org=o;
+        int pos = -1;
+        for (int i =0; i< l.size()&& pos==-1; i++)
+            if (o.getId()==l.get(i).getId())
+                pos=i;
+
+            if (pos!=-1){
+                l.remove(pos);
+                l.add(pos, o);
+                mLiveOrgs.postValue(l);
+            }
     }
 
 
@@ -284,9 +292,14 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
                         List<Organizzazione> organizzazioni = mLiveOrgs.getValue();
                         ResponseOrganizzazione responseOrganizzazioni = gson.fromJson(contents, ResponseOrganizzazione.class);
 //                    List<Organizzazione> orgs = mLiveOrgs.getValue();
-                        if(responseOrganizzazioni==null)
+                        if(responseOrganizzazioni==null){
+                            Log.d(TAG, "run: lista vuota");
                             organizzazioni.addAll(new ArrayList<>());
-                        else organizzazioni.addAll(responseOrganizzazioni.getOrganizations().stream().distinct().collect(Collectors.toList()));
+                        }
+                        else{
+                            Log.d(TAG, "run: lista non vuota");
+                            organizzazioni.addAll(responseOrganizzazioni.getOrganizations().stream().distinct().collect(Collectors.toList()));
+                        }
                         //organizzazioni.clear();
                         //organizzazioni.addAll(responseOrganizzazioni.getOrganizations());
                         mLiveOrgs.postValue(organizzazioni.stream().distinct().collect(Collectors.toList()));

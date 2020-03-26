@@ -205,6 +205,7 @@
 package com.vartmp7.stalker.ui.tracking;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -248,6 +249,7 @@ public class TrackingFragment extends Fragment {
         mAdapter = new TrackingViewAdapter(getContext(), trackingViewModel);
         trackingViewModel.getListOrganizzazione().observe(getViewLifecycleOwner(),
                 list -> {
+                    Log.d(TAG, "onCreateView: on Changed ");
                     mAdapter.setList(list.stream().filter(Organizzazione::isTracking).collect(Collectors.toList()));
                     organizationToTrack.postValue(list.stream().filter(Organizzazione::isTrackingActive).collect(Collectors.toList()));
                 });
