@@ -202,46 +202,16 @@
   ~    See the License for the specific language governing permissions and
   ~    limitations under the License.
   -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="12dp">
 
-<navigation xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/navigation_organizations">
-
-
-    <fragment
-        android:id="@+id/navigation_organizations"
-        android:name="com.vartmp7.stalker.ui.organizations.OrganizationsFragment"
-        android:label="@string/organizzazioni"
-        tools:layout="@layout/fragment_organizations">
-
-
-        <action
-            android:id="@+id/action_navigation_organizations_to_navigation_tracking"
-            app:destination="@id/navigation_tracking" />
-    </fragment>
-    <fragment
-        android:id="@+id/navigation_tracking"
-        android:name="com.vartmp7.stalker.ui.tracking.TrackingFragment"
-        android:label="@string/title_home"
-        tools:layout="@layout/fragment_tracking">
-
-    </fragment>
-
-    <fragment
-        android:id="@+id/navigation_preferiti"
-        android:name="com.vartmp7.stalker.ui.preferiti.PreferitiFragment"
-        android:label="@string/preferiti"
-        tools:layout="@layout/fragment_preferiti" >
-
-        <action
-            android:id="@+id/action_navigation_preferiti_to_navigation_tracking"
-            app:destination="@id/navigation_tracking" />
-    </fragment>
-    <fragment
-        android:id="@+id/navigation_cronologia"
-        android:name="com.vartmp7.stalker.ui.cronologia.CronologiaFragment"
-        android:label="@string/cronologia"
-        tools:layout="@layout/fragment_cronologia" />
-</navigation>
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/previewer_image"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_gravity="center"
+        android:scaleType="centerCrop"/>
+</FrameLayout>

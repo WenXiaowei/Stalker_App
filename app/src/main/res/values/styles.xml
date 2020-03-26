@@ -211,5 +211,7 @@
         <item name="colorPrimaryDark">@color/vartmp7bluChiaro</item>
         <item name="colorAccent">@color/vartmp7bluChiaro</item>
     </style>
-
+    <style name="ImagePreviewerTheme" >
+        <item name="android:windowIsFloating">false</item>
+    </style>
 </resources>

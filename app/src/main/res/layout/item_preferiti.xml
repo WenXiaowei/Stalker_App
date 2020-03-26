@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~                                  Apache License
   ~                            Version 2.0, January 2004
   ~                         http://www.apache.org/licenses/
@@ -203,23 +202,34 @@
   ~    limitations under the License.
   -->
 
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/civIconOrganizzazionePreferiti"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_margin="5dp"
+        android:contentDescription="@string/icon_dell_organizzazione"
+        app:civ_border_width="2dp" />
 
     <TextView
-        android:id="@+id/tv_organizationListItem"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="352dp"
-        android:text="organization:"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
+        android:id="@+id/tvNomeOrganizzazione"
+        android:layout_width="0dp"
+        android:textSize="24sp"
+        android:textAlignment="center"
+        android:layout_weight="4"
+        android:layout_height="wrap_content" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <Button
+        android:id="@+id/btnAddToTracking"
+        android:layout_width="64dp"
+
+        android:layout_height="64dp"
+        android:background="@drawable/ic_add_circle_outline_black_24dp" />
+
+</LinearLayout>

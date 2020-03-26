@@ -274,7 +274,7 @@ public class OrganizationViewAdapter extends RecyclerView.Adapter<OrganizationVi
 //                int position = holder.getAdapterPosition();
 //                Organizzazione org = listaOrganizzazione.get(position);
                 org.setTracking(true);
-                navController.navigate(R.id.action_navigation_organizations_to_navigation_status);
+                navController.navigate(R.id.action_navigation_organizations_to_navigation_tracking);
 
         });
 

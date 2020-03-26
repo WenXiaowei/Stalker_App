@@ -204,59 +204,117 @@
 
 package com.vartmp7.stalker.ui.preferiti;
 
+import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.ViewModel;
+import androidx.navigation.NavController;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.vartmp7.stalker.R;
 import com.vartmp7.stalker.gsonbeans.Organizzazione;
 
 import java.util.List;
+import java.util.zip.Inflater;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class PreferitiViewAdapter extends RecyclerView.Adapter<PreferitiViewAdapter.ViewHolder> {
     private static final String TAG = "com.vartmp7.stalker.ui.preferiti.PreferitiViewAdapter";
     private List<Organizzazione> organizzazioni;
-    //private Context context;
+    private Context context;
+    private PreferitiViewModel viewModel;
+
 
     public void setOrganizzazioni(List<Organizzazione> organizzazioni) {
         this.organizzazioni = organizzazioni;
+        notifyDataSetChanged();
     }
 
-    public PreferitiViewAdapter(Context context, List<Organizzazione> organizzazioni) {
-        //this.context=context;
+    public PreferitiViewAdapter(Context context, PreferitiViewModel model, List<Organizzazione> organizzazioni) {
+        this.context=context;
         this.organizzazioni=organizzazioni;
+        this.viewModel = model;
     }
+
 
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_preferiti_list, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_preferiti, parent, false);
         ViewHolder vh = new ViewHolder(view);
         return vh;
 
     }
+//    private AlertDialog dialog;
+//    private void showImagePreview(int position){
+//        AlertDialog.Builder builder =new  AlertDialog.Builder(context);
+//        builder.setView(LayoutInflater.from(context).inflate(R.layout.dialog_image_preview,null));
+//               CircleImageView imageView = dialog.findViewById(R.id.previewer_image);
+//        /* calls newDrawable(), otherwise changes may affect source drawable*/
+//        Glide.with(context)
+//                .setDefaultRequestOptions(new RequestOptions().error(R.drawable.icon_stalker))
+//                .load(organizzazioni.get(position).getImage_url())
+//                .into(imageView);
+//        dialog= builder.create();
+//        dialog.show();
+//
+//    }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        // Set the name of the 'NicePlace'
-        Log.d(TAG,"org:"+organizzazioni.get(position).getId());
-        ((ViewHolder)holder).tvInfoOrganizzazione.setText(organizzazioni.get(position).getId()+" "+organizzazioni.get(position).getAddress());
+       Organizzazione org = organizzazioni.get(position);
+        Glide.with(context)
+                .setDefaultRequestOptions(new RequestOptions().error(R.drawable.icon_stalker))
+                .load(organizzazioni.get(position).getImage_url())
+                .into(holder.civIconaOrganizzazione);
 
-        // Set the image
-        /*RequestOptions defaultOptions = new RequestOptions()
-                .error(R.drawable.ic_launcher_background);
-        Glide.with(mContext)
-                .setDefaultRequestOptions(defaultOptions)
-                .load(mNicePlaces.get(i).getImageUrl())
-                .into(((ViewHolder)viewHolder).mImage);
-        */
+
+//        holder.civIconaOrganizzazione.setOnLongClickListener(v -> {
+//            showImagePreview(position);
+//            return false;
+//        });
+//        holder.civIconaOrganizzazione.setOnTouchListener((v, event) -> {
+//            if (dialog.isShowing()) {
+//                v.getParent().requestDisallowInterceptTouchEvent(true);
+//                int action = event.getActionMasked();
+//                if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
+//                    v.getParent().requestDisallowInterceptTouchEvent(false);
+//                    dialog.dismiss();
+//                    return true;
+//                }
+//            }
+//            return false;
+//        });
+        holder.tvNomeOrganizzazione.setText(org.getName());
+
+        holder.btnAddToTracking.setOnClickListener(v->{
+            if (org.isTracking()){
+                Toast.makeText(context,"Organizzazione già presente nell'elenco dei tracking!", Toast.LENGTH_SHORT).show();
+            }else {
+                org.setTracking(true);
+                viewModel.updateOrganizzazione(org);
+                new NavController(context).navigate(R.id.action_navigation_organizations_to_navigation_tracking);
+            }
+
+        });
 
     }
 
@@ -265,12 +323,19 @@ public class PreferitiViewAdapter extends RecyclerView.Adapter<PreferitiViewAdap
         return organizzazioni.size();
     }
 
+    public Organizzazione getOrganizationAt(int position) {
+        return organizzazioni.get(position);
+    }
+
     static class ViewHolder extends RecyclerView.ViewHolder{
-        TextView tvInfoOrganizzazione;
+        TextView tvNomeOrganizzazione;
+        CircleImageView civIconaOrganizzazione;
+        Button btnAddToTracking;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvInfoOrganizzazione = (TextView) itemView.findViewById(R.id.tv_organizationListItem);
-
+            tvNomeOrganizzazione = itemView.findViewById(R.id.tvNomeOrganizzazione);
+            civIconaOrganizzazione = itemView.findViewById(R.id.civIconOrganizzazionePreferiti);
+            btnAddToTracking = itemView.findViewById(R.id.btnAddToTracking);
         }
     }
 }

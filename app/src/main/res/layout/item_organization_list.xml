@@ -228,8 +228,8 @@
                 android:layout_height="100dp"
                 android:layout_margin="5dp"
                 android:contentDescription="@string/icon_dell_organizzazione"
-                android:src="@drawable/icon_stalker"
                 app:civ_border_width="2dp" />
+            android:src="@drawable/icon_stalker"
 
             <TextView
                 android:id="@+id/tvNomeOrganizzazione"

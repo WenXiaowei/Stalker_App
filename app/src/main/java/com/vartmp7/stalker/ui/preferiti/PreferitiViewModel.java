@@ -234,11 +234,11 @@ public class PreferitiViewModel extends ViewModel {
     private MutableLiveData<Boolean> organizationsQueryExhausted;
     private MutableLiveData<Boolean> firebaseQueryExhausted;
 
-
-
-
     public PreferitiViewModel(OrganizationsRepository orgRepo) {
         this.orgRepo=orgRepo;
+    }
+    public void updateOrganizzazione(Organizzazione org){
+        orgRepo.updateOrganizzazione(org);
     }
 
     public void init(){
@@ -257,7 +257,6 @@ public class PreferitiViewModel extends ViewModel {
 
         this.liveDataOrganizzazioni = orgRepo.getOrganizzazioni();
         this.mutableliveDataOrgIds = orgRepo.getPreferiti();
-
 
 
         this.mediatorLiveDataOrganizzazioni.addSource(liveDataOrganizzazioni, organizzazioni ->{
@@ -291,7 +290,9 @@ public class PreferitiViewModel extends ViewModel {
         this.mediatorLiveDataOrganizzazioni.addSource(organizationsQueryExhausted, queryExhaustedObserver);
         this.mediatorLiveDataOrganizzazioni.addSource(firebaseQueryExhausted,queryExhaustedObserver);
     }
-
+    public void removeFromPreferiti(Organizzazione org){
+        orgRepo.removeFromPreferiti(org.getId());
+    }
     public LiveData<List<Organizzazione>> getOrganizzazioni() {
         return this.mediatorLiveDataOrganizzazioni;
     }

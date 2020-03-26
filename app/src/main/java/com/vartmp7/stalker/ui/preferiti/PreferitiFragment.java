@@ -210,13 +210,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.vartmp7.stalker.R;
@@ -238,14 +241,14 @@ import okhttp3.OkHttpClient;
 /**
  * @author Xiaowei Wen, Lorenzo Taschin
  */
-public class PreferitiFragment extends Fragment {
+public class PreferitiFragment extends Fragment  implements SwipeRefreshLayout.OnRefreshListener {
     public static final String TAG ="com.vartmp7.stalker.ui.preferiti.PreferitiFragment";
 
     private PreferitiViewModel favViewModel;
     private PreferitiViewAdapter favViewAdapter;
     private RecyclerView favRecyclerView;
-    private ProgressBar favPbLoading;
     private MutableLiveData<List<Organizzazione>> listMutableLiveData;
+    private SwipeRefreshLayout preferitiSwipeLayout;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -253,7 +256,6 @@ public class PreferitiFragment extends Fragment {
         listMutableLiveData = new MutableLiveData<>();
         listMutableLiveData.setValue(new ArrayList<>());
         this.favRecyclerView = (RecyclerView) root.findViewById(R.id.preferitiRecyclerView);
-        this.favPbLoading = (ProgressBar) root.findViewById(R.id.pb_loadingPreferiti);
         /*favViewModel =
                   new ViewModelProvider(getActivity()).get(PreferitiViewModel.class);*/
          //TODO le seguenti righe vanno riviste
@@ -272,41 +274,50 @@ public class PreferitiFragment extends Fragment {
 
         this.favViewModel = new PreferitiViewModel(orgRepo);
 
+        preferitiSwipeLayout = root.findViewById(R.id.srflPreferiti);
         //final TextView textView = root.findViewById(R.id.text_notifications);
 
         Log.d(TAG,"onCreate");
 
-        showProgressBar();
-        favViewModel.init();
+        //favViewModel.init();
         initRecyclerView();
         favViewModel.getOrganizzazioni().observe(getViewLifecycleOwner(), new Observer<List<Organizzazione>>() {
             @Override
             public void onChanged(List<Organizzazione> organizzazioni) {
-                Log.d(TAG,"organizzazioni:");
                 favViewAdapter.setOrganizzazioni(organizzazioni);
-                organizzazioni.forEach(o->Log.d(TAG,"o:"+o.getId()));
-                favViewAdapter.notifyDataSetChanged();
-                hideProgressBar();
+                preferitiSwipeLayout.setRefreshing(false);
             }
         });
 
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                Organizzazione o = favViewAdapter.getOrganizationAt(viewHolder.getAdapterPosition());
+                favViewAdapter.notifyItemChanged(viewHolder.getAdapterPosition());
+                Toast.makeText(requireContext(), getString(R.string.organizzazione_removed_from_favorite), Toast.LENGTH_SHORT).show();
+
+            }
+        }).attachToRecyclerView(favRecyclerView);
         return root;
     }
 
     private void initRecyclerView(){
         if(favViewModel.getOrganizzazioni().getValue()==null) Log.d(TAG,"è null!");
-       favViewAdapter = new PreferitiViewAdapter(getContext(), new ArrayList<>()/*favViewModel.getOrganizzazioni().getValue()*/);
+       favViewAdapter = new PreferitiViewAdapter(getContext(), favViewModel,new ArrayList<>()/*favViewModel.getOrganizzazioni().getValue()*/);
         RecyclerView.LayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         favRecyclerView.setLayoutManager(linearLayoutManager);
         favRecyclerView.setAdapter(favViewAdapter);
     }
 
-    private void showProgressBar(){
-        favPbLoading.setVisibility(View.VISIBLE);
-    }
-    private void hideProgressBar(){
-        favPbLoading.setVisibility(View.GONE);
-    }
 
-
+    @Override
+    public void onRefresh() {
+            preferitiSwipeLayout.setRefreshing(true);
+            favViewModel.refresh();
+    }
 }
