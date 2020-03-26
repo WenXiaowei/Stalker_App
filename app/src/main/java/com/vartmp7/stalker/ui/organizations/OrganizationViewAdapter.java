@@ -285,7 +285,7 @@ public class OrganizationViewAdapter extends RecyclerView.Adapter<OrganizationVi
                     @Override
                     public void onAnimationStart(Animation animation) {
                         holder.llHidingInfo.setVisibility(View.VISIBLE);
-                        ((Button) v).setText(R.string.nascondi);
+//                        ((Button) v).setText(R.string.nascondi);
                     }
 
                     @Override
@@ -306,7 +306,7 @@ public class OrganizationViewAdapter extends RecyclerView.Adapter<OrganizationVi
                     @Override
                     public void onAnimationEnd(Animation animation) {
                         holder.llHidingInfo.setVisibility(View.GONE);
-                        ((Button) v).setText(R.string.dettagli);
+//                        ((Button) v).setText(R.string.dettagli);
                     }
 
                     @Override

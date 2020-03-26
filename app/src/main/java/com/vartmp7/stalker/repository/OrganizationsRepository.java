@@ -219,7 +219,7 @@ public class OrganizationsRepository {
     private FavoritesSource organizationFavoritesSource;
     private static OrganizationsRepository instance;
 
-    public static synchronized OrganizationsRepository getIstance(){
+    public static synchronized OrganizationsRepository getInstance(){
         if (instance==null){
             throw new AssertionError("You have to call init first!");
         }

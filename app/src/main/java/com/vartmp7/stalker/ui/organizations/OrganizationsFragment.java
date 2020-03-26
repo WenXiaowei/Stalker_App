@@ -213,7 +213,6 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -221,17 +220,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.vartmp7.stalker.R;
-import com.vartmp7.stalker.Tools;
 
-import com.vartmp7.stalker.gsonbeans.Organizzazione;
-import com.vartmp7.stalker.repository.FileOrganizationsLocalSource;
-import com.vartmp7.stalker.repository.OrganizationsLocalSource;
 import com.vartmp7.stalker.repository.OrganizationsRepository;
-import com.vartmp7.stalker.repository.OrganizationsWebSource;
-import com.vartmp7.stalker.repository.RESTOrganizationsWebSource;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class OrganizationsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
     public static final String TAG = "com.vartmp7.stalker.ui.organizations.OrganizationsFragment";
@@ -250,7 +240,7 @@ public class OrganizationsFragment extends Fragment implements SwipeRefreshLayou
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_organizations, container, false);
         organizzazioneViewModel = new ViewModelProvider(requireActivity()).get(OrganizationsViewModel.class);
-        organizzazioneViewModel.initData(OrganizationsRepository.getIstance());
+        organizzazioneViewModel.initData(OrganizationsRepository.getInstance());
 
         swipeRefreshLayout = root.findViewById(R.id.srfl);
         swipeRefreshLayout.setOnRefreshListener(this);

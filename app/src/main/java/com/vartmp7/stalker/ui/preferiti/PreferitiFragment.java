@@ -267,7 +267,7 @@ public class PreferitiFragment extends Fragment {
         OrganizationsWebSource webSource = new RESTOrganizationsWebSource(httpClient,listMutableLiveData,"asd");
         FavoritesSource favoritesSource = new FirebaseFavoritesSource("1",FirebaseFirestore.getInstance());
         OrganizationsRepository.init(localSource,webSource,favoritesSource);
-        OrganizationsRepository orgRepo = OrganizationsRepository.getIstance();
+        OrganizationsRepository orgRepo = OrganizationsRepository.getInstance();
         //fine del todo
 
         this.favViewModel = new PreferitiViewModel(orgRepo);

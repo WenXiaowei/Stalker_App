@@ -255,11 +255,11 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
             if (o.getId()==l.get(i).getId())
                 pos=i;
 
-            if (pos!=-1){
-                l.remove(pos);
-                l.add(pos, o);
-                mLiveOrgs.postValue(l);
-            }
+        if (pos!=-1){
+            l.remove(pos);
+            l.add(pos, o);
+            mLiveOrgs.postValue(l);
+        }
     }
 
 

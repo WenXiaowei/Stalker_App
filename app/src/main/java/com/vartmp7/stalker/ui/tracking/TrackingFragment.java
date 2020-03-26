@@ -221,6 +221,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.vartmp7.stalker.R;
 import com.vartmp7.stalker.gsonbeans.Organizzazione;
+import com.vartmp7.stalker.repository.OrganizationsRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -246,6 +247,8 @@ public class TrackingFragment extends Fragment {
         organizationToTrack = new MutableLiveData<>();
 
         trackingViewModel = new ViewModelProvider(requireActivity()).get(TrackingViewModel.class);
+        trackingViewModel.setRepository(OrganizationsRepository.getInstance());
+
         mAdapter = new TrackingViewAdapter(getContext(), trackingViewModel);
         trackingViewModel.getListOrganizzazione().observe(getViewLifecycleOwner(),
                 list -> {

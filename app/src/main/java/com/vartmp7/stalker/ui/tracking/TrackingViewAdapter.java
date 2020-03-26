@@ -296,7 +296,7 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
                     rotate1.setDuration(500);
                     rotate1.setInterpolator(new LinearInterpolator());
                     holder.ibtnPreferito.startAnimation(rotate1);
-                    org.setPreferito(!org.isPreferito());
+//                    org.setPreferito(!org.isPreferito());
                     viewModel.updateOrganizzazione(org.setPreferito(!org.isPreferito()));
                     break;
                 case R.id.sAnonymousSwitch:
