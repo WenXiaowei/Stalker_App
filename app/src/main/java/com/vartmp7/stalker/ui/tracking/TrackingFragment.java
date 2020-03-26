@@ -254,7 +254,7 @@ public class TrackingFragment extends Fragment {
                 list -> {
 //                    Log.d(TAG, "onCreateView: on Changed ");
                     mAdapter.setList(list.stream().filter(Organizzazione::isTracking).collect(Collectors.toList()));
-                    organizationToTrack.postValue(list.stream().filter(Organizzazione::isTrackingActive).collect(Collectors.toList()));
+                    organizationToTrack.setValue(list.stream().filter(Organizzazione::isTrackingActive).collect(Collectors.toList()));
                 });
         layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
