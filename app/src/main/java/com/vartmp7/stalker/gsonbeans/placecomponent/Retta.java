@@ -282,44 +282,5 @@ public class Retta {
         }
         return "y="+m+"x+"+q;
     }
-    public static boolean linesIntersect(final double X1, final double Y1, final double X2, final double Y2,
-                                         final double X3, final double Y3, final double X4, final double Y4) {
-        return ((relativeCCW(X1, Y1, X2, Y2, X3, Y3)
-                * relativeCCW(X1, Y1, X2, Y2, X4, Y4) <= 0) && (relativeCCW(X3,
-                Y3, X4, Y4, X1, Y1)
-                * relativeCCW(X3, Y3, X4, Y4, X2, Y2) <= 0));
-    }
-    private static int relativeCCW(final double X1, final double Y1, double X2, double Y2, double PX,
-                                   double PY) {
-        X2 -= X1;
-        Y2 -= Y1;
-        PX -= X1;
-        PY -= Y1;
-        double ccw = PX * Y2 - PY * X2;
-        if (ccw == 0) {
-            // The point is colinear, classify based on which side of
-            // the segment the point falls on. We can calculate a
-            // relative value using the projection of PX,PY onto the
-            // segment - a negative value indicates the point projects
-            // outside of the segment in the direction of the particular
-            // endpoint used as the origin for the projection.
-            ccw = PX * X2 + PY * Y2;
-            if (ccw > 0) {
-                // Reverse the projection to be relative to the original X2,Y2
-                // X2 and Y2 are simply negated.
-                // PX and PY need to have (X2 - X1) or (Y2 - Y1) subtracted
-                // from them (based on the original values)
-                // Since we really want to get a positive answer when the
-                // point is "beyond (X2,Y2)", then we want to calculate
-                // the inverse anyway - thus we leave X2 & Y2 negated.
-                PX -= X2;
-                PY -= Y2;
-                ccw = PX * X2 + PY * Y2;
-                if (ccw < 0) {
-                    ccw = 0;
-                }
-            }
-        }
-        return (ccw < 0) ? -1 : ((ccw > 0) ? 1 : 0);
-    }
+
 }
