@@ -187,7 +187,7 @@
  *       same "printed page" as the copyright notice for easier
  *       identification within third-party archives.
  *
- *    Copyright [2020] [VartTmp7]
+ *    Copyright [yyyy] [name of copyright owner]
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -200,183 +200,91 @@
  *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
+ *
  */
 
-/*
-clean test jacocoTestReport sonarqube
-commando per avviare il container di sonar qube
-    docker run -d --name sonarqube -p 9000:9000 sonarqube
- Comando da usare per far andare sonar qube
- gradlew sonarqube -Dsonar.projectKey=Stalker_App -Dsonar.host.url=http://localhost:9000 -Dsonar.login=11ca1a408698561b7b343325b831cb3ad4b279bf
+package com.vartmp7.stalker;
+
+import android.content.Context;
+
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.LifecycleRegistry;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.platform.app.InstrumentationRegistry;
+
+import com.vartmp7.stalker.gsonbeans.Organizzazione;
+import com.vartmp7.stalker.repository.FileOrganizationsLocalSource;
+
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TestRule;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+@RunWith(AndroidJUnit4.class)
+public class FileOrganizationsLocalSourceTest {
+    private FileOrganizationsLocalSource source;
+    private Observer<List<Organizzazione>> observer;
+    private static boolean triggered;
 
 
-gradlew clean test jacocoTestDebugUnitTestReport sonarqube
+    @Rule
+    public TestRule rule = new InstantTaskExecutorRule();
 
-*/
-apply plugin: 'com.onesignal.androidsdk.onesignal-gradle-plugin'
-apply plugin: 'com.android.application'
-apply plugin: 'com.google.gms.google-services'
-
-
-buildscript {
-    repositories {
-        maven { url 'https://plugins.gradle.org/m2/'}
+    private static LifecycleOwner mockLifecycleOwner() {
+        LifecycleOwner owner = mock(LifecycleOwner.class);
+        LifecycleRegistry lifecycle = new LifecycleRegistry(owner);
+        lifecycle.handleLifecycleEvent(Lifecycle.Event.ON_RESUME);
+        when(owner.getLifecycle()).thenReturn(lifecycle);
+        return owner;
     }
-    dependencies {
-        classpath 'gradle.plugin.com.onesignal:onesignal-gradle-plugin:0.12.6'
-        classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.8"
+
+    @SuppressWarnings("unchecked")
+    public static Observer<List<Organizzazione>> mockObserver() {
+        return (Observer<List<Organizzazione>>) Mockito.mock(Observer.class);
+    }
+
+
+    private static void  setTriggered(){
+        triggered=true;
+    }
+
+    @Before
+    public void setUpTest(){
+        Context context = InstrumentationRegistry.getInstrumentation().getContext();
+        LifecycleOwner lifeCycleOwner = mockLifecycleOwner();
+        source = new FileOrganizationsLocalSource("prova.json",context,new MutableLiveData<>());
+        source.getOrganizzazioni().observe(lifeCycleOwner, new Observer<List<Organizzazione>>() {
+            @Override
+            public void onChanged(List<Organizzazione> organizzaziones) {
+                setTriggered();
+                assertTrue(triggered);
+            }
+        });
+    }
+
+    @Test
+    public void notifyObserversOnChange(){
+        source.saveOrganizzazioni(Arrays.asList(new Organizzazione().setId(12)));
+
 
     }
-}
-apply plugin: 'org.sonarqube'
-apply plugin: 'jacoco-android'
-
-
-repositories {
-    maven { url 'https://maven.google.com' }
-
-}
-android {
-    compileSdkVersion 28
-    buildToolsVersion "28.0.3"
-    defaultConfig {
-        applicationId "com.vartmp7.stalker"
-        minSdkVersion 28
-        targetSdkVersion 28
-        versionCode 1
-        versionName "1.0"
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        manifestPlaceholders = [
-                onesignal_app_id: '0549f894-64ee-40c5-8045-b00f6d70ed4f',
-                // Project number pulled from dashboard, local value is ignored.
-                onesignal_google_project_number: 'REMOTE'
-        ]
-    }
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
-        debug {
-            testCoverageEnabled true
-        }
-    }
-//
-//    testOptions {
-//        unitTests.all {
-//            jacoco {
-//                version '1.0.1'
-//            }
-//        }
-//    }
-    compileOptions {
-        sourceCompatibility = 1.8
-        targetCompatibility = 1.8
-    }
-}
-
-task createTestReport(type: JacocoReport, dependsOn: ['createDevDebugCoverageReport']) {
-    group = "Reporting"
-
-    reports {
-        xml.enabled = true
-        html.enabled = true
-    }
-/**
- * gradlew sonarqube non funziona per questo errore:
- * No files nor directories matching 'build/intermediates/classes/dev/debug'
- */
-    def fileFilter = ['**/R.class',
-                      '**/R$*.class',
-                      '**/BuildConfig.*',
-                      '**/*$ViewInjector*.*',
-                      '**/*$ViewBinder*.*',
-                      '**/*$MembersInjector*.*',
-                      '**/Manifest*.*',
-                      '**/*Test*.*',
-                      'android/**/*.*']
-    def debugTree = fileTree(dir: "${project.projectDir}/src/test/*/*Test.java", excludes: fileFilter)
-    //def debugTree = fileTree(dir: "${buildDir}/intermediates/classes/dev/debug", excludes: fileFilter)
-    def mainSrc = "${project.projectDir}/src/main/java"
-    //def mainSrc = "${project.projectDir}/app/src/main/java"
-
-    sourceDirectories.from = files([mainSrc])
-    classDirectories.from = files([debugTree])
-    executionData.from = files("${project.buildDir}/jacoco/testDevDebugUnitTest.exec")
-    def files = fileTree("${buildDir}/outputs/code-coverage/connected/flavors/DEV/").filter { it.isFile() }.files.name
-    def instrumentationFileName = "${buildDir}/outputs/code-coverage/connected/flavors/DEV/" + files[0];
-}
-
-sonarqube {
-    properties {
-
-        property "sonar.host.url", "http:localhost:9000"
-        property "sonar.username", "admin"
-        property "sonar.password", "admin"
-
-        property "sonar.projectKey", "StalkerApp"
-        property "sonar.projectName", "StalkerApp"
-        property "sonar.projectVersion", "${version}"
-
-        property "sonar.sources", "src/main"
-
-        property "sonar.java.source", "7"
-        property "sonar.java.binaries", "build/intermediates/app_classes"
-
-        property "sonar.android.lint.report", "build/outputs/lint-results.xml"
-        property "sonar.jacoco.xmlReportPaths","build/reports/jacoco/jacocoTestDebugUnitTestReport/jacocoTestDebugUnitTestReport.xml"
-        property "sonar.jacoco.reportPath","build/jacocotestDebugUnitTest.exec"
-        property "sonar.coverage.reportPath", "build/reports/jacoco/jacocoTestDebugUnitTestReport/jacocoTestDebugUnitTestReport.xml"
-        property "sonar.jacoco.reportPath", "build/reports/jacoco/jacocoTestDebugUnitTestReport/jacocoTestDebugUnitTestReport.xml"
-        property 'sonar.coverage.jacoco.xmlReportPaths','build/reports/jacoco/jacocoTestDebugUnitTestReport/jacocoTestDebugUnitTestReport.xml'
-        //property "sonar.jacoco.itReportPath", instrumentationFileName
-    }
-}
-dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
-    androidTestImplementation 'androidx.test:runner:1.2.0'
-    androidTestImplementation 'androidx.test:rules:1.2.0'
-    testImplementation 'junit:junit:4.13'
-    testImplementation("com.squareup.okhttp3:mockwebserver:4.4.0")
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
-
-    implementation 'com.google.android.material:material:1.1.0'
-    implementation 'androidx.vectordrawable:vectordrawable:1.1.0'
-    implementation 'androidx.navigation:navigation-fragment:2.2.1'
-    implementation 'androidx.navigation:navigation-ui:2.2.1'
-    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
-//    androidTestImplementation 'com.android.support.test.uiautomator:uiautomator-v18:2.0.0'
-
-    implementation "androidx.cardview:cardview:1.0.0"
-    implementation 'com.google.android.gms:play-services-auth:17.0.0'
-    implementation 'com.facebook.android:facebook-android-sdk:5.15.3'
-    implementation 'com.google.firebase:firebase-auth:19.3.0'
-    implementation 'com.google.firebase:firebase-analytics:17.2.3'
-    implementation 'com.google.firebase:firebase-firestore:21.4.1'
-    implementation 'com.google.code.gson:gson:2.8.6'
-
-    implementation 'com.squareup.okhttp3:okhttp:4.4.0'
-    implementation 'com.onesignal:OneSignal:3.12.6'
-    implementation group: 'com.unboundid', name: 'unboundid-ldapsdk', version: '4.0.14'
-    implementation "androidx.recyclerview:recyclerview:1.1.0"
-    implementation 'com.google.android.material:material:1.1.0'
-
-    // required if you want to use Mockito for unit tests
-    def mockito_version = "2.23.4"
-    testImplementation "org.mockito:mockito-core:$mockito_version"
-    androidTestImplementation "org.mockito:mockito-android:$mockito_version"
-    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
-    implementation 'de.hdodenhof:circleimageview:3.1.0'
-    implementation 'com.github.bumptech.glide:glide:4.11.0'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
-
-    // Test helpers for LiveData
-
-    def lifecycle_version = "2.2.0"
-    androidTestImplementation "android.arch.core:core-testing:$lifecycle_version"
-
 
 }
