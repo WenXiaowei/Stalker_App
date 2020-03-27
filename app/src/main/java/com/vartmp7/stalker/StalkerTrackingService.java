@@ -217,6 +217,8 @@ import android.util.Log;
 
 import com.vartmp7.stalker.gsonbeans.Organizzazione;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 
@@ -281,7 +283,7 @@ public class StalkerTrackingService extends Service {
             public void run() {
                 super.run();
                 Log.d(TAG, "run: Starting");
-                int i=58;
+                int i = 3598;
                 while (running) {
 //                        //todo aggiungere il meccanismo del timer e step counter.
 //                        LocationManager m = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -293,7 +295,7 @@ public class StalkerTrackingService extends Service {
 
                     // modificare il textview della schermata di tracciamento
                     if (callBack != null) {
-                        callBack.onCurrentStatusChanged(new String[]{"torre archimede","Unipd",timerFormat(i)});
+                        callBack.onCurrentStatusChanged(new String[]{"torre archimede", "Unipd", timerFormat(i)});
                         Log.d(TAG, "run: ");
                     }
 
@@ -309,19 +311,25 @@ public class StalkerTrackingService extends Service {
         return super.onStartCommand(intent, flags, startId);
     }
 
-    private String timerFormat(int i){
-        String time="";
-        if (i<60)
-            time= i<10? "0"+i+"secondi":i+"secondi";
-        else if (i<3600){
-            int minuti= (i-i%60)/60;
-            time = minuti+":"+i%60;
-        }else{
-            int ore=i%3600;
-            int minuti = (i-3600*ore)%60;
-            int secondi = i-3600*ore - 60*minuti;
-            time= ore+":"+minuti+":"+secondi;
+    private String timerFormat(int i) {
+        String time = "";
+        int secondi = i % 60;
+        int minuti = ((i - secondi) % 3600)/60;
+        int ore = (i - secondi - minuti * 60) / 3600;
+        if (ore == 0) {
+            time += "00";
+        } else {
+            time += ore < 10 ? "0" + ore : ore;
         }
+        time+=":";
+        if (minuti == 0) {
+            time += "00";
+        } else
+            time += (minuti < 10 ? "0" + minuti : minuti) ;
+        time+=":";
+        if (secondi == 0)
+            time += "00";
+        else time += (secondi < 10 ? "0" + secondi : secondi);
         return time;
     }
 }

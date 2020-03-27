@@ -295,55 +295,7 @@
 //    private Gson gson;
 //    private TextView tvLuoghi;
 //    private Luogo prevLuogo;
-//    private Tracker tracker = new Tracker(MainActivity.this, new StalkerTrackingCallBack() {
-//        @Override
-//        public void onLocationsChanged(Location l) {
-//            Coordinata c = new Coordinata(l.getLatitude(), l.getLongitude());
-//            Organizzazione org =
-//                    organizzazioni.get(sScegliOrganizzazione.getSelectedItemPosition() - 1);
-//            trackSignal = new TrackSignal()
-//                    .setIdOrganization(Long.parseLong(org.getId()))
-//                    .setAuthenticated(false);
-//
-//            @SuppressLint("SimpleDateFormat") SimpleDateFormat format = new SimpleDateFormat("y-M-d hh:mm:ss");
-//            Date date = Calendar.getInstance(Locale.getDefault()).getTime();
-//            String formattedDate = format.format(date);
-//            trackSignal.setDate_time(formattedDate.replace(" ", "T"));
-//
-//            if (ldap != null && !org.getType().equalsIgnoreCase("public"))
-//                trackSignal.setAuthenticated(true)
-//                        .setSurname(ldap.getSurname())
-//                        .setUsername(ldap.getUid())
-//                        .setUid_number(Long.parseLong(ldap.getUidNumber()));
-//
-//            for (int i = 0; i < luoghi.size() && !trackSignal.isEntered(); i++) {
-//                Luogo luogo = luoghi.get(i);
-//                if (luogo.isInPlace(c)) {
-//                    tvCurrentStatus.setText(String.format(getString(R.string.you_are_in), luogo.getName()));
-//                    if (prevLuogo == null) {
-//                        prevLuogo = luogo;
-//                        trackSignal.setIdPlace(prevLuogo.getId()).setEntered(true);
-//                        post(trackSignal.getUrlToPost(), gson.toJson(trackSignal));
-//                    } else if (prevLuogo != luogo) {
-//                        trackSignal.setEntered(false).setIdPlace(prevLuogo.getId());
-//                        post(trackSignal.getUrlToPost(), gson.toJson(trackSignal));
-//                        trackSignal.setEntered(true).setIdPlace(luogo.getId());
-//                        post(trackSignal.getUrlToPost(), gson.toJson(trackSignal));
-//                        prevLuogo = luogo;
-//                    }
-//                    return;
-//                }
-//            }
-//            if (prevLuogo != null) {
-//                trackSignal.setEntered(false).setIdPlace(prevLuogo.getId());
-//                post(trackSignal.getUrlToPost(), gson.toJson(trackSignal));
-//                tvCurrentStatus.setText(String.format(getString(R.string.you_left), prevLuogo.getName()));
-//                prevLuogo = null;
-//            } else
-//                tvCurrentStatus.setText(R.string.not_in_any_place);
-//
-//        }
-//    });
+
 //
 //
 //    @Override
