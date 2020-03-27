@@ -258,6 +258,16 @@ public class LuogoPoligono extends AbstractLuogo {
 
 
     @Override
+    public Coordinata getCenter() {
+        return null;
+    }
+
+    @Override
+    boolean isLessDistantThan(Coordinata c, long distanza) {
+        return false;
+    }
+
+    @Override
     boolean isInside(Coordinata c) {
         return RayCasting.isPointInside(getCoordinate(),c);
     }

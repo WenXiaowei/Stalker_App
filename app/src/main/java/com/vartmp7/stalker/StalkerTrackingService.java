@@ -205,11 +205,15 @@
 package com.vartmp7.stalker;
 
 import android.app.Service;
+import android.app.job.JobScheduler;
 import android.content.Context;
 import android.content.Intent;
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
 import android.location.LocationManager;
 import android.os.Binder;
 import android.os.IBinder;
+import android.util.Log;
 
 import com.vartmp7.stalker.gsonbeans.Organizzazione;
 
@@ -217,6 +221,7 @@ import java.util.List;
 
 
 public class StalkerTrackingService extends Service {
+    private static final String TAG = "com.vartmp7.stalker.StalkerTrackingService";
     private boolean running;
     private List<Organizzazione> trackingOrgs;
     private String currentStatus;
@@ -231,17 +236,20 @@ public class StalkerTrackingService extends Service {
     }
 
     private StalkerCallBack callBack;
-    public StalkerTrackingService() { }
-    public interface  StalkerCallBack{
-        void onCurrentStatusChanged(String str);
+
+    public StalkerTrackingService() {
     }
 
+    public interface StalkerCallBack {
+        void onCurrentStatusChanged(String[] str);
+    }
 
-    public class StalkerBinder extends Binder{
-        public void updateTrackingOrganizations(List<Organizzazione> orgs){
-            StalkerTrackingService.this.trackingOrgs =orgs;
+    public class StalkerBinder extends Binder {
+        public void updateTrackingOrganizations(List<Organizzazione> orgs) {
+            StalkerTrackingService.this.trackingOrgs = orgs;
         }
-        public StalkerTrackingService getService(){
+
+        public StalkerTrackingService getService() {
             return StalkerTrackingService.this;
         }
     }
@@ -255,35 +263,65 @@ public class StalkerTrackingService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        running=true;
+        running = true;
     }
 
     // viene eseguito solo una volta
     @Override
     public void onDestroy() {
         super.onDestroy();
-        running=false;
+        running = false;
     }
 
     // viene eseguito ogni volta che si fa operazione di bind
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        new Thread(){
+        new Thread() {
             @Override
             public void run() {
                 super.run();
-                while (running){
-                        //todo aggiungere il meccanismo del timer e step counter.
-                        LocationManager m = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
+                Log.d(TAG, "run: Starting");
+                int i=58;
+                while (running) {
+//                        //todo aggiungere il meccanismo del timer e step counter.
+//                        LocationManager m = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+//                        SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+//                        Sensor sensor=sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
+//                         JobScheduler scheduler= (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
+//
 
 
                     // modificare il textview della schermata di tracciamento
-                    if (callBack!=null)
-                        callBack.onCurrentStatusChanged("");
+                    if (callBack != null) {
+                        callBack.onCurrentStatusChanged(new String[]{"torre archimede","Unipd",timerFormat(i)});
+                        Log.d(TAG, "run: ");
+                    }
+
+                    try {
+                        sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    i++;
                 }
             }
         }.start();
         return super.onStartCommand(intent, flags, startId);
+    }
+
+    private String timerFormat(int i){
+        String time="";
+        if (i<60)
+            time= i<10? "0"+i+"secondi":i+"secondi";
+        else if (i<3600){
+            int minuti= (i-i%60)/60;
+            time = minuti+":"+i%60;
+        }else{
+            int ore=i%3600;
+            int minuti = (i-3600*ore)%60;
+            int secondi = i-3600*ore - 60*minuti;
+            time= ore+":"+minuti+":"+secondi;
+        }
+        return time;
     }
 }

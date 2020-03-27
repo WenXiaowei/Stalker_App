@@ -237,6 +237,17 @@ public class LuogoACirconferenza extends AbstractLuogo {
     public LuogoACirconferenza(long id, String name){
         super(id,name);
     }
+
+    @Override
+    public Coordinata getCenter() {
+        return null;
+    }
+
+    @Override
+    boolean isLessDistantThan(Coordinata c, long distanza) {
+        return false;
+    }
+
     LuogoACirconferenza(long id, String name, Coordinata centro, double raggio) {
         super(id, name);
         this.centro = centro;

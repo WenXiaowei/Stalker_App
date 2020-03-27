@@ -225,11 +225,9 @@ public abstract class AbstractLuogo {
         this.id = id;
         this.name = name;
     }
-
     public long getId() {
         return id;
     }
-
     public AbstractLuogo setId(long id) {
         this.id = id;
         return this;
@@ -253,5 +251,7 @@ public abstract class AbstractLuogo {
         return this;
     }
 
+    abstract public Coordinata getCenter();
+    abstract boolean isLessDistantThan(Coordinata c, long distanza);
     abstract boolean isInside(Coordinata c);
 }
