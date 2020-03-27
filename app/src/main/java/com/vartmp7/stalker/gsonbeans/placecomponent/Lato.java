@@ -270,7 +270,7 @@ public class Lato {
         this.endY = endY;
     }
 
-
+    //restituisce true sse il lato interseca con il segmento che unisce  'coordinata' con (Double.Max_VALUE,Double.MAX_VALUE)
     public boolean linesIntersect(Coordinata coordinata) {
         final double X1 = startX;
         final double Y1 = startY;

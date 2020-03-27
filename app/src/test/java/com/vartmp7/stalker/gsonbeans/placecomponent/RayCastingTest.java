@@ -200,92 +200,66 @@
  *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
+ *
  */
 
 package com.vartmp7.stalker.gsonbeans.placecomponent;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
+import org.junit.runners.Parameterized;
 
-import com.vartmp7.stalker.gsonbeans.placecomponent.Coordinata;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
-import java.util.Objects;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-@Deprecated
-public class Retta {
+@RunWith(Parameterized.class)
+public class RayCastingTest {
+    RayCasting raycasting;
+    boolean isInside;
 
-    private double m;
-
-
-    public double getM() {
-        return m;
+    public RayCastingTest(RayCasting raycasting,boolean isInside) {
+       this.raycasting=raycasting;
+       this.isInside=isInside;
+    }
+    @Parameterized.Parameters
+    public static Collection<Object[]> data() {
+        List<Coordinata> coordinate = Arrays.asList(
+                new Coordinata(0,0),
+                new Coordinata(1,1),
+                new Coordinata(0,2),
+                new Coordinata(-1,1)
+        );
+        //RayCasting raycasting = new RayCasting(coordinate,new Coordinata(0,1));
+        return Arrays.asList(new Object[][]{
+                {new RayCasting(coordinate,new Coordinata(0,1)),true},
+                {new RayCasting(coordinate,new Coordinata(0.01d,2)),false}
+        });
     }
 
-    public double getQ() {
-        return q;
+    @Test
+    public void test(){
+        assertEquals(raycasting.isPointInside(),isInside);
     }
 
-    private double q;
-    private Coordinata a, b;
-
-    public Retta(Coordinata c1, Coordinata c2) {
-        this.m = (c2.getLatitude() - c1.getLatitude()) / (c2.getLongitude() - c1.getLongitude());
-        this.q = (((c2.getLatitude() - c1.getLatitude())*(-1)*c1.getLongitude()) / (c2.getLongitude() - c1.getLongitude())) + c1.getLatitude();
-        a= c1;
-        b = c2;
+    @Test
+    public void testIsInsideWhenItShould(){
+        List<Coordinata> coordinate = Arrays.asList(
+                new Coordinata(0,0),
+                new Coordinata(1,1),
+                new Coordinata(0,2),
+                new Coordinata(-1,1)
+        );
+        RayCasting raycasting = new RayCasting(coordinate,new Coordinata(0,1));
+        assertTrue(raycasting.isPointInside());
     }
 
-    public Retta(double coeffangolare, double q) {
-        this.m = coeffangolare;
-        this.q = q;
-    }
 
-    /**
-     * calcola il segno del determinante
-     * @param c la coordinata del punto
-     * @return return un numero >0 se la coordinata c è a destra della retta (a,b)
-     *              un numero = 0 se la coordinata c appartiene alla retta (a,b)
-     *              un numero < 0 se la coordinata c è a sinistra della retta (a,b)
-     */
 
-    public double distanceToCoordinate(Coordinata c){
-        return (b.getLongitude()-c.getLongitude())-(a.getLatitude()-c.getLatitude())/(a.getLatitude()-c.getLatitude());
-    }
-    public double calcoloLatitude(double longitude) {
-        return this.m * longitude + this.q;
-    }
-
-    public Coordinata intersezione(Retta r) {
-        //System.out.println("x/:"+(-this.q + r.q));
-        //System.out.println("/x:"+(this.m - r.m));
-        double x = (-this.q + r.q) / (this.m - r.m);
-
-        return new Coordinata(calcoloLatitude(x),x);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Retta)) return false;
-        Retta retta = (Retta) o;
-        return Double.compare(retta.getM(), getM()) == 0 &&
-                Double.compare(retta.getQ(), getQ()) == 0 &&
-                Objects.equals(a, retta.a) &&
-                Objects.equals(b, retta.b);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getM(), getQ(), a, b);
-    }
-
-    @NonNull
-    @Override
-    public String toString() {
-        if (q<=0){
-            return  "y="+m+"x"+q;
-        }
-        return "y="+m+"x+"+q;
-    }
 
 }

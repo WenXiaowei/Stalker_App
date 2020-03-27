@@ -215,7 +215,9 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
     CoordinataTest.class,
     LatoTest.class,
-        RettaTest.class
+    RayCastingTest.class
+    //RettaTest.class
+
 })
 public class PlaceComponentTestSuite {
 
