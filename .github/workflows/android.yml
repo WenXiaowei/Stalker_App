@@ -33,5 +33,10 @@ jobs:
       with:
         name: app
         path: app/build/outputs/apk/debug/app-debug.apk
-
+    - name: Remove old artifacts
+      uses: c-hive/gha-remove-artifacts@v1
+      with:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        age: '1 week'
+        skip-tags: true
  
