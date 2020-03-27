@@ -205,17 +205,45 @@
 package com.vartmp7.stalker;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
+import android.location.LocationManager;
 import android.os.Binder;
 import android.os.IBinder;
 
+import com.vartmp7.stalker.gsonbeans.Organizzazione;
+
+import java.util.List;
+
+
 public class StalkerTrackingService extends Service {
-    public StalkerTrackingService() {
+    private boolean running;
+    private List<Organizzazione> trackingOrgs;
+    private String currentStatus;
+
+    public StalkerCallBack getCallBack() {
+        return callBack;
     }
-    
+
+    public StalkerTrackingService setCallBack(StalkerCallBack callBack) {
+        this.callBack = callBack;
+        return this;
+    }
+
+    private StalkerCallBack callBack;
+    public StalkerTrackingService() { }
+    public interface  StalkerCallBack{
+        void onCurrentStatusChanged(String str);
+    }
+
 
     public class StalkerBinder extends Binder{
-
+        public void updateTrackingOrganizations(List<Organizzazione> orgs){
+            StalkerTrackingService.this.trackingOrgs =orgs;
+        }
+        public StalkerTrackingService getService(){
+            return StalkerTrackingService.this;
+        }
     }
 
     @Override
@@ -223,9 +251,39 @@ public class StalkerTrackingService extends Service {
         return new StalkerBinder();
     }
 
+    //viene eseguito solo una volta
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        running=true;
+    }
+
+    // viene eseguito solo una volta
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        running=false;
+    }
+
+    // viene eseguito ogni volta che si fa operazione di bind
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        new Thread(){
+            @Override
+            public void run() {
+                super.run();
+                while (running){
+                        //todo aggiungere il meccanismo del timer e step counter.
+                        LocationManager m = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
+
+
+                    // modificare il textview della schermata di tracciamento
+                    if (callBack!=null)
+                        callBack.onCurrentStatusChanged("");
+                }
+            }
+        }.start();
         return super.onStartCommand(intent, flags, startId);
     }
 }
