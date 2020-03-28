@@ -19,7 +19,7 @@ jobs:
       uses: c-hive/gha-remove-artifacts@v1
       with:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        age: '1 week'
+        age: '1 day'
         skip-tags: true  
     - name: Add ChMOD
       run: chmod +x gradlew
