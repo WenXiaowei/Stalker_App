@@ -267,4 +267,5 @@ public class Lato {
     public void setEndY(double endY) {
         this.endY = endY;
     }
+
 }

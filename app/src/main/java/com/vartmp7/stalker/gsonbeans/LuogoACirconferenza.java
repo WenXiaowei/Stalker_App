@@ -205,7 +205,10 @@
 package com.vartmp7.stalker.gsonbeans;
 
 
+import com.google.gson.internal.$Gson$Preconditions;
 import com.vartmp7.stalker.gsonbeans.placecomponent.Coordinata;
+import com.vartmp7.stalker.gsonbeans.placecomponent.Lato;
+import com.vartmp7.stalker.gsonbeans.placecomponent.Retta;
 
 import java.util.Objects;
 
@@ -216,7 +219,7 @@ import java.util.Objects;
  * Usato per rappresentare dei luoghi con una forma di circonferenza.
  */
 public class LuogoACirconferenza extends AbstractLuogo {
-    public static final String TAG ="com.vartmp7.stalker.gsonbeans.LuogoACirconferenza";
+    public static final String TAG = "com.vartmp7.stalker.gsonbeans.LuogoACirconferenza";
     private Coordinata centro;
     private Double raggio;
 
@@ -234,18 +237,18 @@ public class LuogoACirconferenza extends AbstractLuogo {
         return Objects.hash(getCentro(), getRaggio());
     }
 
-    public LuogoACirconferenza(long id, String name){
-        super(id,name);
+    public LuogoACirconferenza(long id, String name) {
+        super(id, name);
     }
 
     @Override
     public Coordinata getCenter() {
-        return null;
+        return centro;
     }
 
     @Override
     boolean isLessDistantThan(Coordinata c, long distanza) {
-        return false;
+        return c.getDistanceTo(centro) < distanza;
     }
 
     LuogoACirconferenza(long id, String name, Coordinata centro, double raggio) {

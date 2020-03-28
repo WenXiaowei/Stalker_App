@@ -209,6 +209,7 @@ import androidx.annotation.NonNull;
 
 import com.vartmp7.stalker.gsonbeans.AbstractLuogo;
 import com.vartmp7.stalker.gsonbeans.placecomponent.Coordinata;
+import com.vartmp7.stalker.gsonbeans.placecomponent.Retta;
 
 import java.util.Arrays;
 import java.util.List;
@@ -259,12 +260,13 @@ public class LuogoPoligono extends AbstractLuogo {
 
     @Override
     public Coordinata getCenter() {
-        return null;
+        return new Retta(coordinates.get(0),coordinates.get(2))
+                .intersezione(new Retta(coordinates.get(1),coordinates.get(3)));
     }
 
     @Override
     boolean isLessDistantThan(Coordinata c, long distanza) {
-        return false;
+        return getCenter().getDistanceTo(c)<distanza;
     }
 
     @Override
