@@ -279,8 +279,12 @@ task createTestReport(type: JacocoReport, dependsOn: ['createDevDebugCoverageRep
     group = "Reporting"
 
     reports {
-        xml.enabled = true
-        html.enabled = true
+        xml{
+            enabled true
+        }
+        html{
+            enabled true
+        }
     }
 /**
  * gradlew sonarqube non funziona per questo errore:
@@ -294,7 +298,8 @@ task createTestReport(type: JacocoReport, dependsOn: ['createDevDebugCoverageRep
                       '**/*$MembersInjector*.*',
                       '**/Manifest*.*',
                       '**/*Test*.*',
-                      'android/**/*.*']
+                      'android/**/*.*',
+                        '**/*.xml']
     def debugTree = fileTree(dir: "${project.projectDir}/src/test/*/*Test.java", excludes: fileFilter)
     //def debugTree = fileTree(dir: "${buildDir}/intermediates/classes/dev/debug", excludes: fileFilter)
     def mainSrc = "${project.projectDir}/src/main/java"
@@ -305,6 +310,8 @@ task createTestReport(type: JacocoReport, dependsOn: ['createDevDebugCoverageRep
     executionData.from = files("${project.buildDir}/jacoco/testDevDebugUnitTest.exec")
     def files = fileTree("${buildDir}/outputs/code-coverage/connected/flavors/DEV/").filter { it.isFile() }.files.name
     def instrumentationFileName = "${buildDir}/outputs/code-coverage/connected/flavors/DEV/" + files[0];
+
+
 }
 
 sonarqube {

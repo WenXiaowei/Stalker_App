@@ -276,7 +276,9 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
                 FileInputStream fis = null;
                 try {
 //                    Log.d(TAG, "run: lettura dal file");
+                    // todo sonarqube segna come bug
                     fis = context.openFileInput(fileName);
+                    // todo sonarqube segna come bug
                     InputStreamReader inputStreamReader =new InputStreamReader(fis, StandardCharsets.UTF_8);
                     StringBuilder stringBuilder = new StringBuilder();
                     try (BufferedReader reader = new BufferedReader(inputStreamReader)) {
@@ -350,6 +352,7 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
                 }
 
                 try {
+                    // todo sonarqube segna come bug
                     FileWriter writer = new FileWriter(orgJson);
                     // todo quest'istruzione delle volte, genera un concurrentModificationException
                     String l = new Gson().toJson(new ResponseOrganizzazione().setOrganizations(mLiveOrgs.getValue()));
@@ -368,7 +371,7 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
         try {
             executorService.awaitTermination(1, TimeUnit.MINUTES);
         } catch (InterruptedException e) {
-//            e.printStackTrace();
+            e.printStackTrace();
         }
     }
 
