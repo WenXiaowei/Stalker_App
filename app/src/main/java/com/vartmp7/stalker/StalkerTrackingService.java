@@ -205,6 +205,7 @@
 package com.vartmp7.stalker;
 
 import android.app.Service;
+import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
 import android.content.Context;
 import android.content.Intent;
@@ -250,7 +251,6 @@ public class StalkerTrackingService extends Service {
         public void updateTrackingOrganizations(List<Organizzazione> orgs) {
             StalkerTrackingService.this.trackingOrgs = orgs;
         }
-
         public StalkerTrackingService getService() {
             return StalkerTrackingService.this;
         }
@@ -266,6 +266,38 @@ public class StalkerTrackingService extends Service {
     public void onCreate() {
         super.onCreate();
         running = true;
+        new Thread() {
+            @Override
+            public void run() {
+                super.run();
+                Log.d(TAG, "run: Starting");
+                int i = 0;
+                while (running) {
+//                        todo aggiungere il meccanismo del timer e step counter.
+//                        LocationManager m = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+//                        SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+//                        Sensor sensor=sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
+//                     modificare il textview della schermata di tracciamento
+                    JobScheduler scheduler= (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
+
+
+
+
+
+
+                    if (callBack != null) {
+                        callBack.onCurrentStatusChanged(new String[]{"torre archimede", "Unipd", timerFormat(i)});
+                    }
+
+                    try {
+                        sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    i++;
+                }
+            }
+        }.start();
     }
 
     // viene eseguito solo una volta
@@ -278,36 +310,7 @@ public class StalkerTrackingService extends Service {
     // viene eseguito ogni volta che si fa operazione di bind
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        new Thread() {
-            @Override
-            public void run() {
-                super.run();
-                Log.d(TAG, "run: Starting");
-                int i = 3598;
-                while (running) {
-//                        //todo aggiungere il meccanismo del timer e step counter.
-//                        LocationManager m = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-//                        SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-//                        Sensor sensor=sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
-//                         JobScheduler scheduler= (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
-//
 
-
-                    // modificare il textview della schermata di tracciamento
-                    if (callBack != null) {
-                        callBack.onCurrentStatusChanged(new String[]{"torre archimede", "Unipd", timerFormat(i)});
-                        Log.d(TAG, "run: ");
-                    }
-
-                    try {
-                        sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    i++;
-                }
-            }
-        }.start();
         return super.onStartCommand(intent, flags, startId);
     }
 
