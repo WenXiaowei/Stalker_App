@@ -228,6 +228,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.vartmp7.stalker.R;
+import com.vartmp7.stalker.component.StalkerCallback;
 import com.vartmp7.stalker.component.StalkerTrackingService;
 import com.vartmp7.stalker.gsonbeans.Organizzazione;
 import com.vartmp7.stalker.repository.OrganizationsRepository;
@@ -277,7 +278,7 @@ public class TrackingFragment extends Fragment {
             isBound = true;
             binder = (StalkerTrackingService.StalkerBinder) service;
             binder.updateTrackingOrganizations(organizationToTrack);
-            binder.getService().setCallBack(new StalkerTrackingService.StalkerCallBack() {
+            binder.getService().setCallBack(new StalkerCallback() {
 
                 @Override
                 public void onCurrentStatusChanged(String[] str) {
