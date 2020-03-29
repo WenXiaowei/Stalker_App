@@ -202,7 +202,7 @@
  *    limitations under the License.
  */
 
-package com.vartmp7.stalker;
+package com.vartmp7.stalker.component;
 
 import android.app.Service;
 import android.app.job.JobScheduler;
@@ -227,17 +227,17 @@ import static java.lang.Thread.sleep;
 
 
 public class StalkerTrackingService extends Service {
-    private static final String TAG = "com.vartmp7.stalker.StalkerTrackingService";
+    private static final String TAG = "com.vartmp7.stalker.component.StalkerTrackingService";
     private boolean running;
     private static final long KM_5 = 5000;
     private static final long KM_1 = 1000;
     private List<Organizzazione> trackingOrgs = new ArrayList<>();
     private ExecutorService executors = Executors.newSingleThreadExecutor();
-    private StalkerCallBack callBack;
+    private StalkerCallback callBack;
 
 
 
-    public StalkerTrackingService setCallBack(StalkerCallBack callBack) {
+    public StalkerTrackingService setCallBack(StalkerCallback callBack) {
         this.callBack = callBack;
         return this;
     }
@@ -245,11 +245,7 @@ public class StalkerTrackingService extends Service {
     public StalkerTrackingService() {
     }
 
-    public interface StalkerCallBack {
-        void onCurrentStatusChanged(String[] str);
 
-        void onTrackingTerminated();
-    }
 
     public class StalkerBinder extends Binder {
         public void updateTrackingOrganizations(List<Organizzazione> orgs) {
@@ -263,7 +259,6 @@ public class StalkerTrackingService extends Service {
                     current.setRunning(false);
                 }
         }
-
         public StalkerTrackingService getService() {
             return StalkerTrackingService.this;
         }
@@ -277,7 +272,6 @@ public class StalkerTrackingService extends Service {
                 .stream()
                 .filter(Organizzazione::isTrackingActive)
                 .collect(Collectors.toList()));
-
         new Thread(current).start();
         Log.d(TAG, " starting");
 
@@ -311,7 +305,6 @@ public class StalkerTrackingService extends Service {
     // viene eseguito ogni volta che si fa operazione di bind
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -341,7 +334,6 @@ public class StalkerTrackingService extends Service {
         private List<Organizzazione> trackingOrgs;
         int i = 0;
         private boolean isRunning;
-
 
         private StalkerRunnable(List<Organizzazione> orgs) {
             this.trackingOrgs = orgs;

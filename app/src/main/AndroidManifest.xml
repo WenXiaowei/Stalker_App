@@ -222,7 +222,7 @@
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning">
         <service
-            android:name=".StalkerTrackingService"
+            android:name=".component.StalkerTrackingService"
             android:enabled="true"
             android:exported="true"></service>
 
