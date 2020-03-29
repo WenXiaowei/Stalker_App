@@ -207,23 +207,20 @@ package com.vartmp7.stalker.repository;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
 
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.vartmp7.stalker.gsonbeans.Organizzazione;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 
 public class FirebaseFavoritesSource implements FavoritesSource {
-    public static final String TAG = "com.vartmp7.stalker.repository.FirebaseFavoritesRepository";
+    public static final String TAG = "com.vartmp7.stalker.repository.FirebaseFavoritesSource";
     private static final String FIELDNAME_ID = "id";
     private static final String FIELDNAME_ORGANIZZAZIONI = "organizzazioni";
     private OrganizationsRepository organizationsRepo;
@@ -250,17 +247,47 @@ public class FirebaseFavoritesSource implements FavoritesSource {
         this.userId = userId;
         //this.organizationsRepo = orgRepo;
         this.db = db;
+        initUserStorage();
     }
 
     public void setUserID(String userId) {
         this.userId = userId;
+        initUserStorage();
     }
 
 
-    public void initUserStorage(String userId) {
-        Map<String, Object> userData = new HashMap<>();
-        userData.put(FIELDNAME_ORGANIZZAZIONI, new ArrayList<Long>());
-        db.collection("utenti").document(userId).set(userData);
+    private boolean hasData() throws Exception {
+        AtomicBoolean hasData = new AtomicBoolean(false);
+        Exception exc=new Exception();
+        AtomicBoolean exceptionOccurred= new AtomicBoolean(false);
+
+        db.collection("utenti").document(userId).get().addOnSuccessListener(docSnapshot -> {
+            Log.e(TAG, "document exists");
+            hasData.set(docSnapshot.exists());
+        })
+        .addOnFailureListener(e->{
+            Log.e(TAG,e.getMessage());
+            exc.initCause(e);
+            exceptionOccurred.set(true);
+        });
+        if(exceptionOccurred.get()) throw exc;
+        return hasData.get();
+    }
+
+    private void initUserStorage() {
+        Log.d(TAG,"init");
+        try {
+            if(hasData()){
+                Map<String, Object> userData = new HashMap<>();
+                userData.put(FIELDNAME_ORGANIZZAZIONI, new ArrayList<Long>());
+                db.collection("utenti").document(userId).set(userData).addOnSuccessListener(docSnapshot->{
+                    Log.e(TAG,"documento creato correttamente");
+                })
+                .addOnFailureListener(e -> {Log.e(TAG,e.getMessage());});
+            }
+        } catch (Exception e) {
+            Log.e(TAG,e.getMessage());
+        }
     }
 
     @Override
@@ -269,7 +296,9 @@ public class FirebaseFavoritesSource implements FavoritesSource {
                 update(FIELDNAME_ORGANIZZAZIONI, FieldValue.arrayUnion(orgId))
                 .addOnSuccessListener(aVoid ->{
                     Log.w(TAG, "organizzazione aggiunta correttamente");
-                    List<Long> ids = mutableliveDataOrgIds.getValue();
+                    final List<Long> ids = mutableliveDataOrgIds.getValue();
+                    ids.add(orgId);
+                    mutableliveDataOrgIds.postValue(ids);
                 })
                 .addOnFailureListener(e -> Log.w(TAG, "errore avvenuto aggiungendo organizzazione", e));
     }
@@ -331,7 +360,13 @@ public class FirebaseFavoritesSource implements FavoritesSource {
     public void removeOrganizzazione(Long orgId) {
         db.collection("utenti").document(userId).
                 update(FIELDNAME_ORGANIZZAZIONI, FieldValue.arrayRemove(orgId))
-                .addOnSuccessListener(aVoid -> Log.w(TAG, "organizzazione rimossa correttamente"))
+                .addOnSuccessListener(aVoid ->{
+                    final List<Long> ids = mutableliveDataOrgIds.getValue();
+                    ids.remove(orgId);
+                    mutableliveDataOrgIds.postValue(ids);
+                    Log.w(TAG, "organizzazione rimossa correttamente");
+
+                })
                 .addOnFailureListener(e -> Log.w(TAG, "errore avvenuto rimuovendo organizzazione", e));
 /*
         Map<String, Object> org = new HashMap<>();

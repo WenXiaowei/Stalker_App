@@ -263,7 +263,8 @@ public class PreferitiFragment extends Fragment  implements SwipeRefreshLayout.O
         OkHttpClient httpClient= new OkHttpClient();
         String serverUrl="";
 
-        //orgRepo.saveOrganizzazione(new Organizzazione());
+        //orgRepo.saveOrganizzazione(new Org
+        // anizzazione());
         //orgRepo.updateOrganizzazioni();
         // fixme queste tre istanziazioni non servono più, e non serve neanche fare init, basta getInstance - Wen
         OrganizationsLocalSource localSource = new FileOrganizationsLocalSource("orgs.json",getContext(), listMutableLiveData);
@@ -285,7 +286,7 @@ public class PreferitiFragment extends Fragment  implements SwipeRefreshLayout.O
         favViewModel.getOrganizzazioni().observe(getViewLifecycleOwner(), new Observer<List<Organizzazione>>() {
             @Override
             public void onChanged(List<Organizzazione> organizzazioni) {
-                favViewAdapter.setOrganizzazioni(organizzazioni.stream().filter(Organizzazione::isPreferito).collect(Collectors.toList()));
+                favViewAdapter.setOrganizzazioni(organizzazioni/*.stream().filter(Organizzazione::isPreferito).collect(Collectors.toList())*/);
                 Log.e(TAG, "onChanged: refresh" );
 //                preferitiSwipeLayout.setRefreshing(false);
             }

@@ -342,6 +342,23 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
         }
     }
 
+
+    public synchronized void saveOrganizationsInfo(List<Organizzazione> orgs){
+        final List<Organizzazione> orgsSaved = mLiveOrgs.getValue();
+        orgs.forEach(orgSaved -> {
+            for (Organizzazione notSavedYet : orgs) {
+                if(notSavedYet.equals(orgs)){
+                    notSavedYet.setTrackingActive(orgSaved.isTrackingActive())
+                            .setTracking(orgSaved.isTracking())
+                            .setPreferito(orgSaved.isPreferito());
+
+                }
+            }
+        });
+        saveOrganizzazioni(orgs);
+    }
+
+
     @SuppressLint("StaticFieldLeak")
     @Override
     public synchronized void saveOrganizzazioni(List<Organizzazione> orgs) {
