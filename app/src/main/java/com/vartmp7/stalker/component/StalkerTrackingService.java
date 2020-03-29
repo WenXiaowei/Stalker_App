@@ -208,6 +208,10 @@ import android.app.Service;
 import android.app.job.JobScheduler;
 import android.content.Context;
 import android.content.Intent;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
@@ -215,14 +219,14 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.vartmp7.stalker.gsonbeans.Organizzazione;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 import static java.lang.Thread.sleep;
@@ -231,12 +235,10 @@ import static java.lang.Thread.sleep;
 public class StalkerTrackingService extends Service {
     private static final String TAG = "com.vartmp7.stalker.component.StalkerTrackingService";
     private boolean running;
-    private static final long KM_5 = 5000;
-    private static final long KM_1 = 1000;
-    private List<Organizzazione> trackingOrgs = new ArrayList<>();
-    private ExecutorService executors = Executors.newSingleThreadExecutor();
-    private StalkerServiceCallback callBack;
 
+    private List<Organizzazione> trackingOrgs = new ArrayList<>();
+    private StalkerServiceCallback callBack;
+    StalkerRunnable current = null;
 
 
     public StalkerTrackingService setCallBack(StalkerServiceCallback callBack) {
@@ -248,28 +250,27 @@ public class StalkerTrackingService extends Service {
     }
 
 
-
     public class StalkerBinder extends Binder {
         public void updateTrackingOrganizations(List<Organizzazione> orgs) {
             StalkerTrackingService.this.trackingOrgs = orgs;
-            if (orgs.size()!=0)
+            if (orgs.size() != 0)
                 startNewThread();
-            else
-                if (current!=null){
-                    if (callBack!=null)
-                        callBack.onTrackingTerminated();
-                    current.setRunning(false);
-                }
+            else if (current != null) {
+                if (callBack != null)
+                    callBack.onTrackingTerminated();
+                current.stopThread();
+            }
         }
+
         public StalkerTrackingService getService() {
             return StalkerTrackingService.this;
         }
+
     }
 
-    StalkerRunnable current=null;
     private void startNewThread() {
-        if (current!=null)
-            current.setRunning(false);
+        if (current != null)
+            current.stopThread();
         current = new StalkerRunnable(trackingOrgs
                 .stream()
                 .filter(Organizzazione::isTrackingActive)
@@ -282,7 +283,7 @@ public class StalkerTrackingService extends Service {
     @Nullable
     @Override
     public IBinder onBind(@NonNull Intent intent) {
-            return new StalkerBinder();
+        return new StalkerBinder();
     }
 
 
@@ -290,18 +291,15 @@ public class StalkerTrackingService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.d(TAG, "onCreate: ");
         running = true;
     }
 
     // viene eseguito solo una volta
     @Override
     public void onDestroy() {
-        Log.d(TAG, "onDestroy: ");
         super.onDestroy();
 
         running = false;
-//        previousFuture.cancel(true);
     }
 
     // viene eseguito ogni volta che si fa operazione di bind
@@ -331,16 +329,18 @@ public class StalkerTrackingService extends Service {
         else time += (secondi < 10 ? "0" + secondi : secondi);
         return time;
     }
+
     Timer timer = new Timer();
-    private void timer(){
-        timer.schedule(timerTask,0,1000);
+
+    private void timer() {
+        timer.schedule(timerTask, 0, 1000);
     }
 
     private TimerTask timerTask = new TimerTask() {
         @Override
         public void run() {
-            long millis = System.currentTimeMillis()/1000;
-            callBack.onCurrentStatusChanged();
+            long millis = System.currentTimeMillis() / 1000;
+//            callBack.onCurrentStatusChanged();
         }
     };
 
@@ -351,7 +351,7 @@ public class StalkerTrackingService extends Service {
 
         private StalkerRunnable(List<Organizzazione> orgs) {
             this.trackingOrgs = orgs;
-            isRunning=true;
+            isRunning = true;
         }
 
         @Override
@@ -367,6 +367,22 @@ public class StalkerTrackingService extends Service {
                 //                     modificare il textview della schermata di tracciamento
                 JobScheduler scheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
 
+
+                FusedLocationProviderClient fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(StalkerTrackingService.this);
+                SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+                Sensor stepSensor= sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
+
+                sensorManager.registerListener(new SensorEventListener() {
+                    @Override
+                    public void onSensorChanged(SensorEvent event) {
+
+                    }
+
+                    @Override
+                    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+                    }
+                },stepSensor,SensorManager.SENSOR_DELAY_NORMAL);
 
                 if (trackingOrgs != null)
                     Log.d(TAG, "run: tracking orgs !=null");
@@ -405,10 +421,106 @@ public class StalkerTrackingService extends Service {
                 callBack.onTrackingTerminated();
         }
 
-        public void setRunning(boolean running) {
-            this.isRunning = running;
+        void stopThread() {
+            this.isRunning = false;
         }
     }
 
     ;
 }
+/*
+*       if (checkPermissions()) {
+*    public void steps() {
+        SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        if (sensorManager != null) {
+            Sensor sensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
+            sensorManager.registerListener(new SensorEventListener() {
+                @Override
+                public void onSensorChanged(SensorEvent event) {
+                    Sensor sensor1 = event.sensor;
+                    float[] values = event.values;
+                    int val = -1;
+                    if (values.length > 0)
+                        val = (int) values[0];
+
+                    if (sensor.getType() == Sensor.TYPE_STEP_COUNTER) {
+                        Log.d(TAG, "onSensorChanged: " + val);
+                        Toast.makeText(MainActivity.this,"On sensor changed: "+val, Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+                }
+            }, sensor, SensorManager.SENSOR_DELAY_NORMAL);
+        }
+    }
+    private void readNetWorkPosition() {
+        if (checkPermissions()) {
+            Log.d(TAG, "readNetWorkPosition: ");
+            FusedLocationProviderClient fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+            fusedLocationProviderClient.getLastLocation().addOnSuccessListener(l -> {
+                Log.d(TAG, "readNetWorkPosition: on success ");
+                if (l != null) {
+                    Log.d(TAG, "readNetWorkPosition: " + l.toString());
+                    Log.d(TAG, "readNetWorkPosition: " + l.getLatitude());
+                    Log.d(TAG, "readNetWorkPosition: " + l.getLongitude());
+                    Log.d(TAG, "readNetWorkPosition: accuracy: " + l.getAccuracy());
+                    Log.d(TAG, "readNetWorkPosition: provider " + l.getProvider());
+//                    Log.d(TAG, "readNetWorkPosition: "+l.get;
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.d(TAG, "onFailure: ");
+                }
+            }).addOnCompleteListener(new OnCompleteListener<Location>() {
+                @Override
+                public void onComplete(@NonNull Task<Location> task) {
+                    Log.d(TAG, "onComplete: ");
+//                    Log.d(TAG, "onComplete: "+task.getResult().toString());
+                }
+            });
+
+            LocationRequest request = new LocationRequest();
+            request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+//            request.setPriority(LocationRequest.PRIORITY_NO_POWER);
+//            request.setSmallestDisplacement()
+            fusedLocationProviderClient.requestLocationUpdates(request, new LocationCallback() {
+                @Override
+                public void onLocationAvailability(LocationAvailability locationAvailability) {
+                    super.onLocationAvailability(locationAvailability);
+                    Log.d(TAG, "onLocationAvailability: " + locationAvailability.toString());
+                    ;
+                }
+
+                @Override
+                public void onLocationResult(LocationResult locationResult) {
+                    super.onLocationResult(locationResult);
+                    Log.d(TAG, "onLocationResult: " + locationResult.toString());
+
+                }
+            }, null);
+
+            LocationCallback c = new LocationCallback() {
+
+                public void onLocationResult(LocationResult var1) {
+                }
+
+                public void onLocationAvailability(LocationAvailability var1) {
+                }
+            };
+            fusedLocationProviderClient.requestLocationUpdates(request, c, null);
+
+
+            fusedLocationProviderClient.removeLocationUpdates(c);
+
+
+        }
+//        else
+//            requestPermissions();
+    }
+
+* */

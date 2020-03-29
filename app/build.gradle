@@ -261,14 +261,18 @@ android {
             testCoverageEnabled true
         }
     }
-//
-//    testOptions {
-//        unitTests.all {
-//            jacoco {
-//                version '1.0.1'
-//            }
-//        }
-//    }
+
+    testOptions {
+        animationsDisabled true
+        unitTests {
+            includeAndroidResources  =true
+        }
+        unitTests.all {
+            jacoco {
+                version '1.0.1'
+            }
+        }
+    }
     compileOptions {
         sourceCompatibility = 1.8
         targetCompatibility = 1.8
@@ -365,7 +369,7 @@ dependencies {
     implementation 'com.google.android.material:material:1.1.0'
 
     // required if you want to use Mockito for unit tests
-    testImplementation 'org.mockito:mockito-core:2.23.4'
+    testImplementation 'org.mockito:mockito-core:2.7.22'
     // required if you want to use Mockito for Android tests
     androidTestImplementation 'org.mockito:mockito-android:2.23.4'
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"

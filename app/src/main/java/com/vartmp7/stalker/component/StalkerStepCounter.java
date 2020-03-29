@@ -204,36 +204,54 @@
 
 package com.vartmp7.stalker.component;
 
-import android.content.Context;
-import android.location.Location;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.Task;
-import com.vartmp7.stalker.gsonbeans.Organizzazione;
-import com.vartmp7.stalker.gsonbeans.placecomponent.Coordinata;
+public class StalkerStepCounter {
+    private SensorManager manager;
+    private int stepFromLastRead = 0;
+    private Sensor sensor = null;
+    private SensorEventListener li;
 
-import java.util.List;
-
-public class StalkingLocationManager {
-    private static final long KM_5 = 5000;
-    private static final long KM_1 = 1000;
-    private FusedLocationProviderClient client;
-    private Context context;
-
-    public StalkingLocationManager(Context context, FusedLocationProviderClient client) {
-        this.context = context;
-        this.client = client;
+    public StalkerStepCounter(SensorManager manager) {
+        this.manager = manager;
+        this.sensor = manager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
     }
 
-    private Coordinata getMostPreciseLocation() {
-//        Task<Location> tas = client.getLastLocation();
-//        if (tas.isSuccessful()) {
-//            Location location = tas.getResult();
-//            return new Coordinata(location.getLongitude(), location.getLatitude());
-//        }
-        return null;
+    public void addListener() {
+        li = new SensorEventListener() {
+            @Override
+            public void onSensorChanged(SensorEvent event) {
+                Sensor sensor1 = event.sensor;
+                float[] values = event.values;
+                int val = -1;
+                if (values.length > 0)
+                    val = (int) values[0];
+
+                if (sensor.getType() == Sensor.TYPE_STEP_COUNTER) {
+                    stepFromLastRead = val;
+//                    Toast.makeText(MainActivity.this,"On sensor changed: "+val, Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+            }
+        };
+        manager.registerListener(li, sensor, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
+    public int getSteps() {
+        int toRe = stepFromLastRead;
+        stepFromLastRead = 0;
+        return toRe;
+    }
+
+    public void removeListener() {
+        manager.unregisterListener(li);
+    }
 
 }
