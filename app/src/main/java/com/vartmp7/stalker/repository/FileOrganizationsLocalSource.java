@@ -246,25 +246,26 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
 //        this.mLiveOrgs.setValue(new ArrayList<>());
         this.mLiveOrgs = org;
     }
-    public void activeAllTrackingOrganization(boolean active){
-        List<Organizzazione> lis = mLiveOrgs.getValue(), list= new ArrayList<>();
-        for (Organizzazione org: lis) {
-            if (org.isTracking()){
-                org.setTrackingActive(active);
-            }
-            list.add(org);
 
+    @Override
+    public void updateOrganizzazioni(List<Organizzazione> org) {
+        List<Organizzazione> orgList = mLiveOrgs.getValue();
+
+        for (Organizzazione organizzazione: org){
+            int i = orgList.indexOf(organizzazione);
+            orgList.add(i,organizzazione);
         }
-        mLiveOrgs.setValue(list);
+
+        mLiveOrgs.setValue(orgList);
     }
     @Override
     public void updateOrganizzazione(Organizzazione o) {
         List<Organizzazione> l = mLiveOrgs.getValue();
         int pos = -1;
-        for (int i =0; i< l.size()&& pos==-1; i++)
-            if (o.getId()==l.get(i).getId())
-                pos=i;
-
+//        for (int i =0; i< l.size()&& pos==-1; i++)
+//            if (o.getId()==l.get(i).getId())
+//                pos=i;
+            pos = l.indexOf(o);
         if (pos!=-1){
             l.remove(pos);
             l.add(pos, o);
@@ -272,6 +273,7 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
             mLiveOrgs.setValue(l);
         }
     }
+
 
 
     @Override

@@ -212,6 +212,7 @@ import com.vartmp7.stalker.gsonbeans.Organizzazione;
 import com.vartmp7.stalker.repository.OrganizationsRepository;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Xiaowei Wen, Lorenzo Taschin
@@ -231,7 +232,9 @@ public class TrackingViewModel extends ViewModel {
     }
 
     public void activeAllTrackingOrganization(boolean active){
-        repository.activeAllTrackingOrganization(active);
+        List<Organizzazione> l=repository.getOrganizzazioni().getValue().stream().filter(Organizzazione::isTracking).collect(Collectors.toList());
+        l.forEach(organizzazione -> organizzazione.setTrackingActive(active));
+        repository.updateOrganizzationi(l);
     }
 
     public void setRepository(OrganizationsRepository repository) {

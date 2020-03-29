@@ -230,8 +230,8 @@ public class OrganizationsRepository {
     public void updateOrganizzazione(Organizzazione o){
        organizationsLocalSource.updateOrganizzazione(o);
     }
-    public void activeAllTrackingOrganization(boolean active){
-        organizationsLocalSource.activeAllTrackingOrganization(active);
+    public void updateOrganizzationi(List<Organizzazione> l){
+        organizationsLocalSource.updateOrganizzazioni(l);
     }
 
     public synchronized static OrganizationsRepository init(OrganizationsLocalSource orgsLocalSource, OrganizationsWebSource orgsWebSource, FavoritesSource fa){
