@@ -221,7 +221,6 @@ public class TrackingViewModel extends ViewModel {
     public static final String TAG = "com.vartmp7.stalker.ui.home.HomeViewModel";
 
     private OrganizationsRepository repository;
-    private MediatorLiveData<List<Organizzazione>> listMediatorLiveData;
 
     public LiveData<List<Organizzazione>> getListOrganizzazione() {
         return repository.getOrganizzazioni();
