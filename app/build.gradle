@@ -261,14 +261,18 @@ android {
             testCoverageEnabled true
         }
     }
-//
-//    testOptions {
-//        unitTests.all {
-//            jacoco {
-//                version '1.0.1'
-//            }
-//        }
-//    }
+
+    testOptions {
+        animationsDisabled true
+        unitTests {
+            includeAndroidResources  =true
+        }
+        unitTests.all {
+            jacoco {
+                version '1.0.1'
+            }
+        }
+    }
     compileOptions {
         sourceCompatibility = 1.8
         targetCompatibility = 1.8
@@ -279,12 +283,8 @@ task createTestReport(type: JacocoReport, dependsOn: ['createDevDebugCoverageRep
     group = "Reporting"
 
     reports {
-        xml{
-            enabled true
-        }
-        html{
-            enabled true
-        }
+        xml.enabled = true
+        html.enabled = true
     }
 /**
  * gradlew sonarqube non funziona per questo errore:
@@ -298,8 +298,7 @@ task createTestReport(type: JacocoReport, dependsOn: ['createDevDebugCoverageRep
                       '**/*$MembersInjector*.*',
                       '**/Manifest*.*',
                       '**/*Test*.*',
-                      'android/**/*.*',
-                        '**/*.xml']
+                      'android/**/*.*']
     def debugTree = fileTree(dir: "${project.projectDir}/src/test/*/*Test.java", excludes: fileFilter)
     //def debugTree = fileTree(dir: "${buildDir}/intermediates/classes/dev/debug", excludes: fileFilter)
     def mainSrc = "${project.projectDir}/src/main/java"
@@ -310,8 +309,6 @@ task createTestReport(type: JacocoReport, dependsOn: ['createDevDebugCoverageRep
     executionData.from = files("${project.buildDir}/jacoco/testDevDebugUnitTest.exec")
     def files = fileTree("${buildDir}/outputs/code-coverage/connected/flavors/DEV/").filter { it.isFile() }.files.name
     def instrumentationFileName = "${buildDir}/outputs/code-coverage/connected/flavors/DEV/" + files[0];
-
-
 }
 
 sonarqube {
@@ -372,18 +369,15 @@ dependencies {
     implementation 'com.google.android.material:material:1.1.0'
 
     // required if you want to use Mockito for unit tests
-    def mockito_version = "2.23.4"
-    testImplementation "org.mockito:mockito-core:$mockito_version"
-    androidTestImplementation "org.mockito:mockito-android:$mockito_version"
+    testImplementation 'org.mockito:mockito-core:2.23.4'
+    // required if you want to use Mockito for Android tests
+    androidTestImplementation 'org.mockito:mockito-android:2.23.4'
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
     implementation 'de.hdodenhof:circleimageview:3.1.0'
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
 
-    // Test helpers for LiveData
-
-    def lifecycle_version = "2.2.0"
-    androidTestImplementation "android.arch.core:core-testing:$lifecycle_version"
+    implementation "com.google.android.gms:play-services-location:17.0.0"
 
 
 }
