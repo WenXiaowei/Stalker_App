@@ -204,211 +204,22 @@
 
 package com.vartmp7.stalker.component;
 
-import android.app.Service;
-import android.app.job.JobScheduler;
-import android.content.Context;
-import android.content.Intent;
-import android.os.Binder;
-import android.os.IBinder;
-import android.util.Log;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 import com.vartmp7.stalker.gsonbeans.Organizzazione;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.stream.Collectors;
 
-import static java.lang.Thread.sleep;
+public class StalkingLocationManager {
+    private StalkerTrackingCallBack callBack;
+    private List<Organizzazione> orgs;
 
-
-public class StalkerTrackingService extends Service {
-    private static final String TAG = "com.vartmp7.stalker.component.StalkerTrackingService";
-    private boolean running;
-    private static final long KM_5 = 5000;
-    private static final long KM_1 = 1000;
-    private List<Organizzazione> trackingOrgs = new ArrayList<>();
-    private ExecutorService executors = Executors.newSingleThreadExecutor();
-    private StalkerServiceCallback callBack;
-
-
-
-    public StalkerTrackingService setCallBack(StalkerServiceCallback callBack) {
+    public StalkingLocationManager(StalkerTrackingCallBack callBack, List<Organizzazione> orgs) {
         this.callBack = callBack;
-        return this;
-    }
-
-    public StalkerTrackingService() {
+        this.orgs = orgs;
     }
 
 
 
-    public class StalkerBinder extends Binder {
-        public void updateTrackingOrganizations(List<Organizzazione> orgs) {
-            StalkerTrackingService.this.trackingOrgs = orgs;
-            if (orgs.size()!=0)
-                startNewThread();
-            else
-                if (current!=null){
-                    if (callBack!=null)
-                        callBack.onTrackingTerminated();
-                    current.setRunning(false);
-                }
-        }
-        public StalkerTrackingService getService() {
-            return StalkerTrackingService.this;
-        }
-    }
-
-    StalkerRunnable current=null;
-    private void startNewThread() {
-        if (current!=null)
-            current.setRunning(false);
-        current = new StalkerRunnable(trackingOrgs
-                .stream()
-                .filter(Organizzazione::isTrackingActive)
-                .collect(Collectors.toList()));
-        new Thread(current).start();
-        Log.d(TAG, " starting");
+    private int stepSinceLastTime(){
 
     }
-
-    @Nullable
-    @Override
-    public IBinder onBind(@NonNull Intent intent) {
-            return new StalkerBinder();
-    }
-
-
-    //viene eseguito solo una volta
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        Log.d(TAG, "onCreate: ");
-        running = true;
-    }
-
-    // viene eseguito solo una volta
-    @Override
-    public void onDestroy() {
-        Log.d(TAG, "onDestroy: ");
-        super.onDestroy();
-
-        running = false;
-//        previousFuture.cancel(true);
-    }
-
-    // viene eseguito ogni volta che si fa operazione di bind
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        return super.onStartCommand(intent, flags, startId);
-    }
-
-    private String timerFormat(int i) {
-        String time = "";
-        int secondi = i % 60;
-        int minuti = ((i - secondi) % 3600) / 60;
-        int ore = (i - secondi - minuti * 60) / 3600;
-        if (ore == 0) {
-            time += "00";
-        } else {
-            time += ore < 10 ? "0" + ore : ore;
-        }
-        time += ":";
-        if (minuti == 0) {
-            time += "00";
-        } else
-            time += (minuti < 10 ? "0" + minuti : minuti);
-        time += ":";
-        if (secondi == 0)
-            time += "00";
-        else time += (secondi < 10 ? "0" + secondi : secondi);
-        return time;
-    }
-    Timer timer = new Timer();
-    private void timer(){
-        timer.schedule(timerTask,0,1000);
-    }
-
-    private TimerTask timerTask = new TimerTask() {
-        @Override
-        public void run() {
-            long millis = System.currentTimeMillis()/1000;
-            callBack.onCurrentStatusChanged();
-        }
-    };
-
-    private class StalkerRunnable implements Runnable {
-        private List<Organizzazione> trackingOrgs;
-        int i = 0;
-        private boolean isRunning;
-
-        private StalkerRunnable(List<Organizzazione> orgs) {
-            this.trackingOrgs = orgs;
-            isRunning=true;
-        }
-
-        @Override
-        public synchronized void run() {
-
-            Log.d(TAG, "run: thread Starting");
-            while (isRunning) {
-                Log.d(TAG, "run: threa running" + i);
-                //                        todo aggiungere il meccanismo del timer e step counter.
-                //                        LocationManager m = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-                //                        SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-                //                        Sensor sensor=sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
-                //                     modificare il textview della schermata di tracciamento
-                JobScheduler scheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
-
-
-                if (trackingOrgs != null)
-                    Log.d(TAG, "run: tracking orgs !=null");
-                else
-                    Log.d(TAG, "run: tracking orgs ==null");
-                //                if (trackingOrgs.size()==0)
-                //                    Log.d(TAG, "run: tracking orgs =0");
-                //                else
-                //                    Log.d(TAG, "run: tracking orgs !=0");
-
-
-                if (trackingOrgs != null) {
-
-                    if (trackingOrgs.size() == 0) {
-                        Log.d(TAG, "run: No organization's tracking");
-                        //                        running = false;
-                    }
-
-                    Log.d(TAG, "run: tracking orgs.size= " + trackingOrgs.size());
-                }
-
-
-                if (callBack != null) {
-                    callBack.onCurrentStatusChanged(new String[]{"torre archimede", "Unipd", timerFormat(i)});
-                }
-
-                try {
-                    sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                i++;
-            }
-            Log.d(TAG, "run: while terminating");
-            if (callBack != null)
-                callBack.onTrackingTerminated();
-        }
-
-        public void setRunning(boolean running) {
-            this.isRunning = running;
-        }
-    }
-
-    ;
 }

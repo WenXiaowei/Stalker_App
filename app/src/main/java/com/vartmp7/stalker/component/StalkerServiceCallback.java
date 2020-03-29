@@ -204,7 +204,7 @@
 
 package com.vartmp7.stalker.component;
 
-public interface StalkerCallback {
+public interface StalkerServiceCallback {
     void onCurrentStatusChanged(String[] str);
 
     void onTrackingTerminated();
