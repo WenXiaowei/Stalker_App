@@ -246,7 +246,17 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
 //        this.mLiveOrgs.setValue(new ArrayList<>());
         this.mLiveOrgs = org;
     }
+    public void activeAllTrackingOrganization(boolean active){
+        List<Organizzazione> lis = mLiveOrgs.getValue(), list= new ArrayList<>();
+        for (Organizzazione org: lis) {
+            if (org.isTracking()){
+                org.setTrackingActive(active);
+            }
+            list.add(org);
 
+        }
+        mLiveOrgs.setValue(list);
+    }
     @Override
     public void updateOrganizzazione(Organizzazione o) {
         List<Organizzazione> l = mLiveOrgs.getValue();
@@ -303,6 +313,7 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
                         }
                         //organizzazioni.clear();
                         //organizzazioni.addAll(responseOrganizzazioni.getOrganizations());
+                        //fixme ogni tanto sputa anche concurrente modification
                         mLiveOrgs.postValue(organizzazioni.stream().distinct().collect(Collectors.toList()));
 //                        Log.d(TAG, "run: dati letti dal file");
                     }

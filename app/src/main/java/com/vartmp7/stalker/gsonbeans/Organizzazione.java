@@ -247,6 +247,8 @@ public class Organizzazione implements Serializable {
     }
 
     public Organizzazione setTracking(boolean tracking) {
+        if (!isTracking)
+            setTrackingActive(false);
         isTracking = tracking;
         return this;
     }

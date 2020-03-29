@@ -220,4 +220,6 @@ public interface OrganizationsLocalSource {
     void removeOrganizzazione(Organizzazione org);
 
     void updateOrganizzazione(Organizzazione org);
+
+    void activeAllTrackingOrganization(boolean active);
 }

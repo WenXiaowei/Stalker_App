@@ -204,6 +204,7 @@
 
 package com.vartmp7.stalker.ui.tracking;
 
+import android.app.ActivityManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -240,6 +241,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 
@@ -255,7 +257,7 @@ public class TrackingFragment extends Fragment {
     private final static int TRACKING_STOP_MSG_CODE = 3;
     private final static String MSG_CODE = "MSG_CODE";
     private TrackingViewModel trackingViewModel;
-    private MutableLiveData<List<Organizzazione>> organizationToTrack;
+    private List<Organizzazione> organizationToTrack;
     private TrackingViewAdapter mAdapter;
     private RecyclerView recyclerView;
     private Button btnStartAllTracking, btnStopAllTracking;
@@ -264,16 +266,11 @@ public class TrackingFragment extends Fragment {
     private View.OnClickListener listener = v -> {
         switch (v.getId()) {
             case R.id.btnStartAll:
-                for (Organizzazione org : organizationToTrack.getValue()) {
-                    org.setTrackingActive(true);
-                    trackingViewModel.updateOrganizzazione(org);
-                }
+                trackingViewModel.activeAllTrackingOrganization(true);
                 startAndBindTrackingService();
-
                 break;
             case R.id.btnStopAll:
-                for (Organizzazione org : organizationToTrack.getValue())
-                    trackingViewModel.updateOrganizzazione(org.setTrackingActive(false));
+                trackingViewModel.activeAllTrackingOrganization(false);
                 stopTrackingService();
                 break;
         }
@@ -286,7 +283,7 @@ public class TrackingFragment extends Fragment {
         public void onServiceConnected(ComponentName name, IBinder service) {
             isBound = true;
             binder = (StalkerTrackingService.StalkerBinder) service;
-            binder.updateTrackingOrganizations(organizationToTrack.getValue());
+            binder.updateTrackingOrganizations(organizationToTrack);
             binder.getService().setCallBack(new StalkerTrackingService.StalkerCallBack() {
 
                 @Override
@@ -310,6 +307,7 @@ public class TrackingFragment extends Fragment {
                 }
 
             });
+            Log.d(TAG, "onServiceConnected: ");
         }
 
         public boolean isBound() {
@@ -320,6 +318,7 @@ public class TrackingFragment extends Fragment {
         public void onServiceDisconnected(ComponentName name) {
             isBound = false;
             binder = null;
+            Log.d(TAG, "onServiceDisconnected: ");
         }
     }
 
@@ -368,15 +367,13 @@ public class TrackingFragment extends Fragment {
     }
 
     private void updateTrackingOrganizationInService() {
+        if (binder==null)
+            startAndBindTrackingService();
         if (binder != null) {
-            List<Organizzazione> orgs = organizationToTrack.getValue().stream()
+            Log.d(TAG, "updateTrackingOrganizationInService");
+            List<Organizzazione> orgs = organizationToTrack.stream()
                     .filter(Organizzazione::isTrackingActive)
                     .collect(Collectors.toList());
-            requireContext().startService(serviceIntent);
-            if (orgs == null)
-                Log.d(TAG, "updateTrackingOrganizationInService: == null");
-            else
-                Log.d(TAG, "updateTrackingOrganizationInService: != null");
             binder.updateTrackingOrganizations(orgs);
         }
     }
@@ -387,19 +384,24 @@ public class TrackingFragment extends Fragment {
 
     private void startAndBindTrackingService() {
         serviceIntent = new Intent(requireContext(), StalkerTrackingService.class);
-        requireContext().startService(serviceIntent);
-        if (!serviceConnection.isBound())
-            requireContext().bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE);
+        requireContext().bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE);
     }
 
 
     private void stopTrackingService() {
         if (serviceIntent != null) {
+            Log.d(TAG, "stopTrackingService: " + serviceConnection.isBound());
             if (serviceConnection.isBound())
                 requireContext().unbindService(serviceConnection);
-            requireContext().stopService(serviceIntent);
-//            serviceIntent = null;
         }
+    }
+
+    private void init(List<Organizzazione> org) {
+        if (org.stream().anyMatch(Organizzazione::isTrackingActive)) {
+            startAndBindTrackingService();
+            updateTrackingOrganizationInService();
+        }
+
     }
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle b) {
@@ -413,38 +415,30 @@ public class TrackingFragment extends Fragment {
 
         recyclerView = root.findViewById(R.id.trackingRecycleView);
 
-        organizationToTrack = new MutableLiveData<>(new ArrayList<>());
 
         trackingViewModel = new ViewModelProvider(requireActivity()).get(TrackingViewModel.class);
         trackingViewModel.setRepository(OrganizationsRepository.getInstance());
-
+        organizationToTrack = trackingViewModel.getListOrganizzazione()
+                .getValue()
+                .stream()
+                .filter(Organizzazione::isTracking)
+                .filter(Organizzazione::isTrackingActive)
+                .collect(Collectors.toList());
+        init(organizationToTrack);
         mAdapter = new TrackingViewAdapter(getContext(), trackingViewModel);
         trackingViewModel.getListOrganizzazione().observe(getViewLifecycleOwner(),
                 list -> {
                     Log.d(TAG, "onCreateView: on Changed ");
                     List<Organizzazione> lis = list.stream().filter(Organizzazione::isTracking).collect(Collectors.toList());
                     mAdapter.setList(lis);
-                    organizationToTrack.setValue(lis.stream().filter(Organizzazione::isTrackingActive).collect(Collectors.toList()));
+//                    if (lis.stream().anyMatch(Organizzazione::isTrackingActive)) {
+                    organizationToTrack = lis.stream().filter(Organizzazione::isTrackingActive).collect(Collectors.toList());
                     updateTrackingOrganizationInService();
+//                    }
                 });
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(mAdapter);
-
-        organizationToTrack.observe(getViewLifecycleOwner(), list -> {
-            if (binder == null) {
-                startAndBindTrackingService();
-            }
-            if (binder != null){
-                if (list==null)
-                    Log.d(TAG, "onCreateView: ==null");
-                else
-                    Log.d(TAG, "onCreateView:!=null");
-                binder.updateTrackingOrganizations(list);
-            }
-
-        });
-
 
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
             @Override

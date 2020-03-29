@@ -205,27 +205,23 @@
 package com.vartmp7.stalker;
 
 import android.app.Service;
-import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
 import android.content.Context;
 import android.content.Intent;
-import android.hardware.Sensor;
-import android.hardware.SensorManager;
-import android.location.LocationManager;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
 
-import androidx.lifecycle.MutableLiveData;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
-import com.google.common.collect.Lists;
 import com.vartmp7.stalker.gsonbeans.Organizzazione;
 
-import java.util.Calendar;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 import static java.lang.Thread.sleep;
 
@@ -235,33 +231,37 @@ public class StalkerTrackingService extends Service {
     private boolean running;
     private static final long KM_5 = 5000;
     private static final long KM_1 = 1000;
-    private MutableLiveData<List<Organizzazione>> trackingOrgs;
-    private String currentStatus;
+    private List<Organizzazione> trackingOrgs = new ArrayList<>();
     private ExecutorService executors = Executors.newSingleThreadExecutor();
+    private StalkerCallBack callBack;
+
+
 
     public StalkerTrackingService setCallBack(StalkerCallBack callBack) {
         this.callBack = callBack;
         return this;
     }
 
-    private StalkerCallBack callBack;
-
     public StalkerTrackingService() {
     }
 
     public interface StalkerCallBack {
         void onCurrentStatusChanged(String[] str);
+
         void onTrackingTerminated();
     }
 
     public class StalkerBinder extends Binder {
         public void updateTrackingOrganizations(List<Organizzazione> orgs) {
-            if (orgs!=null)
-                Log.d(TAG, "updateTrackingOrganizations: != null");
+            StalkerTrackingService.this.trackingOrgs = orgs;
+            if (orgs.size()!=0)
+                startNewThread();
             else
-                Log.d(TAG, "updateTrackingOrganizations: = null");
-
-            StalkerTrackingService.this.trackingOrgs = new MutableLiveData<>(orgs);
+                if (current!=null){
+                    if (callBack!=null)
+                        callBack.onTrackingTerminated();
+                    current.setRunning(false);
+                }
         }
 
         public StalkerTrackingService getService() {
@@ -269,10 +269,26 @@ public class StalkerTrackingService extends Service {
         }
     }
 
-    @Override
-    public IBinder onBind(Intent intent) {
-        return new StalkerBinder();
+    StalkerRunnable current=null;
+    private void startNewThread() {
+        if (current!=null)
+            current.setRunning(false);
+        current = new StalkerRunnable(trackingOrgs
+                .stream()
+                .filter(Organizzazione::isTrackingActive)
+                .collect(Collectors.toList()));
+
+        new Thread(current).start();
+        Log.d(TAG, " starting");
+
     }
+
+    @Nullable
+    @Override
+    public IBinder onBind(@NonNull Intent intent) {
+            return new StalkerBinder();
+    }
+
 
     //viene eseguito solo una volta
     @Override
@@ -280,7 +296,6 @@ public class StalkerTrackingService extends Service {
         super.onCreate();
         Log.d(TAG, "onCreate: ");
         running = true;
-        executors.execute(stalkerTrackingRunnable);
     }
 
     // viene eseguito solo una volta
@@ -288,14 +303,15 @@ public class StalkerTrackingService extends Service {
     public void onDestroy() {
         Log.d(TAG, "onDestroy: ");
         super.onDestroy();
+
         running = false;
+//        previousFuture.cancel(true);
     }
 
     // viene eseguito ogni volta che si fa operazione di bind
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (executors.isShutdown())
-            executors.execute(stalkerTrackingRunnable);
+
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -321,40 +337,49 @@ public class StalkerTrackingService extends Service {
         return time;
     }
 
-    private Runnable stalkerTrackingRunnable = new Runnable() {
+    private class StalkerRunnable implements Runnable {
+        private List<Organizzazione> trackingOrgs;
         int i = 0;
+        private boolean isRunning;
+
+
+        private StalkerRunnable(List<Organizzazione> orgs) {
+            this.trackingOrgs = orgs;
+            isRunning=true;
+        }
+
         @Override
         public synchronized void run() {
 
             Log.d(TAG, "run: thread Starting");
-            while (running) {
-                Log.d(TAG, "run: threa running"+i);
-//                        todo aggiungere il meccanismo del timer e step counter.
-//                        LocationManager m = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-//                        SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-//                        Sensor sensor=sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
-//                     modificare il textview della schermata di tracciamento
+            while (isRunning) {
+                Log.d(TAG, "run: threa running" + i);
+                //                        todo aggiungere il meccanismo del timer e step counter.
+                //                        LocationManager m = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+                //                        SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+                //                        Sensor sensor=sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
+                //                     modificare il textview della schermata di tracciamento
                 JobScheduler scheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
 
 
-                if (trackingOrgs!=null)
+                if (trackingOrgs != null)
                     Log.d(TAG, "run: tracking orgs !=null");
                 else
                     Log.d(TAG, "run: tracking orgs ==null");
-//                if (trackingOrgs.size()==0)
-//                    Log.d(TAG, "run: tracking orgs =0");
-//                else
-//                    Log.d(TAG, "run: tracking orgs !=0");
+                //                if (trackingOrgs.size()==0)
+                //                    Log.d(TAG, "run: tracking orgs =0");
+                //                else
+                //                    Log.d(TAG, "run: tracking orgs !=0");
 
 
                 if (trackingOrgs != null) {
 
-                    if (trackingOrgs.getValue().size() == 0){
+                    if (trackingOrgs.size() == 0) {
                         Log.d(TAG, "run: No organization's tracking");
-//                        running = false;
+                        //                        running = false;
                     }
 
-                    Log.d(TAG, "run: tracking orgs.size= " + trackingOrgs.getValue().size());
+                    Log.d(TAG, "run: tracking orgs.size= " + trackingOrgs.size());
                 }
 
 
@@ -373,5 +398,11 @@ public class StalkerTrackingService extends Service {
             if (callBack != null)
                 callBack.onTrackingTerminated();
         }
-    };
+
+        public void setRunning(boolean running) {
+            this.isRunning = running;
+        }
+    }
+
+    ;
 }

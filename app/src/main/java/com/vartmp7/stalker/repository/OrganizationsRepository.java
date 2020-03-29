@@ -209,6 +209,7 @@ import androidx.lifecycle.LiveData;
 import com.vartmp7.stalker.gsonbeans.Organizzazione;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 public class OrganizationsRepository {
 
@@ -228,6 +229,9 @@ public class OrganizationsRepository {
 
     public void updateOrganizzazione(Organizzazione o){
        organizationsLocalSource.updateOrganizzazione(o);
+    }
+    public void activeAllTrackingOrganization(boolean active){
+        organizationsLocalSource.activeAllTrackingOrganization(active);
     }
 
     public synchronized static OrganizationsRepository init(OrganizationsLocalSource orgsLocalSource, OrganizationsWebSource orgsWebSource, FavoritesSource fa){

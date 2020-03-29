@@ -217,16 +217,21 @@ import java.util.List;
  * @author Xiaowei Wen, Lorenzo Taschin
  */
 public class TrackingViewModel extends ViewModel {
-    public static final String TAG ="com.vartmp7.stalker.ui.home.HomeViewModel";
+    public static final String TAG = "com.vartmp7.stalker.ui.home.HomeViewModel";
 
     private OrganizationsRepository repository;
     private MediatorLiveData<List<Organizzazione>> listMediatorLiveData;
 
-    public LiveData<List<Organizzazione>> getListOrganizzazione(){
+    public LiveData<List<Organizzazione>> getListOrganizzazione() {
         return repository.getOrganizzazioni();
     }
-    public void updateOrganizzazione(Organizzazione o){
+
+    public void updateOrganizzazione(Organizzazione o) {
         repository.updateOrganizzazione(o);
+    }
+
+    public void activeAllTrackingOrganization(boolean active){
+        repository.activeAllTrackingOrganization(active);
     }
 
     public void setRepository(OrganizationsRepository repository) {
