@@ -206,6 +206,7 @@
 package com.vartmp7.stalker;
 
 import android.content.Context;
+import android.util.Log;
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.Lifecycle;
@@ -233,6 +234,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -240,9 +242,12 @@ import static org.mockito.Mockito.when;
 
 @RunWith(AndroidJUnit4.class)
 public class FileOrganizationsLocalSourceTest {
+    private static final String TAG ="com.vartmp7.stalker.FileOrganizationsLocalSourceTest" ;
     private FileOrganizationsLocalSource source;
     private Observer<List<Organizzazione>> observer;
+    private List<Organizzazione> expected;
     private static boolean triggered;
+    private LifecycleOwner lifecycleOwner;
 
 
     @Rule
@@ -269,22 +274,19 @@ public class FileOrganizationsLocalSourceTest {
     @Before
     public void setUpTest(){
         Context context = InstrumentationRegistry.getInstrumentation().getContext();
-        LifecycleOwner lifeCycleOwner = mockLifecycleOwner();
+        this.lifecycleOwner = mockLifecycleOwner();
         source = new FileOrganizationsLocalSource("prova.json",context,new MutableLiveData<>());
-        source.getOrganizzazioni().observe(lifeCycleOwner, new Observer<List<Organizzazione>>() {
-            @Override
-            public void onChanged(List<Organizzazione> organizzaziones) {
-                setTriggered();
-                assertTrue(triggered);
-            }
-        });
     }
 
     @Test
-    public void notifyObserversOnChange(){
-        source.saveOrganizzazioni(Arrays.asList(new Organizzazione().setId(12)));
-
-
+    public void test(){
+        expected = Arrays.asList(new Organizzazione().setId(12));
+        source.getOrganizzazioni().observe(lifecycleOwner,organizzazioni->{
+            Log.d(TAG,"triggered");
+            organizzazioni.forEach(organizzazione -> Log.d(TAG,"id: "+organizzazione.getId()+", name: "+organizzazione.getName()));
+            assertEquals(organizzazioni,expected);
+        });
+        source.saveOrganizzazioni(expected);
     }
 
 }
