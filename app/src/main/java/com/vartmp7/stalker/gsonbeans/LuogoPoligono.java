@@ -245,16 +245,10 @@ public class LuogoPoligono extends AbstractLuogo {
     @NonNull
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-
-        for (Coordinata c : getCoordinate()) {
-            builder.append(c.toString());
-        }
-
         return "\nid: " + getId() +
                 "\nNome: " + getName() +
                 "\nNum. Max Persone " + getNum_max_people() +
-                "\nCoordinate: " + builder.toString();
+                "\nCoordinate: " + getCoordinate().toString();
     }
 
 

@@ -213,7 +213,6 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.util.Log;
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -228,7 +227,6 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.protobuf.DoubleValue;
 import com.vartmp7.stalker.R;
 import com.vartmp7.stalker.component.CallBack;
 import com.vartmp7.stalker.component.StalkerServiceCallback;
@@ -237,8 +235,6 @@ import com.vartmp7.stalker.gsonbeans.Organizzazione;
 import com.vartmp7.stalker.repository.OrganizationsRepository;
 
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -261,31 +257,7 @@ public class TrackingFragment extends Fragment {
     private TrackingViewAdapter mAdapter;
     private TextView tvCurrentStatus;
     private StalkerTrackingService.StalkerBinder binder;
-    private CallBack callback= new StalkerServiceCallback(handler) {
-        @Override
-        public void onCurrentStatusChanged(String[] str) {
-            Message msg = new Message();
-            Bundle b = new Bundle();
-            b.putInt(MSG_CODE, TRACKING_MSG_CODE);
-            b.putStringArray(PLACE_MSG, str);
-            msg.setData(b);
-            handler.sendMessage(msg);
 
-            List<Pair<Double, Double>> lis = new ArrayList<>(Arrays.asList(new Pair<>(1d,2d)));
-
-        }
-
-        @Override
-        public void onTrackingTerminated() {
-            handler.sendEmptyMessage(TRACKING_STOP_MSG_CODE);
-        }
-
-        @Override
-        public void onInitializingTracking() {
-            handler.sendEmptyMessage(TRACKING_INITIALIZING_MSG_CODE);
-        }
-
-    };
     private StalkerTrackingServiceConnetion serviceConnection = new StalkerTrackingServiceConnetion();
 
     private View.OnClickListener listener = v -> {
@@ -378,7 +350,29 @@ public class TrackingFragment extends Fragment {
     }
 
     private Handler handler = new StalkerHandler(this);
+    private CallBack callback= new StalkerServiceCallback(handler) {
+        @Override
+        public void onCurrentStatusChanged(String[] str) {
+            Message msg = new Message();
+            Bundle b = new Bundle();
+            b.putInt(MSG_CODE, TRACKING_MSG_CODE);
+            b.putStringArray(PLACE_MSG, str);
+            msg.setData(b);
+            handler.sendMessage(msg);
 
+        }
+
+        @Override
+        public void onTrackingTerminated() {
+            handler.sendEmptyMessage(TRACKING_STOP_MSG_CODE);
+        }
+
+        @Override
+        public void onInitializingTracking() {
+            handler.sendEmptyMessage(TRACKING_INITIALIZING_MSG_CODE);
+        }
+
+    };
     private Intent serviceIntent;
 
     private void startAndBindTrackingService() {
