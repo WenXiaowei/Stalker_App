@@ -250,7 +250,12 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
     @Override
     public void updateOrganizzazione(Organizzazione o) {
         List<Organizzazione> l = mLiveOrgs.getValue();
-        int pos = -1;
+        if(l.remove(o)){
+            l.add(o);
+            mLiveOrgs.setValue(l);
+        }
+
+        /*int pos = -1;
         for (int i =0; i< l.size()&& pos==-1; i++)
             if (o.getId()==l.get(i).getId())
                 pos=i;
@@ -260,7 +265,7 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
             l.add(pos, o);
             saveOrganizzazioni(l);
             mLiveOrgs.setValue(l);
-        }
+        }*/
     }
 
 

@@ -368,10 +368,17 @@ dependencies {
     implementation "androidx.recyclerview:recyclerview:1.1.0"
     implementation 'com.google.android.material:material:1.1.0'
 
+    def mockito_version = "2.23.4"
     // required if you want to use Mockito for unit tests
-    testImplementation 'org.mockito:mockito-core:2.23.4'
+    testImplementation "org.mockito:mockito-core:$mockito_version"
     // required if you want to use Mockito for Android tests
-    androidTestImplementation 'org.mockito:mockito-android:2.23.4'
+    androidTestImplementation "org.mockito:mockito-android:$mockito_version"
+
+    def arch_version = "2.1.0"
+
+    // Test helpers for LiveData
+    androidTestImplementation "android.arch.core:core-testing:$arch_version"
+
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
     implementation 'de.hdodenhof:circleimageview:3.1.0'
     implementation 'com.github.bumptech.glide:glide:4.11.0'

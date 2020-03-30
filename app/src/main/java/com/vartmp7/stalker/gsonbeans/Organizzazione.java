@@ -436,7 +436,7 @@ public class Organizzazione implements Serializable {
         if (this == o) return true;
         if (!(o instanceof Organizzazione)) return false;
         Organizzazione that = (Organizzazione) o;
-        return getId() == that.getId() &&
+        return getId() == that.getId() /*&&
                 Objects.equals(getAddress(), that.getAddress()) &&
                 Objects.equals(getCity(), that.getCity()) &&
                 Objects.equals(getEmail(), that.getEmail()) &&
@@ -449,7 +449,7 @@ public class Organizzazione implements Serializable {
                 Objects.equals(getLdap_common_name(), that.getLdap_common_name()) &&
                 Objects.equals(getLdap_domain_component(), that.getLdap_domain_component()) &&
                 Objects.equals(getLdap_port(), that.getLdap_port()) &&
-                Objects.equals(getLuoghi(), that.getLuoghi());
+                Objects.equals(getLuoghi(), that.getLuoghi())*/;
     }
 
     @Override

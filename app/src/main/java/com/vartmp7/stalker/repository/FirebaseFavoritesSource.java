@@ -250,17 +250,29 @@ public class FirebaseFavoritesSource implements FavoritesSource {
         this.userId = userId;
         //this.organizationsRepo = orgRepo;
         this.db = db;
+        initUserStorage();
     }
 
     public void setUserID(String userId) {
         this.userId = userId;
+        initUserStorage();
     }
 
 
-    public void initUserStorage(String userId) {
-        Map<String, Object> userData = new HashMap<>();
-        userData.put(FIELDNAME_ORGANIZZAZIONI, new ArrayList<Long>());
-        db.collection("utenti").document(userId).set(userData);
+    public void initUserStorage() {
+        db.collection("utenti").document(userId)
+            .get()
+            .addOnSuccessListener(docSnapshot->{
+                if(!docSnapshot.exists()){
+                    Log.d(TAG, "initUserStorage(!document...exists()): ");
+                    Map<String, Object> userData = new HashMap<>();
+                    userData.put(FIELDNAME_ORGANIZZAZIONI, new ArrayList<Long>());
+                    db.collection("utenti").document(userId).set(userData);
+                }
+            }).addOnFailureListener(e->{
+                Log.e(TAG, "initUserStorage: "+e.getMessage());
+            });
+
     }
 
     @Override
