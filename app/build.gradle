@@ -380,7 +380,8 @@ dependencies {
 
     // Test helpers for LiveData
     androidTestImplementation "android.arch.core:core-testing:$arch_version"
-
+    //todo a me va se c'è quella sotto. senza non mi prendere InstantTaskExecutorRule
+    androidTestImplementation "androidx.arch.core:core-testing:2.1.0"
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
     implementation 'de.hdodenhof:circleimageview:3.1.0'
     implementation 'com.github.bumptech.glide:glide:4.11.0'
