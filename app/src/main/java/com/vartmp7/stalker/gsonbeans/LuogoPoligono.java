@@ -265,7 +265,7 @@ public class LuogoPoligono extends AbstractLuogo {
     }
 
     @Override
-    double distanceTo(Coordinata c) {
+    public double distanceTo(Coordinata c) {
         return getCenter().getDistanceTo(c);
     }
 

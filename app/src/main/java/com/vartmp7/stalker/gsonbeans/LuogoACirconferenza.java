@@ -249,7 +249,7 @@ public class LuogoACirconferenza extends AbstractLuogo {
     }
 
     @Override
-    double distanceTo(@NotNull Coordinata c) {
+    public double distanceTo(@NotNull Coordinata c) {
         return c.getDistanceTo(centro);
     }
 
