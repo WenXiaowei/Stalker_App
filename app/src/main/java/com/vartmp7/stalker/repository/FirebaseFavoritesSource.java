@@ -221,6 +221,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
+
 
 public class FirebaseFavoritesSource implements FavoritesSource {
     public static final String TAG = "com.vartmp7.stalker.repository.FirebaseFavoritesRepository";
@@ -228,6 +233,9 @@ public class FirebaseFavoritesSource implements FavoritesSource {
     private static final String FIELDNAME_ORGANIZZAZIONI = "organizzazioni";
     private OrganizationsRepository organizationsRepo;
     private FirebaseFirestore db;
+
+    @Getter(AccessLevel.PUBLIC)
+    @Setter(AccessLevel.PUBLIC)
     private String userId;
 
     /*
@@ -252,12 +260,6 @@ public class FirebaseFavoritesSource implements FavoritesSource {
         this.db = db;
         initUserStorage();
     }
-
-    public void setUserID(String userId) {
-        this.userId = userId;
-        initUserStorage();
-    }
-
 
     public void initUserStorage() {
         db.collection("utenti").document(userId)

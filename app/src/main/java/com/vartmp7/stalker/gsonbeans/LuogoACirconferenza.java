@@ -209,6 +209,10 @@ import com.vartmp7.stalker.gsonbeans.placecomponent.Coordinata;
 
 import java.util.Objects;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
+
 /**
  * @author Xiaowei Wen, Lorenzo Taschin
  * @version 1.0
@@ -216,8 +220,14 @@ import java.util.Objects;
  * Usato per rappresentare dei luoghi con una forma di circonferenza.
  */
 public class LuogoACirconferenza extends AbstractLuogo {
-    public static final String TAG ="com.vartmp7.stalker.gsonbeans.LuogoACirconferenza";
+    public static final String TAG = "com.vartmp7.stalker.gsonbeans.LuogoACirconferenza";
+    @Getter
+    @Setter
+    @Accessors(chain = true)
     private Coordinata centro;
+    @Getter
+    @Setter
+    @Accessors(chain = true)
     private Double raggio;
 
     @Override
@@ -234,9 +244,10 @@ public class LuogoACirconferenza extends AbstractLuogo {
         return Objects.hash(getCentro(), getRaggio());
     }
 
-    public LuogoACirconferenza(long id, String name){
-        super(id,name);
+    public LuogoACirconferenza(long id, String name) {
+        super(id, name);
     }
+
     LuogoACirconferenza(long id, String name, Coordinata centro, double raggio) {
         super(id, name);
         this.centro = centro;
@@ -255,21 +266,4 @@ public class LuogoACirconferenza extends AbstractLuogo {
         return distanza <= raggio;
     }
 
-    public Coordinata getCentro() {
-        return centro;
-    }
-
-    public LuogoACirconferenza setCentro(Coordinata centro) {
-        this.centro = centro;
-        return this;
-    }
-
-    public Double getRaggio() {
-        return raggio;
-    }
-
-    public LuogoACirconferenza setRaggio(Double raggio) {
-        this.raggio = raggio;
-        return this;
-    }
 }

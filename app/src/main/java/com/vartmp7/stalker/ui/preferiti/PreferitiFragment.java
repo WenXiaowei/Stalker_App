@@ -236,6 +236,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import lombok.AccessLevel;
+import lombok.Getter;
 import okhttp3.OkHttpClient;
 
 
@@ -248,6 +250,7 @@ public class PreferitiFragment extends Fragment  implements SwipeRefreshLayout.O
     private PreferitiViewModel favViewModel;
     private PreferitiViewAdapter favViewAdapter;
     private RecyclerView favRecyclerView;
+    @Getter(AccessLevel.PUBLIC)
     private MutableLiveData<List<Organizzazione>> listMutableLiveData;
     private SwipeRefreshLayout preferitiSwipeLayout;
 

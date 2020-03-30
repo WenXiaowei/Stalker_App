@@ -231,12 +231,16 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+
 public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
     private static final String TAG = "com.vartmp7.stalker.repository.FileOrganizationsRepository";
     private String fileName;
     private Context context;
     private Gson gson;
     //    List<Organizzazione> organizzazioni;
+    @Getter(AccessLevel.PUBLIC)
     private MutableLiveData<List<Organizzazione>> mLiveOrgs;
 
     public FileOrganizationsLocalSource(String fileName, Context context, MutableLiveData<List<Organizzazione>> org) {

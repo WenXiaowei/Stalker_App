@@ -208,11 +208,27 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import java.util.Objects;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
+
 public class Lato {
     public static final String TAG = "com.vartmp7.stalker.gsonbeans.placecomponent.lato";
+    @Getter
+    @Setter
+    @Accessors(chain = true)
     private double startX;
+    @Getter
+    @Setter
+    @Accessors(chain = true)
     private double startY;
+    @Getter
+    @Setter
+    @Accessors(chain = true)
     private double endX;
+    @Getter
+    @Setter
+    @Accessors(chain = true)
     private double endY;
 
     public Lato(Coordinata a, Coordinata b) {
@@ -236,38 +252,6 @@ public class Lato {
     @Override
     public int hashCode() {
         return Objects.hash(getStartX(), getStartY(), getEndX(), getEndY());
-    }
-
-    public double getStartX() {
-        return startX;
-    }
-
-    public void setStartX(double startX) {
-        this.startX = startX;
-    }
-
-    public double getStartY() {
-        return startY;
-    }
-
-    public void setStartY(double startY) {
-        this.startY = startY;
-    }
-
-    public double getEndX() {
-        return endX;
-    }
-
-    public void setEndX(double endX) {
-        this.endX = endX;
-    }
-
-    public double getEndY() {
-        return endY;
-    }
-
-    public void setEndY(double endY) {
-        this.endY = endY;
     }
 
     //restituisce true sse il lato interseca con il segmento che unisce  'coordinata' con (Double.Max_VALUE,Double.MAX_VALUE)

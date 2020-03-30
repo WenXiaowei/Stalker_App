@@ -207,6 +207,10 @@ package com.vartmp7.stalker.gsonbeans;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
+
 /**
  *
  * @author Xiaowei Wen, Lorenzo Taschin
@@ -214,12 +218,11 @@ import java.util.List;
  * https://www.javadoc.io/doc/org.danilopianini/gson-extras/0.2.1/com/google/gson/typeadapters/RuntimeTypeAdapterFactory.html
  */
 public class ResponseLuogo {
-    private static final String TAG="com.vartmp7.stalker.GsonBeans.ResponseLuogo";
-    private List<? extends AbstractLuogo> places;
 
-    public void setLuoghi(List<AbstractLuogo> luoghi) {
-        this.places = luoghi;
-    }
-    public int getPlacesLength(){return places.size();}
+    private static final String TAG="com.vartmp7.stalker.GsonBeans.ResponseLuogo";
+    @Getter @Setter @Accessors(chain = true)
+    private List<? extends AbstractLuogo> luoghi;
+
+    public int getPlacesLength(){return luoghi.size();}
 
 }

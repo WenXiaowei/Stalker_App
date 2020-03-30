@@ -209,6 +209,11 @@ import android.os.Parcelable;
 
 import com.unboundid.ldap.sdk.persist.LDAPGetter;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
@@ -219,272 +224,81 @@ import java.util.Objects;
 public class Organizzazione implements Serializable {
     public static final String TAG = "com.vartmp7.stalker.gsonbeans.Organizzazione";
 
-
+    @Getter(AccessLevel.PUBLIC) @Setter(AccessLevel.PUBLIC) @Accessors(chain = true)
     private String address;
+    @Getter @Setter @Accessors(chain = true)
     private String city;
+    @Getter @Setter @Accessors(chain = true)
     private String email;
+    @Getter @Setter @Accessors(chain = true)
     private long id;
+    @Getter @Setter @Accessors(chain = true)
     private String name;
+    @Getter @Setter @Accessors(chain = true)
     private String nation;
+    @Getter @Setter @Accessors(chain = true)
     private String phone_number;
+    @Getter @Setter @Accessors(chain = true)
     private String postal_code;
+    @Getter @Setter @Accessors(chain = true)
     private String region;
+    @Getter @Setter @Accessors(chain = true)
     private String type;
+    @Getter @Setter @Accessors(chain = true)
     private String ldap_common_name;
+    @Getter @Setter @Accessors(chain = true)
     private String ldap_domain_component;
+    @Getter @Setter @Accessors(chain = true)
     private String ldap_port;
+    @Getter @Setter @Accessors(chain = true)
     private String image_url;
+    @Getter @Setter @Accessors(chain = true)
     private List<? extends AbstractLuogo> luoghi;
+    @Getter @Setter @Accessors(chain = true)
     private boolean isPreferito = false;
+    @Getter @Setter @Accessors(chain = true)
     private boolean isTracking = false;
+    @Getter @Setter @Accessors(chain = true)
     private boolean isExpanded = false;
+    @Getter @Setter @Accessors(chain = true)
     private boolean isLogged = false;
+    @Getter @Setter @Accessors(chain = true)
     private boolean isAnonimo = false;
+    @Getter @Setter @Accessors(chain = true)
     private boolean isTrackingActive=false;
 
-
-    public boolean isTracking() {
-        return isTracking;
-    }
-
-    public Organizzazione setTracking(boolean tracking) {
-        isTracking = tracking;
-        return this;
-    }
-
-    public boolean isExpanded() {
-        return isExpanded;
-    }
-
-    public Organizzazione setExpanded(boolean expanded) {
-        isExpanded = expanded;
-        return this;
-    }
-
-    public boolean isLogged() {
-        return isLogged;
-    }
-
-    public Organizzazione setLogged(boolean logged) {
-        isLogged = logged;
-        return this;
-    }
-
-    public boolean isAnonimo() {
-        return isAnonimo;
-    }
-
-    public Organizzazione setAnonimo(boolean anonimo) {
-        isAnonimo = anonimo;
-        return this;
-    }
-
-    public String getImage_url() {
-        return image_url;
-    }
-
-    public Organizzazione setImage_url(String image_url) {
-        this.image_url = image_url;
-        return this;
-    }
-
-
-    public String getOrgInfo() {
-        return name;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public Organizzazione setAddress(String address) {
-        this.address = address;
-        return this;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public Organizzazione setCity(String city) {
-        this.city = city;
-        return this;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public Organizzazione setEmail(String email) {
-        this.email = email;
-        return this;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public Organizzazione setId(long id) {
-        this.id = id;
-        return this;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public Organizzazione setName(String name) {
-        this.name = name;
-        return this;
-    }
-
-    public String getNation() {
-        return nation;
-    }
-
-    public Organizzazione setNation(String nation) {
-        this.nation = nation;
-        return this;
-    }
-
-    public String getPhone_number() {
-        return phone_number;
-    }
-
-    public Organizzazione setPhone_number(String phone_number) {
-        this.phone_number = phone_number;
-        return this;
-    }
-
-    public String getPostal_code() {
-        return postal_code;
-    }
-
-    public Organizzazione setPostal_code(String postal_code) {
-        this.postal_code = postal_code;
-        return this;
-    }
-
-    public String getRegion() {
-        return region;
-    }
-
-    public Organizzazione setRegion(String region) {
-        this.region = region;
-        return this;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public Organizzazione setType(String type) {
-        this.type = type;
-        return this;
-    }
-
-    public String getLdap_common_name() {
-        return ldap_common_name;
-    }
-
-    public Organizzazione setLdap_common_name(String ldap_common_name) {
-        this.ldap_common_name = ldap_common_name;
-        return this;
-    }
-
-    public String getLdap_domain_component() {
-        return ldap_domain_component;
-    }
-
-    public Organizzazione setLdap_domain_component(String ldap_domain_component) {
-        this.ldap_domain_component = ldap_domain_component;
-        return this;
-    }
-
-    public String getLdap_port() {
-        return ldap_port;
-    }
-
-    public Organizzazione setLdap_port(String ldap_port) {
-        this.ldap_port = ldap_port;
-        return this;
-    }
-
-    public Boolean isPreferito() {
-        return isPreferito;
-    }
-
-    public Organizzazione setPreferito(Boolean preferito) {
-        isPreferito = preferito;
-        return this;
-    }
-
-    public List<? extends AbstractLuogo> getLuoghi() {
-        return luoghi;
-    }
-
-    public Organizzazione setLuoghi(List<? extends AbstractLuogo> luoghi) {
-        this.luoghi = luoghi;
-        return this;
-    }
-
-    public Organizzazione() {
-    }
+    public Organizzazione() {}
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Organizzazione)) return false;
         Organizzazione that = (Organizzazione) o;
-        return getId() == that.getId() /*&&
-                Objects.equals(getAddress(), that.getAddress()) &&
-                Objects.equals(getCity(), that.getCity()) &&
-                Objects.equals(getEmail(), that.getEmail()) &&
-                Objects.equals(getName(), that.getName()) &&
-                Objects.equals(getNation(), that.getNation()) &&
-                Objects.equals(getPhone_number(), that.getPhone_number()) &&
-                Objects.equals(getPostal_code(), that.getPostal_code()) &&
-                Objects.equals(getRegion(), that.getRegion()) &&
-                Objects.equals(getType(), that.getType()) &&
-                Objects.equals(getLdap_common_name(), that.getLdap_common_name()) &&
-                Objects.equals(getLdap_domain_component(), that.getLdap_domain_component()) &&
-                Objects.equals(getLdap_port(), that.getLdap_port()) &&
-                Objects.equals(getLuoghi(), that.getLuoghi())*/;
+        return id == that.id &&
+                isPreferito() == that.isPreferito() &&
+                isTracking() == that.isTracking() &&
+                isExpanded() == that.isExpanded() &&
+                isLogged() == that.isLogged() &&
+                isAnonimo() == that.isAnonimo() &&
+                isTrackingActive() == that.isTrackingActive() &&
+                Objects.equals(address, that.address) &&
+                Objects.equals(city, that.city) &&
+                Objects.equals(email, that.email) &&
+                Objects.equals(name, that.name) &&
+                Objects.equals(nation, that.nation) &&
+                Objects.equals(phone_number, that.phone_number) &&
+                Objects.equals(postal_code, that.postal_code) &&
+                Objects.equals(region, that.region) &&
+                Objects.equals(type, that.type) &&
+                Objects.equals(ldap_common_name, that.ldap_common_name) &&
+                Objects.equals(ldap_domain_component, that.ldap_domain_component) &&
+                Objects.equals(ldap_port, that.ldap_port) &&
+                Objects.equals(image_url, that.image_url) &&
+                Objects.equals(luoghi, that.luoghi);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getAddress(), getCity(), getEmail(), getId(), getName(), getNation(), getPhone_number(), getPostal_code(), getRegion(), getType(), getLdap_common_name(), getLdap_domain_component(), getLdap_port(), isPreferito, getLuoghi());
-    }
-
-    @Override
-    public String toString() {
-        return "Organizzazione{" +
-                "address='" + address + '\'' +
-                ", city='" + city + '\'' +
-                ", email='" + email + '\'' +
-                ", id=" + id +
-                ", name='" + name + '\'' +
-                ", nation='" + nation + '\'' +
-                ", phone_number='" + phone_number + '\'' +
-                ", postal_code='" + postal_code + '\'' +
-                ", region='" + region + '\'' +
-                ", type='" + type + '\'' +
-                ", ldap_common_name='" + ldap_common_name + '\'' +
-                ", ldap_domain_component='" + ldap_domain_component + '\'' +
-                ", ldap_port='" + ldap_port + '\'' +
-                ", isPreferito=" + isPreferito +
-                ", luoghi=" + luoghi +
-                '}';
-    }
-
-
-    public boolean isTrackingActive() {
-        return isTrackingActive;
-    }
-
-    public Organizzazione setTrackingActive(boolean trackingActive) {
-        isTrackingActive = trackingActive;
-        return this;
+        return Objects.hash(address, city, email, id, name, nation, phone_number, postal_code, region, type, ldap_common_name, ldap_domain_component, ldap_port, image_url, luoghi, isPreferito(), isTracking(), isExpanded(), isLogged(), isAnonimo(), isTrackingActive());
     }
 }

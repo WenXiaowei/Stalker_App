@@ -213,12 +213,17 @@ import com.vartmp7.stalker.repository.OrganizationsRepository;
 
 import java.util.List;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * @author Xiaowei Wen, Lorenzo Taschin
  */
 public class TrackingViewModel extends ViewModel {
     public static final String TAG ="com.vartmp7.stalker.ui.home.HomeViewModel";
 
+    @Setter(AccessLevel.PUBLIC) @Getter(AccessLevel.PUBLIC)
     private OrganizationsRepository repository;
     private MediatorLiveData<List<Organizzazione>> listMediatorLiveData;
 
@@ -227,10 +232,6 @@ public class TrackingViewModel extends ViewModel {
     }
     public void updateOrganizzazione(Organizzazione o){
         repository.updateOrganizzazione(o);
-    }
-
-    public void setRepository(OrganizationsRepository repository) {
-        this.repository = repository;
     }
 
 

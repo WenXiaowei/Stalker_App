@@ -229,7 +229,6 @@ public class TrackSignalTest {
             .setEntered(entered)
             .setIdPlace(idPlace)
             .setAuthenticated(authenticated)
-            .setUid_number(uid_number)
             .setUsername(username)
             .setSurname(surname)
             .setDate_time(date_time);
@@ -244,7 +243,6 @@ public class TrackSignalTest {
                 .setEntered(entered)
                 .setIdPlace(idPlace)
                 .setAuthenticated(authenticated)
-                .setUid_number(uid_number)
                 .setUsername(username)
                 .setSurname(surname)
                 .setDate_time(date_time);
@@ -265,7 +263,6 @@ public class TrackSignalTest {
         assertEquals(signal2.isEntered(), trackSignal.isEntered());
         assertEquals(signal2.getIdPlace(), trackSignal.getIdPlace());
         assertEquals(signal2.isAuthenticated(), trackSignal.isAuthenticated());
-        assertEquals(signal2.getUid_number(), trackSignal.getUid_number());
         assertEquals(signal2.getUsername(), trackSignal.getUsername());
         assertEquals(signal2.getSurname(), trackSignal.getSurname());
         assertEquals(signal2.getDate_time(), trackSignal.getDate_time());

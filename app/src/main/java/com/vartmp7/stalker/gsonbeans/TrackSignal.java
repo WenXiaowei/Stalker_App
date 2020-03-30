@@ -208,24 +208,39 @@ import android.util.Log;
 
 import com.google.gson.annotations.Expose;
 
+import java.lang.annotation.Target;
 import java.util.Objects;
 
 /**
  * @author Xiaowei Wen, Lorenzo Taschin
  */
 public class TrackSignal {
+
+
     private static final String TAG="com.vartmp7.stalker.GsonBeans.TrackSignal";
     // Annotazione expose usato indicare quale campo devo venir serializzato
     private long idOrganization;
     private long idPlace=0;
+
+    public static final String LDAP_V3="ldpav3";
+    public static final String GOOGLE="GOOGLE";
+    public static final String FACEBOOK="FACEBOOK";
+
+    @Expose
+    private String auth_type;
+
+    public TrackSignal(long idOrganization) {
+        this.idOrganization = idOrganization;
+    }
+
     @Expose
     private boolean entered=false;
     @Expose
     private boolean authenticated=false;
     @Expose
-    private long uid_number;
-    @Expose
     private String username;
+    @Expose
+    private String password;
     @Expose
     private String surname;
     @Expose
@@ -240,7 +255,7 @@ public class TrackSignal {
                 getIdPlace() == that.getIdPlace() &&
                 isEntered() == that.isEntered() &&
                 isAuthenticated() == that.isAuthenticated() &&
-                getUid_number() == that.getUid_number() &&
+
                 Objects.equals(getUsername(), that.getUsername()) &&
                 Objects.equals(getSurname(), that.getSurname()) &&
                 Objects.equals(getDate_time(), that.getDate_time());
@@ -248,13 +263,12 @@ public class TrackSignal {
 
     @Override
     public int hashCode() {
-        return Objects.hash(getIdOrganization(), getIdPlace(), isEntered(), isAuthenticated(), getUid_number(), getUsername(), getSurname(), getDate_time());
+        return Objects.hash(getIdOrganization(), getIdPlace(), isEntered(), isAuthenticated(), getUsername(), getSurname(), getDate_time());
     }
 
     public TrackSignal(boolean en, boolean au, long uid, String user, String sur, String date) {
         entered = en;
         authenticated = au;
-        uid_number = uid;
         username = user;
         surname = sur;
         date_time = date;
@@ -297,14 +311,6 @@ public class TrackSignal {
         return this;
     }
 
-    public long getUid_number() {
-        return uid_number;
-    }
-
-    public TrackSignal setUid_number(long uid_number) {
-        this.uid_number = uid_number;
-        return this;
-    }
 
     public String getUsername() {
         return username;

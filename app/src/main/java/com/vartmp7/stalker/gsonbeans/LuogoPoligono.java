@@ -205,6 +205,7 @@
 package com.vartmp7.stalker.gsonbeans;
 
 import com.vartmp7.stalker.gsonbeans.placecomponent.RayCasting;
+
 import androidx.annotation.NonNull;
 
 import com.vartmp7.stalker.gsonbeans.AbstractLuogo;
@@ -213,52 +214,47 @@ import com.vartmp7.stalker.gsonbeans.placecomponent.Coordinata;
 import java.util.Arrays;
 import java.util.List;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
+
 /**
  * @author Xiaowei Wen, Lorenzo Taschin
  */
 public class LuogoPoligono extends AbstractLuogo {
+    @Getter
+    @Setter
+    @Accessors(chain = true)
+    private List<Coordinata> coordinate;
 
-    private List<Coordinata> coordinates;
-
-    public LuogoPoligono(){
-        super(0,null);
-    }
-    LuogoPoligono(long id, String name, List<Coordinata> coordinate){
-        super(id,name);
-        this.coordinates =coordinate;
-
-    }
-    LuogoPoligono(long id, String name,  long num_max_people,List<Coordinata> coordinate) {
-        super(id,name,num_max_people);
-        this.coordinates = coordinate;
+    public LuogoPoligono() {
+        super(0, null);
     }
 
-    public List<Coordinata> getCoordinate() {
-        return coordinates;
+    LuogoPoligono(long id, String name, List<Coordinata> coordinate) {
+        super(id, name);
+        this.coordinate = coordinate;
+
     }
 
-    public LuogoPoligono setCoordinate(List<Coordinata> coordinate) {
-        this.coordinates = coordinate;
-        return this;
+    LuogoPoligono(long id, String name, long num_max_people, List<Coordinata> coordinate) {
+        super(id, name, num_max_people);
+        this.coordinate = coordinate;
     }
+
+
     @NonNull
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-
-        for (Coordinata c : getCoordinate()) {
-            builder.append(c.toString());
-        }
-
         return "\nid: " + getId() +
                 "\nNome: " + getName() +
                 "\nNum. Max Persone " + getNum_max_people() +
-                "\nCoordinate: " + builder.toString();
+                "\nCoordinate: " + getCoordinate().toString();
     }
 
 
     @Override
     boolean isInside(Coordinata c) {
-        return new RayCasting(getCoordinate(),c).isPointInside();
+        return new RayCasting(getCoordinate(), c).isPointInside();
     }
 }
