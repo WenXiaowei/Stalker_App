@@ -228,14 +228,14 @@ class StalkerServiceRunnable implements Runnable {
     private List<Organizzazione> trackingOrgs;
     private int i = 0;
     private boolean isRunning;
-    private StalkerServiceCallback callBack;
+    private CallBack callBack;
     private FusedLocationProviderClient fusedLocationProviderClient;
     private SensorManager sensorManager;
     private Coordinata coordinata = null;
 
     StalkerServiceRunnable(FusedLocationProviderClient fusedLocationProviderClient,
                            SensorManager sensorManager,
-                           StalkerServiceCallback callBack, List<Organizzazione> trackingOrg) {
+                           CallBack callBack, List<Organizzazione> trackingOrg) {
         this.trackingOrgs = trackingOrg;
         this.isRunning = true;
         this.callBack = callBack;

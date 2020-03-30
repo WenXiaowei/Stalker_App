@@ -204,8 +204,14 @@
 
 package com.vartmp7.stalker.component;
 
-public interface StalkerServiceCallback {
-    void onCurrentStatusChanged(String[] str);
-    void onTrackingTerminated();
-    void onInitializingTracking();
+import android.os.Handler;
+
+
+public abstract class StalkerServiceCallback implements CallBack{
+    private Handler handler;
+    public StalkerServiceCallback(Handler handler) {
+        this.handler = handler;
+    }
+
+
 }

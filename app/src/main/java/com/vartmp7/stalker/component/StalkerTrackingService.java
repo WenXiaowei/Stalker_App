@@ -238,11 +238,11 @@ public class StalkerTrackingService extends Service {
     private boolean running;
 
     private List<Organizzazione> trackingOrgs = new ArrayList<>();
-    private StalkerServiceCallback callBack;
+    private CallBack callBack;
     StalkerServiceRunnable current = null;
 
 
-    public StalkerTrackingService setCallBack(StalkerServiceCallback callBack) {
+    public StalkerTrackingService setCallBack(CallBack callBack) {
         this.callBack = callBack;
         return this;
     }
