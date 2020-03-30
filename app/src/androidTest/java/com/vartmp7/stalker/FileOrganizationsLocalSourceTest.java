@@ -232,6 +232,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -273,20 +274,44 @@ public class FileOrganizationsLocalSourceTest {
 
     @Before
     public void setUpTest(){
-        Context context = InstrumentationRegistry.getInstrumentation().getContext();
+        Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
         this.lifecycleOwner = mockLifecycleOwner();
-        source = new FileOrganizationsLocalSource("prova.json",context,new MutableLiveData<>());
+        List<Organizzazione> orgs = Arrays.asList(
+                new Organizzazione().setId(1).setName("asd").setTracking(true),
+                new Organizzazione().setId(2).setName("lol").setTracking(false),
+                new Organizzazione().setId(3).setName("lll").setTracking(true)
+        );
+        source = new FileOrganizationsLocalSource("prova.json",context,new MutableLiveData<>(orgs));
     }
 
     @Test
-    public void test(){
+    public void saveTest(){
+        Log.d(TAG,"as");
         expected = Arrays.asList(new Organizzazione().setId(12));
         source.getOrganizzazioni().observe(lifecycleOwner,organizzazioni->{
-            Log.d(TAG,"triggered");
+            Log.d(TAG, "saveTest: triggered");
             organizzazioni.forEach(organizzazione -> Log.d(TAG,"id: "+organizzazione.getId()+", name: "+organizzazione.getName()));
             assertEquals(organizzazioni,expected);
         });
         source.saveOrganizzazioni(expected);
     }
+
+//    @Test
+//    public void updateTest(){
+//        Organizzazione o = source.getOrganizzazioni().getValue().get(0);
+//        expected = new ArrayList<>(source.getOrganizzazioni().getValue());
+//        expected.add(o);
+//        expected.sort(Comparator.comparing(Organizzazione::getId));
+//
+//        source.getOrganizzazioni().observe(lifecycleOwner,organizzazioni->{
+//            Log.d(TAG, "updateTest: observer triggered");
+//            organizzazioni.sort(Comparator.comparing(Organizzazione::getId));
+//            organizzazioni.forEach(organizzazione -> Log.d(TAG,"id: "+organizzazione.getId()+", name: "+organizzazione.getName()));
+//            assertEquals(organizzazioni,expected);
+//        });
+//        o.setName("updated").setPreferito(false).setTracking(false);
+//        source.updateOrganizzazione(o);
+//
+//    }
 
 }

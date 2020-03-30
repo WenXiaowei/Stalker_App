@@ -273,12 +273,13 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
     public LiveData<List<Organizzazione>> getOrganizzazioni() {
         //MutableLiveData<List<Organizzazione>> mLiveOrgs = new MutableLiveData<>();
         //this.mLiveOrgs.setValue(organizzazioni);
-
+        Log.d("TEST","arrivo qua1");
         new Thread() {
             @Override
             public void run() {
                 super.run();
                 FileInputStream fis = null;
+                Log.d("TEST","arrivo qua 2");
                 try {
 //                    Log.d(TAG, "run: lettura dal file");
                     // fixme sonarqube segna come bug
@@ -310,6 +311,7 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
                         }
                         //organizzazioni.clear();
                         //organizzazioni.addAll(responseOrganizzazioni.getOrganizations());
+                        Log.d("TEST","arrivo qua 3");
                         mLiveOrgs.postValue(organizzazioni.stream().distinct().collect(Collectors.toList()));
 //                        Log.d(TAG, "run: dati letti dal file");
                     }
