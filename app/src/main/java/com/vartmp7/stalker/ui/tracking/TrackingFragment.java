@@ -257,6 +257,27 @@ public class TrackingFragment extends Fragment {
     private TrackingViewAdapter mAdapter;
     private TextView tvCurrentStatus;
     private StalkerTrackingService.StalkerBinder binder;
+    private Handler handler = new StalkerHandler(this);
+    private CallBack callback = new StalkerServiceCallback(handler) {
+        @Override
+        public void onCurrentStatusChanged(String[] str) {
+            Message msg = new Message();
+            Bundle b = new Bundle();
+            b.putInt(MSG_CODE, TRACKING_MSG_CODE);
+            b.putStringArray(PLACE_MSG, str);
+            msg.setData(b);
+            handler.sendMessage(msg);
+        }
+
+        @Override
+        public void onTrackingTerminated() {
+            handler.sendEmptyMessage(TRACKING_STOP_MSG_CODE);
+        }
+
+        @Override
+        public void onInitializingTracking() { handler.sendEmptyMessage(TRACKING_INITIALIZING_MSG_CODE); }
+    };
+    private Intent serviceIntent;
 
     private StalkerTrackingServiceConnetion serviceConnection = new StalkerTrackingServiceConnetion();
 
@@ -306,11 +327,9 @@ public class TrackingFragment extends Fragment {
 
     public static class StalkerHandler extends Handler {
         WeakReference<TrackingFragment> reference;
-
         StalkerHandler(TrackingFragment reference) {
             this.reference = new WeakReference<>(reference);
         }
-
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
@@ -323,11 +342,9 @@ public class TrackingFragment extends Fragment {
             } else if (msg.what == TRACKING_STOP_MSG_CODE) {
                 fragment.tvCurrentStatus.setText(R.string.nessun_organizzazione_ti_sta_stalkerando);
             }
-
-
             //gestione degli messaggi non empty, se sono più di un caso, allora può essere convertito in switch
             int code = msg.getData().getInt(MSG_CODE, -1);
-            if (code == TRACKING_MSG_CODE) {//                    String s = String.format(Locale.getDefault(),"Sei in %s dell'organizzazione da %d", b.getString(PLACE_MSG),1);
+            if (code == TRACKING_MSG_CODE) {
                 String[] a = b.getStringArray(PLACE_MSG);
                 if (a != null && a.length >= 3) {
                     String s = String.format(Locale.getDefault(), "Sei in %s dell'organizzazione \"%s\" da %s", a[0], a[1], a[2]);
@@ -349,31 +366,6 @@ public class TrackingFragment extends Fragment {
         }
     }
 
-    private Handler handler = new StalkerHandler(this);
-    private CallBack callback= new StalkerServiceCallback(handler) {
-        @Override
-        public void onCurrentStatusChanged(String[] str) {
-            Message msg = new Message();
-            Bundle b = new Bundle();
-            b.putInt(MSG_CODE, TRACKING_MSG_CODE);
-            b.putStringArray(PLACE_MSG, str);
-            msg.setData(b);
-            handler.sendMessage(msg);
-
-        }
-
-        @Override
-        public void onTrackingTerminated() {
-            handler.sendEmptyMessage(TRACKING_STOP_MSG_CODE);
-        }
-
-        @Override
-        public void onInitializingTracking() {
-            handler.sendEmptyMessage(TRACKING_INITIALIZING_MSG_CODE);
-        }
-
-    };
-    private Intent serviceIntent;
 
     private void startAndBindTrackingService() {
         serviceIntent = new Intent(requireContext(), StalkerTrackingService.class);
@@ -410,7 +402,7 @@ public class TrackingFragment extends Fragment {
 
 
         trackingViewModel = new ViewModelProvider(requireActivity()).get(TrackingViewModel.class);
-        trackingViewModel.setRepository(OrganizationsRepository.getInstance());
+        trackingViewModel.init(OrganizationsRepository.getInstance());
         organizationToTrack = trackingViewModel.getListOrganizzazione()
                 .getValue()
                 .stream()

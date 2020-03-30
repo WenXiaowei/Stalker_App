@@ -236,7 +236,7 @@ public class TrackingViewModel extends ViewModel {
         repository.updateOrganizzationi(l);
     }
 
-    public void setRepository(OrganizationsRepository repository) {
+    public void init(OrganizationsRepository repository) {
         this.repository = repository;
     }
 
