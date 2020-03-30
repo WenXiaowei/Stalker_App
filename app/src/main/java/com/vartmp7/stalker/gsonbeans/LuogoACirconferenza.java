@@ -210,6 +210,8 @@ import com.vartmp7.stalker.gsonbeans.placecomponent.Coordinata;
 import com.vartmp7.stalker.gsonbeans.placecomponent.Lato;
 import com.vartmp7.stalker.gsonbeans.placecomponent.Retta;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Objects;
 
 /**
@@ -247,8 +249,8 @@ public class LuogoACirconferenza extends AbstractLuogo {
     }
 
     @Override
-    boolean isLessDistantThan(Coordinata c, long distanza) {
-        return c.getDistanceTo(centro) < distanza;
+    double distanceTo(@NotNull Coordinata c) {
+        return c.getDistanceTo(centro);
     }
 
     LuogoACirconferenza(long id, String name, Coordinata centro, double raggio) {

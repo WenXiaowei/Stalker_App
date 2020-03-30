@@ -252,6 +252,6 @@ public abstract class AbstractLuogo {
     }
 
     abstract public Coordinata getCenter();
-    abstract boolean isLessDistantThan(Coordinata c, long distanza);
+    abstract public double distanceTo(Coordinata c);
     abstract boolean isInside(Coordinata c);
 }

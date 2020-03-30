@@ -218,6 +218,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.lifecycle.LifecycleService;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -238,7 +239,7 @@ public class StalkerTrackingService extends Service {
 
     private List<Organizzazione> trackingOrgs = new ArrayList<>();
     private StalkerServiceCallback callBack;
-    StalkerRunnable current = null;
+    StalkerServiceRunnable current = null;
 
 
     public StalkerTrackingService setCallBack(StalkerServiceCallback callBack) {
@@ -271,10 +272,14 @@ public class StalkerTrackingService extends Service {
     private void startNewThread() {
         if (current != null)
             current.stopThread();
-        current = new StalkerRunnable(trackingOrgs
-                .stream()
-                .filter(Organizzazione::isTrackingActive)
-                .collect(Collectors.toList()));
+        current = new StalkerServiceRunnable(LocationServices.getFusedLocationProviderClient(this),
+//                this,
+                (SensorManager) getSystemService(Context.SENSOR_SERVICE),
+                callBack,
+                trackingOrgs
+                        .stream()
+                        .filter(Organizzazione::isTrackingActive)
+                        .collect(Collectors.toList()));
         new Thread(current).start();
         Log.d(TAG, " starting");
 
@@ -308,27 +313,6 @@ public class StalkerTrackingService extends Service {
         return super.onStartCommand(intent, flags, startId);
     }
 
-    private String timerFormat(int i) {
-        String time = "";
-        int secondi = i % 60;
-        int minuti = ((i - secondi) % 3600) / 60;
-        int ore = (i - secondi - minuti * 60) / 3600;
-        if (ore == 0) {
-            time += "00";
-        } else {
-            time += ore < 10 ? "0" + ore : ore;
-        }
-        time += ":";
-        if (minuti == 0) {
-            time += "00";
-        } else
-            time += (minuti < 10 ? "0" + minuti : minuti);
-        time += ":";
-        if (secondi == 0)
-            time += "00";
-        else time += (secondi < 10 ? "0" + secondi : secondi);
-        return time;
-    }
 
     Timer timer = new Timer();
 
@@ -344,89 +328,7 @@ public class StalkerTrackingService extends Service {
         }
     };
 
-    private class StalkerRunnable implements Runnable {
-        private List<Organizzazione> trackingOrgs;
-        int i = 0;
-        private boolean isRunning;
 
-        private StalkerRunnable(List<Organizzazione> orgs) {
-            this.trackingOrgs = orgs;
-            isRunning = true;
-        }
-
-        @Override
-        public synchronized void run() {
-
-            Log.d(TAG, "run: thread Starting");
-            while (isRunning) {
-                Log.d(TAG, "run: threa running" + i);
-                //                        todo aggiungere il meccanismo del timer e step counter.
-                //                        LocationManager m = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-                //                        SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-                //                        Sensor sensor=sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
-                //                     modificare il textview della schermata di tracciamento
-                JobScheduler scheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
-
-
-                FusedLocationProviderClient fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(StalkerTrackingService.this);
-                SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-                Sensor stepSensor= sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
-
-                sensorManager.registerListener(new SensorEventListener() {
-                    @Override
-                    public void onSensorChanged(SensorEvent event) {
-
-                    }
-
-                    @Override
-                    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
-                    }
-                },stepSensor,SensorManager.SENSOR_DELAY_NORMAL);
-
-                if (trackingOrgs != null)
-                    Log.d(TAG, "run: tracking orgs !=null");
-                else
-                    Log.d(TAG, "run: tracking orgs ==null");
-                //                if (trackingOrgs.size()==0)
-                //                    Log.d(TAG, "run: tracking orgs =0");
-                //                else
-                //                    Log.d(TAG, "run: tracking orgs !=0");
-
-
-                if (trackingOrgs != null) {
-
-                    if (trackingOrgs.size() == 0) {
-                        Log.d(TAG, "run: No organization's tracking");
-                        //                        running = false;
-                    }
-
-                    Log.d(TAG, "run: tracking orgs.size= " + trackingOrgs.size());
-                }
-
-
-                if (callBack != null) {
-                    callBack.onCurrentStatusChanged(new String[]{"torre archimede", "Unipd", timerFormat(i)});
-                }
-
-                try {
-                    sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                i++;
-            }
-            Log.d(TAG, "run: while terminating");
-            if (callBack != null)
-                callBack.onTrackingTerminated();
-        }
-
-        void stopThread() {
-            this.isRunning = false;
-        }
-    }
-
-    ;
 }
 /*
 *       if (checkPermissions()) {

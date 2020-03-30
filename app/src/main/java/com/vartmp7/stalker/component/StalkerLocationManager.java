@@ -207,7 +207,13 @@ package com.vartmp7.stalker.component;
 import android.content.Context;
 import android.location.Location;
 
+import androidx.lifecycle.MutableLiveData;
+
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationAvailability;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.Task;
 import com.vartmp7.stalker.gsonbeans.Organizzazione;
@@ -215,24 +221,18 @@ import com.vartmp7.stalker.gsonbeans.placecomponent.Coordinata;
 
 import java.util.List;
 
-public class StalkingLocationManager {
-    private static final long KM_5 = 5000;
-    private static final long KM_1 = 1000;
+public class StalkerLocationManager {
     private FusedLocationProviderClient client;
-    private Context context;
 
-    public StalkingLocationManager(Context context, FusedLocationProviderClient client) {
-        this.context = context;
+    public StalkerLocationManager(FusedLocationProviderClient client) {
         this.client = client;
     }
 
-    private Coordinata getMostPreciseLocation() {
-//        Task<Location> tas = client.getLastLocation();
-//        if (tas.isSuccessful()) {
-//            Location location = tas.getResult();
-//            return new Coordinata(location.getLongitude(), location.getLatitude());
-//        }
-        return null;
+    public void updateMostPreciseLocation(LocationCallback callback) {
+        LocationRequest locationRequest = new LocationRequest();
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        client.requestLocationUpdates(locationRequest, callback, null);
+
     }
 
 

@@ -265,8 +265,8 @@ public class LuogoPoligono extends AbstractLuogo {
     }
 
     @Override
-    boolean isLessDistantThan(Coordinata c, long distanza) {
-        return getCenter().getDistanceTo(c)<distanza;
+    double distanceTo(Coordinata c) {
+        return getCenter().getDistanceTo(c);
     }
 
     @Override

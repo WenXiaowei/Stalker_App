@@ -246,17 +246,18 @@ public class TrackingFragment extends Fragment {
 
     private final static String TAG = "com.vartmp7.stalker.ui.home.HomeFragment";
     private final static String PLACE_MSG = "PLACE_MSG";
-    private final static int PLACE_MSG_CODE = 1;
-    private final static int TIMER_MSG_CODE = 2;
-    private final static int TRACKING_STOP_MSG_CODE = 3;
+    private final static int TRACKING_MSG_CODE = 1;
+    private final static int TRACKING_STOP_MSG_CODE = 2;
+    private final static int TRACKING_INITIALIZING_MSG_CODE = 3;
+
     private final static String MSG_CODE = "MSG_CODE";
     private TrackingViewModel trackingViewModel;
     private List<Organizzazione> organizationToTrack;
     private TrackingViewAdapter mAdapter;
-    private RecyclerView recyclerView;
-    private Button btnStartAllTracking, btnStopAllTracking;
     private TextView tvCurrentStatus;
     private StalkerTrackingService.StalkerBinder binder;
+    private StalkerTrackingServiceConnetion serviceConnection = new StalkerTrackingServiceConnetion();
+
     private View.OnClickListener listener = v -> {
         switch (v.getId()) {
             case R.id.btnStartAll:
@@ -273,6 +274,7 @@ public class TrackingFragment extends Fragment {
     private class StalkerTrackingServiceConnetion implements ServiceConnection {
         private boolean isBound = false;
 
+
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             isBound = true;
@@ -284,7 +286,7 @@ public class TrackingFragment extends Fragment {
                 public void onCurrentStatusChanged(String[] str) {
                     Message msg = new Message();
                     Bundle b = new Bundle();
-                    b.putInt(MSG_CODE, PLACE_MSG_CODE);
+                    b.putInt(MSG_CODE, TRACKING_MSG_CODE);
                     b.putStringArray(PLACE_MSG, str);
                     msg.setData(b);
                     handler.sendMessage(msg);
@@ -292,12 +294,12 @@ public class TrackingFragment extends Fragment {
 
                 @Override
                 public void onTrackingTerminated() {
-                    Message msg = new Message();
-                    Bundle b = new Bundle();
-                    b.putInt(MSG_CODE, TRACKING_STOP_MSG_CODE);
-                    msg.setData(b);
-                    handler.sendMessage(msg);
+                    handler.sendEmptyMessage(TRACKING_STOP_MSG_CODE);
+                }
 
+                @Override
+                public void onInitializingTracking() {
+                    handler.sendEmptyMessage(TRACKING_INITIALIZING_MSG_CODE);
                 }
 
             });
@@ -314,12 +316,8 @@ public class TrackingFragment extends Fragment {
             binder = null;
             Log.d(TAG, "onServiceDisconnected: ");
         }
+
     }
-
-    ;
-
-    private StalkerTrackingServiceConnetion serviceConnection = new StalkerTrackingServiceConnetion();
-
 
     @Override
     public void onDestroy() {
@@ -340,28 +338,28 @@ public class TrackingFragment extends Fragment {
             TrackingFragment fragment = reference.get();
             Bundle b = msg.getData();
 
+            //gestione dei empty message
+            if (msg.what == TRACKING_INITIALIZING_MSG_CODE) {
+                fragment.tvCurrentStatus.setText(R.string.initializing_tracking);
+            } else if (msg.what == TRACKING_STOP_MSG_CODE) {
+                fragment.tvCurrentStatus.setText(R.string.nessun_organizzazione_ti_sta_stalkerando);
+            }
+
+
+            //gestione degli messaggi non empty, se sono più di un caso, allora può essere convertito in switch
             int code = msg.getData().getInt(MSG_CODE, -1);
-            switch (code) {
-                case PLACE_MSG_CODE:
-//                    String s = String.format(Locale.getDefault(),"Sei in %s dell'organizzazione da %d", b.getString(PLACE_MSG),1);
-                    String[] a = b.getStringArray(PLACE_MSG);
-                    if (a != null && a.length >= 3) {
-                        String s = String.format(Locale.getDefault(), "Sei in %s dell'organizzazione \"%s\" da %s", a[0], a[1], a[2]);
-                        fragment.tvCurrentStatus.setText(s);
-                    }
-                    break;
-                case TRACKING_STOP_MSG_CODE:
-                    fragment.tvCurrentStatus.setText(R.string.nessun_organizzazione_ti_sta_stalkerando);
-                    break;
-                case TIMER_MSG_CODE:
-                    break;
-                default:
+            if (code == TRACKING_MSG_CODE) {//                    String s = String.format(Locale.getDefault(),"Sei in %s dell'organizzazione da %d", b.getString(PLACE_MSG),1);
+                String[] a = b.getStringArray(PLACE_MSG);
+                if (a != null && a.length >= 3) {
+                    String s = String.format(Locale.getDefault(), "Sei in %s dell'organizzazione \"%s\" da %s", a[0], a[1], a[2]);
+                    fragment.tvCurrentStatus.setText(s);
+                }
             }
         }
     }
 
     private void updateTrackingOrganizationInService() {
-        if (binder==null)
+        if (binder == null)
             startAndBindTrackingService();
         if (binder != null) {
             Log.d(TAG, "updateTrackingOrganizationInService");
@@ -401,13 +399,13 @@ public class TrackingFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle b) {
         View root = inflater.inflate(R.layout.fragment_tracking, container, false);
 
-        btnStartAllTracking = root.findViewById(R.id.btnStartAll);
-        btnStopAllTracking = root.findViewById(R.id.btnStopAll);
+        Button btnStartAllTracking = root.findViewById(R.id.btnStartAll);
+        Button btnStopAllTracking = root.findViewById(R.id.btnStopAll);
         btnStartAllTracking.setOnClickListener(listener);
         btnStopAllTracking.setOnClickListener(listener);
         tvCurrentStatus = root.findViewById(R.id.tvCurrentStatus);
 
-        recyclerView = root.findViewById(R.id.trackingRecycleView);
+        RecyclerView recyclerView = root.findViewById(R.id.trackingRecycleView);
 
 
         trackingViewModel = new ViewModelProvider(requireActivity()).get(TrackingViewModel.class);

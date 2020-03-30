@@ -205,54 +205,168 @@
 package com.vartmp7.stalker.component;
 
 import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.util.Log;
 
-public class StalkerStepCounter {
-    private SensorManager manager;
-    private int stepFromLastRead = 0;
-    private Sensor sensor;
-    private SensorEventListener li;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationResult;
+import com.vartmp7.stalker.gsonbeans.AbstractLuogo;
+import com.vartmp7.stalker.gsonbeans.Organizzazione;
+import com.vartmp7.stalker.gsonbeans.placecomponent.Coordinata;
 
-    public StalkerStepCounter(SensorManager manager, Sensor sensor) {
-        this.manager = manager;
-        this.sensor = sensor;
-        addListener();
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static java.lang.Thread.sleep;
+
+
+class StalkerServiceRunnable implements Runnable {
+    private static final String TAG = "com.vartmp7.stalker.component.StalkerServiceRunnable";
+    private List<Organizzazione> trackingOrgs;
+    private int i = 0;
+    private boolean isRunning;
+    private StalkerServiceCallback callBack;
+    private FusedLocationProviderClient fusedLocationProviderClient;
+    private SensorManager sensorManager;
+    private Coordinata coordinata = null;
+
+    StalkerServiceRunnable(FusedLocationProviderClient fusedLocationProviderClient,
+                           SensorManager sensorManager,
+                           StalkerServiceCallback callBack, List<Organizzazione> trackingOrg) {
+        this.trackingOrgs = trackingOrg;
+        this.isRunning = true;
+        this.callBack = callBack;
+        this.fusedLocationProviderClient = fusedLocationProviderClient;
+        this.sensorManager = sensorManager;
     }
 
-    private void addListener() {
-        li = new SensorEventListener() {
-            @Override
-            public void onSensorChanged(SensorEvent event) {
-                Sensor sensor1 = event.sensor;
-                float[] values = event.values;
-                int val = -1;
-                if (values.length > 0)
-                    val = (int) values[0];
 
-                if (sensor.getType() == Sensor.TYPE_STEP_COUNTER) {
-                    stepFromLastRead = val;
-//                    Toast.makeText(MainActivity.this,"On sensor changed: "+val, Toast.LENGTH_SHORT).show();
+    @Override
+    public synchronized void run() {
+        Log.d(TAG, "run: thread Starting");
+        if (callBack != null)
+            callBack.onInitializingTracking();
+        Sensor sensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
+        StalkerStepCounter stepCounter = new StalkerStepCounter(sensorManager, sensor);
+        StalkerLocationManager locationManager = new StalkerLocationManager(fusedLocationProviderClient);
+        locationManager.updateMostPreciseLocation(new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                super.onLocationResult(locationResult);
+                coordinata = new Coordinata(locationResult.getLastLocation().getLongitude(),
+                        locationResult.getLastLocation().getLatitude());
+            }
+        });
+
+
+        List<AbstractLuogo> listaLuoghi = new ArrayList<>();
+        for (int j = 0; j < trackingOrgs.size(); j++) {
+            List<? extends AbstractLuogo> luoghi = trackingOrgs.get(j).getLuoghi();
+            listaLuoghi.addAll(luoghi);
+        }
+
+
+        while (isRunning && coordinata != null) {
+            listaLuoghi = listaLuoghi.stream().sorted((o1, o2) -> (int) (o1.distanceTo(coordinata)- o2.distanceTo(coordinata))).collect(Collectors.toList());
+
+            if (listaLuoghi.size()!=0){
+                double minDistance =listaLuoghi.get(0).distanceTo(coordinata);
+
+                if (minDistance<1000){
+                    try {
+                        sleep(60*1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    if (stepCounter.getSteps()>50){
+
+                    }else{
+                        try {
+                            sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+
+                }else if (minDistance<5000){
+
+                }else{
+
                 }
-            }
-
-            @Override
-            public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
             }
-        };
-        manager.registerListener(li, sensor, SensorManager.SENSOR_DELAY_NORMAL);
+            Log.d(TAG, "run: threa running" + i);
+            //                        todo aggiungere il meccanismo del timer e step counter.
+            //                        LocationManager m = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            //                        SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+            //                        Sensor sensor=sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
+            //                     modificare il textview della schermata di tracciamento
+
+
+            if (trackingOrgs != null)
+                Log.d(TAG, "run: tracking orgs !=null");
+            else
+                Log.d(TAG, "run: tracking orgs ==null");
+            //                if (trackingOrgs.size()==0)
+            //                    Log.d(TAG, "run: tracking orgs =0");
+            //                else
+            //                    Log.d(TAG, "run: tracking orgs !=0");
+
+
+            if (trackingOrgs != null) {
+
+                if (trackingOrgs.size() == 0) {
+                    Log.d(TAG, "run: No organization's tracking");
+                    //                        running = false;
+                }
+
+                Log.d(TAG, "run: tracking orgs.size= " + trackingOrgs.size());
+            }
+
+
+            if (callBack != null) {
+                callBack.onCurrentStatusChanged(new String[]{"torre archimede", "Unipd", timerFormat(i)});
+            }
+
+            try {
+                sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            i++;
+        }
+        Log.d(TAG, "run: while terminating");
+        if (callBack != null)
+            callBack.onTrackingTerminated();
     }
 
-    public int getSteps() {
-        int toRe = stepFromLastRead;
-        stepFromLastRead = 0;
-        return toRe;
+    private String timerFormat(int i) {
+        String time = "";
+        int secondi = i % 60;
+        int minuti = ((i - secondi) % 3600) / 60;
+        int ore = (i - secondi - minuti * 60) / 3600;
+        if (ore == 0) {
+            time += "00";
+        } else {
+            time += ore < 10 ? "0" + ore : ore;
+        }
+        time += ":";
+        if (minuti == 0) {
+            time += "00";
+        } else
+            time += (minuti < 10 ? "0" + minuti : minuti);
+        time += ":";
+        if (secondi == 0)
+            time += "00";
+        else time += (secondi < 10 ? "0" + secondi : secondi);
+        return time;
     }
 
-    public void removeListener() {
-        manager.unregisterListener(li);
+    void stopThread() {
+        this.isRunning = false;
     }
-
 }
