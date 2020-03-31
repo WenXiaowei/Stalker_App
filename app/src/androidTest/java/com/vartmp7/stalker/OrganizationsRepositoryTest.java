@@ -187,7 +187,7 @@
  *       same "printed page" as the copyright notice for easier
  *       identification within third-party archives.
  *
- *    Copyright [2020] [VartTmp7]
+ *    Copyright [yyyy] [name of copyright owner]
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -200,201 +200,20 @@
  *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
+ *
  */
 
-package com.vartmp7.stalker.repository;
+package com.vartmp7.stalker;
 
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.util.Log;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
+import org.junit.Before;
+import org.junit.runner.RunWith;
 
-import com.google.gson.Gson;
-import com.vartmp7.stalker.gsonbeans.Organizzazione;
-import com.vartmp7.stalker.gsonbeans.ResponseOrganizzazione;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
-import lombok.AccessLevel;
-import lombok.Getter;
-
-public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
-    private static final String TAG = "com.vartmp7.stalker.repository.FileOrganizationsRepository";
-    private String fileName;
-    private Context context;
-    private Gson gson;
-    //    List<Organizzazione> organizzazioni;
-    @Getter(AccessLevel.PUBLIC)
-    private MutableLiveData<List<Organizzazione>> mLiveOrgs;
-
-    public FileOrganizationsLocalSource(String fileName, Context context, MutableLiveData<List<Organizzazione>> org) {
-        this.fileName = fileName;
-        this.context = context;
-        this.gson = new Gson();
-//        this.mLiveOrgs.setValue(new ArrayList<>());
-        this.mLiveOrgs = org;
-    }
-
-    @Override
-    public void updateOrganizzazione(Organizzazione o) {
-        List<Organizzazione> l = new ArrayList<>(mLiveOrgs.getValue());
-        int pos=-1;
-        for (int i =0; i< l.size()&& pos==-1; i++)
-            if (o.getId()==l.get(i).getId())
-                pos=i;
-//        int pos = l.indexOf(o);
-        if (pos!=-1){
-            l.remove(pos);
-            l.add(pos, o);
-            saveOrganizzazioni(l);
-        }
-    }
+@RunWith(AndroidJUnit4.class)
+public class OrganizationsRepositoryTest {
 
 
-
-
-    @Override
-    public LiveData<List<Organizzazione>> getOrganizzazioni() {
-        //MutableLiveData<List<Organizzazione>> mLiveOrgs = new MutableLiveData<>();
-        //this.mLiveOrgs.setValue(organizzazioni);
-//        Log.d("TEST","arrivo qua1");
-        new Thread() {
-            @Override
-            public void run() {
-                super.run();
-                FileInputStream fis = null;
-//                Log.d("TEST","arrivo qua 2");
-                try {
-//                    Log.d(TAG, "run: lettura dal file");
-                    // fixme sonarqube segna come bug
-                    fis = context.openFileInput(fileName);
-                    // fixme sonarqube segna come bug
-                    InputStreamReader inputStreamReader =new InputStreamReader(fis, StandardCharsets.UTF_8);
-                    StringBuilder stringBuilder = new StringBuilder();
-                    try (BufferedReader reader = new BufferedReader(inputStreamReader)) {
-                        String line = reader.readLine();
-                        while (line != null) {
-                            stringBuilder.append(line).append('\n');
-                            line = reader.readLine();
-                        }
-                    } catch (IOException e) {
-//                        Log.e(TAG, "run: Errore");
-                        // Error occurred when opening raw file for reading.
-                    } finally {
-                        String contents = stringBuilder.toString();
-                        ResponseOrganizzazione responseOrganizzazioni = gson.fromJson(contents, ResponseOrganizzazione.class);
-                        List<Organizzazione> organizzazioni = responseOrganizzazioni.getOrganizations();//mLiveOrgs.getValue();
-//                    List<Organizzazione> orgs = mLiveOrgs.getValue();
-                        if(responseOrganizzazioni==null){
-//                            Log.d(TAG, "run: lista vuota");
-                            organizzazioni.addAll(new ArrayList<>());
-                        }
-                        else{
-//                            Log.d(TAG, "run: lista non vuota");
-//                          organizzazioni.addAll(responseOrganizzazioni.getOrganizations().stream().distinct().collect(Collectors.toList()));
-                            mLiveOrgs.postValue(organizzazioni);
-                        }
-                        //organizzazioni.clear();
-                        //organizzazioni.addAll(responseOrganizzazioni.getOrganizations());
-                        Log.d("TEST","arrivo qua 3");
-//                        mLiveOrgs.postValue(organizzazioni.stream().distinct().collect(Collectors.toList()));
-//                        Log.d(TAG, "run: dati letti dal file");
-                    }
-
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
-
-            }
-        }.start();
-        return mLiveOrgs;
-    }
-
-    @Override
-    public void saveOrganizzazione(Organizzazione org) {
-
-        LiveData<List<Organizzazione>> liveOrgs = getOrganizzazioni();
-        if (liveOrgs != null) {
-            List<Organizzazione> orgs = liveOrgs.getValue();
-            if (orgs != null) {
-                orgs.add(org);
-                saveOrganizzazioni(orgs);
-            }
-        }
-    }
-
-    //@SuppressLint("StaticFieldLeak")
-    @Override
-    public synchronized void saveOrganizzazioni(List<Organizzazione> orgs) {
-        ExecutorService executorService = Executors.newSingleThreadExecutor();
-
-        executorService.execute(new Runnable() {
-            @Override
-            public synchronized void run() {
-
-                File orgJson = new File(context.getFilesDir(), fileName);
-                if (!orgJson.exists()){
-                    try {
-                        orgJson.createNewFile();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    Log.d(TAG, "creazione file");
-                    Log.d(TAG, "doInBackground: "+orgJson.mkdir());
-                }
-
-                try {
-                    // fixme sonarqube segna come bug
-                    FileWriter writer = new FileWriter(orgJson);
-                    // fixme quest'istruzione delle volte, genera un concurrentModificationException
-                    String l = new Gson().toJson(new ResponseOrganizzazione().setOrganizations(orgs));
-                    Log.d(TAG, "saving data.");
-
-                    writer.write(l);
-                    writer.flush();
-                    writer.close();
-                    mLiveOrgs.postValue(orgs);
-                } catch (IOException e) {
-                    Log.d(TAG, "Errore, file non trovato");
-                    e.printStackTrace();
-                }
-                Log.d(TAG, "doInBackground: finished saving data");
-            }
-        });
-        executorService.shutdown();
-        try {
-            executorService.awaitTermination(1, TimeUnit.MINUTES);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void removeOrganizzazione(Organizzazione org) {
-        LiveData<List<Organizzazione>> liveOrgs = getOrganizzazioni();
-        if (liveOrgs != null) {
-            List<Organizzazione> orgs = liveOrgs.getValue();
-            orgs.remove(org);
-            saveOrganizzazioni(orgs);
-        }
-
-    }
-
-
+    @Before
+    public void setup(){}
 }
