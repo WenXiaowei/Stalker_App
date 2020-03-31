@@ -253,23 +253,17 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
 
     @Override
     public void updateOrganizzazione(Organizzazione o) {
-        List<Organizzazione> l = mLiveOrgs.getValue();
-        if(l.remove(o)){
-            l.add(o);
-            mLiveOrgs.setValue(l);
-        }
-
-        /*int pos = -1;
+        List<Organizzazione> l = new ArrayList<>(mLiveOrgs.getValue());
+        int pos=-1;
         for (int i =0; i< l.size()&& pos==-1; i++)
             if (o.getId()==l.get(i).getId())
                 pos=i;
-
+//        int pos = l.indexOf(o);
         if (pos!=-1){
             l.remove(pos);
             l.add(pos, o);
             saveOrganizzazioni(l);
-            mLiveOrgs.setValue(l);
-        }*/
+        }
     }
 
 
@@ -277,13 +271,13 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
     public LiveData<List<Organizzazione>> getOrganizzazioni() {
         //MutableLiveData<List<Organizzazione>> mLiveOrgs = new MutableLiveData<>();
         //this.mLiveOrgs.setValue(organizzazioni);
-        Log.d("TEST","arrivo qua1");
+//        Log.d("TEST","arrivo qua1");
         new Thread() {
             @Override
             public void run() {
                 super.run();
                 FileInputStream fis = null;
-                Log.d("TEST","arrivo qua 2");
+//                Log.d("TEST","arrivo qua 2");
                 try {
 //                    Log.d(TAG, "run: lettura dal file");
                     // fixme sonarqube segna come bug
@@ -306,11 +300,11 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
                         List<Organizzazione> organizzazioni = responseOrganizzazioni.getOrganizations();//mLiveOrgs.getValue();
 //                    List<Organizzazione> orgs = mLiveOrgs.getValue();
                         if(responseOrganizzazioni==null){
-                            Log.d(TAG, "run: lista vuota");
+//                            Log.d(TAG, "run: lista vuota");
                             organizzazioni.addAll(new ArrayList<>());
                         }
                         else{
-                            Log.d(TAG, "run: lista non vuota");
+//                            Log.d(TAG, "run: lista non vuota");
 //                          organizzazioni.addAll(responseOrganizzazioni.getOrganizations().stream().distinct().collect(Collectors.toList()));
                             mLiveOrgs.postValue(organizzazioni);
                         }
@@ -343,15 +337,15 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
         }
     }
 
-    @SuppressLint("StaticFieldLeak")
+    //@SuppressLint("StaticFieldLeak")
     @Override
     public synchronized void saveOrganizzazioni(List<Organizzazione> orgs) {
-
         ExecutorService executorService = Executors.newSingleThreadExecutor();
 
         executorService.execute(new Runnable() {
             @Override
             public synchronized void run() {
+
                 File orgJson = new File(context.getFilesDir(), fileName);
                 if (!orgJson.exists()){
                     try {
@@ -369,6 +363,7 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
                     // fixme quest'istruzione delle volte, genera un concurrentModificationException
                     String l = new Gson().toJson(new ResponseOrganizzazione().setOrganizations(orgs));
                     Log.d(TAG, "saving data.");
+
                     writer.write(l);
                     writer.flush();
                     writer.close();

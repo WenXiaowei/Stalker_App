@@ -348,20 +348,45 @@ public class FileOrganizationsLocalSourceTest {
     }
 
     @Test
-    public void testUpdate(){
-        List<Organizzazione> toUpdate = new ArrayList<>(firsts);
-        Organizzazione o = toUpdate.get(0);
-        o.setName("updated");
-        o.setTracking(true);
-        toUpdate.sort(Comparator.comparing(Organizzazione::getId));
-        expected = new ArrayList<>(toUpdate);
-        source.getOrganizzazioni().observe(lifecycleOwner,organizzazioni->{
-            Log.d(TAG, "updateTest: observer triggered");
-            organizzazioni.sort(Comparator.comparing(Organizzazione::getId));
-            organizzazioni.forEach(organizzazione -> Log.d(TAG,"id: "+organizzazione.getId()+", name: "+organizzazione.getName()));
-            assertEquals(organizzazioni,expected);
+    public void testUpdateOrganizzazione(){
+        List<Organizzazione> toUpdate = new ArrayList<>();
+        for (Organizzazione org: firsts){
+            toUpdate.add(new Organizzazione().setId(org.getId()).setName((org.getName())));
+        }
+        Organizzazione o = toUpdate.get(0).setId(firsts.get(0).getId()).setName("updated");
+        //toUpdate.sort(Comparator.comparing(Organizzazione::getId));
+        expected = toUpdate;
+        observer.setTester(organizzazioni->{
+            Log.d(TAG, "testUpdateOrganizzazione: observer triggered");
+            if(!organizzazioni.equals(firsts)){
+                //organizzazioni.sort(Comparator.comparing(Organizzazione::getId));
+                organizzazioni.forEach(organizzazione -> Log.d(TAG,"testUpdateOrganizzazione: id: "+organizzazione.getId()+", name: "+organizzazione.getName()));
+                assertEquals(organizzazioni,expected);
+            }else{
+                Log.d(TAG, "testUpdateOrganizzazione: pescate organizzazioni iniziali");
+            }
         });
         source.updateOrganizzazione(o);
-
     }
+
+    /*@Test
+    public void testUpdateOrganizzazioni(){
+        List<Organizzazione> toUpdate = Arrays.asList(
+                new Organizzazione().setId(firsts.get(0).getId()).setName("asd"),
+                new Organizzazione().setId(firsts.get(1).getId()).setTracking(true)
+        );
+        expected = toUpdate;
+        observer.setTester(organizzazioni->{
+            Log.d(TAG, "testUpdateOrganizzazioni: observer triggered");
+            if(!organizzazioni.equals(firsts)){
+                //organizzazioni.sort(Comparator.comparing(Organizzazione::getId));
+                organizzazioni.forEach(organizzazione -> Log.d(TAG,"testUpdateOrganizzazioni: id: "+organizzazione.getId()+", name: "+organizzazione.getName()));
+                assertEquals(organizzazioni,expected);
+            }else{
+                Log.d(TAG, "testUpdateOrganizzazioni: pescate organizzazioni iniziali");
+            }
+        });
+        source.updateOrganizzazioni(toUpdate);
+    }
+    */
 }
