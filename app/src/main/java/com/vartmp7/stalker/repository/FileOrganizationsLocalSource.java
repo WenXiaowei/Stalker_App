@@ -302,8 +302,8 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
                         // Error occurred when opening raw file for reading.
                     } finally {
                         String contents = stringBuilder.toString();
-                        List<Organizzazione> organizzazioni = mLiveOrgs.getValue();
                         ResponseOrganizzazione responseOrganizzazioni = gson.fromJson(contents, ResponseOrganizzazione.class);
+                        List<Organizzazione> organizzazioni = responseOrganizzazioni.getOrganizations();//mLiveOrgs.getValue();
 //                    List<Organizzazione> orgs = mLiveOrgs.getValue();
                         if(responseOrganizzazioni==null){
                             Log.d(TAG, "run: lista vuota");
@@ -311,12 +311,13 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
                         }
                         else{
                             Log.d(TAG, "run: lista non vuota");
-                            organizzazioni.addAll(responseOrganizzazioni.getOrganizations().stream().distinct().collect(Collectors.toList()));
+//                          organizzazioni.addAll(responseOrganizzazioni.getOrganizations().stream().distinct().collect(Collectors.toList()));
+                            mLiveOrgs.postValue(organizzazioni);
                         }
                         //organizzazioni.clear();
                         //organizzazioni.addAll(responseOrganizzazioni.getOrganizations());
                         Log.d("TEST","arrivo qua 3");
-                        mLiveOrgs.postValue(organizzazioni.stream().distinct().collect(Collectors.toList()));
+//                        mLiveOrgs.postValue(organizzazioni.stream().distinct().collect(Collectors.toList()));
 //                        Log.d(TAG, "run: dati letti dal file");
                     }
 
@@ -366,11 +367,12 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
                     // fixme sonarqube segna come bug
                     FileWriter writer = new FileWriter(orgJson);
                     // fixme quest'istruzione delle volte, genera un concurrentModificationException
-                    String l = new Gson().toJson(new ResponseOrganizzazione().setOrganizations(mLiveOrgs.getValue()));
+                    String l = new Gson().toJson(new ResponseOrganizzazione().setOrganizations(orgs));
                     Log.d(TAG, "saving data.");
                     writer.write(l);
                     writer.flush();
                     writer.close();
+                    mLiveOrgs.postValue(orgs);
                 } catch (IOException e) {
                     Log.d(TAG, "Errore, file non trovato");
                     e.printStackTrace();
