@@ -217,7 +217,7 @@ public class ResponseLuogo {
     private static final String TAG="com.vartmp7.stalker.GsonBeans.ResponseLuogo";
     private List<? extends AbstractLuogo> places;
 
-    public void setLuoghi(List<AbstractLuogo> luoghi) {
+    public void setLuoghi(List<LuogoPoligono> luoghi) {
         this.places = luoghi;
     }
     public int getPlacesLength(){return places.size();}

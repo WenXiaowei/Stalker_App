@@ -208,6 +208,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.hardware.SensorManager;
+import android.location.LocationManager;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
@@ -264,7 +265,14 @@ public class StalkerTrackingService extends Service {
     private void startNewThread() {
         if (current != null)
             current.stopThread();
-        current = new StalkerServiceRunnable(LocationServices.getFusedLocationProviderClient(this),
+        if (callBack!=null)
+            Log.d(TAG, "startNewThread: callback != null");
+        else
+            Log.d(TAG, "startNewThread: callback == null");
+        current = new StalkerServiceRunnable(
+                getApplicationContext(),
+                (LocationManager) getSystemService(Context.LOCATION_SERVICE),
+//                LocationServices.getFusedLocationProviderClient(this),
                 (SensorManager) getSystemService(Context.SENSOR_SERVICE),
                 callBack,
                 trackingOrgs
@@ -298,6 +306,7 @@ public class StalkerTrackingService extends Service {
     // viene eseguito ogni volta che si fa operazione di bind
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        startNewThread();
         return super.onStartCommand(intent, flags, startId);
     }
 

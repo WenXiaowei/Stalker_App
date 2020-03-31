@@ -208,4 +208,5 @@ public interface CallBack {
     void onCurrentStatusChanged(String[] str);
     void onTrackingTerminated();
     void onInitializingTracking();
+    void notInsideAnyPlaces();
 }

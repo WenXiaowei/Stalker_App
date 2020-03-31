@@ -208,10 +208,15 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.Log;
 
+import com.google.gson.GsonBuilder;
+import com.google.gson.TypeAdapterFactory;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.gson.Gson;
+import com.vartmp7.stalker.gsonbeans.AbstractLuogo;
+import com.vartmp7.stalker.gsonbeans.LuogoACirconferenza;
+import com.vartmp7.stalker.gsonbeans.LuogoPoligono;
 import com.vartmp7.stalker.gsonbeans.Organizzazione;
 import com.vartmp7.stalker.gsonbeans.ResponseOrganizzazione;
 
@@ -253,6 +258,7 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
 
         for (Organizzazione organizzazione: org){
             int i = orgList.indexOf(organizzazione);
+            orgList.remove(i);
             orgList.add(i,organizzazione);
         }
 
@@ -285,44 +291,7 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
             @Override
             public void run() {
                 super.run();
-                FileInputStream fis = null;
-                try {
-//                    Log.d(TAG, "run: lettura dal file");
-                    fis = context.openFileInput(fileName);
-                    InputStreamReader inputStreamReader =new InputStreamReader(fis, StandardCharsets.UTF_8);
-                    StringBuilder stringBuilder = new StringBuilder();
-                    try (BufferedReader reader = new BufferedReader(inputStreamReader)) {
-                        String line = reader.readLine();
-                        while (line != null) {
-                            stringBuilder.append(line).append('\n');
-                            line = reader.readLine();
-                        }
-                    } catch (IOException e) {
-//                        Log.e(TAG, "run: Errore");
-                        // Error occurred when opening raw file for reading.
-                    } finally {
-                        String contents = stringBuilder.toString();
-                        List<Organizzazione> organizzazioni = mLiveOrgs.getValue();
-                        ResponseOrganizzazione responseOrganizzazioni = gson.fromJson(contents, ResponseOrganizzazione.class);
-//                    List<Organizzazione> orgs = mLiveOrgs.getValue();
-                        if(responseOrganizzazioni==null){
-                            Log.d(TAG, "run: lista vuota");
-                            organizzazioni.addAll(new ArrayList<>());
-                        }
-                        else{
-                            Log.d(TAG, "run: lista non vuota");
-                            organizzazioni.addAll(responseOrganizzazioni.getOrganizations().stream().distinct().collect(Collectors.toList()));
-                        }
-                        //organizzazioni.clear();
-                        //organizzazioni.addAll(responseOrganizzazioni.getOrganizations());
-                        //fixme ogni tanto sputa anche concurrente modification
-                        mLiveOrgs.postValue(organizzazioni.stream().distinct().collect(Collectors.toList()));
-//                        Log.d(TAG, "run: dati letti dal file");
-                    }
 
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
 
             }
         }.start();
@@ -363,43 +332,44 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
     @Override
     public synchronized void saveOrganizzazioni(List<Organizzazione> orgs) {
 
-        ExecutorService executorService = Executors.newSingleThreadExecutor();
-
-        executorService.execute(new Runnable() {
-            @Override
-            public synchronized void run() {
-                File orgJson = new File(context.getFilesDir(), fileName);
-                if (!orgJson.exists()){
-                    try {
-                        orgJson.createNewFile();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    Log.d(TAG, "creazione file");
-                    Log.d(TAG, "doInBackground: "+orgJson.mkdir());
-                }
-
-                try {
-                    FileWriter writer = new FileWriter(orgJson);
-                    // todo quest'istruzione delle volte, genera un concurrentModificationException
-                    String l = new Gson().toJson(new ResponseOrganizzazione().setOrganizations(mLiveOrgs.getValue()));
-                    Log.d(TAG, "saving data.");
-                    writer.write(l);
-                    writer.flush();
-                    writer.close();
-                } catch (IOException e) {
-                    Log.d(TAG, "Errore, file non trovato");
-                    e.printStackTrace();
-                }
-                Log.d(TAG, "doInBackground: finished saving data");
+//        ExecutorService executorService = Executors.newSingleThreadExecutor();
+//
+//        executorService.execute(new Runnable() {
+//            @Override
+//            public synchronized void run() {
+//
+//            }
+//        });
+//        executorService.shutdown();
+//        try {
+//            executorService.awaitTermination(1, TimeUnit.MINUTES);
+//        } catch (InterruptedException e) {
+////            e.printStackTrace();
+//        }
+        File orgJson = new File(context.getFilesDir(), fileName);
+        if (!orgJson.exists()){
+            try {
+                orgJson.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        });
-        executorService.shutdown();
-        try {
-            executorService.awaitTermination(1, TimeUnit.MINUTES);
-        } catch (InterruptedException e) {
-//            e.printStackTrace();
+            Log.d(TAG, "creazione file");
+            Log.d(TAG, "doInBackground: "+orgJson.mkdir());
         }
+
+        try {
+            FileWriter writer = new FileWriter(orgJson);
+            // todo quest'istruzione delle volte, genera un concurrentModificationException
+            String l = new Gson().toJson(new ResponseOrganizzazione().setOrganizations(mLiveOrgs.getValue().stream().distinct().collect(Collectors.toList())));
+            Log.d(TAG, "saving data.");
+            writer.write(l);
+            writer.flush();
+            writer.close();
+        } catch (IOException e) {
+            Log.d(TAG, "Errore, file non trovato");
+            e.printStackTrace();
+        }
+        Log.d(TAG, "doInBackground: finished saving data");
     }
 
     @Override

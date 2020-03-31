@@ -250,6 +250,7 @@ public class TrackingFragment extends Fragment {
     private final static int TRACKING_MSG_CODE = 1;
     private final static int TRACKING_STOP_MSG_CODE = 2;
     private final static int TRACKING_INITIALIZING_MSG_CODE = 3;
+    private final static int TRACKING_NOT_IN_PLACE_MSG_CODE = 4;
 
     private final static String MSG_CODE = "MSG_CODE";
     private TrackingViewModel trackingViewModel;
@@ -275,7 +276,14 @@ public class TrackingFragment extends Fragment {
         }
 
         @Override
-        public void onInitializingTracking() { handler.sendEmptyMessage(TRACKING_INITIALIZING_MSG_CODE); }
+        public void onInitializingTracking() {
+            handler.sendEmptyMessage(TRACKING_INITIALIZING_MSG_CODE);
+        }
+
+        @Override
+        public void notInsideAnyPlaces() {
+            handler.sendEmptyMessage(TRACKING_NOT_IN_PLACE_MSG_CODE);
+        }
     };
     private Intent serviceIntent;
 
@@ -327,21 +335,29 @@ public class TrackingFragment extends Fragment {
 
     public static class StalkerHandler extends Handler {
         WeakReference<TrackingFragment> reference;
+
         StalkerHandler(TrackingFragment reference) {
             this.reference = new WeakReference<>(reference);
         }
+
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             TrackingFragment fragment = reference.get();
             Bundle b = msg.getData();
-
             //gestione dei empty message
-            if (msg.what == TRACKING_INITIALIZING_MSG_CODE) {
-                fragment.tvCurrentStatus.setText(R.string.initializing_tracking);
-            } else if (msg.what == TRACKING_STOP_MSG_CODE) {
-                fragment.tvCurrentStatus.setText(R.string.nessun_organizzazione_ti_sta_stalkerando);
+            switch (msg.what) {
+                case TRACKING_INITIALIZING_MSG_CODE:
+                    fragment.tvCurrentStatus.setText(R.string.initializing_tracking);
+                    break;
+                case TRACKING_STOP_MSG_CODE:
+                    fragment.tvCurrentStatus.setText(R.string.nessun_organizzazione_ti_sta_stalkerando);
+                    break;
+                case TRACKING_NOT_IN_PLACE_MSG_CODE:
+                    fragment.tvCurrentStatus.setText(R.string.non_presente_nei_luoghi_tracciati);
+                default:
             }
+
             //gestione degli messaggi non empty, se sono più di un caso, allora può essere convertito in switch
             int code = msg.getData().getInt(MSG_CODE, -1);
             if (code == TRACKING_MSG_CODE) {
@@ -359,7 +375,7 @@ public class TrackingFragment extends Fragment {
             startAndBindTrackingService();
         if (binder != null) {
             Log.d(TAG, "updateTrackingOrganizationInService");
-            List<Organizzazione> orgs = organizationToTrack.stream()
+            List<Organizzazione> orgs = organizationToTrack.stream().distinct()
                     .filter(Organizzazione::isTrackingActive)
                     .collect(Collectors.toList());
             binder.updateTrackingOrganizations(orgs);
@@ -369,6 +385,7 @@ public class TrackingFragment extends Fragment {
 
     private void startAndBindTrackingService() {
         serviceIntent = new Intent(requireContext(), StalkerTrackingService.class);
+        requireContext().startService(serviceIntent);
         requireContext().bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE);
     }
 

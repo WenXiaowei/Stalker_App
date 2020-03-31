@@ -229,10 +229,15 @@ public class LuogoPoligono extends AbstractLuogo {
         this.coordinates =coordinate;
 
     }
+    public LuogoPoligono setOrganizationName(String str){
+        super.setOrganizationName(str);
+        return this;
+    }
     LuogoPoligono(long id, String name,  long num_max_people,List<Coordinata> coordinate) {
         super(id,name,num_max_people);
         this.coordinates = coordinate;
     }
+
 
     public List<Coordinata> getCoordinate() {
         return coordinates;
@@ -264,7 +269,32 @@ public class LuogoPoligono extends AbstractLuogo {
     }
 
     @Override
-    boolean isInside(Coordinata c) {
+    public boolean  isInside(Coordinata c) {
         return RayCasting.isPointInside(getCoordinate(),c);
+    }
+    public long getId() {
+        return super.getId();
+    }
+    public LuogoPoligono setId(long id) {
+        super.setId(id);
+        return this;
+    }
+
+    public String getName() {
+        return super.getName();
+    }
+
+    public LuogoPoligono setName(String name) {
+        super.setName(name);
+        return this;
+    }
+
+    public long getNum_max_people() {
+        return super.getNum_max_people();
+    }
+
+    public LuogoPoligono setNum_max_people(long num_max_people) {
+        super.setNum_max_people(num_max_people);
+        return this;
     }
 }

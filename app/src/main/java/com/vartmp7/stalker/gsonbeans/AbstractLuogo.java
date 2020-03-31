@@ -212,6 +212,17 @@ import com.vartmp7.stalker.gsonbeans.placecomponent.Coordinata;
  */
 public abstract class AbstractLuogo {
     public static final String TAG ="com.vartmp7.stalker.gsonbeans.AbstractLuogo";
+
+    public String getOrganizationName() {
+        return organizationName;
+    }
+
+    public AbstractLuogo setOrganizationName(String organizationName) {
+        this.organizationName = organizationName;
+        return this;
+    }
+
+    private String organizationName;
     private long id;
     private String name;
     private long num_max_people;
@@ -253,5 +264,5 @@ public abstract class AbstractLuogo {
 
     abstract public Coordinata getCenter();
     abstract public double distanceTo(Coordinata c);
-    abstract boolean isInside(Coordinata c);
+    abstract public boolean isInside(Coordinata c);
 }

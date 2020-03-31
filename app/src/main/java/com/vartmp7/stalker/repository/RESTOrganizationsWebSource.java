@@ -207,12 +207,16 @@ package com.vartmp7.stalker.repository;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.gson.Gson;
+import com.vartmp7.stalker.gsonbeans.AbstractLuogo;
+import com.vartmp7.stalker.gsonbeans.LuogoPoligono;
 import com.vartmp7.stalker.gsonbeans.Organizzazione;
 import com.vartmp7.stalker.gsonbeans.ResponseOrganizzazione;
+import com.vartmp7.stalker.gsonbeans.placecomponent.Coordinata;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -256,11 +260,17 @@ public class RESTOrganizationsWebSource implements OrganizationsWebSource {
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
                 List<Organizzazione> orgs = mutableLiveDataOrganizzazioni.getValue();
 
+                LuogoPoligono l = new LuogoPoligono()
+                        .setCoordinate(Arrays.asList(new Coordinata(45.411660, 11.887027),new Coordinata(45.411846, 11.887572),
+                                new Coordinata(45.411730, 11.887650), new Coordinata(45.411544, 11.887106)))
+                        .setOrganizationName("UNIPD").setId(2);
+
                 orgs.add(new Organizzazione().setName("unipd " + count).setId(count)
                         .setTracking(true)
                         .setTrackingActive(true)
-                    .setImage_url("https://cdn.discordapp.com/attachments/690970576415621201/691008560363995208/Schermata_2020-03-21_alle_20.41.13.png"));
-
+                    .setImage_url("https://cdn.discordapp.com/attachments/690970576415621201/691008560363995208/Schermata_2020-03-21_alle_20.41.13.png")
+                .setLuoghi(
+                        Arrays.asList(l, l.setId(1))));
                 /*
                 mutableLiveOrgs.postValue(Arrays.asList(
                     new Organizzazione().setId(++count),

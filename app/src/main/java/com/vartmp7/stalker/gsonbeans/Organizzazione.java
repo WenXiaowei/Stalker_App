@@ -234,7 +234,7 @@ public class Organizzazione implements Serializable {
     private String ldap_domain_component;
     private String ldap_port;
     private String image_url;
-    private List<? extends AbstractLuogo> luoghi;
+    private List<LuogoPoligono> luoghi;
     private boolean isPreferito = false;
     private boolean isTracking = false;
     private boolean isExpanded = false;
@@ -420,11 +420,11 @@ public class Organizzazione implements Serializable {
         return this;
     }
 
-    public List<? extends AbstractLuogo> getLuoghi() {
+    public List<LuogoPoligono> getLuoghi() {
         return luoghi;
     }
 
-    public Organizzazione setLuoghi(List<? extends AbstractLuogo> luoghi) {
+    public Organizzazione setLuoghi(List<LuogoPoligono> luoghi) {
         this.luoghi = luoghi;
         return this;
     }

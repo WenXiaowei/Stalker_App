@@ -204,20 +204,38 @@
 
 package com.vartmp7.stalker.component;
 
+import android.Manifest;
+import android.content.Context;
+import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.os.Bundle;
+import android.os.Looper;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
+import androidx.lifecycle.MutableLiveData;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.vartmp7.stalker.gsonbeans.AbstractLuogo;
+import com.vartmp7.stalker.gsonbeans.LuogoPoligono;
 import com.vartmp7.stalker.gsonbeans.Organizzazione;
 import com.vartmp7.stalker.gsonbeans.placecomponent.Coordinata;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
+import java.util.OptionalDouble;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static java.lang.Thread.sleep;
@@ -232,116 +250,143 @@ class StalkerServiceRunnable implements Runnable {
     private FusedLocationProviderClient fusedLocationProviderClient;
     private SensorManager sensorManager;
     private Coordinata coordinata = null;
+    private LocationManager manager;
+    private Context context;
 
-    StalkerServiceRunnable(FusedLocationProviderClient fusedLocationProviderClient,
+    StalkerServiceRunnable(Context context,
+                           LocationManager manager,
+//            FusedLocationProviderClient fusedLocationProviderClient,
                            SensorManager sensorManager,
                            CallBack callBack, List<Organizzazione> trackingOrg) {
         this.trackingOrgs = trackingOrg;
+        this.context = context;
         this.isRunning = true;
         this.callBack = callBack;
-        this.fusedLocationProviderClient = fusedLocationProviderClient;
+//        this.fusedLocationProviderClient = fusedLocationProviderClient;
         this.sensorManager = sensorManager;
+        this.manager = manager;
     }
 
 
+    private static final int SECONDS_TO_WAIT = 3;
+
     @Override
     public synchronized void run() {
+
+        Looper.prepare();
         Log.d(TAG, "run: thread Starting");
         if (callBack != null)
             callBack.onInitializingTracking();
-        Sensor sensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
-        StalkerStepCounter stepCounter = new StalkerStepCounter(sensorManager, sensor);
-        StalkerLocationManager locationManager = new StalkerLocationManager(fusedLocationProviderClient);
-        locationManager.updateMostPreciseLocation(new LocationCallback() {
+        LocationRequest request = new LocationRequest();
+        request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                .setMaxWaitTime(SECONDS_TO_WAIT * 1000)
+                .setSmallestDisplacement(1);
+
+//        Sensor sensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
+//        StalkerStepCounter stepCounter = new StalkerStepCounter(sensorManager, sensor);
+//        StalkerLocationManager locationManager = new StalkerLocationManager(fusedLocationProviderClient);
+
+
+//        locationManager.updateMostPreciseLocation(callback);
+
+        if (context.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                context.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+
+            manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1, 10, new LocationListener() {
+                @Override
+                public void onLocationChanged(Location location) {
+                    coordinata = new Coordinata(location.getLongitude(), location.getLatitude());
+                }
+
+                @Override
+                public void onStatusChanged(String provider, int status, Bundle extras) {
+
+                }
+
+                @Override
+                public void onProviderEnabled(String provider) {
+
+                }
+
+                @Override
+                public void onProviderDisabled(String provider) {
+
+                }
+            });
+        }
+        List<LuogoPoligono> listaLuoghi = new ArrayList<>();
+        for (int j = 0; j < trackingOrgs.size(); j++) {
+            List<LuogoPoligono> luoghi = trackingOrgs.get(j).getLuoghi();
+            listaLuoghi.addAll(luoghi);
+        }
+        LocationCallback locationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
                 super.onLocationResult(locationResult);
+                Log.d(TAG, "onLocationResult: Updating coordinate");
                 coordinata = new Coordinata(locationResult.getLastLocation().getLongitude(),
                         locationResult.getLastLocation().getLatitude());
             }
-        });
+        };
+//        fusedLocationProviderClient.requestLocationUpdates(request, locationCallback, null);
 
-
-        List<AbstractLuogo> listaLuoghi = new ArrayList<>();
-        for (int j = 0; j < trackingOrgs.size(); j++) {
-            List<? extends AbstractLuogo> luoghi = trackingOrgs.get(j).getLuoghi();
-            listaLuoghi.addAll(luoghi);
-        }
-
-
-        while (isRunning && coordinata != null) {
-            listaLuoghi = listaLuoghi.stream().sorted((o1, o2) -> (int) (o1.distanceTo(coordinata)- o2.distanceTo(coordinata))).collect(Collectors.toList());
-
-            if (listaLuoghi.size()!=0){
-                double minDistance =listaLuoghi.get(0).distanceTo(coordinata);
-
-                if (minDistance<1000){
-                    try {
-                        sleep(60*1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    if (stepCounter.getSteps()>50){
-
-                    }else{
-                        try {
-                            sleep(1000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-
-                }else if (minDistance<5000){
-
-                }else{
-
-                }
-
-            }
-            Log.d(TAG, "run: threa running" + i);
-            //                        todo aggiungere il meccanismo del timer e step counter.
-            //                        LocationManager m = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-            //                        SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-            //                        Sensor sensor=sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
-            //                     modificare il textview della schermata di tracciamento
-
-
-            if (trackingOrgs != null)
-                Log.d(TAG, "run: tracking orgs !=null");
-            else
-                Log.d(TAG, "run: tracking orgs ==null");
-            //                if (trackingOrgs.size()==0)
-            //                    Log.d(TAG, "run: tracking orgs =0");
-            //                else
-            //                    Log.d(TAG, "run: tracking orgs !=0");
-
-
-            if (trackingOrgs != null) {
-
-                if (trackingOrgs.size() == 0) {
-                    Log.d(TAG, "run: No organization's tracking");
-                    //                        running = false;
-                }
-
-                Log.d(TAG, "run: tracking orgs.size= " + trackingOrgs.size());
-            }
-
-
+        while (isRunning) {
+//            Task<Location> location = fusedLocationProviderClient.getLastLocation();
+//            location.addOnCompleteListener(new OnCompleteListener<Location>() {
+//                @Override
+//                public void onComplete(@NonNull Task<Location> task) {
+//                    Log.d(TAG, "onComplete: " + task.getResult());
+//                    coordinata = new Coordinata(task.getResult().getLongitude(), task.getResult().getLatitude());
+//                }
+//            });
+//            if (location.isComplete())
+//                coordinata = new Coordinata(location.getResult().getLongitude(), location.getResult().getLatitude());
+            Log.d(TAG, "run: " + i);
             if (callBack != null) {
-                callBack.onCurrentStatusChanged(new String[]{"torre archimede", "Unipd", timerFormat(i)});
+                callBack.notInsideAnyPlaces();
+            } else
+                Log.d(TAG, "run: callback == null");
+
+
+            if (coordinata != null) {
+                Log.d(TAG, "run: " + coordinata);
+                long i = listaLuoghi.stream().filter(luogo1 -> luogo1.isInside(coordinata)).count();
+
+                if (i != 0) {
+                    Log.d(TAG, "run: Presente!");
+                } else {
+                    Log.d(TAG, "run: non presente!");
+                }
+//                if (luogo.isPresent()) {
+//                    AbstractLuogo l = luogo.get();
+//                    if (callBack != null) {
+//                        Log.d(TAG, "run: sei in " + l.getName() + ": " + i);
+//                        callBack.onCurrentStatusChanged(new String[]{l.getName(), l.getOrganizationName(), timerFormat(i)});
+////                    callBack.onCurrentStatusChanged(new String[]{"torre archimede", "Unipd", timerFormat(i)});
+//                    }
+//                } else {
+//                    Log.d(TAG, "run: non sei presente in nessun luogo" + i);
+//                    if (callBack != null)
+//                        callBack.notInsideAnyPlaces();
+//                }
+            } else {
+                Log.d(TAG, "run: coordinata==null");
             }
 
             try {
-                sleep(1000);
+                sleep((SECONDS_TO_WAIT + 2) * 1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
             i++;
         }
+
+
         Log.d(TAG, "run: while terminating");
         if (callBack != null)
             callBack.onTrackingTerminated();
+
+
     }
 
     private String timerFormat(int i) {

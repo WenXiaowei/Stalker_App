@@ -266,7 +266,7 @@ public class LuogoACirconferenza extends AbstractLuogo {
     }
 
     @Override
-    boolean isInside(Coordinata c) {
+    public boolean isInside(Coordinata c) {
         double distanza = centro.getDistanceTo(c);
         return distanza <= raggio;
     }
