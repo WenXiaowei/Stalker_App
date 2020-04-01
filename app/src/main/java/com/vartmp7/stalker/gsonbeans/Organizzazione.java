@@ -253,7 +253,7 @@ public class Organizzazione implements Serializable {
     @Getter @Setter @Accessors(chain = true)
     private String image_url;
     @Getter @Setter @Accessors(chain = true)
-    private List<? extends AbstractLuogo> luoghi;
+    private List<LuogoPoligono> luoghi;
     @Getter @Setter @Accessors(chain = true)
     private boolean isPreferito = false;
     @Getter @Setter @Accessors(chain = true)

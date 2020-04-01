@@ -295,7 +295,7 @@ public class OrganizationsRepository {
              public void onChanged(List<Organizzazione> organizzazioni) {
                  resultFromWebCall.removeObserver(this);
                  Log.d(TAG, "onChanged: aggiornare org");
-                 organizationsLocalSource.updateOrganizzazioni(organizzazioni);
+                 organizationsLocalSource.updateOrganizzazioniInfo(organizzazioni);
              }
          });
         /*MutableLiveData<Boolean> webQueryExhausted = new MutableLiveData<Boolean>(false);

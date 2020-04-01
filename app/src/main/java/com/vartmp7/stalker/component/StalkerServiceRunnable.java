@@ -312,8 +312,8 @@ class StalkerServiceRunnable implements Runnable {
             });
             List<LuogoPoligono> listaLuoghi = new ArrayList<>();
             for (int j = 0; j < trackingOrgs.size(); j++) {
-                List<LuogoPoligono> luoghi = trackingOrgs.get(j).getLuoghi();
-                listaLuoghi.addAll(luoghi);
+//                List<LuogoPoligono> luoghi = trackingOrgs.get(j).getLuoghi();
+//                listaLuoghi.addAll(luoghi);
             }
 
 //        fusedLocationProviderClient.requestLocationUpdates(request, locationCallback, null);
@@ -329,7 +329,7 @@ class StalkerServiceRunnable implements Runnable {
 
                 if (coordinata != null) {
                     Log.d(TAG, "run: " + coordinata);
-                    long i = listaLuoghi.stream().filter(luogo1 -> luogo1.isInside(coordinata)).count();
+//                    long i = listaLuoghi.stream().filter(luogo1 -> luogo1.isInside(coordinata)).count();
 
                     if (i != 0) {
                         Log.d(TAG, "run: Presente!");

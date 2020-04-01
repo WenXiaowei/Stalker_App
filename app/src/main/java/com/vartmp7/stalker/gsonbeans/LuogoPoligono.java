@@ -255,32 +255,18 @@ public class LuogoPoligono extends AbstractLuogo {
 
 
     @Override
-    boolean isInside(Coordinata c) {
+    public Coordinata getCenter() {
+        return null;
+    }
+
+    @Override
+    public double distanceTo(Coordinata c) {
+        return 0;
+    }
+
+    @Override
+    public boolean isInside(Coordinata c) {
         return new RayCasting(getCoordinate(), c).isPointInside();
     }
-    public long getId() {
-        return super.getId();
-    }
-    public LuogoPoligono setId(long id) {
-        super.setId(id);
-        return this;
-    }
 
-    public String getName() {
-        return super.getName();
-    }
-
-    public LuogoPoligono setName(String name) {
-        super.setName(name);
-        return this;
-    }
-
-    public long getNum_max_people() {
-        return super.getNum_max_people();
-    }
-
-    public LuogoPoligono setNum_max_people(long num_max_people) {
-        super.setNum_max_people(num_max_people);
-        return this;
-    }
 }

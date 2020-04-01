@@ -237,32 +237,6 @@ public abstract class AbstractLuogo {
         this.id = id;
         this.name = name;
     }
-    public long getId() {
-        return id;
-    }
-    public AbstractLuogo setId(long id) {
-        this.id = id;
-        return this;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public AbstractLuogo setName(String name) {
-        this.name = name;
-        return this;
-    }
-
-    public long getNum_max_people() {
-        return num_max_people;
-    }
-
-    public AbstractLuogo setNum_max_people(long num_max_people) {
-        this.num_max_people = num_max_people;
-        return this;
-    }
-
     abstract public Coordinata getCenter();
     abstract public double distanceTo(Coordinata c);
     abstract public boolean isInside(Coordinata c);

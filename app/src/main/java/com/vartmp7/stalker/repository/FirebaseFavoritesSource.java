@@ -248,7 +248,7 @@ public class FirebaseFavoritesSource implements FavoritesSource {
     //private MutableLiveData<Boolean> firebaseQueryExhausted;
 
     public FirebaseFavoritesSource(String userId, FirebaseFirestore db) {
-        this.mutableliveDataOrgIds = new MutableLiveData<>();
+        this.mutableliveDataOrgIds = new MutableLiveData<>(new ArrayList<>());
         //this.mediatorLiveDataOrganizzazioni = new MediatorLiveData<>();
         //organizationsQueryExhausted = new MutableLiveData<Boolean>(false);
         //firebaseQueryExhausted = new MutableLiveData<Boolean>(false);
@@ -274,21 +274,6 @@ public class FirebaseFavoritesSource implements FavoritesSource {
 
     }
 
-    private void initUserStorage() {
-        Log.d(TAG,"init");
-        try {
-            if(hasData()){
-                Map<String, Object> userData = new HashMap<>();
-                userData.put(FIELDNAME_ORGANIZZAZIONI, new ArrayList<Long>());
-                db.collection("utenti").document(userId).set(userData).addOnSuccessListener(docSnapshot->{
-                    Log.e(TAG,"documento creato correttamente");
-                })
-                .addOnFailureListener(e -> {Log.e(TAG,e.getMessage());});
-            }
-        } catch (Exception e) {
-            Log.e(TAG,e.getMessage());
-        }
-    }
 
     @Override
     public void addOrganizzazione(Long orgId) {
