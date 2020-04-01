@@ -221,5 +221,5 @@ public interface OrganizationsLocalSource {
 
     void updateOrganizzazione(Organizzazione org);
 
-    void updateOrganizzazioni(List<Organizzazione> org);
+    void updateOrganizzazioni(List<Organizzazione> orgs);
 }

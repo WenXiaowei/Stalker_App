@@ -187,7 +187,7 @@
  *       same "printed page" as the copyright notice for easier
  *       identification within third-party archives.
  *
- *    Copyright [2020] [VartTmp7]
+ *    Copyright [yyyy] [name of copyright owner]
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -200,159 +200,20 @@
  *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
+ *
  */
 
-package com.vartmp7.stalker.repository;
+package com.vartmp7.stalker;
 
-import android.util.Log;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
+import org.junit.Before;
+import org.junit.runner.RunWith;
 
-import com.vartmp7.stalker.gsonbeans.Organizzazione;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Consumer;
-
-public class OrganizationsRepository {
-
-    private static final String TAG = "com.vartmp7.stalker.repository.OrganizationsRepository";
-
-    private OrganizationsLocalSource organizationsLocalSource;
-    private OrganizationsWebSource organizationsWebSource;
-    private FavoritesSource organizationFavoritesSource;
-    private static OrganizationsRepository instance;
-
-    public static synchronized OrganizationsRepository getInstance(){
-        if (instance==null){
-            throw new AssertionError("You have to call init first!");
-        }
-        return instance;
-    }
-
-    public void updateOrganizzazione(Organizzazione o){
-       organizationsLocalSource.updateOrganizzazione(o);
-    }
-    public void updateOrganizzationi(List<Organizzazione> l){
-        organizationsLocalSource.updateOrganizzazioni(l);
-    }
-
-    public void updateOrganizzazioni(List<Organizzazione> orgs){
-        organizationsLocalSource.updateOrganizzazioni(orgs);
-    }
-
-    public synchronized static OrganizationsRepository init(OrganizationsLocalSource orgsLocalSource, OrganizationsWebSource orgsWebSource, FavoritesSource fa){
-        if (instance == null){
-            instance = new OrganizationsRepository( orgsLocalSource,  orgsWebSource,fa);
-        }
-        return instance;
-    }
+@RunWith(AndroidJUnit4.class)
+public class OrganizationsRepositoryTest {
 
 
-    protected OrganizationsRepository( OrganizationsLocalSource orgsLocalSource, OrganizationsWebSource orgsWebSource,FavoritesSource fa) {
-        this.organizationsLocalSource = orgsLocalSource;
-        this.organizationsWebSource = orgsWebSource;
-        this.organizationFavoritesSource = fa;
-    }
-    public LiveData<List<Organizzazione>> getOrganizzazioni(){
-        return organizationsLocalSource.getOrganizzazioni();
-    }
-
-    public LiveData<List<Long>> getPreferiti(){
-        return organizationFavoritesSource.getOrganizzazioni();
-    }
-
-    public void addToPreferiti(Organizzazione org){
-        org.setPreferito(true);
-        updateOrganizzazione(org);
-        organizationFavoritesSource.addOrganizzazione(org.getId());
-    }
-
-    public void removeFromPreferiti(Organizzazione org){
-        org.setPreferito(false);
-        updateOrganizzazione(org);
-        organizationFavoritesSource.removeOrganizzazione(org.getId());
-    }
-
-
-    public void saveOrganizzazione(){
-    }
-
-    // in teoria il metodo non serve
-    public void removeOrganizzazione(Organizzazione o){
-
-    }
-
-
-
-
-    public void refreshOrganizzazioni(){
-        LiveData<List<Organizzazione>> resultFromWebCall = organizationsWebSource.getOrganizzazioni();
-        resultFromWebCall.observeForever(new Observer<List<Organizzazione>>() {
-             @Override
-             public void onChanged(List<Organizzazione> organizzazioni) {
-                 resultFromWebCall.removeObserver(this);
-                 Log.d(TAG, "onChanged: aggiornare org");
-                 organizationsLocalSource.updateOrganizzazioni(organizzazioni);
-             }
-         });
-        /*MutableLiveData<Boolean> webQueryExhausted = new MutableLiveData<Boolean>(false);
-        MutableLiveData<Boolean> localQueryExhausted = new MutableLiveData<Boolean>(false);
-        resultFromWebCall.observeForever(organizzazioni->{
-            webQueryExhausted.setValue(true);
-        });
-        LiveData<List<Organizzazione>> resultFromLocalQuery = organizationsLocalSource.getOrganizzazioni();
-        resultFromLocalQuery.observeForever(organizzazioni->{
-           localQueryExhausted.setValue(true);
-        });
-        final Observer<Boolean> queryObserver = new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean aBoolean) {
-                if(webQueryExhausted.getValue() && localQueryExhausted.getValue()){
-                    localQueryExhausted.removeObserver(this);
-                    webQueryExhausted.removeObserver(this);
-                    for (Organizzazione orgFromWeb: resultFromWebCall.getValue()){
-                        for (Organizzazione org: resultFromLocalQuery.getValue()) {
-                            if(org.getId()==orgFromWeb.getId()){
-                                orgFromWeb.setPreferito(org.isPreferito());
-                                orgFromWeb.setTracking(org.isTracking());
-                                orgFromWeb.setTrackingActive(org.isTracking());
-                                rg=orgFromWeb;o
-                            }
-                        }
-                    }
-                    List<Organizzazione> toSave = resultFromLocalQuery.getValue();
-                    Log.d(TAG, "refreshOrganizzazioni: org che verranno salvate");
-                    toSave.forEach(o-> Log.d(TAG, "refreshOrganizzazioni: "+o.getId()+" "+o.getName()+o.isPreferito()));
-                    organizationsLocalSource.saveOrganizzazioni(toSave);
-                }
-            }
-        };
-        localQueryExhausted.observeForever(queryObserver);
-        webQueryExhausted.observeForever(queryObserver);*/
-    }
-
-    public void addToActiveTracking(Organizzazione o) {
-        o.setTrackingActive(true);
-        updateOrganizzazione(o);
-    }
-
-    public void addToTracking(Organizzazione o) {
-        o.setTracking(true);
-        updateOrganizzazione(o);
-    }
-
-    /*
-    metodi più specifici, se in futuro si rendessero disponibili delle API più specifiche.
-    Potrebbero avere senso per occupare meno banda e alleggerire il carico lato server,
-
-    param: lista degli id delle organizzazioni
-    List<Organizzazione> getOrganizzazioni(List<String> organizationIds);
-
-    param: id di un'organizzazione
-    Organizzazione getOrganizzazione(List<String> organizationId);
-    */
-
+    @Before
+    public void setup(){}
 }
