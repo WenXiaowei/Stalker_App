@@ -34,10 +34,10 @@ jobs:
 #         github-token: ${{ secrets.GITHUB_TOKEN }}
 #         parallel: true
 #         path-to-lcov: ./coverage/lcov.info # optional (default value)
-    - name: Upload APK
-      uses: actions/upload-artifact@v1
-      with:
-        name: app
-        path: app/build/outputs/apk/debug/app-debug.apk
+#    - name: Upload APK
+ #     uses: actions/upload-artifact@v1
+  #    with:
+   #     name: app
+    #    path: app/build/outputs/apk/debug/app-debug.apk
 
  
