@@ -238,9 +238,11 @@ public class OrganizationViewAdapter extends RecyclerView.Adapter<OrganizationVi
     private List<Organizzazione> listaOrganizzazione;
     private Context context;
     private NavController navController;
+    private OrganizationsViewModel viewModel;
 
-    public OrganizationViewAdapter(Context context, NavController controller) {
+    public OrganizationViewAdapter(Context context, OrganizationsViewModel organizationsViewModel,NavController controller) {
         this.context = context;
+        this.viewModel= organizationsViewModel;
         this.navController = controller;
     }
 
@@ -274,6 +276,7 @@ public class OrganizationViewAdapter extends RecyclerView.Adapter<OrganizationVi
 //                int position = holder.getAdapterPosition();
 //                Organizzazione org = listaOrganizzazione.get(position);
                 org.setTracking(true);
+                viewModel.updateOrganizzazione(org);
                 navController.navigate(R.id.action_navigation_organizations_to_navigation_tracking);
 
         });
