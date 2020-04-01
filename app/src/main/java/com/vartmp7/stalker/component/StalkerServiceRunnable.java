@@ -271,16 +271,12 @@ class StalkerServiceRunnable implements Runnable {
     private static final int SECONDS_TO_WAIT = 3;
 
     @Override
-    public synchronized void run() {
+    public void run() {
 
         Looper.prepare();
         Log.d(TAG, "run: thread Starting");
         if (callBack != null)
             callBack.onInitializingTracking();
-        LocationRequest request = new LocationRequest();
-        request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setMaxWaitTime(SECONDS_TO_WAIT * 1000)
-                .setSmallestDisplacement(1);
 
 //        Sensor sensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
 //        StalkerStepCounter stepCounter = new StalkerStepCounter(sensorManager, sensor);
@@ -291,10 +287,11 @@ class StalkerServiceRunnable implements Runnable {
 
         if (context.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
                 context.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-
-            manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1, 10, new LocationListener() {
+            Log.d(TAG, "run: location permissions granted");
+            manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1, 1, new LocationListener() {
                 @Override
                 public void onLocationChanged(Location location) {
+                    Log.d(TAG, "onLocationChanged: location is changed");
                     coordinata = new Coordinata(location.getLongitude(), location.getLatitude());
                 }
 
@@ -313,50 +310,32 @@ class StalkerServiceRunnable implements Runnable {
 
                 }
             });
-        }
-        List<LuogoPoligono> listaLuoghi = new ArrayList<>();
-        for (int j = 0; j < trackingOrgs.size(); j++) {
-            List<LuogoPoligono> luoghi = trackingOrgs.get(j).getLuoghi();
-            listaLuoghi.addAll(luoghi);
-        }
-        LocationCallback locationCallback = new LocationCallback() {
-            @Override
-            public void onLocationResult(LocationResult locationResult) {
-                super.onLocationResult(locationResult);
-                Log.d(TAG, "onLocationResult: Updating coordinate");
-                coordinata = new Coordinata(locationResult.getLastLocation().getLongitude(),
-                        locationResult.getLastLocation().getLatitude());
+            List<LuogoPoligono> listaLuoghi = new ArrayList<>();
+            for (int j = 0; j < trackingOrgs.size(); j++) {
+                List<LuogoPoligono> luoghi = trackingOrgs.get(j).getLuoghi();
+                listaLuoghi.addAll(luoghi);
             }
-        };
+
 //        fusedLocationProviderClient.requestLocationUpdates(request, locationCallback, null);
 
-        while (isRunning) {
-//            Task<Location> location = fusedLocationProviderClient.getLastLocation();
-//            location.addOnCompleteListener(new OnCompleteListener<Location>() {
-//                @Override
-//                public void onComplete(@NonNull Task<Location> task) {
-//                    Log.d(TAG, "onComplete: " + task.getResult());
-//                    coordinata = new Coordinata(task.getResult().getLongitude(), task.getResult().getLatitude());
-//                }
-//            });
-//            if (location.isComplete())
-//                coordinata = new Coordinata(location.getResult().getLongitude(), location.getResult().getLatitude());
-            Log.d(TAG, "run: " + i);
-            if (callBack != null) {
-                callBack.notInsideAnyPlaces();
-            } else
-                Log.d(TAG, "run: callback == null");
+            while (isRunning) {
+
+                Log.d(TAG, "run: " + i);
+                if (callBack != null) {
+                    callBack.notInsideAnyPlaces();
+                } else
+                    Log.d(TAG, "run: callback == null");
 
 
-            if (coordinata != null) {
-                Log.d(TAG, "run: " + coordinata);
-                long i = listaLuoghi.stream().filter(luogo1 -> luogo1.isInside(coordinata)).count();
+                if (coordinata != null) {
+                    Log.d(TAG, "run: " + coordinata);
+                    long i = listaLuoghi.stream().filter(luogo1 -> luogo1.isInside(coordinata)).count();
 
-                if (i != 0) {
-                    Log.d(TAG, "run: Presente!");
-                } else {
-                    Log.d(TAG, "run: non presente!");
-                }
+                    if (i != 0) {
+                        Log.d(TAG, "run: Presente!");
+                    } else {
+                        Log.d(TAG, "run: non presente!");
+                    }
 //                if (luogo.isPresent()) {
 //                    AbstractLuogo l = luogo.get();
 //                    if (callBack != null) {
@@ -369,22 +348,24 @@ class StalkerServiceRunnable implements Runnable {
 //                    if (callBack != null)
 //                        callBack.notInsideAnyPlaces();
 //                }
-            } else {
-                Log.d(TAG, "run: coordinata==null");
+                } else {
+                    Log.d(TAG, "run: coordinata==null");
+                }
+
+                try {
+                    sleep((SECONDS_TO_WAIT + 2) * 1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                i++;
             }
 
-            try {
-                sleep((SECONDS_TO_WAIT + 2) * 1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            i++;
+
+            Log.d(TAG, "run: while terminating");
+            if (callBack != null)
+                callBack.onTrackingTerminated();
+
         }
-
-
-        Log.d(TAG, "run: while terminating");
-        if (callBack != null)
-            callBack.onTrackingTerminated();
 
 
     }
