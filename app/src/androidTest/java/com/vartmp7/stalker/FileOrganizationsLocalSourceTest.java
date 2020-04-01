@@ -369,13 +369,31 @@ public class FileOrganizationsLocalSourceTest {
         source.updateOrganizzazione(o);
     }
 
-    /*@Test
+    @Test
     public void testUpdateOrganizzazioni(){
         List<Organizzazione> toUpdate = Arrays.asList(
-                new Organizzazione().setId(firsts.get(0).getId()).setName("asd"),
-                new Organizzazione().setId(firsts.get(1).getId()).setTracking(true)
+                new Organizzazione().setId(firsts.get(0).getId()).setName("updated1"),
+                new Organizzazione().setId(firsts.get(1).getId()).setName("updated2").setTracking(true),
+                new Organizzazione().setId(36).setName("new org")
         );
-        expected = toUpdate;
+        expected = new ArrayList<>(firsts);
+
+        for(int i=0;i<toUpdate.size();i++){
+            Organizzazione orgToUpdate = toUpdate.get(i);
+            boolean contained=false;
+            for (int j=0;j<expected.size() &&!contained;j++){
+                Organizzazione currentOrg = expected.get(j);
+                if(orgToUpdate.getId()==currentOrg.getId()){
+                    contained=true;
+                    orgToUpdate.setTrackingActive(currentOrg.isTrackingActive());
+                    orgToUpdate.setTracking(currentOrg.isTracking());
+                    orgToUpdate.setPreferito(currentOrg.isPreferito());
+                    expected.set(i,orgToUpdate);
+                }
+            }
+            if(!contained) expected.add(orgToUpdate);
+        }
+
         observer.setTester(organizzazioni->{
             Log.d(TAG, "testUpdateOrganizzazioni: observer triggered");
             if(!organizzazioni.equals(firsts)){
@@ -387,6 +405,8 @@ public class FileOrganizationsLocalSourceTest {
             }
         });
         source.updateOrganizzazioni(toUpdate);
+        source.updateOrganizzazioni(toUpdate);
+        source.updateOrganizzazioni(toUpdate);
     }
-    */
+
 }
