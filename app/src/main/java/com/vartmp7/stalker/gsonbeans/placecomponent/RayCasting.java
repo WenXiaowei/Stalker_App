@@ -205,63 +205,67 @@
 package com.vartmp7.stalker.gsonbeans.placecomponent;
 
 
-import com.vartmp7.stalker.gsonbeans.placecomponent.Coordinata;
-import com.vartmp7.stalker.gsonbeans.placecomponent.Lato;
-import com.vartmp7.stalker.gsonbeans.placecomponent.Retta;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class RayCasting {
-    public static boolean isLatLngInside(List<Coordinata> latLngs, Coordinata latLng) {
-        return normalizeLatLngsAndProceed(latLngs, latLng);
+    private List<Coordinata> coordinate;
+    private Coordinata punto;
+
+
+    public RayCasting(List<Coordinata> latLngs, Coordinata latLng) {
+        this.coordinate = latLngs;
+        this.punto = latLng;
+    }
+//    public  boolean isLatLngInside() {
+//        return normalizeLatLngsAndProceed();
+//    }
+
+    public  boolean isPointInside() {
+        return isPointInsideEdges(getEdgesFromPoints(coordinate), punto);
     }
 
-    public static boolean isPointInside(List<Coordinata> coordinates, Coordinata point) {
-        return isPointInsideEdges(getEdgesFromPoints(coordinates), point);
-    }
+//    private  boolean normalizeLatLngsAndProceed() {
+//        if(coordinate.size() < 3) throw new RuntimeException("At least 3 latlngs are required");
+//
+//        double smallestLongitude = Double.MAX_VALUE, highestLongitude = Double.MIN_VALUE;
+//
+//        for(Coordinata latLng : coordinate) {
+//            if(latLng.getLongitude() < smallestLongitude) {
+//                smallestLongitude = latLng.getLongitude();
+//            } else if(latLng.getLongitude() > highestLongitude) {
+//                highestLongitude = latLng.getLongitude();
+//            }
+//        }
+//
+//        if(punto.getLongitude() < smallestLongitude) {
+//            smallestLongitude = punto.getLongitude();
+//        } else if(punto.getLongitude() > highestLongitude) {
+//            highestLongitude = punto.getLongitude();
+//        }
+//
+//        if((highestLongitude - smallestLongitude) > 180) {
+//            List<Coordinata> normalizedLatlngs = new ArrayList<>();
+//            for(Coordinata latLng: coordinate) {
+//                normalizedLatlngs.add(new Coordinata(latLng.getLatitude(), latLng.getLongitude() < 0 ? latLng.getLongitude() + 180 : latLng.getLongitude()));
+//            }
+//            punto = new Coordinata(punto.getLatitude(), punto.getLongitude() < 0 ? punto.getLongitude() + 180 : punto.getLongitude());
+//            return isPointInsideEdges(getEdgesFromLatLngs(normalizedLatlngs), new Coordinata(punto));
+//        } else {
+//            return isPointInsideEdges(getEdgesFromLatLngs(coordinate), new Coordinata(punto));
+//        }
+//    }
+//
+//    private  ArrayList<Lato> getEdgesFromLatLngs(List<Coordinata> latLngs) {
+//        ArrayList<Lato> edges = new ArrayList<>();
+//        for(int i = 0; i < latLngs.size(); i++) {
+//            edges.add(new Lato(latLngs.get(i), i < latLngs.size()-1 ? latLngs.get(i+1) : latLngs.get(0)));
+//        }
+//
+//        return edges;
+//    }
 
-    private static boolean normalizeLatLngsAndProceed(List<Coordinata> coordinate, Coordinata punto) {
-        if(coordinate.size() < 3) throw new RuntimeException("At least 3 latlngs are required");
-
-        double smallestLongitude = Double.MAX_VALUE, highestLongitude = Double.MIN_VALUE;
-
-        for(Coordinata latLng : coordinate) {
-            if(latLng.getLongitude() < smallestLongitude) {
-                smallestLongitude = latLng.getLongitude();
-            } else if(latLng.getLongitude() > highestLongitude) {
-                highestLongitude = latLng.getLongitude();
-            }
-        }
-
-        if(punto.getLongitude() < smallestLongitude) {
-            smallestLongitude = punto.getLongitude();
-        } else if(punto.getLongitude() > highestLongitude) {
-            highestLongitude = punto.getLongitude();
-        }
-
-        if((highestLongitude - smallestLongitude) > 180) {
-            List<Coordinata> normalizedLatlngs = new ArrayList<>();
-            for(Coordinata latLng: coordinate) {
-                normalizedLatlngs.add(new Coordinata(latLng.getLatitude(), latLng.getLongitude() < 0 ? latLng.getLongitude() + 180 : latLng.getLongitude()));
-            }
-            punto = new Coordinata(punto.getLatitude(), punto.getLongitude() < 0 ? punto.getLongitude() + 180 : punto.getLongitude());
-            return isPointInsideEdges(getEdgesFromLatLngs(normalizedLatlngs), new Coordinata(punto));
-        } else {
-            return isPointInsideEdges(getEdgesFromLatLngs(coordinate), new Coordinata(punto));
-        }
-    }
-
-    private static ArrayList<Lato> getEdgesFromLatLngs(List<Coordinata> latLngs) {
-        ArrayList<Lato> edges = new ArrayList<>();
-        for(int i = 0; i < latLngs.size(); i++) {
-            edges.add(new Lato(latLngs.get(i), i < latLngs.size()-1 ? latLngs.get(i+1) : latLngs.get(0)));
-        }
-
-        return edges;
-    }
-
-    private static ArrayList<Lato> getEdgesFromPoints(List<Coordinata> points) {
+    private  ArrayList<Lato> getEdgesFromPoints(List<Coordinata> points) {
         ArrayList<Lato> edges = new ArrayList<>();
         for(int i = 0; i < points.size(); i++) {
             edges.add(new Lato(points.get(i), i < points.size()-1 ? points.get(i+1) : points.get(0)));
@@ -270,25 +274,13 @@ public class RayCasting {
         return edges;
     }
 
-    /**
-     * Assuming that the passed edges form a closed polygon, this method
-     * tells whether the given point lies inside or outside the polygon
-     *
-     * @param edges
-     * @param point
-     * @return
-     */
-    private static boolean isPointInsideEdges(List<Lato> edges, Coordinata point) {
-//        Log.d("RAY CAST", "Point: " + point.getX() + "; " + point.getY());
-//        Log.d("RAY CAST", "Lines ******************");
-//        for(Lato edge : edges) {
-//            Log.d("RAY CAST", edge.getStartX() + "," + edge.getStartY() + "; " + edge.getEndX() + "," + edge.getEndY());
-//        }
-//        Log.d("RAY CAST", "Lines ******************");
+    private  boolean isPointInsideEdges(List<Lato> edges, Coordinata point) {
+
         int intersectionCount = 0;
 
         for(Lato edge : edges) {
-            if(Retta.linesIntersect(edge.getStartX(), edge.getStartY(), edge.getEndX(), edge.getEndY(), point.getLongitude(), point.getLatitude(), Double.MAX_VALUE, Double.MAX_VALUE)) {
+
+            if(edge.linesIntersect(point)) {
                 intersectionCount++;
             }
         }

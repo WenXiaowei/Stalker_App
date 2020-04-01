@@ -202,171 +202,45 @@
  *    limitations under the License.
  */
 
-package com.vartmp7.stalker.ui.organizations;
+package com.vartmp7.stalker.repository;
 
-import android.content.Context;
-import android.graphics.Color;
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-
-import androidx.annotation.NonNull;
-import androidx.lifecycle.LiveData;
-import androidx.navigation.NavController;
-import androidx.recyclerview.widget.RecyclerView;
-
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
-import com.vartmp7.stalker.R;
 import com.vartmp7.stalker.gsonbeans.Organizzazione;
+import com.vartmp7.stalker.gsonbeans.ResponseLuogo;
+import com.vartmp7.stalker.gsonbeans.ResponseOrganizzazione;
+import com.vartmp7.stalker.gsonbeans.TrackHistory;
+import com.vartmp7.stalker.gsonbeans.TrackSignal;
 
-import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author Xiaowei Wen, Lorenzo Taschin
- */
-public class OrganizationViewAdapter extends RecyclerView.Adapter<OrganizationViewAdapter.ViewHolder> {
-    public static final String TAG = "com.vartmp7.stalker.ui.organizations.OrganizationAdapter";
-    private List<Organizzazione> listaOrganizzazione;
-    private Context context;
-    private NavController navController;
+import retrofit2.Call;
+import retrofit2.http.Body;
+import retrofit2.http.GET;
+import retrofit2.http.Headers;
+import retrofit2.http.POST;
+import retrofit2.http.Path;
 
-    public OrganizationViewAdapter(Context context, NavController controller) {
-        this.context = context;
-        this.navController = controller;
-    }
+public interface RestApiService {
+    @Headers("Organization-Token: vartmp7")
+    @GET("organizations")
+    Call<ResponseOrganizzazione> organizations();
 
-    public void setOrganizations(List<Organizzazione> newData){
-//        this.listaOrganizzazione= new ArrayList<>();
-        this.listaOrganizzazione= newData;
-        this.notifyDataSetChanged();
-    }
+    @Headers("Organization-Token: vartmp7")
+    @GET("organizations/{organization_id}")
+    Call<Organizzazione> organization(@Path("organization_id") long id);
 
-    @NonNull
-    @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_organization_list, parent, false);
-        return new ViewHolder(view);
-    }
+    @Headers("Organization-Token: vartmp7")
+    @GET("organizations/{organization_id}/places")
+    Call<ResponseLuogo> organizationsPlaces(@Path("organization_id") long id);
 
-    @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Organizzazione org = listaOrganizzazione.get(position);
-        int colorIndex = position % 5;
-        Glide.with(context)
-                .setDefaultRequestOptions(new RequestOptions().error(R.drawable.icon_stalker))
-                .load(listaOrganizzazione.get(position).getImage_url())
-                .into(holder.ivIconOrganizzazione);
+    @Headers("Organization-Token: vartmp7")
+    @GET("organizations/{organization_id}/places/{place_id}")
+    Call<ResponseLuogo> organizationsPlaceWithID(@Path("organization_id") long id,@Path("place_id") long placeId);
 
-        holder.nomeOrganizzazione.setText(org.getName());
-        holder.tipoOrganizzazione.setText(org.getType());
-        holder.tvIndirizzo.setText(org.getAddress());
-        holder.btnTrackMe.setOnClickListener(v -> {
-//                int position = holder.getAdapterPosition();
-//                Organizzazione org = listaOrganizzazione.get(position);
-                org.setTracking(true);
-                navController.navigate(R.id.action_navigation_organizations_to_navigation_tracking);
+    @Headers("Organization-Token: vartmp7")
+    @POST("organizations/{organization_id}/places/{place_id}/tracks")
+    Call<ResponseLuogo> tracking(@Path("organization_id") long id, @Path("place_id") long placeId, @Body TrackSignal signal);
 
-        });
-
-        holder.btnShowDetails.setOnClickListener(v->{
-            if (holder.llHidingInfo.getVisibility() == View.GONE) {
-                Animation slideDown = AnimationUtils.loadAnimation(context, R.anim.slide_down_animation);
-                slideDown.setAnimationListener(new Animation.AnimationListener() {
-                    @Override
-                    public void onAnimationStart(Animation animation) {
-                        holder.llHidingInfo.setVisibility(View.VISIBLE);
-//                        ((Button) v).setText(R.string.nascondi);
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animation animation) {
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animation animation) {
-
-                    }
-                });
-                holder.llHidingInfo.startAnimation(slideDown);
-            } else {
-                Animation closing = AnimationUtils.loadAnimation(context, R.anim.closing_animation);
-                closing.setAnimationListener(new Animation.AnimationListener() {
-                    @Override
-                    public void onAnimationStart(Animation animation) {}
-                    @Override
-                    public void onAnimationEnd(Animation animation) {
-                        holder.llHidingInfo.setVisibility(View.GONE);
-//                        ((Button) v).setText(R.string.dettagli);
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animation animation) {}
-                });
-                holder.llHidingInfo.startAnimation(closing);
-            }
-        });
-
-        if (holder.llHidingInfo.getVisibility() == View.INVISIBLE) {
-            Animation slideDown = AnimationUtils.loadAnimation(context, R.anim.slide_down_animation);
-            slideDown.setAnimationListener(new Animation.AnimationListener() {
-                @Override
-                public void onAnimationStart(Animation animation) {
-                    holder.llHidingInfo.setVisibility(View.VISIBLE);
-                    holder.tvIndirizzo.setVisibility(View.VISIBLE);
-                }
-
-                @Override
-                public void onAnimationEnd(Animation animation) {
-                }
-
-                @Override
-                public void onAnimationRepeat(Animation animation) {
-
-                }
-            });
-            holder.llHidingInfo.startAnimation(slideDown);
-        }
-
-    }
-
-    @Override
-    public int getItemCount() {
-        return listaOrganizzazione.size();
-    }
-
-    static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView nomeOrganizzazione;
-        TextView tipoOrganizzazione, tvIndirizzo, tvElencoLuoghi;
-        Button btnTrackMe, btnShowDetails;
-        LinearLayout llHidingInfo,llIconName;
-
-        ImageView ivIconOrganizzazione;
-
-        ViewHolder(@NonNull View itemView) {
-            // dati dell'organizzazione
-            super(itemView);
-            nomeOrganizzazione = itemView.findViewById(R.id.tvNomeOrganizzazione);
-            tipoOrganizzazione = itemView.findViewById(R.id.tvTipoOrganizzazione);
-            btnTrackMe = itemView.findViewById(R.id.btnTrackMe);
-            tvIndirizzo = itemView.findViewById(R.id.tvIndirizzo);
-            llHidingInfo = itemView.findViewById(R.id.llHidingInformation);
-            ivIconOrganizzazione = itemView.findViewById(R.id.ivIconOrganizzazione);
-            btnShowDetails= itemView.findViewById(R.id.btnShowDetails);
-            llIconName = itemView.findViewById(R.id.llIconName);
-            tvElencoLuoghi = itemView.findViewById(R.id.tvElencoLuoghi);
-
-        }
-    }
-
-
+    @Headers("Organization-Token: vartmp7")
+    @POST("organizations/{id_orgs}/user/tracks")
+    Call<List<TrackHistory>> getTracks(@Path("id_orgs") long id, @Body TrackSignal signal);
 }

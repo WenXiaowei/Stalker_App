@@ -218,6 +218,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
+
 
 public class FirebaseFavoritesSource implements FavoritesSource {
     public static final String TAG = "com.vartmp7.stalker.repository.FirebaseFavoritesSource";
@@ -225,6 +230,9 @@ public class FirebaseFavoritesSource implements FavoritesSource {
     private static final String FIELDNAME_ORGANIZZAZIONI = "organizzazioni";
     private OrganizationsRepository organizationsRepo;
     private FirebaseFirestore db;
+
+    @Getter(AccessLevel.PUBLIC)
+    @Setter(AccessLevel.PUBLIC)
     private String userId;
 
     /*
@@ -250,28 +258,20 @@ public class FirebaseFavoritesSource implements FavoritesSource {
         initUserStorage();
     }
 
-    public void setUserID(String userId) {
-        this.userId = userId;
-        initUserStorage();
-    }
+    public void initUserStorage() {
+        db.collection("utenti").document(userId)
+            .get()
+            .addOnSuccessListener(docSnapshot->{
+                if(!docSnapshot.exists()){
+                    Log.d(TAG, "initUserStorage(!document...exists()): ");
+                    Map<String, Object> userData = new HashMap<>();
+                    userData.put(FIELDNAME_ORGANIZZAZIONI, new ArrayList<Long>());
+                    db.collection("utenti").document(userId).set(userData);
+                }
+            }).addOnFailureListener(e->{
+                Log.e(TAG, "initUserStorage: "+e.getMessage());
+            });
 
-
-    private boolean hasData() throws Exception {
-        AtomicBoolean hasData = new AtomicBoolean(false);
-        Exception exc=new Exception();
-        AtomicBoolean exceptionOccurred= new AtomicBoolean(false);
-
-        db.collection("utenti").document(userId).get().addOnSuccessListener(docSnapshot -> {
-            Log.e(TAG, "document exists");
-            hasData.set(docSnapshot.exists());
-        })
-        .addOnFailureListener(e->{
-            Log.e(TAG,e.getMessage());
-            exc.initCause(e);
-            exceptionOccurred.set(true);
-        });
-        if(exceptionOccurred.get()) throw exc;
-        return hasData.get();
     }
 
     private void initUserStorage() {

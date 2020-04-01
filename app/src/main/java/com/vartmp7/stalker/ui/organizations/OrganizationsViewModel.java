@@ -214,6 +214,9 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+
 /**
  * @author Xiaowei Wen, Lorenzo Taschin
  */
@@ -221,6 +224,7 @@ public class OrganizationsViewModel extends ViewModel {
     public static final String TAG = "com.vartmp7.stalker.ui.organizations.OrganizationsViewModel";
 
     private OrganizationsRepository orgRepo;
+    @Getter(AccessLevel.PUBLIC)
     private LiveData<List<Organizzazione>> organizationList;
 
 
@@ -239,10 +243,6 @@ public class OrganizationsViewModel extends ViewModel {
         orgRepo.updateOrganizzazioni();
     }*/
 
-    public @Nullable
-    LiveData<List<Organizzazione>> getOrganizationList() {
-        return organizationList;
-    }
 
 //    public void aggiungiOrganizzazione(final Organizzazione org) {
 //        List<Organizzazione> l = organizationList.getValue();

@@ -206,29 +206,30 @@ package com.vartmp7.stalker.gsonbeans;
 
 import com.vartmp7.stalker.gsonbeans.placecomponent.Coordinata;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
+
 /**
- * @author  Xiaowei Wen, Lorenzo Taschin
- *
+ * @author Xiaowei Wen, Lorenzo Taschin
  */
 public abstract class AbstractLuogo {
-    public static final String TAG ="com.vartmp7.stalker.gsonbeans.AbstractLuogo";
-
-    public String getOrganizationName() {
-        return organizationName;
-    }
-
-    public AbstractLuogo setOrganizationName(String organizationName) {
-        this.organizationName = organizationName;
-        return this;
-    }
-
-    private String organizationName;
+    public static final String TAG = "com.vartmp7.stalker.gsonbeans.AbstractLuogo";
+    @Getter
+    @Setter
+    @Accessors(chain = true)
     private long id;
+    @Getter
+    @Setter
+    @Accessors(chain = true)
     private String name;
+    @Getter
+    @Setter
+    @Accessors(chain = true)
     private long num_max_people;
 
     protected AbstractLuogo(long id, String name, long num_max_people) {
-      this(id,name);
+        this(id, name);
         this.num_max_people = num_max_people;
     }
 

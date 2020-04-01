@@ -205,6 +205,7 @@
 package com.vartmp7.stalker.gsonbeans;
 
 import com.vartmp7.stalker.gsonbeans.placecomponent.RayCasting;
+
 import androidx.annotation.NonNull;
 
 import com.vartmp7.stalker.gsonbeans.AbstractLuogo;
@@ -214,39 +215,35 @@ import com.vartmp7.stalker.gsonbeans.placecomponent.Retta;
 import java.util.Arrays;
 import java.util.List;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
+
 /**
  * @author Xiaowei Wen, Lorenzo Taschin
  */
 public class LuogoPoligono extends AbstractLuogo {
+    @Getter
+    @Setter
+    @Accessors(chain = true)
+    private List<Coordinata> coordinate;
 
-    private List<Coordinata> coordinates;
-
-    public LuogoPoligono(){
-        super(0,null);
-    }
-    LuogoPoligono(long id, String name, List<Coordinata> coordinate){
-        super(id,name);
-        this.coordinates =coordinate;
-
-    }
-    public LuogoPoligono setOrganizationName(String str){
-        super.setOrganizationName(str);
-        return this;
-    }
-    LuogoPoligono(long id, String name,  long num_max_people,List<Coordinata> coordinate) {
-        super(id,name,num_max_people);
-        this.coordinates = coordinate;
+    public LuogoPoligono() {
+        super(0, null);
     }
 
+    LuogoPoligono(long id, String name, List<Coordinata> coordinate) {
+        super(id, name);
+        this.coordinate = coordinate;
 
-    public List<Coordinata> getCoordinate() {
-        return coordinates;
     }
 
-    public LuogoPoligono setCoordinate(List<Coordinata> coordinate) {
-        this.coordinates = coordinate;
-        return this;
+    LuogoPoligono(long id, String name, long num_max_people, List<Coordinata> coordinate) {
+        super(id, name, num_max_people);
+        this.coordinate = coordinate;
     }
+
+
     @NonNull
     @Override
     public String toString() {
@@ -258,19 +255,8 @@ public class LuogoPoligono extends AbstractLuogo {
 
 
     @Override
-    public Coordinata getCenter() {
-        return new Retta(coordinates.get(0),coordinates.get(2))
-                .intersezione(new Retta(coordinates.get(1),coordinates.get(3)));
-    }
-
-    @Override
-    public double distanceTo(Coordinata c) {
-        return getCenter().getDistanceTo(c);
-    }
-
-    @Override
-    public boolean  isInside(Coordinata c) {
-        return RayCasting.isPointInside(getCoordinate(),c);
+    boolean isInside(Coordinata c) {
+        return new RayCasting(getCoordinate(), c).isPointInside();
     }
     public long getId() {
         return super.getId();

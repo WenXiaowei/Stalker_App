@@ -212,6 +212,8 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(Parameterized.class)
 public class LatoTest {
@@ -227,6 +229,30 @@ public class LatoTest {
         this.x2 = x2;
         this.y2 = y2;
     }
+
+    @Test
+    public void testLinesIntersectWhenItShouldNot(){
+        Lato l=new Lato(new Coordinata(0,0),new Coordinata(1,1));
+        Coordinata p = new Coordinata(3,3);
+        assertFalse(l.linesIntersect(p));
+    }
+
+    @Test
+    public void testLinesIntersectWhenPointIsOnEdge(){
+        Lato l2=new Lato(new Coordinata(0,0),new Coordinata(1,1));
+        Coordinata p2 = new Coordinata(0.5d,0.5d);
+        assertTrue(l2.linesIntersect(p2));
+    }
+
+
+    @Test
+    public void testLinesIntersectWhenItShould(){
+        Lato l=new Lato(new Coordinata(0,0),new Coordinata(1,2));
+        Coordinata p = new Coordinata(0,1);
+        assertTrue(l.linesIntersect(p));
+    }
+
+
 
     @Parameterized.Parameters
     public static Collection<Object[]> data() {

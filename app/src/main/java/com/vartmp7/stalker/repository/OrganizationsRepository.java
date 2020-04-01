@@ -246,12 +246,6 @@ public class OrganizationsRepository {
         this.organizationsLocalSource = orgsLocalSource;
         this.organizationsWebSource = orgsWebSource;
         this.organizationFavoritesSource = fa;
-
-        /*organizationsLocalSource.saveOrganizzazioni(Arrays.asList(
-                new Organizzazione().setId(1).setName("asd"),
-                new Organizzazione().setId(2).setName("ffff"),
-                new Organizzazione().setId(3).setName("gg")
-        ));*/
     }
     public LiveData<List<Organizzazione>> getOrganizzazioni(){
         return organizationsLocalSource.getOrganizzazioni();

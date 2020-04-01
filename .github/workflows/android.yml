@@ -15,6 +15,12 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 1.8
+    - name: Remove old artifacts
+      uses: c-hive/gha-remove-artifacts@v1
+      with:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        age: '1 day'
+        skip-tags: true  
     - name: Add ChMOD
       run: chmod +x gradlew
     - name: Test
@@ -28,10 +34,10 @@ jobs:
 #         github-token: ${{ secrets.GITHUB_TOKEN }}
 #         parallel: true
 #         path-to-lcov: ./coverage/lcov.info # optional (default value)
-    - name: Upload APK
-      uses: actions/upload-artifact@v1
-      with:
-        name: app
-        path: app/build/outputs/apk/debug/app-debug.apk
+#    - name: Upload APK
+ #     uses: actions/upload-artifact@v1
+  #    with:
+   #     name: app
+    #    path: app/build/outputs/apk/debug/app-debug.apk
 
  

@@ -209,21 +209,32 @@ import androidx.annotation.Nullable;
 
 import java.util.Objects;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
+
 /**
  * @author Xiaowei Wen, Lorenzo Taschin
  */
 
 public class Coordinata {
 
-    public static final String TAG ="com.vartmp7.stalker.gsonbeans.placecomponent.Coordinata";
-    private double latitude=0;//y
-    private double longitude=0; //x
+    public static final String TAG = "com.vartmp7.stalker.gsonbeans.placecomponent.Coordinata";
+    @Getter
+    @Setter
+    @Accessors(chain = true)
+    private double latitude = 0;//y
+    @Getter
+    @Setter
+    @Accessors(chain = true)
+    private double longitude = 0; //x
 
     public Coordinata() {
     }
-    public Coordinata(Coordinata c){
-        latitude=c.getLatitude();
-        longitude=c.getLongitude();
+
+    public Coordinata(Coordinata c) {
+        latitude = c.getLatitude();
+        longitude = c.getLongitude();
     }
 
     public Coordinata(double latitudine, double longitude) {
@@ -231,21 +242,7 @@ public class Coordinata {
         this.longitude = longitude;
     }
 
-    public double getLatitude() {
-        return latitude;
-    }
 
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
-    }
-
-    public double getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(double longoitude) {
-        this.longitude = longoitude;
-    }
 
     @NonNull
     @Override
@@ -268,8 +265,8 @@ public class Coordinata {
         return Objects.hash(getLatitude(), getLongitude());
     }
 
-    private double rad(double x){
-        return x*Math.PI/180;
+    private double rad(double x) {
+        return x * Math.PI / 180;
     }
 
     /**
@@ -287,5 +284,7 @@ public class Coordinata {
                         Math.sin(dLong / 2) * Math.sin(dLong / 2);
         double c1 = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
         return R * c1; // returns the distance in meter
-    };
+    }
+
+    ;
 }

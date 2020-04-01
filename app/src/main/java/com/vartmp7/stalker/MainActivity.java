@@ -352,6 +352,7 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             case R.id.menuLogin:
                 goToLoginActivity(true);
+            default:
 
         }
         return super.onOptionsItemSelected(item);

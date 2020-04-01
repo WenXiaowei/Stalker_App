@@ -210,22 +210,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
+
 /**
  * @author Xiaowei Wen, Lorenzo Taschin
  */
 public class ResponseOrganizzazione {
     public static final String TAG ="com.vartmp7.stalker.gsonbeans.ResponseOrganizzazione";
-
+    @Getter
+    @Setter
+    @Accessors(chain = true)
     private List<Organizzazione> organizations;
-
-    public List<Organizzazione> getOrganizations() {
-        return organizations;
-    }
-
-    public ResponseOrganizzazione setOrganizations(List<Organizzazione> organizations) {
-        this.organizations = organizations;
-        return this;
-    }
 
     @Deprecated
     public String[] getDataForSpinner() {

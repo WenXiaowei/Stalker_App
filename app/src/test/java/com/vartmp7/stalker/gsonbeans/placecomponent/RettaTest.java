@@ -234,15 +234,6 @@ public class RettaTest {
 
 
 
-    @Test
-    public void testEquals(){
-        Coordinata c1 = new Coordinata(1,1),
-                c2 = new Coordinata(2,2);
-        Retta r1 = new Retta(c1,c2);
-        assertEquals(r1,new Retta(c2,c1));
-        assertEquals(r1,new Retta(r1.getM(),r1.getQ()));
-
-    }
 
     @Before
     public void initialize() {

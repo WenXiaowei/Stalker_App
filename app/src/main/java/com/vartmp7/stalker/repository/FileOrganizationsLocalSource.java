@@ -236,12 +236,16 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+
 public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
     private static final String TAG = "com.vartmp7.stalker.repository.FileOrganizationsRepository";
     private String fileName;
     private Context context;
     private Gson gson;
     //    List<Organizzazione> organizzazioni;
+    @Getter(AccessLevel.PUBLIC)
     private MutableLiveData<List<Organizzazione>> mLiveOrgs;
 
     public FileOrganizationsLocalSource(String fileName, Context context, MutableLiveData<List<Organizzazione>> org) {
@@ -277,7 +281,7 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
             l.add(pos, o);
             saveOrganizzazioni(l);
             mLiveOrgs.setValue(l);
-        }
+        }*/
     }
 
 
@@ -286,11 +290,48 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
     public LiveData<List<Organizzazione>> getOrganizzazioni() {
         //MutableLiveData<List<Organizzazione>> mLiveOrgs = new MutableLiveData<>();
         //this.mLiveOrgs.setValue(organizzazioni);
-
+        Log.d("TEST","arrivo qua1");
         new Thread() {
             @Override
             public void run() {
                 super.run();
+                FileInputStream fis = null;
+                Log.d("TEST","arrivo qua 2");
+                try {
+//                    Log.d(TAG, "run: lettura dal file");
+                    // fixme sonarqube segna come bug
+                    fis = context.openFileInput(fileName);
+                    // fixme sonarqube segna come bug
+                    InputStreamReader inputStreamReader =new InputStreamReader(fis, StandardCharsets.UTF_8);
+                    StringBuilder stringBuilder = new StringBuilder();
+                    try (BufferedReader reader = new BufferedReader(inputStreamReader)) {
+                        String line = reader.readLine();
+                        while (line != null) {
+                            stringBuilder.append(line).append('\n');
+                            line = reader.readLine();
+                        }
+                    } catch (IOException e) {
+//                        Log.e(TAG, "run: Errore");
+                        // Error occurred when opening raw file for reading.
+                    } finally {
+                        String contents = stringBuilder.toString();
+                        List<Organizzazione> organizzazioni = mLiveOrgs.getValue();
+                        ResponseOrganizzazione responseOrganizzazioni = gson.fromJson(contents, ResponseOrganizzazione.class);
+//                    List<Organizzazione> orgs = mLiveOrgs.getValue();
+                        if(responseOrganizzazioni==null){
+                            Log.d(TAG, "run: lista vuota");
+                            organizzazioni.addAll(new ArrayList<>());
+                        }
+                        else{
+                            Log.d(TAG, "run: lista non vuota");
+                            organizzazioni.addAll(responseOrganizzazioni.getOrganizations().stream().distinct().collect(Collectors.toList()));
+                        }
+                        //organizzazioni.clear();
+                        //organizzazioni.addAll(responseOrganizzazioni.getOrganizations());
+                        Log.d("TEST","arrivo qua 3");
+                        mLiveOrgs.postValue(organizzazioni.stream().distinct().collect(Collectors.toList()));
+//                        Log.d(TAG, "run: dati letti dal file");
+                    }
 
 
             }
@@ -322,6 +363,21 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
                             .setPreferito(orgSaved.isPreferito());
 
                 }
+
+                try {
+                    // fixme sonarqube segna come bug
+                    FileWriter writer = new FileWriter(orgJson);
+                    // fixme quest'istruzione delle volte, genera un concurrentModificationException
+                    String l = new Gson().toJson(new ResponseOrganizzazione().setOrganizations(mLiveOrgs.getValue()));
+                    Log.d(TAG, "saving data.");
+                    writer.write(l);
+                    writer.flush();
+                    writer.close();
+                } catch (IOException e) {
+                    Log.d(TAG, "Errore, file non trovato");
+                    e.printStackTrace();
+                }
+                Log.d(TAG, "doInBackground: finished saving data");
             }
         });
         saveOrganizzazioni(orgs);
@@ -358,15 +414,8 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
         }
 
         try {
-            FileWriter writer = new FileWriter(orgJson);
-            // todo quest'istruzione delle volte, genera un concurrentModificationException
-            String l = new Gson().toJson(new ResponseOrganizzazione().setOrganizations(mLiveOrgs.getValue().stream().distinct().collect(Collectors.toList())));
-            Log.d(TAG, "saving data.");
-            writer.write(l);
-            writer.flush();
-            writer.close();
-        } catch (IOException e) {
-            Log.d(TAG, "Errore, file non trovato");
+            executorService.awaitTermination(1, TimeUnit.MINUTES);
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
         Log.d(TAG, "doInBackground: finished saving data");

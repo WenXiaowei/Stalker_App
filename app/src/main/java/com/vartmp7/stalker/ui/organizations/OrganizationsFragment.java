@@ -249,7 +249,7 @@ public class OrganizationsFragment extends Fragment implements SwipeRefreshLayou
 
         setUpRecyclerView();
         organizzazioneViewModel.getOrganizationList().observe(requireActivity(), list -> {
-            mAdapter.setData(list);
+            mAdapter.setOrganizations(list);
             mAdapter.notifyDataSetChanged();
             swipeRefreshLayout.setRefreshing(false);
         });

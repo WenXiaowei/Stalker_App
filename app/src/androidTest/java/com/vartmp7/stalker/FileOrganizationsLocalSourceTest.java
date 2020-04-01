@@ -187,7 +187,7 @@
  *       same "printed page" as the copyright notice for easier
  *       identification within third-party archives.
  *
- *    Copyright [2020] [VartTmp7]
+ *    Copyright [yyyy] [name of copyright owner]
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -200,173 +200,166 @@
  *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
+ *
  */
 
-package com.vartmp7.stalker.ui.organizations;
+package com.vartmp7.stalker;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.util.Log;
 
-import androidx.annotation.NonNull;
-import androidx.lifecycle.LiveData;
-import androidx.navigation.NavController;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.LifecycleRegistry;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.platform.app.InstrumentationRegistry;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
-import com.vartmp7.stalker.R;
 import com.vartmp7.stalker.gsonbeans.Organizzazione;
+import com.vartmp7.stalker.gsonbeans.ResponseOrganizzazione;
+import com.vartmp7.stalker.repository.FileOrganizationsLocalSource;
 
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TestRule;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
-/**
- * @author Xiaowei Wen, Lorenzo Taschin
- */
-public class OrganizationViewAdapter extends RecyclerView.Adapter<OrganizationViewAdapter.ViewHolder> {
-    public static final String TAG = "com.vartmp7.stalker.ui.organizations.OrganizationAdapter";
-    private List<Organizzazione> listaOrganizzazione;
-    private Context context;
-    private NavController navController;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-    public OrganizationViewAdapter(Context context, NavController controller) {
-        this.context = context;
-        this.navController = controller;
+@RunWith(AndroidJUnit4.class)
+public class FileOrganizationsLocalSourceTest {
+    private static final String TAG ="com.vartmp7.stalker.FileOrganizationsLocalSourceTest" ;
+    private FileOrganizationsLocalSource source;
+    private TestObserver observer;
+    private List<Organizzazione> firsts;
+    private List<Organizzazione> expected;
+    private static boolean triggered;
+    private LifecycleOwner lifecycleOwner;
+
+
+    private class TestObserver implements Observer<List<Organizzazione>>{
+        private Tester tester;
+        @Override
+        public void onChanged(List<Organizzazione> organizzazioni) {
+            if(tester!=null)
+                tester.test(organizzazioni);
+        }
+        public TestObserver  setTester(Tester tester){
+            this.tester=tester;
+            return this;
+        }
+
     }
 
-    public void setOrganizations(List<Organizzazione> newData){
-//        this.listaOrganizzazione= new ArrayList<>();
-        this.listaOrganizzazione= newData;
-        this.notifyDataSetChanged();
+    private interface Tester{
+        void test(List<Organizzazione> organizzazioni);
     }
 
-    @NonNull
-    @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_organization_list, parent, false);
-        return new ViewHolder(view);
+
+    @Rule
+    public TestRule rule = new InstantTaskExecutorRule();
+
+    private static LifecycleOwner mockLifecycleOwner() {
+        LifecycleOwner owner = mock(LifecycleOwner.class);
+        LifecycleRegistry lifecycle = new LifecycleRegistry(owner);
+        lifecycle.handleLifecycleEvent(Lifecycle.Event.ON_RESUME);
+        when(owner.getLifecycle()).thenReturn(lifecycle);
+        return owner;
     }
 
-    @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Organizzazione org = listaOrganizzazione.get(position);
-        int colorIndex = position % 5;
-        Glide.with(context)
-                .setDefaultRequestOptions(new RequestOptions().error(R.drawable.icon_stalker))
-                .load(listaOrganizzazione.get(position).getImage_url())
-                .into(holder.ivIconOrganizzazione);
+    @SuppressWarnings("unchecked")
+    public static Observer<List<Organizzazione>> mockObserver() {
+        return (Observer<List<Organizzazione>>) Mockito.mock(Observer.class);
+    }
 
-        holder.nomeOrganizzazione.setText(org.getName());
-        holder.tipoOrganizzazione.setText(org.getType());
-        holder.tvIndirizzo.setText(org.getAddress());
-        holder.btnTrackMe.setOnClickListener(v -> {
-//                int position = holder.getAdapterPosition();
-//                Organizzazione org = listaOrganizzazione.get(position);
-                org.setTracking(true);
-                navController.navigate(R.id.action_navigation_organizations_to_navigation_tracking);
 
+    private static void  setTriggered(){
+        triggered=true;
+    }
+
+    @Before
+    public void setUpTest(){
+        Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        this.lifecycleOwner = mockLifecycleOwner();
+        firsts = Arrays.asList(
+                new Organizzazione().setId(1).setName("asd").setTracking(false),
+                new Organizzazione().setId(2).setName("lol").setTracking(false),
+                new Organizzazione().setId(3).setName("lll").setTracking(false)
+        );
+        try (PrintWriter pw = new PrintWriter(context.openFileOutput("prova.json",Context.MODE_PRIVATE))){
+            ResponseOrganizzazione r = new ResponseOrganizzazione().setOrganizations(firsts);
+            pw.println(r);
+            pw.flush();
+            Log.d(TAG,"ok");
+        }catch(FileNotFoundException e){
+            Log.e(TAG,e.getMessage());
+        }
+        source = new FileOrganizationsLocalSource("prova.json",context,new MutableLiveData<>(firsts));
+        observer = new TestObserver();
+        source.getOrganizzazioni().observe(lifecycleOwner, observer);
+    }
+
+    @Test
+    public void testGet(){
+        observer.setTester(organizzazioni -> {
+            organizzazioni.forEach(organizzazione -> Log.d(TAG, "testGet: "+organizzazione.getId()));
+           assertEquals(organizzazioni,firsts);
         });
+    }
 
-        holder.btnShowDetails.setOnClickListener(v->{
-            if (holder.llHidingInfo.getVisibility() == View.GONE) {
-                Animation slideDown = AnimationUtils.loadAnimation(context, R.anim.slide_down_animation);
-                slideDown.setAnimationListener(new Animation.AnimationListener() {
-                    @Override
-                    public void onAnimationStart(Animation animation) {
-                        holder.llHidingInfo.setVisibility(View.VISIBLE);
-//                        ((Button) v).setText(R.string.nascondi);
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animation animation) {
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animation animation) {
-
-                    }
-                });
-                holder.llHidingInfo.startAnimation(slideDown);
-            } else {
-                Animation closing = AnimationUtils.loadAnimation(context, R.anim.closing_animation);
-                closing.setAnimationListener(new Animation.AnimationListener() {
-                    @Override
-                    public void onAnimationStart(Animation animation) {}
-                    @Override
-                    public void onAnimationEnd(Animation animation) {
-                        holder.llHidingInfo.setVisibility(View.GONE);
-//                        ((Button) v).setText(R.string.dettagli);
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animation animation) {}
-                });
-                holder.llHidingInfo.startAnimation(closing);
+  /*  @Test
+    public void testSave() {
+        Log.d(TAG,"as");
+        expected = Arrays.asList(new Organizzazione().setId(12));
+        observer.setTester(organizzazioni -> {
+            Log.e(TAG, "testSave: triggered");
+            if(!organizzazioni.equals(firsts)){
+                organizzazioni.forEach(organizzazione -> Log.d(TAG, "testSave: "+organizzazione.getId()));
+                assertEquals(organizzazioni,expected);
+            }else{
+                Log.d(TAG, "testSave: pescate organizzazioni iniziali");
             }
+
         });
-
-        if (holder.llHidingInfo.getVisibility() == View.INVISIBLE) {
-            Animation slideDown = AnimationUtils.loadAnimation(context, R.anim.slide_down_animation);
-            slideDown.setAnimationListener(new Animation.AnimationListener() {
-                @Override
-                public void onAnimationStart(Animation animation) {
-                    holder.llHidingInfo.setVisibility(View.VISIBLE);
-                    holder.tvIndirizzo.setVisibility(View.VISIBLE);
-                }
-
-                @Override
-                public void onAnimationEnd(Animation animation) {
-                }
-
-                @Override
-                public void onAnimationRepeat(Animation animation) {
-
-                }
-            });
-            holder.llHidingInfo.startAnimation(slideDown);
-        }
-
+        source.saveOrganizzazioni(expected);
     }
 
-    @Override
-    public int getItemCount() {
-        return listaOrganizzazione.size();
+    @Test
+    public void testUpdate(){
+        Log.d(TAG,"as");
+        List<Organizzazione> tmp = new ArrayList<>(firsts);
+        Organizzazione o = tmp.get(0);
+        o.setName("updated");
+        o.setTracking(true);
+        tmp.sort(Comparator.comparing(Organizzazione::getId));
+        expected = new ArrayList<>(tmp);
+        source.getOrganizzazioni().observe(lifecycleOwner,organizzazioni->{
+            Log.d(TAG, "updateTest: observer triggered");
+            organizzazioni.sort(Comparator.comparing(Organizzazione::getId));
+            organizzazioni.forEach(organizzazione -> Log.d(TAG,"id: "+organizzazione.getId()+", name: "+organizzazione.getName()));
+            assertEquals(organizzazioni,expected);
+        });
+        source.updateOrganizzazione(o);
+
     }
-
-    static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView nomeOrganizzazione;
-        TextView tipoOrganizzazione, tvIndirizzo, tvElencoLuoghi;
-        Button btnTrackMe, btnShowDetails;
-        LinearLayout llHidingInfo,llIconName;
-
-        ImageView ivIconOrganizzazione;
-
-        ViewHolder(@NonNull View itemView) {
-            // dati dell'organizzazione
-            super(itemView);
-            nomeOrganizzazione = itemView.findViewById(R.id.tvNomeOrganizzazione);
-            tipoOrganizzazione = itemView.findViewById(R.id.tvTipoOrganizzazione);
-            btnTrackMe = itemView.findViewById(R.id.btnTrackMe);
-            tvIndirizzo = itemView.findViewById(R.id.tvIndirizzo);
-            llHidingInfo = itemView.findViewById(R.id.llHidingInformation);
-            ivIconOrganizzazione = itemView.findViewById(R.id.ivIconOrganizzazione);
-            btnShowDetails= itemView.findViewById(R.id.btnShowDetails);
-            llIconName = itemView.findViewById(R.id.llIconName);
-            tvElencoLuoghi = itemView.findViewById(R.id.tvElencoLuoghi);
-
-        }
-    }
-
-
+*/
 }

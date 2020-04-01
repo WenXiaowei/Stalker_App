@@ -213,13 +213,13 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 
 import com.vartmp7.stalker.gsonbeans.Organizzazione;
-import com.vartmp7.stalker.repository.FavoritesSource;
 import com.vartmp7.stalker.repository.OrganizationsRepository;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import lombok.AccessLevel;
+import lombok.Getter;
 
 /**
  * @author Xiaowei Wen, Lorenzo Taschin
@@ -230,7 +230,8 @@ public class PreferitiViewModel extends ViewModel {
 
     private LiveData<List<Long>> mutableliveDataOrgIds;
     private LiveData<List<Organizzazione>> liveDataOrganizzazioni;
-    private MediatorLiveData<List<Organizzazione>> mediatorLiveDataOrganizzazioni;
+    @Getter(AccessLevel.PUBLIC)
+    private MediatorLiveData<List<Organizzazione>> organizzazioni;
     private MutableLiveData<Boolean> organizationsQueryExhausted;
     private MutableLiveData<Boolean> firebaseQueryExhausted;
 
@@ -242,7 +243,7 @@ public class PreferitiViewModel extends ViewModel {
     }
 
     public void init(){
-        this.mediatorLiveDataOrganizzazioni = new MediatorLiveData<>();
+        this.organizzazioni = new MediatorLiveData<>();
         //this.liveDataOrganizzazioni = orgRepo.getOrganizzazioni();
         //this.mutableliveDataOrgIds = orgRepo.getPreferiti();
         this.firebaseQueryExhausted = new MutableLiveData<>(false);
@@ -259,11 +260,11 @@ public class PreferitiViewModel extends ViewModel {
         this.mutableliveDataOrgIds = orgRepo.getPreferiti();
 
 
-        this.mediatorLiveDataOrganizzazioni.addSource(liveDataOrganizzazioni, organizzazioni ->{
+        this.organizzazioni.addSource(liveDataOrganizzazioni, organizzazioni ->{
             Log.e(TAG,"PORCODIOOO");
             organizationsQueryExhausted.setValue(true);
         });
-        this.mediatorLiveDataOrganizzazioni.addSource(mutableliveDataOrgIds, orgIds->{
+        this.organizzazioni.addSource(mutableliveDataOrgIds, orgIds->{
                 Log.e(TAG,"CANN DIOOO");
                 firebaseQueryExhausted.setValue(true);
         });
@@ -278,7 +279,7 @@ public class PreferitiViewModel extends ViewModel {
                 Log.e(TAG,"cambiamento");
                 if(firebaseQueryExhausted.getValue() && organizationsQueryExhausted.getValue()){
                     final List<Long> orgIds = mutableliveDataOrgIds.getValue();
-                    mediatorLiveDataOrganizzazioni.postValue(
+                    organizzazioni.postValue(
                             liveDataOrganizzazioni.getValue()
                                     .stream()
                                     .filter(o-> orgIds.contains(o.getId()))
@@ -287,13 +288,11 @@ public class PreferitiViewModel extends ViewModel {
                 }
             }
         };
-        this.mediatorLiveDataOrganizzazioni.addSource(organizationsQueryExhausted, queryExhaustedObserver);
-        this.mediatorLiveDataOrganizzazioni.addSource(firebaseQueryExhausted,queryExhaustedObserver);
+        this.organizzazioni.addSource(organizationsQueryExhausted, queryExhaustedObserver);
+        this.organizzazioni.addSource(firebaseQueryExhausted,queryExhaustedObserver);
     }
     public void removeFromPreferiti(Organizzazione org){
         orgRepo.removeFromPreferiti(org);
     }
-    public LiveData<List<Organizzazione>> getOrganizzazioni() {
-        return this.mediatorLiveDataOrganizzazioni;
-    }
+
 }

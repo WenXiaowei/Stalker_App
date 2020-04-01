@@ -213,9 +213,12 @@ import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-    CoordinataTest.class,
-    LatoTest.class,
+        CoordinataTest.class,
+        LatoTest.class,
+        RayCastingTest.class,
+        TrackiHistoryTest.class,
         RettaTest.class
+
 })
 public class PlaceComponentTestSuite {
 
