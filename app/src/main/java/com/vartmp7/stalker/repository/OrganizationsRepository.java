@@ -204,10 +204,15 @@
 
 package com.vartmp7.stalker.repository;
 
+import android.util.Log;
+
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 
 import com.vartmp7.stalker.gsonbeans.Organizzazione;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class OrganizationsRepository {
@@ -228,6 +233,10 @@ public class OrganizationsRepository {
 
     public void updateOrganizzazione(Organizzazione o){
        organizationsLocalSource.updateOrganizzazione(o);
+    }
+
+    public void updateOrganizzazioni(List<Organizzazione> orgs){
+        organizationsLocalSource.updateOrganizzazioni(orgs);
     }
 
     public synchronized static OrganizationsRepository init(OrganizationsLocalSource orgsLocalSource, OrganizationsWebSource orgsWebSource, FavoritesSource fa){
@@ -277,23 +286,48 @@ public class OrganizationsRepository {
 
     public void refreshOrganizzazioni(){
         LiveData<List<Organizzazione>> resultFromWebCall = organizationsWebSource.getOrganizzazioni();
-        organizationsLocalSource.saveOrganizzazioni(resultFromWebCall.getValue());
-//        final Observer<List<Organizzazione>> webCallObserver = new Observer<List<Organizzazione>>(){
-//            @Override
-//            public void onChanged(List<Organizzazione> organizzazioni) {
-//                Log.d(TAG, " refreshorganizzazione: onChanged: Observer triggered");
-//
-//            }
-//        };
-//        resultFromWebCall.removeObserver(webCallObserver);
-
-        /*resultFromWeb.observe(lifeCycleOwner, organizzazioni -> new Thread(() -> {
-            Log.d(TAG, "orgs");
-            organizzazioni.forEach(o -> Log.d(TAG, "org " + o.getId()));
-            organizationsLocalSource.saveOrganizzazioni(organizzazioni);
-        }).start());
-        resultFromWeb.removeObserver();
-*/
+        resultFromWebCall.observeForever(new Observer<List<Organizzazione>>() {
+             @Override
+             public void onChanged(List<Organizzazione> organizzazioni) {
+                 resultFromWebCall.removeObserver(this);
+                 Log.d(TAG, "onChanged: aggiornare org");
+                 organizationsLocalSource.updateOrganizzazioni(organizzazioni);
+             }
+         });
+        /*MutableLiveData<Boolean> webQueryExhausted = new MutableLiveData<Boolean>(false);
+        MutableLiveData<Boolean> localQueryExhausted = new MutableLiveData<Boolean>(false);
+        resultFromWebCall.observeForever(organizzazioni->{
+            webQueryExhausted.setValue(true);
+        });
+        LiveData<List<Organizzazione>> resultFromLocalQuery = organizationsLocalSource.getOrganizzazioni();
+        resultFromLocalQuery.observeForever(organizzazioni->{
+           localQueryExhausted.setValue(true);
+        });
+        final Observer<Boolean> queryObserver = new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                if(webQueryExhausted.getValue() && localQueryExhausted.getValue()){
+                    localQueryExhausted.removeObserver(this);
+                    webQueryExhausted.removeObserver(this);
+                    for (Organizzazione orgFromWeb: resultFromWebCall.getValue()){
+                        for (Organizzazione org: resultFromLocalQuery.getValue()) {
+                            if(org.getId()==orgFromWeb.getId()){
+                                orgFromWeb.setPreferito(org.isPreferito());
+                                orgFromWeb.setTracking(org.isTracking());
+                                orgFromWeb.setTrackingActive(org.isTracking());
+                                rg=orgFromWeb;o
+                            }
+                        }
+                    }
+                    List<Organizzazione> toSave = resultFromLocalQuery.getValue();
+                    Log.d(TAG, "refreshOrganizzazioni: org che verranno salvate");
+                    toSave.forEach(o-> Log.d(TAG, "refreshOrganizzazioni: "+o.getId()+" "+o.getName()+o.isPreferito()));
+                    organizationsLocalSource.saveOrganizzazioni(toSave);
+                }
+            }
+        };
+        localQueryExhausted.observeForever(queryObserver);
+        webQueryExhausted.observeForever(queryObserver);*/
     }
 
     public void addToActiveTracking(Organizzazione o) {

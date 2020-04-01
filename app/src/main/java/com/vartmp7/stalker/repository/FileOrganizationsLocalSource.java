@@ -235,7 +235,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 
 public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
-    private static final String TAG = "com.vartmp7.stalker.repository.FileOrganizationsRepository";
+    private static final String TAG = "com.vartmp7.stalker.repository.FileOrganizationsLocalSource";
     private String fileName;
     private Context context;
     private Gson gson;
@@ -247,8 +247,8 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
         this.fileName = fileName;
         this.context = context;
         this.gson = new Gson();
-//        this.mLiveOrgs.setValue(new ArrayList<>());
-        this.mLiveOrgs = org;
+        this.mLiveOrgs=new MutableLiveData<>(new ArrayList<>());
+//        this.mLiveOrgs = org;
     }
 
     @Override
@@ -264,6 +264,37 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
             l.add(pos, o);
             saveOrganizzazioni(l);
         }
+    }
+
+    @Override
+    public void updateOrganizzazioni(List<Organizzazione> orgsToUpdate){
+        orgsToUpdate.forEach(o-> Log.d(TAG, "updateOrganizzazioni: updateOrgs"+o.getId()));
+        List<Organizzazione> currentOrgs = new ArrayList<>(mLiveOrgs.getValue());
+        List<Organizzazione> toSave = new ArrayList<>();
+        currentOrgs.forEach(o-> Log.d(TAG, "currentorg: "+o.getId()));
+        for(int j=0; j<orgsToUpdate.size(); j++){
+            boolean contained=false;
+            Organizzazione orgToUpdate = orgsToUpdate.get(j);
+            for(int i=0; i<currentOrgs.size() && !contained; i++){
+                Organizzazione currentOrg = currentOrgs.get(i);
+                if(currentOrg.getId() == orgToUpdate.getId()){
+                    Log.d(TAG, +currentOrg.getId()+"="+orgToUpdate.getId());
+                    contained=true;
+                    orgToUpdate.setTrackingActive(currentOrg.isTrackingActive());
+                    orgToUpdate.setTracking(currentOrg.isTracking());
+                    orgToUpdate.setPreferito(currentOrg.isPreferito());
+                    toSave.add(orgToUpdate);
+                    //currentOrgs.remove(currentOrg);
+                }
+            }
+            if(!contained){
+                toSave.add(orgToUpdate);
+//                Log.e(TAG, "updateOrganizzazioni: chel cannnn");
+            }
+        }
+        Log.d(TAG, "updateOrganizzazioni: futureOrgs");
+        currentOrgs.forEach(o-> Log.d(TAG, "org: "+o.getId()));
+        saveOrganizzazioni(toSave);
     }
 
 
@@ -294,7 +325,7 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
                             line = reader.readLine();
                         }
                     } catch (IOException e) {
-//                        Log.e(TAG, "run: Errore");
+                        Log.e(TAG, "run: Errore");
                         // Error occurred when opening raw file for reading.
                     } finally {
                         String contents = stringBuilder.toString();
@@ -364,14 +395,14 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
                     FileWriter writer = new FileWriter(orgJson);
                     // fixme quest'istruzione delle volte, genera un concurrentModificationException
                     String l = new Gson().toJson(new ResponseOrganizzazione().setOrganizations(orgs));
-                    Log.d(TAG, "saving data.");
-
+                    Log.d(TAG, "saving data:");
+                    orgs.forEach(o-> Log.d(TAG, "save org:"+o.getId()));
                     writer.write(l);
                     writer.flush();
                     writer.close();
                     mLiveOrgs.postValue(orgs);
                 } catch (IOException e) {
-                    Log.d(TAG, "Errore, file non trovato");
+                    Log.e(TAG, "Errore, file non trovato");
                     e.printStackTrace();
                 }
                 Log.d(TAG, "doInBackground: finished saving data");

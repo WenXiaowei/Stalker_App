@@ -248,7 +248,7 @@ public class OrganizationsFragment extends Fragment implements SwipeRefreshLayou
         recyclerView = root.findViewById(R.id.rvListaOrganizzazioni);
 
         setUpRecyclerView();
-        organizzazioneViewModel.getOrganizationList().observe(requireActivity(), list -> {
+        organizzazioneViewModel.getOrganizationList().observe(getViewLifecycleOwner(), list -> {
             mAdapter.setOrganizations(list);
             mAdapter.notifyDataSetChanged();
             swipeRefreshLayout.setRefreshing(false);
