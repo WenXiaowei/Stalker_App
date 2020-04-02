@@ -208,6 +208,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.vartmp7.stalker.component.NotLogged;
 import com.vartmp7.stalker.gsonbeans.Organizzazione;
 import com.vartmp7.stalker.repository.OrganizationsRepository;
 
@@ -245,11 +246,11 @@ public class TrackingViewModel extends ViewModel {
         this.repository = repository;
     }
 
-    public void removePreferito(Organizzazione o) {
+    public void removePreferito(Organizzazione o) throws NotLogged {
         repository.removeFromPreferiti(o);
     }
 
-    public void addPreferito(Organizzazione o) {
+    public void addPreferito(Organizzazione o) throws NotLogged {
         repository.addToPreferiti(o);
     }
 

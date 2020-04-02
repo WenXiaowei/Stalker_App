@@ -253,4 +253,7 @@
     <string name="tracking_terminated">Tracciamento terminato!</string>
     <string name="initializing_tracking">Inizializzazione del tracciamento!</string>
     <string name="non_presente_nei_luoghi_tracciati">Non sei presente nei luoghi delle organizzazioni che ti stanno tracciando!</string>
+    <string name="i_tuoi_preferiti">I tuoi preferiti:</string>
+    <string name="should_be_logged_for_favorites">Non hai effettuato accesso, non puoi avere delle organizzazioni preferite, per farlo fai accesso.</string>
+    <string name="not_logged_yet">Non hai fatto Login!</string>
 </resources>

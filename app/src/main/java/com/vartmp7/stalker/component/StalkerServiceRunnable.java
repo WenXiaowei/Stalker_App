@@ -205,43 +205,41 @@
 package com.vartmp7.stalker.component;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationAvailability;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.vartmp7.stalker.gsonbeans.AbstractLuogo;
 import com.vartmp7.stalker.gsonbeans.LuogoPoligono;
 import com.vartmp7.stalker.gsonbeans.Organizzazione;
 import com.vartmp7.stalker.gsonbeans.placecomponent.Coordinata;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
-import java.util.OptionalDouble;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import static java.lang.Thread.sleep;
 
 
-class StalkerServiceRunnable implements Runnable {
+public class StalkerServiceRunnable implements Runnable {
     private static final String TAG = "com.vartmp7.stalker.component.StalkerServiceRunnable";
     private List<Organizzazione> trackingOrgs;
     private int i = 0;
@@ -249,122 +247,82 @@ class StalkerServiceRunnable implements Runnable {
     private CallBack callBack;
     private FusedLocationProviderClient fusedLocationProviderClient;
     private SensorManager sensorManager;
-    private Coordinata coordinata = null;
-    private LocationManager manager;
+    private MutableLiveData<Coordinata> coordinata = null;
+    private LifecycleOwner lifecycleOwner;
     private Context context;
-
-    StalkerServiceRunnable(Context context,
-                           LocationManager manager,
-//            FusedLocationProviderClient fusedLocationProviderClient,
-                           SensorManager sensorManager,
-                           CallBack callBack, List<Organizzazione> trackingOrg) {
-        this.trackingOrgs = trackingOrg;
+    private LocationRequest request;
+    private LocationCallback locationCallback;
+    public StalkerServiceRunnable(Context context,
+                                  FusedLocationProviderClient locationProviderClient,
+                                  LifecycleOwner owner,
+                                  SensorManager sensorManager,
+                                  CallBack callBack,
+                                  List<Organizzazione> trackingOrg) {
         this.context = context;
-        this.isRunning = true;
-        this.callBack = callBack;
-//        this.fusedLocationProviderClient = fusedLocationProviderClient;
         this.sensorManager = sensorManager;
-        this.manager = manager;
+        this.lifecycleOwner = owner;
+        this.isRunning = true;
+        this.trackingOrgs = trackingOrg;
+        this.callBack = callBack;
+        this.fusedLocationProviderClient = locationProviderClient;
+        coordinata = new MutableLiveData<>();
+        request = new LocationRequest();
+        request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        request.setMaxWaitTime(2);
+        request.setSmallestDisplacement(10);
+
+        locationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                super.onLocationResult(locationResult);
+                Log.d(TAG, "onLocationResult() called with: locationResult = [" + locationResult + "]");
+                coordinata.postValue(new Coordinata(locationResult.getLastLocation().getLongitude(),
+                        locationResult.getLastLocation().getLatitude()));
+            }
+        };
+
     }
 
 
     private static final int SECONDS_TO_WAIT = 3;
 
+    @SuppressLint("HandlerLeak")
     @Override
     public void run() {
 
-        Looper.prepare();
         Log.d(TAG, "run: thread Starting");
         if (callBack != null)
             callBack.onInitializingTracking();
-
-//        Sensor sensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
-//        StalkerStepCounter stepCounter = new StalkerStepCounter(sensorManager, sensor);
-//        StalkerLocationManager locationManager = new StalkerLocationManager(fusedLocationProviderClient);
-
-
-//        locationManager.updateMostPreciseLocation(callback);
+        Looper.prepare();
+        fusedLocationProviderClient.requestLocationUpdates(request, locationCallback, Looper.myLooper());
+        new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                Log.d(TAG, "handleMessage: ");
+            }
+        };
 
         if (context.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
                 context.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             Log.d(TAG, "run: location permissions granted");
-            manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1, 1, new LocationListener() {
-                @Override
-                public void onLocationChanged(Location location) {
-                    Log.d(TAG, "onLocationChanged: location is changed");
-                    coordinata = new Coordinata(location.getLongitude(), location.getLatitude());
-                }
-
-                @Override
-                public void onStatusChanged(String provider, int status, Bundle extras) {
-
-                }
-
-                @Override
-                public void onProviderEnabled(String provider) {
-
-                }
-
-                @Override
-                public void onProviderDisabled(String provider) {
-
-                }
-            });
-            List<LuogoPoligono> listaLuoghi = new ArrayList<>();
-            for (int j = 0; j < trackingOrgs.size(); j++) {
-//                List<LuogoPoligono> luoghi = trackingOrgs.get(j).getLuoghi();
-//                listaLuoghi.addAll(luoghi);
-            }
-
-//        fusedLocationProviderClient.requestLocationUpdates(request, locationCallback, null);
 
             while (isRunning) {
-
-                Log.d(TAG, "run: " + i);
-                if (callBack != null) {
-                    callBack.notInsideAnyPlaces();
-                } else
-                    Log.d(TAG, "run: callback == null");
-
-
-                if (coordinata != null) {
-                    Log.d(TAG, "run: " + coordinata);
-//                    long i = listaLuoghi.stream().filter(luogo1 -> luogo1.isInside(coordinata)).count();
-
-                    if (i != 0) {
-                        Log.d(TAG, "run: Presente!");
-                    } else {
-                        Log.d(TAG, "run: non presente!");
-                    }
-//                if (luogo.isPresent()) {
-//                    AbstractLuogo l = luogo.get();
-//                    if (callBack != null) {
-//                        Log.d(TAG, "run: sei in " + l.getName() + ": " + i);
-//                        callBack.onCurrentStatusChanged(new String[]{l.getName(), l.getOrganizationName(), timerFormat(i)});
-////                    callBack.onCurrentStatusChanged(new String[]{"torre archimede", "Unipd", timerFormat(i)});
-//                    }
-//                } else {
-//                    Log.d(TAG, "run: non sei presente in nessun luogo" + i);
-//                    if (callBack != null)
-//                        callBack.notInsideAnyPlaces();
-//                }
-                } else {
-                    Log.d(TAG, "run: coordinata==null");
-                }
-
+                Log.d(TAG, "run() called "+ i++);
                 try {
-                    sleep((SECONDS_TO_WAIT + 2) * 1000);
+                    sleep(1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                i++;
             }
-
+            Looper.loop();
 
             Log.d(TAG, "run: while terminating");
             if (callBack != null)
                 callBack.onTrackingTerminated();
 
+        } else {
+            Log.d(TAG, "run() permission not granted");
         }
 
 

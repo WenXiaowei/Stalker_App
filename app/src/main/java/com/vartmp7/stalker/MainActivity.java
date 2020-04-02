@@ -312,8 +312,10 @@ public class MainActivity extends AppCompatActivity {
 
         MutableLiveData<List<Organizzazione>> list = new MutableLiveData<>(new ArrayList<>());
         OrganizationsLocalSource localSource = new FileOrganizationsLocalSource("orgs.json", this, list);
-//        FavoritesSource preferitiRepository = new FirebaseFavoritesSource("1", FirebaseFirestore.getInstance());
-        FavoritesSource preferitiRepository = new FirebaseFavoritesSource(getUserId(), FirebaseFirestore.getInstance());
+        FavoritesSource preferitiRepository=null;
+        if (FirebaseAuth.getInstance().getCurrentUser()!=null || GoogleSignIn.getLastSignedInAccount(this)!=null) {
+            preferitiRepository = new FirebaseFavoritesSource(getUserId(), FirebaseFirestore.getInstance());
+        }
 
         OrganizationsWebSource webSource = new RESTOrganizationsWebSource(Tools.getUnsafeOkHttpClient(), list, "https://asdasd.com");
         OrganizationsRepository.init(localSource, webSource, preferitiRepository);

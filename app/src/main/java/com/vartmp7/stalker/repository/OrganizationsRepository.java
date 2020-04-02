@@ -210,6 +210,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 
+import com.vartmp7.stalker.component.NotLogged;
 import com.vartmp7.stalker.gsonbeans.Organizzazione;
 
 import java.util.ArrayList;
@@ -264,27 +265,21 @@ public class OrganizationsRepository {
         return organizationFavoritesSource.getOrganizzazioni();
     }
 
-    public void addToPreferiti(Organizzazione org){
-        org.setPreferito(true);
-        updateOrganizzazione(org);
-        organizationFavoritesSource.addOrganizzazione(org.getId());
+    public void addToPreferiti(Organizzazione org) throws NotLogged {
+        if (organizationFavoritesSource!=null){
+            org.setPreferito(true);
+            updateOrganizzazione(org);
+            organizationFavoritesSource.addOrganizzazione(org.getId());
+        }else throw new NotLogged();
     }
 
-    public void removeFromPreferiti(Organizzazione org){
-        org.setPreferito(false);
-        updateOrganizzazione(org);
-        organizationFavoritesSource.removeOrganizzazione(org.getId());
+    public void removeFromPreferiti(Organizzazione org) throws NotLogged {
+        if (organizationFavoritesSource!=null){
+            org.setPreferito(false);
+            updateOrganizzazione(org);
+            organizationFavoritesSource.removeOrganizzazione(org.getId());
+        }else throw new NotLogged();
     }
-
-
-    public void saveOrganizzazione(){
-    }
-
-    // in teoria il metodo non serve
-    public void removeOrganizzazione(Organizzazione o){
-
-    }
-
 
 
 
@@ -332,16 +327,6 @@ public class OrganizationsRepository {
         };
         localQueryExhausted.observeForever(queryObserver);
         webQueryExhausted.observeForever(queryObserver);*/
-    }
-
-    public void addToActiveTracking(Organizzazione o) {
-        o.setTrackingActive(true);
-        updateOrganizzazione(o);
-    }
-
-    public void addToTracking(Organizzazione o) {
-        o.setTracking(true);
-        updateOrganizzazione(o);
     }
 
     /*

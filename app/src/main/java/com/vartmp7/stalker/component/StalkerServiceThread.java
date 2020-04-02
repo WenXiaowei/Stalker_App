@@ -202,98 +202,117 @@
  *    limitations under the License.
  */
 
-package com.vartmp7.stalker.ui.preferiti;
+package com.vartmp7.stalker.component;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.util.Log;
 
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MediatorLiveData;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModel;
+import androidx.core.app.ActivityCompat;
 
-import com.vartmp7.stalker.component.NotLogged;
-import com.vartmp7.stalker.gsonbeans.Organizzazione;
-import com.vartmp7.stalker.repository.OrganizationsRepository;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.vartmp7.stalker.gsonbeans.placecomponent.Coordinata;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-import lombok.AccessLevel;
-import lombok.Getter;
-
-/**
- * @author Xiaowei Wen, Lorenzo Taschin
- */
-public class PreferitiViewModel extends ViewModel {
-    public static final String TAG ="com.vartmp7.stalker.ui.preferiti.PreferitiViewModel";
-    private OrganizationsRepository orgRepo;
-
-    private LiveData<List<Long>> mutableliveDataOrgIds;
-    private LiveData<List<Organizzazione>> liveDataOrganizzazioni;
-    @Getter(AccessLevel.PUBLIC)
-    private MediatorLiveData<List<Organizzazione>> organizzazioni;
-    private MutableLiveData<Boolean> organizationsQueryExhausted;
-    private MutableLiveData<Boolean> firebaseQueryExhausted;
-
-    public PreferitiViewModel(OrganizationsRepository orgRepo) {
-        this.orgRepo=orgRepo;
-    }
-    public void updateOrganizzazione(Organizzazione org){
-        orgRepo.updateOrganizzazione(org);
-    }
-
-    public void init(){
-        this.organizzazioni = new MediatorLiveData<>();
-        //this.liveDataOrganizzazioni = orgRepo.getOrganizzazioni();
-        //this.mutableliveDataOrgIds = orgRepo.getPreferiti();
-        this.firebaseQueryExhausted = new MutableLiveData<>(false);
-        this.organizationsQueryExhausted = new MutableLiveData<>(false);
-        refresh();
-    }
-
-    public void refresh(){
-        //MutableLiveData<List<Organizzazione>> listOrgs= new MutableLiveData<>();
-        this.firebaseQueryExhausted.setValue(false);
-        this.organizationsQueryExhausted.setValue(false);
-
-        this.liveDataOrganizzazioni = orgRepo.getOrganizzazioni();
-        this.mutableliveDataOrgIds = orgRepo.getPreferiti();
+public class StalkerServiceThread extends Thread implements Runnable {
+    private static final String TAG = "StalkerServiceThread";
+    private Context context;
+    private FusedLocationProviderClient fusedLocationProviderClient;
+    private LocationCallback locationCallback;
+    private LocationRequest locationRequest;
+    private Coordinata coordinata = null;
 
 
-        this.organizzazioni.addSource(liveDataOrganizzazioni, organizzazioni ->{
-            Log.e(TAG,"PORCODIOOO");
-            organizationsQueryExhausted.setValue(true);
-        });
-        this.organizzazioni.addSource(mutableliveDataOrgIds, orgIds->{
-                Log.e(TAG,"CANN DIOOO");
-                firebaseQueryExhausted.setValue(true);
-        });
-        //orgRepo.refreshOrganizzazioni();
+    public StalkerServiceThread(Context context,
+                                FusedLocationProviderClient fusedLocationProviderClient
+//                               ,LocationCallback locationCallback
+//                                ,LocationRequest locationRequest
+    ) {
+        this.context = context;
+        this.fusedLocationProviderClient = fusedLocationProviderClient;
+//        this.locationCallback = locationCallback;
+//        this.locationRequest = locationRequest;
+        locationRequest = new LocationRequest()
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                .setExpirationTime(10000000)
+                .setExpirationTime(Long.MAX_VALUE)
+                .setSmallestDisplacement(1f);
 
-        //listOrgs.setValue(Arrays.asList(new Organizzazione().setId(1212)));
 
 
-        final Observer<Boolean> queryExhaustedObserver =  new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean aBoolean) {
-                Log.e(TAG,"cambiamento");
-                if(firebaseQueryExhausted.getValue() && organizationsQueryExhausted.getValue()){
-                    final List<Long> orgIds = mutableliveDataOrgIds.getValue();
-                    organizzazioni.postValue(
-                            liveDataOrganizzazioni.getValue()
-                                    .stream()
-                                    .filter(o-> orgIds.contains(o.getId()))
-                                    .collect(Collectors.toList())
-                    );
+        }
+
+
+
+
+    @Override
+    public void run() {
+        super.run();
+
+        Looper.prepare();
+        LocationManager manager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1, 1, new LocationListener() {
+                @Override
+                public void onLocationChanged(Location location) {
+                    Log.d(TAG, "onLocationChanged() called with: location = [" + location + "]");
+                }
+
+                @Override
+                public void onStatusChanged(String provider, int status, Bundle extras) {
+
+                }
+
+                @Override
+                public void onProviderEnabled(String provider) {
+
+                }
+
+                @Override
+                public void onProviderDisabled(String provider) {
+
+                }
+            });
+            int i = 0;
+            locationCallback = new LocationCallback() {
+                @Override
+                public void onLocationResult(LocationResult locationResult) {
+                    super.onLocationResult(locationResult);
+                    Log.d(TAG, "onLocationResult() called with: locationResult = [" + locationResult + "]");
+                    Location l = locationResult.getLastLocation();
+                    coordinata = new Coordinata(l.getLongitude(), l.getLatitude());
+                }
+            };
+            fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper());
+            Log.d(TAG, "run() called post Looper.prepare");
+
+
+            while (true) {
+
+                if (coordinata != null) {
+                    Log.d(TAG, "run() called" + coordinata);
+                }
+                Log.d(TAG, " iteration: " + i++);
+                try {
+                    sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
             }
-        };
-        this.organizzazioni.addSource(organizationsQueryExhausted, queryExhaustedObserver);
-        this.organizzazioni.addSource(firebaseQueryExhausted,queryExhaustedObserver);
-    }
-    public void removeFromPreferiti(Organizzazione org) throws NotLogged {
-        orgRepo.removeFromPreferiti(org);
-    }
 
+        }else
+            Log.d(TAG, "run() called: permission check failed!");
+    }
 }

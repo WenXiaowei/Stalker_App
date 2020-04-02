@@ -209,7 +209,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -221,8 +223,14 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.vartmp7.stalker.R;
+import com.vartmp7.stalker.component.NotLogged;
 import com.vartmp7.stalker.gsonbeans.Organizzazione;
 import com.vartmp7.stalker.repository.FavoritesSource;
 import com.vartmp7.stalker.repository.FileOrganizationsLocalSource;
@@ -254,9 +262,19 @@ public class PreferitiFragment extends Fragment  implements SwipeRefreshLayout.O
     private MutableLiveData<List<Organizzazione>> listMutableLiveData;
     private SwipeRefreshLayout preferitiSwipeLayout;
 
+    private boolean isUserLogged(){
+        return FirebaseAuth.getInstance().getCurrentUser()!=null || GoogleSignIn.getLastSignedInAccount(requireContext())!=null;
+    }
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_preferiti, container, false);
+        if (!isUserLogged()){
+            TextView tv=root.findViewById(R.id.tvHeaderFavorites);
+            tv.setText(R.string.should_be_logged_for_favorites);
+            requireActivity().openOptionsMenu();
+            return root;
+        }
         listMutableLiveData = new MutableLiveData<>();
         listMutableLiveData.setValue(new ArrayList<>());
         this.favRecyclerView = (RecyclerView) root.findViewById(R.id.preferitiRecyclerView);
@@ -270,11 +288,12 @@ public class PreferitiFragment extends Fragment  implements SwipeRefreshLayout.O
         // anizzazione());
         //orgRepo.updateOrganizzazioni();
         // fixme queste tre istanziazioni non servono più, e non serve neanche fare init, basta getInstance - Wen
-        OrganizationsLocalSource localSource = new FileOrganizationsLocalSource("orgs.json",getContext(), listMutableLiveData);
-        OrganizationsWebSource webSource = new RESTOrganizationsWebSource(httpClient,listMutableLiveData,"asd");
-        FavoritesSource favoritesSource = new FirebaseFavoritesSource("1",FirebaseFirestore.getInstance());
+//        OrganizationsLocalSource localSource = new FileOrganizationsLocalSource("orgs.json",getContext(), listMutableLiveData);
+//        OrganizationsWebSource webSource = new RESTOrganizationsWebSource(httpClient,listMutableLiveData,"asd");
+//        FavoritesSource favoritesSource = new FirebaseFavoritesSource("1",FirebaseFirestore.getInstance());
         //OrganizationsRepository.init(localSource,webSource,favoritesSource);
         OrganizationsRepository orgRepo = OrganizationsRepository.getInstance();
+//        orgRepo.setFavoriteSource();
         //fine del todo
 
         this.favViewModel = new PreferitiViewModel(orgRepo);
@@ -304,10 +323,18 @@ public class PreferitiFragment extends Fragment  implements SwipeRefreshLayout.O
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 Organizzazione o = favViewAdapter.getOrganizationAt(viewHolder.getAdapterPosition());
-                favViewModel.removeFromPreferiti(o);
-                favViewAdapter.notifyItemRemoved(viewHolder.getAdapterPosition());
+                int id;
+                try {
+                    favViewModel.removeFromPreferiti(o);
+                    favViewAdapter.notifyItemRemoved(viewHolder.getAdapterPosition());
+                    id=R.string.organizzazione_removed_from_favorite;
+                } catch (NotLogged notLogged) {
+                    id=R.string.not_logged_yet;
+//                    notLogged.printStackTrace();
+                }
 
-                Toast.makeText(requireContext(), getString(R.string.organizzazione_removed_from_favorite), Toast.LENGTH_SHORT).show();
+
+                Toast.makeText(requireContext(), getString(id), Toast.LENGTH_SHORT).show();
 
             }
         }).attachToRecyclerView(favRecyclerView);

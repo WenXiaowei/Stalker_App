@@ -268,17 +268,17 @@ public class StalkerTrackingService extends Service {
         if (callBack!=null)
             Log.d(TAG, "startNewThread: callback != null");
         else
-            Log.d(TAG, "startNewThread: callback == null");
-        current = new StalkerServiceRunnable(
-                getApplicationContext(),
-                (LocationManager) getSystemService(Context.LOCATION_SERVICE),
-//                LocationServices.getFusedLocationProviderClient(this),
-                (SensorManager) getSystemService(Context.SENSOR_SERVICE),
-                callBack,
-                trackingOrgs
-                        .stream()
-                        .filter(Organizzazione::isTrackingActive)
-                        .collect(Collectors.toList()));
+//            Log.d(TAG, "startNewThread: callback == null");
+//        current = new StalkerServiceRunnable(
+//                getApplicationContext(),
+//                (LocationManager) getSystemService(Context.LOCATION_SERVICE),
+////                LocationServices.getFusedLocationProviderClient(this),
+//                (SensorManager) getSystemService(Context.SENSOR_SERVICE),
+//                callBack,
+//                trackingOrgs
+//                        .stream()
+//                        .filter(Organizzazione::isTrackingActive)
+//                        .collect(Collectors.toList()));
         new Thread(current).start();
         Log.d(TAG, " starting");
 
