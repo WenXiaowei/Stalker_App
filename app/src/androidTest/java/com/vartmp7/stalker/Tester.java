@@ -205,75 +205,10 @@
 
 package com.vartmp7.stalker;
 
-import android.util.Log;
-
-import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
-import androidx.test.ext.junit.runners.AndroidJUnit4;
-
 import com.vartmp7.stalker.gsonbeans.Organizzazione;
-import com.vartmp7.stalker.repository.FavoritesSource;
-import com.vartmp7.stalker.repository.FileOrganizationsLocalSource;
-import com.vartmp7.stalker.repository.OrganizationsLocalSource;
-import com.vartmp7.stalker.repository.OrganizationsRepository;
-import com.vartmp7.stalker.repository.OrganizationsWebSource;
-import com.vartmp7.stalker.ui.organizations.OrganizationsViewModel;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.stubbing.OngoingStubbing;
-
-import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.when;
-
-@RunWith(AndroidJUnit4.class)
-public class OrganizationsRepositoryTest {
-    private final String TAG="com.vartmp7.stalker.OrganizationsRepositoryTest";
-    private OrganizationsRepository orgRepo;
-    private LifecycleOwner lifecycleOwner;
-    private TestObserver observer;
-    private List<Organizzazione> firsts;
-    private List<Organizzazione> expected;
-
-
-
-
-    @Before
-    public void setup(){
-        final MutableLiveData<List<Organizzazione>> localLiveData = new MutableLiveData<>();
-        OrganizationsLocalSource localSource = Mockito.mock(OrganizationsLocalSource.class);
-        when(localSource.getOrganizzazioni());
-        OrganizationsWebSource webSource = Mockito.mock(OrganizationsWebSource.class);
-
-
-      FavoritesSource favoritesSource = Mockito.mock(FavoritesSource.class);
-
-        orgRepo = OrganizationsRepository.init(localSource,webSource,favoritesSource);
-        lifecycleOwner = TestUtil.mockLifecycleOwner();
-        observer = new TestObserver();
-        orgRepo.getOrganizzazioni().observe(lifecycleOwner,observer);
-    }
-
-    @Test
-    public void testGet(){
-        expected=firsts;
-        observer.setTester(organizzazioni -> {
-            Log.d(TAG, "testGet: triggered");
-            organizzazioni.forEach(o-> Log.d(TAG, "testGet: org"+o.getId()));
-            assertEquals(expected,organizzazioni);
-        });
-
-    }
-
-
-
+interface Tester {
+    void test(List<Organizzazione> organizzazioni);
 }
