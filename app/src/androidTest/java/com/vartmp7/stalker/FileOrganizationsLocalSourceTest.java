@@ -257,35 +257,14 @@ public class FileOrganizationsLocalSourceTest {
     private LifecycleOwner lifecycleOwner;
 
 
-    private class TestObserver implements Observer<List<Organizzazione>>{
-        private Tester tester;
-        @Override
-        public void onChanged(List<Organizzazione> organizzazioni) {
-            if(tester!=null)
-                tester.test(organizzazioni);
-        }
-        public TestObserver  setTester(Tester tester){
-            this.tester=tester;
-            return this;
-        }
 
-    }
 
-    private interface Tester{
-        void test(List<Organizzazione> organizzazioni);
-    }
 
 
     @Rule
     public TestRule rule = new InstantTaskExecutorRule();
 
-    private static LifecycleOwner mockLifecycleOwner() {
-        LifecycleOwner owner = mock(LifecycleOwner.class);
-        LifecycleRegistry lifecycle = new LifecycleRegistry(owner);
-        lifecycle.handleLifecycleEvent(Lifecycle.Event.ON_RESUME);
-        when(owner.getLifecycle()).thenReturn(lifecycle);
-        return owner;
-    }
+
 
     @SuppressWarnings("unchecked")
     public static Observer<List<Organizzazione>> mockObserver() {
@@ -300,7 +279,7 @@ public class FileOrganizationsLocalSourceTest {
     @Before
     public void setUpTest(){
         Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        this.lifecycleOwner = mockLifecycleOwner();
+        this.lifecycleOwner = TestUtil.mockLifecycleOwner();
         firsts = Arrays.asList(
                 new Organizzazione().setId(1).setName("asd").setTracking(false),
                 new Organizzazione().setId(2).setName("lol").setTracking(false),
