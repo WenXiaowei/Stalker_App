@@ -474,6 +474,7 @@ public class TrackingFragment extends Fragment {
                         trackingViewModel.removePreferito(o);
                     else trackingViewModel.addPreferito(o);
                 }catch (NotLogged ex){
+
                     Toast.makeText(requireContext(), R.string.not_logged_yet, Toast.LENGTH_SHORT).show();
                 }
 

@@ -268,17 +268,17 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_login,container,false);
-        Button signUpButton = (Button) v.findViewById(R.id.btn_signUp);
+        Button signUpButton = v.findViewById(R.id.btn_signUp);
         signUpButton.setOnClickListener(this);
 
-        Button signInButton1 = (Button) v.findViewById(R.id.btn_signIn);
+        Button signInButton1 = v.findViewById(R.id.btn_signIn);
         signInButton1.setOnClickListener(this);
 
 // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
         callbackManager = CallbackManager.Factory.create();
 
-        LoginButton loginButton = (LoginButton) v.findViewById(R.id.login_button);
+        LoginButton loginButton = v.findViewById(R.id.login_button);
         loginButton.setPermissions("email");
 
         // If using in a fragment
@@ -291,7 +291,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
 
                 AccessToken accessToken = AccessToken.getCurrentAccessToken();
 
-                Log.d(TAG, "onSuccess: " + accessToken.getUserId().toString());
+                Log.d(TAG, "onSuccess: " + accessToken.getUserId());
                 boolean isLoggedIn = accessToken != null && !accessToken.isExpired();
 
 //                Successivamente, esegui l'accesso vero e proprio, come nell'OnClickListener di un pulsante personalizzato:

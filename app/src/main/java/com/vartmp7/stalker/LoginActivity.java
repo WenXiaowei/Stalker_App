@@ -290,7 +290,6 @@ public class LoginActivity extends AppCompatActivity {
         FragmentTransaction transaction = manager.beginTransaction();
         LoginFragment fragment = new LoginFragment();
         transaction.add(R.id.fcvLoginContainer,fragment);
-
         transaction.commit();
 
     }
