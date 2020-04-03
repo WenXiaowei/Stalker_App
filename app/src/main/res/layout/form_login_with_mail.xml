@@ -202,63 +202,66 @@
   ~    limitations under the License.
   -->
 
-<resources>
-    <string name="app_name">Stalker</string>
-    <string name="stalker">Stalker</string>
-    <string name="seleziona_l_organizzazione">Seleziona l\'organizzazione:</string>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/vartmp7bluChiaro"
+    android:orientation="vertical">
 
-    <string name="sign_in">Accedi</string>
-    <string name="sign_up">Registrati</string>
-    <string name="nessun_organizzazione_ti_sta_stalkerando">Nessun\'organizzazione ti sta stalkerando!</string>
-    <string name="status">Status</string>
-    <string name="elenco_luoghi">Elenco Luoghi:</string>
-    <string name="elenco_dei_luoghi_tracciati_per_l_organizzazione_selezionata">Elenco dei luoghi tracciati per l\'organizzazione selezionata:</string>
-    <string name="start_track">Start Track</string>
-    <string name="agg">Agg.</string>
-    <string name="username">Username</string>
-    <string name="password">Password</string>
-    <string name="annulla">Annulla</string>
-    <string name="stop">Stop</string>
-    <string name="conferma">Conferma</string>
-    <string name="not_in_any_place">Non sei in nessun luogo tracciato dell\'organizzazione selezionata!</string>
-    <string name="you_left">Hai lasciato %s</string>
-    <string name="you_are_in">Sei in %s</string>
-    <string name="facebook_app_id">212692166599390</string><!--todo Da togliere successivamente quando renderemo l'app pubblica   -->
-    <string name="fb_login_protocol_scheme">fb212692166599390</string>
-    <string name="continua_senza_autenticazione">Continua senza autenticazione</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
-    <string name="cronologia">Cronologia</string>
-    <string name="preferiti">Preferiti</string>
-    <string name="organizzazioni">Organizzazioni</string>
-    <string name="scegli">Scegli</string>
-    <string name="il_traccimento_non_ancora_attivo">Il traccimento non è ancora attivo!</string>
-    <string name="track_me">Tracciami</string>
-    <string name="login_ldap">Login LDAP</string>
-    <string name="anonimo_question">Anonimo?</string>
-    <string name="indirizzo">Indirizzo:</string>
-    <string name="email">Email</string>
-    <string name="logout">Logout</string>
-    <string name="login">Login</string>
-    <string name="icon_dell_organizzazione">icon dell\'organizzazione</string>
-    <string name="dettagli">Dettagli</string>
-    <string name="nascondi">Nascondi</string>
-    <string name="tipo_organizzazione">Tipo Organizzazione: </string>
-    <string name="n_d">N.D.</string>
-    <string name="nessun_luogo_tracciabile_per_quest_organizzazione">Nessun luogo tracciabile per quest\'organizzazione</string>
-    <string name="attualmente_sei_in">Attualmente sei in:</string>
-    <string name="organizzazione_added_to_favorite">Organizzazione aggiunta ai preferiti!</string>
-    <string name="organizzazione_removed_from_favorite">Organizzazione rimosso dai preferiti</string>
-    <string name="tracking_terminated">Tracciamento terminato!</string>
-    <string name="initializing_tracking">Inizializzazione del tracciamento!</string>
-    <string name="non_presente_nei_luoghi_tracciati">Non sei presente nei luoghi delle organizzazioni che ti stanno tracciando!</string>
-    <string name="i_tuoi_preferiti">I tuoi preferiti:</string>
-    <string name="should_be_logged_for_favorites">Non hai effettuato accesso, non puoi avere delle organizzazioni preferite, per farlo fai accesso.</string>
-    <string name="not_logged_yet">Non hai fatto Login!</string>
-    <string name="reset">Reset</string>
-    <string name="registrami">Registrami</string>
-    <string name="accedi">Accedi</string>
-    <string name="ripeti_password">Ripeti password</string>
-    <string name="password_dimenticata">Password dimenticata</string>
-</resources>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/email"
+        android:textColor="@color/white" />
+
+    <EditText
+        android:id="@+id/etUsername"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="4dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginRight="4dp"
+        android:layout_marginBottom="4dp"
+        android:hint="@string/email"
+        android:inputType="textEmailAddress" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/password"
+        android:textColor="@color/white" />
+
+    <EditText
+        android:id="@+id/etPassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="4dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginRight="4dp"
+        android:layout_marginBottom="16dp"
+        android:fontFamily="sans-serif"
+        android:hint="@string/password"
+        android:inputType="textPassword" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/refresh_btn_style"
+            android:text="@string/password_dimenticata" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/refresh_btn_style"
+            android:text="@string/accedi" />
+    </LinearLayout>
+</LinearLayout>

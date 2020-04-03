@@ -248,9 +248,6 @@ public class StalkerServiceThread extends Thread implements Runnable {
                 .setExpirationTime(10000000)
                 .setExpirationTime(Long.MAX_VALUE)
                 .setSmallestDisplacement(1f);
-
-
-
         }
 
 
@@ -269,20 +266,15 @@ public class StalkerServiceThread extends Thread implements Runnable {
                 public void onLocationChanged(Location location) {
                     Log.d(TAG, "onLocationChanged() called with: location = [" + location + "]");
                 }
-
                 @Override
                 public void onStatusChanged(String provider, int status, Bundle extras) {
-
                 }
-
                 @Override
                 public void onProviderEnabled(String provider) {
-
                 }
 
                 @Override
                 public void onProviderDisabled(String provider) {
-
                 }
             });
             int i = 0;
@@ -297,10 +289,7 @@ public class StalkerServiceThread extends Thread implements Runnable {
             };
             fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper());
             Log.d(TAG, "run() called post Looper.prepare");
-
-
             while (true) {
-
                 if (coordinata != null) {
                     Log.d(TAG, "run() called" + coordinata);
                 }
@@ -311,7 +300,6 @@ public class StalkerServiceThread extends Thread implements Runnable {
                     e.printStackTrace();
                 }
             }
-
         }else
             Log.d(TAG, "run() called: permission check failed!");
     }

@@ -257,7 +257,8 @@ public class MainActivity extends AppCompatActivity {
     public static final String URL_SERVER = "http::/localhost:5000";
     public static final String TOKEN_NAME = "Organization-Token";
     public static final String TOKEN_VALUE = "vartmp7";
-
+    public static final String PREFERENCE_FILE = "stalker";
+    public static final String PREFERENCE_NOT_LOGIN = "not_login";
     private GoogleSignInClient mGoogleSignInClient;
 
     @Override
@@ -271,7 +272,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        if (!isUserLogged() && !getSharedPreferences("stalker", MODE_PRIVATE).getBoolean("not_login", false))
+        if (!isUserLogged() && !getSharedPreferences(PREFERENCE_FILE, MODE_PRIVATE).getBoolean(PREFERENCE_NOT_LOGIN, false))
             goToLoginActivity(false);
         BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
@@ -312,8 +313,8 @@ public class MainActivity extends AppCompatActivity {
 
         MutableLiveData<List<Organizzazione>> list = new MutableLiveData<>(new ArrayList<>());
         OrganizationsLocalSource localSource = new FileOrganizationsLocalSource("orgs.json", this, list);
-        FavoritesSource preferitiRepository=null;
-        if (FirebaseAuth.getInstance().getCurrentUser()!=null || GoogleSignIn.getLastSignedInAccount(this)!=null) {
+        FavoritesSource preferitiRepository = null;
+        if (FirebaseAuth.getInstance().getCurrentUser() != null || GoogleSignIn.getLastSignedInAccount(this) != null) {
             preferitiRepository = new FirebaseFavoritesSource(getUserId(), FirebaseFirestore.getInstance());
         }
 

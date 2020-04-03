@@ -213,6 +213,8 @@
     <include layout="@layout/schermata_iniziale" />
 
     <androidx.fragment.app.FragmentContainerView
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
         android:id="@+id/fcvLoginContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />

@@ -349,7 +349,7 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(R.string.login);
         builder.setMessage("Fai accesso all'organizzazione che hai scelto");
-        builder.setView(LayoutInflater.from(context).inflate(R.layout.dialog_login, null));
+        builder.setView(LayoutInflater.from(context).inflate(R.layout.form_login_with_mail, null));
         builder.setPositiveButton(context.getString(R.string.conferma), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {

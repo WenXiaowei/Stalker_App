@@ -223,6 +223,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -243,7 +245,6 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.vartmp7.stalker.LoginActivity;
 import com.vartmp7.stalker.MainActivity;
 import com.vartmp7.stalker.R;
 
@@ -267,7 +268,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_login,container,false);
+        View v = inflater.inflate(R.layout.form_login,container,false);
         Button signUpButton = v.findViewById(R.id.btn_signUp);
         signUpButton.setOnClickListener(this);
 
@@ -377,7 +378,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
         LayoutInflater inflater = getLayoutInflater();
         builder.setTitle(R.string.sign_up);
         builder.setMessage("Registrati");
-        builder.setView(inflater.inflate(R.layout.dialog_login, null));
+        builder.setView(inflater.inflate(R.layout.form_login_with_mail, null));
         builder.setPositiveButton(getString(R.string.conferma), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -424,7 +425,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
         LayoutInflater inflater = getLayoutInflater();
         builder.setTitle(R.string.sign_in);
         builder.setMessage("Accedi");
-        builder.setView(inflater.inflate(R.layout.dialog_login, null));
+        builder.setView(inflater.inflate(R.layout.form_login_with_mail, null));
         builder.setPositiveButton(getString(R.string.conferma), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -483,6 +484,13 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
         requireActivity().getApplication().setTheme(R.style.AppTheme);
         startActivity(intent);
     }
+    private void changeMethod(Fragment fragment,String backstackString){
+        FragmentManager manager =requireActivity().getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.replace(R.id.fcvLoginContainer,fragment);
+        transaction.addToBackStack(backstackString);
+        transaction.commit();
+    }
 
     @Override
     public void onClick(View v) {
@@ -497,10 +505,12 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
                 break;
             case R.id.btn_signUp:
                 Log.e(TAG, "cliccato btn signUp");
-                showSignUpDialog();
+                changeMethod(new LoginWithMail(),"login_with_mail");
+//                showSignUpDialog();
                 break;
             case R.id.btn_signIn:
-                showSignInDialog();
+                changeMethod(new RegisterWithMail(),"register_with_mail");
+//                showSignInDialog();
                 break;
         }
     }
