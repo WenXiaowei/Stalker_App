@@ -221,6 +221,7 @@ import androidx.fragment.app.Fragment;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
 import com.vartmp7.stalker.MainActivity;
 import com.vartmp7.stalker.R;
@@ -283,14 +284,16 @@ public class SignUpWithMail extends Fragment implements View.OnClickListener {
                                         .commit();
                             } else {
                                 Toast.makeText(requireContext(), "Verifica la mail!",Toast.LENGTH_SHORT).show();
-
                             }
                         }
 
                     } else {
                         // If sign in fails, display a message to the user.
                         Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                        Toast.makeText(requireContext(), "Authentication failed.", Toast.LENGTH_SHORT).show();
+                        int message =R.string.unknown_error;
+                        if (task.getException() instanceof FirebaseAuthUserCollisionException)
+                            message= R.string.account_esistente_con_questa_mail;
+                        Toast.makeText(requireContext(), getString(message), Toast.LENGTH_SHORT).show();
 
                     }
                 }

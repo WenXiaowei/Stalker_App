@@ -217,7 +217,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -243,7 +242,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.UserInfo;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.vartmp7.stalker.gsonbeans.Organizzazione;
 import com.vartmp7.stalker.repository.FavoritesSource;
@@ -256,7 +255,6 @@ import com.vartmp7.stalker.repository.RESTOrganizationsWebSource;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.zip.Inflater;
 
 /**
  * @author Xiaowei Wen, Lorenzo Taschin
@@ -351,8 +349,9 @@ public class MainActivity extends AppCompatActivity {
             if (FirebaseAuth.getInstance().getCurrentUser() != null) {
                 if (!(FirebaseAuth.getInstance().getCurrentUser().getProviderData().size() >= 2 &&
                         FirebaseAuth.getInstance().getCurrentUser().getProviderData().get(1).getProviderId()
-                                .equals(EmailAuthProvider.EMAIL_PASSWORD_SIGN_IN_METHOD)))
-                    menu.removeItem(R.id.menuCambioPassword);
+                                .equals(EmailAuthProvider.EMAIL_PASSWORD_SIGN_IN_METHOD))) {
+                    menu.removeItem(R.id.menuModificaDati);
+                }
 
             }
         } else {
@@ -375,55 +374,59 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             case R.id.menuLogin:
                 goToLoginActivity(true);
-            case R.id.menuCambioPassword:
-                showChangePasswordDialog();
+            case R.id.menuModificaDati:
+                showEditInfoDialog();
                 break;
+
             default:
 
         }
         return super.onOptionsItemSelected(item);
     }
 
-    private void showChangePasswordDialog() {
+    private void showEditInfoDialog() {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser == null)
+            return;
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Modifica password");
+        builder.setTitle(R.string.modifica_dati);
         LayoutInflater inflater = this.getLayoutInflater();
-        View v = inflater.inflate(R.layout.confirm_password_form, null);
-        builder.setView(v)
+        View view = inflater.inflate(R.layout.edit_dati_form, null);
+        EditText etNewMail = view.findViewById(R.id.etEmail);
+
+        etNewMail.setText(currentUser.getEmail());
+        EditText etPassword = view.findViewById(R.id.etPassword);
+        EditText etRPassword = view.findViewById(R.id.etRipetiPassword);
+        builder.setView(view)
                 .setPositiveButton(R.string.conferma, (dialog, which) -> {
-                    Dialog d = (Dialog) dialog;
-                    EditText etPassord = d.findViewById(R.id.etPassword);
-                    EditText etRPassword = d.findViewById(R.id.etRipetiPassword);
-                    if (etPassord.getText().toString().equals(etRPassword.getText().toString())) {
+                    if (!etNewMail.getText().toString().trim().equalsIgnoreCase(currentUser.getEmail())) {
+                        currentUser.updateEmail(etNewMail.getText().toString()).addOnCompleteListener(task -> {
+                            int stringId = task.isSuccessful() ? R.string.modificato_con_successo : R.string.modifica_di_fallito;
+                            showToast(getString(stringId, getString(R.string.email)));
+                        });
+                    }
+                    if (etPassword.getText().toString().equalsIgnoreCase(""))
+                        return;
+                    if (etPassword.getText().toString().equals(etRPassword.getText().toString())) {
                         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
                             FirebaseAuth.getInstance().getCurrentUser()
-                                    .updatePassword(etPassord.getText().toString())
-                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<Void> task) {
-                                            int stringId;
-                                            if (task.isSuccessful()) {
-                                                stringId = R.string.pw_modificato_con_successo;
-                                            } else {
-                                                stringId = R.string.qualcosa_non_e_andato_bene;
-                                            }
-                                            Toast.makeText(MainActivity.this, stringId, Toast.LENGTH_SHORT).show();
-                                        }
+                                    .updatePassword(etPassword.getText().toString())
+                                    .addOnCompleteListener(task -> {
+                                        int stringId = task.isSuccessful() ? R.string.modificato_con_successo : R.string.modifica_di_fallito;
+                                        showToast(getString(stringId, getString(R.string.password)));
                                     });
                         }
-
                     } else {
                         Toast.makeText(this, R.string.password_non_coincidono, Toast.LENGTH_SHORT).show();
                     }
 
-                }).setNegativeButton(R.string.annulla, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
+                }).setNegativeButton(R.string.annulla, (dialog, which) -> dialog.dismiss());
 
         builder.create().show();
+    }
+
+    private void showToast(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
     private String getUserId() {

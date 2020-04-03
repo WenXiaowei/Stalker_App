@@ -205,11 +205,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:icon="@drawable/ic_change_password"
-        android:id="@+id/menuCambioPassword"
-        android:title="@string/modifica_password" />
+        android:id="@+id/menuModificaDati"
+        android:title="@string/modifica_dati" />
     <item
         android:id="@+id/menuLogout"
-        android:icon="@drawable/ic_exit_to_app_black_24dp"
         android:title="@string/logout" />
+
 </menu>
