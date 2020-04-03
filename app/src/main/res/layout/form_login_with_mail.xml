@@ -215,7 +215,7 @@
         android:textColor="@color/white" />
 
     <EditText
-        android:id="@+id/etUsername"
+        android:id="@+id/etEmail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="4dp"
@@ -253,6 +253,7 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:id="@+id/btnPasswordForgot"
             android:layout_weight="1"
             android:background="@drawable/refresh_btn_style"
             android:text="@string/password_dimenticata" />
@@ -260,6 +261,7 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:id="@+id/btnLogin"
             android:layout_weight="1"
             android:background="@drawable/refresh_btn_style"
             android:text="@string/accedi" />

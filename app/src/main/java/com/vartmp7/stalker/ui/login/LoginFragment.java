@@ -205,9 +205,6 @@
 package com.vartmp7.stalker.ui.login;
 
 import android.Manifest;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -217,7 +214,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -372,103 +368,9 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
         }
     }
 
-    public void showSignUpDialog() {
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-        LayoutInflater inflater = getLayoutInflater();
-        builder.setTitle(R.string.sign_up);
-        builder.setMessage("Registrati");
-        builder.setView(inflater.inflate(R.layout.form_login_with_mail, null));
-        builder.setPositiveButton(getString(R.string.conferma), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-                Dialog d = (Dialog) dialog;
-                EditText etUsername = d.findViewById(R.id.etUsername);
-                EditText etPassword = d.findViewById(R.id.etPassword);
-
-                String email = etUsername.getText().toString().trim();
-                String password = etPassword.getText().toString().trim();
-
-                mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(
-                        task -> {
-                            if (task.isSuccessful()) {
-                                // Sign in success, update UI with the signed-in user's information
-                                Log.d(TAG, "createUserWithEmail:success");
-                                FirebaseUser user = mAuth.getCurrentUser();
-                                goToMainActivity();
-
-                            } else {
-                                // If sign in fails, display a message to the user.
-                                Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                                Toast.makeText(requireContext(), "Authentication failed.", Toast.LENGTH_SHORT).show();
-
-                            }
-                        }
-                );
-            }
-        });
-
-        builder.setNegativeButton(R.string.annulla, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-        builder.create().show();
-
-    }
-
-    private void showSignInDialog() {
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-        LayoutInflater inflater = getLayoutInflater();
-        builder.setTitle(R.string.sign_in);
-        builder.setMessage("Accedi");
-        builder.setView(inflater.inflate(R.layout.form_login_with_mail, null));
-        builder.setPositiveButton(getString(R.string.conferma), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-                Dialog d = (Dialog) dialog;
-                EditText etUsername = d.findViewById(R.id.etUsername);
-                EditText etPassword = d.findViewById(R.id.etPassword);
-
-                String email = etUsername.getText().toString().trim();
-                String password = etPassword.getText().toString().trim();
-
-                mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(
-                        task -> {
-                            if (task.isSuccessful()) {
-                                // Sign in success, update UI with the signed-in user's information
-                                Log.d(TAG, "signInWithEmail:success");
-                                FirebaseUser user = mAuth.getCurrentUser();
-                                goToMainActivity();
-                            } else {
-                                // If sign in fails, display a message to the user.
-                                Log.w(TAG, "signInWithEmail:failure", task.getException());
-                                Toast.makeText(requireContext(), "Authentication failed.",
-                                        Toast.LENGTH_SHORT).show();
-
-                            }
-
-                            // ...
-                        }
-                );
 
 
-            }
-        });
 
-        builder.setNegativeButton(R.string.annulla, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-        builder.create().show();
-
-    }
 
 
     private void googleSignIn() {
@@ -509,7 +411,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
 //                showSignUpDialog();
                 break;
             case R.id.btn_signIn:
-                changeMethod(new RegisterWithMail(),"register_with_mail");
+                changeMethod(new SignUpWithMail(),"register_with_mail");
 //                showSignInDialog();
                 break;
         }
@@ -522,7 +424,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-
         switch (requestCode){
             case REQ_COARSE_LOCATION | REQ_FINE_LOCATION | REQ_INTERNET:
                 if (grantResults.length==1 && grantResults[0]!= PackageManager.PERMISSION_GRANTED)

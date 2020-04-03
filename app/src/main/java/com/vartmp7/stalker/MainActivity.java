@@ -212,15 +212,22 @@
 //     * _g0uY5uQ87yD469NmjFJ4kS7
 package com.vartmp7.stalker;
 
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.MutableLiveData;
 import androidx.navigation.NavController;
@@ -234,7 +241,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.UserInfo;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.vartmp7.stalker.gsonbeans.Organizzazione;
 import com.vartmp7.stalker.repository.FavoritesSource;
@@ -247,6 +256,7 @@ import com.vartmp7.stalker.repository.RESTOrganizationsWebSource;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.Inflater;
 
 /**
  * @author Xiaowei Wen, Lorenzo Taschin
@@ -335,10 +345,20 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        if (isUserLogged())
+        if (isUserLogged()) {
             inflater.inflate(R.menu.setting_menu, menu);
-        else
+            //todo capire come disattivare la scelta per cambiare password!
+            if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+                if (!(FirebaseAuth.getInstance().getCurrentUser().getProviderData().size() >= 2 &&
+                        FirebaseAuth.getInstance().getCurrentUser().getProviderData().get(1).getProviderId()
+                                .equals(EmailAuthProvider.EMAIL_PASSWORD_SIGN_IN_METHOD)))
+                    menu.removeItem(R.id.menuCambioPassword);
+
+            }
+        } else {
             inflater.inflate(R.menu.setting_menu_no_log, menu);
+
+        }
         return true;
     }
 
@@ -355,10 +375,55 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             case R.id.menuLogin:
                 goToLoginActivity(true);
+            case R.id.menuCambioPassword:
+                showChangePasswordDialog();
+                break;
             default:
 
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showChangePasswordDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Modifica password");
+        LayoutInflater inflater = this.getLayoutInflater();
+        View v = inflater.inflate(R.layout.confirm_password_form, null);
+        builder.setView(v)
+                .setPositiveButton(R.string.conferma, (dialog, which) -> {
+                    Dialog d = (Dialog) dialog;
+                    EditText etPassord = d.findViewById(R.id.etPassword);
+                    EditText etRPassword = d.findViewById(R.id.etRipetiPassword);
+                    if (etPassord.getText().toString().equals(etRPassword.getText().toString())) {
+                        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+                            FirebaseAuth.getInstance().getCurrentUser()
+                                    .updatePassword(etPassord.getText().toString())
+                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            int stringId;
+                                            if (task.isSuccessful()) {
+                                                stringId = R.string.pw_modificato_con_successo;
+                                            } else {
+                                                stringId = R.string.qualcosa_non_e_andato_bene;
+                                            }
+                                            Toast.makeText(MainActivity.this, stringId, Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                        }
+
+                    } else {
+                        Toast.makeText(this, R.string.password_non_coincidono, Toast.LENGTH_SHORT).show();
+                    }
+
+                }).setNegativeButton(R.string.annulla, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        builder.create().show();
     }
 
     private String getUserId() {

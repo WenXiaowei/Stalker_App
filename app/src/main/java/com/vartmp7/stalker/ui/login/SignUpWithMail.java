@@ -204,23 +204,110 @@
 
 package com.vartmp7.stalker.ui.login;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.vartmp7.stalker.MainActivity;
 import com.vartmp7.stalker.R;
 
-public class RegisterWithMail extends Fragment {
+public class SignUpWithMail extends Fragment implements View.OnClickListener {
+    private static final String TAG = "com.vartmp7.stalker.ui.login.RegisterWithMail";
+    private EditText etEmail, etPassword, etRPassword;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View root= inflater.inflate(R.layout.form_register,container,false);
+        View root = inflater.inflate(R.layout.form_sign_up, container, false);
 
+        etEmail = root.findViewById(R.id.etEmail);
+        etPassword = root.findViewById(R.id.etPassword);
+        etRPassword = root.findViewById(R.id.etRipetiPassword);
+        root.findViewById(R.id.btnReset).setOnClickListener(this);
+        root.findViewById(R.id.btnSignUp).setOnClickListener(this);
         return root;
+    }
+
+
+    public void showSignUpDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        builder.setTitle(R.string.sign_up);
+        builder.setMessage("Vuoi confermare la registrazione?");
+        builder.setPositiveButton(getString(R.string.conferma), (dialog, which) -> {
+            if (etPassword.getText().toString().trim().length() < 8) {
+                Toast.makeText(requireContext(), R.string.password_troppo_corta, Toast.LENGTH_SHORT).show();
+            } else if (etPassword.getText().toString().equals(etRPassword.getText().toString())) {
+                signUp(etEmail.getText().toString(), etPassword.getText().toString());
+            } else {
+                Toast.makeText(requireContext(), R.string.password_non_coincidono, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        builder.setNegativeButton(R.string.annulla, (dialog, which) -> dialog.dismiss());
+        builder.create().show();
+
+    }
+
+    private void signUp(String email, String password) {
+
+        FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password).addOnCompleteListener(
+                task -> {
+                    if (task.isSuccessful()) {
+                        // Sign in success, update UI with the signed-in user's information
+                        Log.d(TAG, "createUserWithEmail:success");
+
+                        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                        if (user != null) {
+                            user.sendEmailVerification().addOnCompleteListener(task1 -> {
+                                if (task1.isSuccessful())
+                                    Toast.makeText(requireContext(), R.string.mail_di_verifica_inviata, Toast.LENGTH_SHORT).show();
+                            });
+                            if (user.isEmailVerified()) {
+                                requireActivity().getSupportFragmentManager()
+                                        .beginTransaction()
+                                        .replace(R.id.fcvLoginContainer, new LoginWithMail())
+                                        .commit();
+                            } else {
+                                Toast.makeText(requireContext(), "Verifica la mail!",Toast.LENGTH_SHORT).show();
+
+                            }
+                        }
+
+                    } else {
+                        // If sign in fails, display a message to the user.
+                        Log.w(TAG, "createUserWithEmail:failure", task.getException());
+                        Toast.makeText(requireContext(), "Authentication failed.", Toast.LENGTH_SHORT).show();
+
+                    }
+                }
+        );
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.btnReset:
+                etEmail.setText("");
+                etPassword.setText("");
+                etRPassword.setText("");
+                break;
+            case R.id.btnSignUp:
+                showSignUpDialog();
+                break;
+        }
     }
 }
