@@ -266,16 +266,20 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:paddingStart="@dimen/botton_paddings"
+            android:paddingEnd="@dimen/botton_paddings"
             android:background="@drawable/refresh_btn_style"
-            android:text="@string/sign_in" />
+            android:text="@string/sign_up" />
 
         <Button
             android:id="@+id/btn_signUp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:paddingStart="@dimen/botton_paddings"
+            android:paddingEnd="@dimen/botton_paddings"
             android:background="@drawable/refresh_btn_style"
-            android:text="@string/sign_up"
+            android:text="@string/sign_in"
           />
 
     </LinearLayout>

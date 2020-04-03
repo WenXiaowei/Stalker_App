@@ -208,11 +208,7 @@
     android:background="@color/vartmp7bluChiaro"
     android:layout_height="match_parent">
 
-    <TextView
-        android:textColor="@color/white"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/email" />
+
 
     <EditText
         android:id="@+id/etUsername"
@@ -226,11 +222,29 @@
         android:hint="@string/email"
         android:inputType="textEmailAddress" />
 
-    <TextView
-        android:textColor="@color/white"
+    <EditText
+        android:id="@+id/etNome"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/password" />
+        android:layout_marginLeft="4dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginRight="4dp"
+        android:layout_marginBottom="16dp"
+        android:fontFamily="sans-serif"
+        android:hint="@string/nome"
+        android:inputType="textPassword" />
+
+    <EditText
+        android:id="@+id/etCognome"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="4dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginRight="4dp"
+        android:layout_marginBottom="16dp"
+        android:fontFamily="sans-serif"
+        android:hint="@string/cognome"
+        android:inputType="textPassword" />
 
     <EditText
         android:id="@+id/etPassword"
@@ -243,11 +257,7 @@
         android:fontFamily="sans-serif"
         android:hint="@string/password"
         android:inputType="textPassword" />
-    <TextView
-        android:textColor="@color/white"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/ripeti_password" />
+
     <EditText
         android:id="@+id/etRipetiPassword"
         android:layout_width="match_parent"
@@ -257,23 +267,27 @@
         android:layout_marginRight="4dp"
         android:layout_marginBottom="16dp"
         android:fontFamily="sans-serif"
-        android:hint="@string/password"
+        android:hint="@string/ripeti_password"
         android:inputType="textPassword" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
         <Button
-            android:background="@drawable/refresh_btn_style"
-
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/reset"
+            android:layout_marginEnd="@dimen/botton_paddings"
             android:layout_weight="1"
-            />
+            android:background="@drawable/refresh_btn_style"
+            android:paddingEnd="@dimen/botton_paddings"
+            android:paddingStart="@dimen/botton_paddings"
+            android:text="@string/reset" />
         <Button
             android:background="@drawable/refresh_btn_style"
-
+            android:paddingEnd="@dimen/botton_paddings"
+            android:paddingStart="@dimen/botton_paddings"
+            android:layout_marginStart="2dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/registrami"

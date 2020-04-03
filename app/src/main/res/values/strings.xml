@@ -260,5 +260,7 @@
     <string name="registrami">Registrami</string>
     <string name="accedi">Accedi</string>
     <string name="ripeti_password">Ripeti password</string>
-    <string name="password_dimenticata">Password dimenticata</string>
+    <string name="password_dimenticata">Password \ndimenticata</string>
+    <string name="cognome">Cognome</string>
+    <string name="nome">Nome</string>
 </resources>
