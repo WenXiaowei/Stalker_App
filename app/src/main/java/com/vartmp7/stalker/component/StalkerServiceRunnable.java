@@ -202,97 +202,155 @@
  *    limitations under the License.
  */
 
-package com.vartmp7.stalker;
+package com.vartmp7.stalker.component;
 
 import android.Manifest;
-import android.app.AlertDialog;
-import android.app.Dialog;
+import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.content.res.Resources;
+import android.hardware.SensorManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
+import androidx.core.app.ActivityCompat;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 
-import com.facebook.AccessToken;
-import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
-import com.facebook.login.LoginResult;
-import com.facebook.login.widget.LoginButton;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.SignInButton;
-import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationAvailability;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FacebookAuthProvider;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.unboundid.ldap.sdk.controls.ManageDsaITRequestControl;
-import com.vartmp7.stalker.ui.login.LoginFragment;
+import com.vartmp7.stalker.gsonbeans.LuogoPoligono;
+import com.vartmp7.stalker.gsonbeans.Organizzazione;
+import com.vartmp7.stalker.gsonbeans.placecomponent.Coordinata;
 
-import java.security.Permission;
+import java.util.ArrayList;
+import java.util.List;
+
+import static java.lang.Thread.sleep;
 
 
-/**
- * @author Xiaowei Wen, Lorenzo Taschin
- */
-public class LoginActivity extends AppCompatActivity {
+public class StalkerServiceRunnable implements Runnable {
+    private static final String TAG = "com.vartmp7.stalker.component.StalkerServiceRunnable";
+    private List<Organizzazione> trackingOrgs;
+    private int i = 0;
+    private boolean isRunning;
+    private CallBack callBack;
+    private FusedLocationProviderClient fusedLocationProviderClient;
+    private SensorManager sensorManager;
+    private MutableLiveData<Coordinata> coordinata = null;
+    private LifecycleOwner lifecycleOwner;
+    private Context context;
+    private LocationRequest request;
+    private LocationCallback locationCallback;
+    public StalkerServiceRunnable(Context context,
+                                  FusedLocationProviderClient locationProviderClient,
+                                  LifecycleOwner owner,
+                                  SensorManager sensorManager,
+                                  CallBack callBack,
+                                  List<Organizzazione> trackingOrg) {
+        this.context = context;
+        this.sensorManager = sensorManager;
+        this.lifecycleOwner = owner;
+        this.isRunning = true;
+        this.trackingOrgs = trackingOrg;
+        this.callBack = callBack;
+        this.fusedLocationProviderClient = locationProviderClient;
+        coordinata = new MutableLiveData<>();
+        request = new LocationRequest();
+        request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        request.setMaxWaitTime(2);
+        request.setSmallestDisplacement(10);
 
-    private static final String TAG = "com.vartmp7.stalker.LoginActivitity";
-    private FirebaseAuth mAuth;
-    ;
+        locationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                super.onLocationResult(locationResult);
+                Log.d(TAG, "onLocationResult() called with: locationResult = [" + locationResult + "]");
+                coordinata.postValue(new Coordinata(locationResult.getLastLocation().getLongitude(),
+                        locationResult.getLastLocation().getLatitude()));
+            }
+        };
 
-    //    keytool -exportcert -alias YOUR_RELEASE_KEY_ALIAS -keystore YOUR_RELEASE_KEY_PATH | openssl sha1 -binary | openssl base64
+    }
+
+
+    private static final int SECONDS_TO_WAIT = 3;
+
+    @SuppressLint("HandlerLeak")
     @Override
-    protected void onStart() {
-        super.onStart();
+    public void run() {
 
-        setTheme(R.style.AppThemeNoActionBar);
-        mAuth = FirebaseAuth.getInstance();
+        Log.d(TAG, "run: thread Starting");
+        if (callBack != null)
+            callBack.onInitializingTracking();
+        Looper.prepare();
+        fusedLocationProviderClient.requestLocationUpdates(request, locationCallback, Looper.getMainLooper());
+        new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                Log.d(TAG, "handleMessage: ");
+            }
+        };
 
-        if (mAuth.getCurrentUser() != null || GoogleSignIn.getLastSignedInAccount(this) != null ) {
-            goToMainActivity();
+        if (context.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                context.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            Log.d(TAG, "run: location permissions granted");
+
+            while (isRunning) {
+                Log.d(TAG, "run() called "+ i++);
+                try {
+                    sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            Looper.loop();
+
+            Log.d(TAG, "run: while terminating");
+            if (callBack != null)
+                callBack.onTrackingTerminated();
+
+        } else {
+            Log.d(TAG, "run() permission not granted");
         }
-    }
 
-    @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
-
-        FragmentManager manager = getSupportFragmentManager();
-        FragmentTransaction transaction = manager.beginTransaction();
-        LoginFragment fragment = new LoginFragment();
-        transaction.replace(R.id.fcvLoginContainer, fragment);
-        transaction.commit();
 
     }
 
-    public void goToMainActivity() {
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        getApplication().setTheme(R.style.AppTheme);
-        startActivity(intent);
+    private String timerFormat(int i) {
+        String time = "";
+        int secondi = i % 60;
+        int minuti = ((i - secondi) % 3600) / 60;
+        int ore = (i - secondi - minuti * 60) / 3600;
+        if (ore == 0) {
+            time += "00";
+        } else {
+            time += ore < 10 ? "0" + ore : ore;
+        }
+        time += ":";
+        if (minuti == 0) {
+            time += "00";
+        } else
+            time += (minuti < 10 ? "0" + minuti : minuti);
+        time += ":";
+        if (secondi == 0)
+            time += "00";
+        else time += (secondi < 10 ? "0" + secondi : secondi);
+        return time;
     }
 
-
+    void stopThread() {
+        this.isRunning = false;
+    }
 }

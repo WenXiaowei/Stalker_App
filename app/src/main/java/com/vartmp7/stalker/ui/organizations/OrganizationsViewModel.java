@@ -236,7 +236,10 @@ public class OrganizationsViewModel extends ViewModel {
         //TODO togliere questo casting
         this.organizationList = orgRepo.getOrganizzazioni();
     }
-    public void setOrganizationTracking(long id){
+
+
+    public void updateOrganizzazione(Organizzazione o){
+        orgRepo.updateOrganizzazione(o);
     }
 
    /* public void updateData() {

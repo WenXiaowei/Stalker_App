@@ -211,6 +211,8 @@ import com.vartmp7.stalker.gsonbeans.Organizzazione;
 import java.util.List;
 
 public interface OrganizationsLocalSource {
+    void updateOrganizzazioniInfo(List<Organizzazione> orgsToUpdate);
+
     LiveData<List<Organizzazione>> getOrganizzazioni();
 
     void saveOrganizzazione(Organizzazione org);

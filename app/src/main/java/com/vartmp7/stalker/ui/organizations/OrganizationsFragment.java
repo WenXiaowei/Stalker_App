@@ -262,7 +262,7 @@ public class OrganizationsFragment extends Fragment implements SwipeRefreshLayou
     }
 
     private void setUpRecyclerView() {
-        mAdapter = new OrganizationViewAdapter(getContext(), Navigation.findNavController(requireActivity(),
+        mAdapter = new OrganizationViewAdapter(getContext(), organizzazioneViewModel,Navigation.findNavController(requireActivity(),
                 R.id.nav_host_fragment));
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);

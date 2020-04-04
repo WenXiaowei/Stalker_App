@@ -210,7 +210,11 @@
     android:layout_height="match_parent"
     android:id="@+id/srflPreferiti"
     tools:context="com.vartmp7.stalker.ui.preferiti.PreferitiFragment">
-
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/i_tuoi_preferiti"
+        android:id="@+id/tvHeaderFavorites"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/preferitiRecyclerView"

@@ -237,6 +237,7 @@ public abstract class AbstractLuogo {
         this.id = id;
         this.name = name;
     }
-
-    abstract boolean isInside(Coordinata c);
+    abstract public Coordinata getCenter();
+    abstract public double distanceTo(Coordinata c);
+    abstract public boolean isInside(Coordinata c);
 }

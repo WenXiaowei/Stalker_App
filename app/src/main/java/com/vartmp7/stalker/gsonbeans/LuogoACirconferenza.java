@@ -205,7 +205,12 @@
 package com.vartmp7.stalker.gsonbeans;
 
 
+import com.google.gson.internal.$Gson$Preconditions;
 import com.vartmp7.stalker.gsonbeans.placecomponent.Coordinata;
+import com.vartmp7.stalker.gsonbeans.placecomponent.Lato;
+import com.vartmp7.stalker.gsonbeans.placecomponent.Retta;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
@@ -248,6 +253,16 @@ public class LuogoACirconferenza extends AbstractLuogo {
         super(id, name);
     }
 
+    @Override
+    public Coordinata getCenter() {
+        return centro;
+    }
+
+    @Override
+    public double distanceTo(@NotNull Coordinata c) {
+        return c.getDistanceTo(centro);
+    }
+
     LuogoACirconferenza(long id, String name, Coordinata centro, double raggio) {
         super(id, name);
         this.centro = centro;
@@ -261,7 +276,7 @@ public class LuogoACirconferenza extends AbstractLuogo {
     }
 
     @Override
-    boolean isInside(Coordinata c) {
+    public boolean isInside(Coordinata c) {
         double distanza = centro.getDistanceTo(c);
         return distanza <= raggio;
     }

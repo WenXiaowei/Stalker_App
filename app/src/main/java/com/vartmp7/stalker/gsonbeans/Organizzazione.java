@@ -253,7 +253,7 @@ public class Organizzazione implements Serializable {
     @Getter @Setter @Accessors(chain = true)
     private String image_url;
     @Getter @Setter @Accessors(chain = true)
-    private List<? extends AbstractLuogo> luoghi;
+    private List<LuogoPoligono> luoghi;
     @Getter @Setter @Accessors(chain = true)
     private boolean isPreferito = false;
     @Getter @Setter @Accessors(chain = true)
@@ -274,27 +274,20 @@ public class Organizzazione implements Serializable {
         if (this == o) return true;
         if (!(o instanceof Organizzazione)) return false;
         Organizzazione that = (Organizzazione) o;
-        return id == that.id &&
-                isPreferito() == that.isPreferito() &&
-                isTracking() == that.isTracking() &&
-                isExpanded() == that.isExpanded() &&
-                isLogged() == that.isLogged() &&
-                isAnonimo() == that.isAnonimo() &&
-                isTrackingActive() == that.isTrackingActive() &&
-                Objects.equals(address, that.address) &&
-                Objects.equals(city, that.city) &&
-                Objects.equals(email, that.email) &&
-                Objects.equals(name, that.name) &&
-                Objects.equals(nation, that.nation) &&
-                Objects.equals(phone_number, that.phone_number) &&
-                Objects.equals(postal_code, that.postal_code) &&
-                Objects.equals(region, that.region) &&
-                Objects.equals(type, that.type) &&
-                Objects.equals(ldap_common_name, that.ldap_common_name) &&
-                Objects.equals(ldap_domain_component, that.ldap_domain_component) &&
-                Objects.equals(ldap_port, that.ldap_port) &&
-                Objects.equals(image_url, that.image_url) &&
-                Objects.equals(luoghi, that.luoghi);
+        return getId() == that.getId() /*&&
+                Objects.equals(getAddress(), that.getAddress()) &&
+                Objects.equals(getCity(), that.getCity()) &&
+                Objects.equals(getEmail(), that.getEmail()) &&
+                Objects.equals(getName(), that.getName()) &&
+                Objects.equals(getNation(), that.getNation()) &&
+                Objects.equals(getPhone_number(), that.getPhone_number()) &&
+                Objects.equals(getPostal_code(), that.getPostal_code()) &&
+                Objects.equals(getRegion(), that.getRegion()) &&
+                Objects.equals(getType(), that.getType()) &&
+                Objects.equals(getLdap_common_name(), that.getLdap_common_name()) &&
+                Objects.equals(getLdap_domain_component(), that.getLdap_domain_component()) &&
+                Objects.equals(getLdap_port(), that.getLdap_port()) &&
+                Objects.equals(getLuoghi(), that.getLuoghi())*/;
     }
 
     @Override

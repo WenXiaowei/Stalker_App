@@ -204,6 +204,8 @@
 
 package com.vartmp7.stalker.ui.organizations;
 
+import org.junit.runner.RunWith;
+
 import static org.junit.Assert.*;
 
 public class OrganizationsFragmentTest {

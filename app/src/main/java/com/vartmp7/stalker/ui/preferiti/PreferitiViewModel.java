@@ -212,6 +212,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 
+import com.vartmp7.stalker.component.NotLogged;
 import com.vartmp7.stalker.gsonbeans.Organizzazione;
 import com.vartmp7.stalker.repository.OrganizationsRepository;
 
@@ -291,7 +292,7 @@ public class PreferitiViewModel extends ViewModel {
         this.organizzazioni.addSource(organizationsQueryExhausted, queryExhaustedObserver);
         this.organizzazioni.addSource(firebaseQueryExhausted,queryExhaustedObserver);
     }
-    public void removeFromPreferiti(Organizzazione org){
+    public void removeFromPreferiti(Organizzazione org) throws NotLogged {
         orgRepo.removeFromPreferiti(org);
     }
 

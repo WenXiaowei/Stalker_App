@@ -211,10 +211,12 @@ import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 
+import com.vartmp7.stalker.component.NotLogged;
 import com.vartmp7.stalker.gsonbeans.Organizzazione;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class OrganizationsRepository {
 
@@ -235,6 +237,9 @@ public class OrganizationsRepository {
 
     public void updateOrganizzazione(Organizzazione o){
        organizationsLocalSource.updateOrganizzazione(o);
+    }
+    public void updateOrganizzationi(List<Organizzazione> l){
+        organizationsLocalSource.updateOrganizzazioni(l);
     }
 
     public void updateOrganizzazioni(List<Organizzazione> orgs){
@@ -271,27 +276,21 @@ public class OrganizationsRepository {
         return organizationFavoritesSource.getOrganizzazioni();
     }
 
-    public void addToPreferiti(Organizzazione org){
-        org.setPreferito(true);
-        updateOrganizzazione(org);
-        organizationFavoritesSource.addOrganizzazione(org.getId());
+    public void addToPreferiti(Organizzazione org) throws NotLogged {
+        if (organizationFavoritesSource!=null){
+            org.setPreferito(true);
+            updateOrganizzazione(org);
+            organizationFavoritesSource.addOrganizzazione(org.getId());
+        }else throw new NotLogged();
     }
 
-    public void removeFromPreferiti(Organizzazione org){
-        org.setPreferito(false);
-        updateOrganizzazione(org);
-        organizationFavoritesSource.removeOrganizzazione(org.getId());
+    public void removeFromPreferiti(Organizzazione org) throws NotLogged {
+        if (organizationFavoritesSource!=null){
+            org.setPreferito(false);
+            updateOrganizzazione(org);
+            organizationFavoritesSource.removeOrganizzazione(org.getId());
+        }else throw new NotLogged();
     }
-
-
-    public void saveOrganizzazione(){
-    }
-
-    // in teoria il metodo non serve
-    public void removeOrganizzazione(Organizzazione o){
-
-    }
-
 
 
 
@@ -312,8 +311,7 @@ public class OrganizationsRepository {
              @Override
              public void onChanged(List<Organizzazione> organizzazioni) {
                  Log.d(TAG, "onChanged: aggiornare org");
-                 organizzazioni.forEach(o-> Log.d(TAG, "onChanged: "+o.getId()));
-                 organizationsLocalSource.updateOrganizzazioni(organizzazioni);
+                 organizationsLocalSource.updateOrganizzazioniInfo(organizzazioni);
              }
          });
 
@@ -355,16 +353,6 @@ public class OrganizationsRepository {
         };
         localQueryExhausted.observeForever(queryObserver);
         webQueryExhausted.observeForever(queryObserver);*/
-    }
-
-    public void addToActiveTracking(Organizzazione o) {
-        o.setTrackingActive(true);
-        updateOrganizzazione(o);
-    }
-
-    public void addToTracking(Organizzazione o) {
-        o.setTracking(true);
-        updateOrganizzazione(o);
     }
 
     /*

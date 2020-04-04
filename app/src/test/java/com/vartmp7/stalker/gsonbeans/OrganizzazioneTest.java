@@ -232,7 +232,7 @@ public class OrganizzazioneTest {
     private static final  String ldap_domain_component="cn=wen,cn=xiaowei";
     private static final  String ldap_port="250";
     private static final  Boolean isPreferito = false;
-    private static final  List<? extends AbstractLuogo> luoghi=new ArrayList<>();
+    private static final  List<LuogoPoligono> luoghi=new ArrayList<>();
     private static final Organizzazione org = new Organizzazione()
                                                     .setAddress(address)
             .setCity(city).setEmail(email).setId(id).setName(name).setNation(nation).setPhone_number(phone_number)

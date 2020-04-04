@@ -208,10 +208,12 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.vartmp7.stalker.component.NotLogged;
 import com.vartmp7.stalker.gsonbeans.Organizzazione;
 import com.vartmp7.stalker.repository.OrganizationsRepository;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -221,25 +223,34 @@ import lombok.Setter;
  * @author Xiaowei Wen, Lorenzo Taschin
  */
 public class TrackingViewModel extends ViewModel {
-    public static final String TAG ="com.vartmp7.stalker.ui.home.HomeViewModel";
+    public static final String TAG = "com.vartmp7.stalker.ui.home.HomeViewModel";
 
     @Setter(AccessLevel.PUBLIC) @Getter(AccessLevel.PUBLIC)
     private OrganizationsRepository repository;
-    private MediatorLiveData<List<Organizzazione>> listMediatorLiveData;
 
-    public LiveData<List<Organizzazione>> getListOrganizzazione(){
+    public LiveData<List<Organizzazione>> getListOrganizzazione() {
         return repository.getOrganizzazioni();
     }
-    public void updateOrganizzazione(Organizzazione o){
+
+    public void updateOrganizzazione(Organizzazione o) {
         repository.updateOrganizzazione(o);
     }
 
+    public void activeAllTrackingOrganization(boolean active){
+        List<Organizzazione> l=repository.getOrganizzazioni().getValue().stream().filter(Organizzazione::isTracking).collect(Collectors.toList());
+        l.forEach(organizzazione -> organizzazione.setTrackingActive(active));
+        repository.updateOrganizzationi(l);
+    }
 
-    public void removePreferito(Organizzazione o) {
+    public void init(OrganizationsRepository repository) {
+        this.repository = repository;
+    }
+
+    public void removePreferito(Organizzazione o) throws NotLogged {
         repository.removeFromPreferiti(o);
     }
 
-    public void addPreferito(Organizzazione o) {
+    public void addPreferito(Organizzazione o) throws NotLogged {
         repository.addToPreferiti(o);
     }
 

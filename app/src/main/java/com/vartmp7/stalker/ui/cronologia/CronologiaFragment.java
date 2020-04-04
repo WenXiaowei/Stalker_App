@@ -204,7 +204,14 @@
 
 package com.vartmp7.stalker.ui.cronologia;
 
+import android.Manifest;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -216,7 +223,13 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
 import com.vartmp7.stalker.R;
+import com.vartmp7.stalker.component.StalkerServiceRunnable;
+import com.vartmp7.stalker.component.StalkerServiceThread;
 
 
 /**
@@ -232,13 +245,56 @@ public class CronologiaFragment extends Fragment {
         cronologiaViewModel =
                 new ViewModelProvider(requireActivity()).get(CronologiaViewModel.class);
         View root = inflater.inflate(R.layout.fragment_cronologia, container, false);
-        final TextView textView = root.findViewById(R.id.text_dashboard);
-        cronologiaViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-                textView.setText(s);
-            }
-        });
+//        final TextView textView = root.findViewById(R.id.text_dashboard);
+//        cronologiaViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
+//            @Override
+//            public void onChanged(@Nullable String s) {
+//                textView.setText(s);
+//            }
+//        });
+
+        root.findViewById(R.id.btnStartThread).setOnClickListener(v-> startThread());
+
+
         return root;
+    }
+
+    public void startThread(){
+
+        if (requireActivity().checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION)== PackageManager.PERMISSION_GRANTED
+            && requireActivity().checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)== PackageManager.PERMISSION_GRANTED){
+            Log.d(TAG, "startThread() called");
+                     StalkerServiceRunnable runnable = new StalkerServiceRunnable(requireContext(),
+                             LocationServices.getFusedLocationProviderClient(requireActivity()),
+                             getViewLifecycleOwner(),null,null,null);
+
+//            new Thread(runnable).start();
+            new StalkerServiceThread(requireContext(),LocationServices.getFusedLocationProviderClient(requireActivity())).start();
+
+
+
+
+        }else{
+            requestPermissions();
+        }
+
+    }
+
+    private void requestPermissions() {
+        requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION},1);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode==1 && grantResults.length==2
+                && grantResults[0] == PackageManager.PERMISSION_GRANTED
+                && grantResults[1] == PackageManager.PERMISSION_GRANTED
+        ){
+            startThread();
+        }else{
+            requestPermissions();
+        }
     }
 }

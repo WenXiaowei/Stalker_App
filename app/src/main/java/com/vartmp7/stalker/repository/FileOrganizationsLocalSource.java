@@ -208,10 +208,16 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.Log;
 
+import com.google.gson.GsonBuilder;
+import com.google.gson.TypeAdapterFactory;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.gson.Gson;
+import com.vartmp7.stalker.gsonbeans.AbstractLuogo;
+import com.vartmp7.stalker.gsonbeans.LuogoACirconferenza;
+import com.vartmp7.stalker.gsonbeans.LuogoPoligono;
 import com.vartmp7.stalker.gsonbeans.Organizzazione;
 import com.vartmp7.stalker.gsonbeans.ResponseOrganizzazione;
 
@@ -247,19 +253,32 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
         this.fileName = fileName;
         this.context = context;
         this.gson = new Gson();
-        this.mLiveOrgs=new MutableLiveData<>(new ArrayList<>());
+        this.mLiveOrgs = new MutableLiveData<>(new ArrayList<>());
 //        this.mLiveOrgs = org;
+    }
+
+    @Override
+    public void updateOrganizzazioni(List<Organizzazione> org) {
+        List<Organizzazione> orgList = mLiveOrgs.getValue();
+
+        for (Organizzazione organizzazione : org) {
+            int i = orgList.indexOf(organizzazione);
+            orgList.remove(i);
+            orgList.add(i, organizzazione);
+        }
+
+        mLiveOrgs.setValue(orgList);
     }
 
     @Override
     public void updateOrganizzazione(Organizzazione o) {
         List<Organizzazione> l = new ArrayList<>(mLiveOrgs.getValue());
-        int pos=-1;
-        for (int i =0; i< l.size()&& pos==-1; i++)
-            if (o.getId()==l.get(i).getId())
-                pos=i;
+        int pos = -1;
+        for (int i = 0; i < l.size() && pos == -1; i++)
+            if (o.getId() == l.get(i).getId())
+                pos = i;
 //        int pos = l.indexOf(o);
-        if (pos!=-1){
+        if (pos != -1) {
             l.remove(pos);
             l.add(pos, o);
             saveOrganizzazioni(l);
@@ -267,15 +286,15 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
     }
 
     @Override
-    public void updateOrganizzazioni(List<Organizzazione> orgsToUpdate){
-        orgsToUpdate.forEach(o-> Log.d(TAG, "updateOrganizzazioni: updateOrgs"+o.getId()));
+    public void updateOrganizzazioniInfo(List<Organizzazione> orgsToUpdate) {
+        orgsToUpdate.forEach(o -> Log.d(TAG, "updateOrganizzazioni: updateOrgs" + o.getId()));
         List<Organizzazione> currentOrgs = new ArrayList<>(mLiveOrgs.getValue());
         List<Organizzazione> toSave = new ArrayList<>();
-        currentOrgs.forEach(o-> Log.d(TAG, "currentorg: "+o.getId()));
-        for(int j=0; j<orgsToUpdate.size(); j++){
-            boolean contained=false;
+        currentOrgs.forEach(o -> Log.d(TAG, "currentorg: " + o.getId()));
+        for (int j = 0; j < orgsToUpdate.size(); j++) {
+            boolean contained = false;
             Organizzazione orgToUpdate = orgsToUpdate.get(j);
-            for(int i=0; i<currentOrgs.size() && !contained; i++){
+            for (int i = 0; i < currentOrgs.size() && !contained; i++) {
                 Organizzazione currentOrg = currentOrgs.get(i);
                 if(currentOrg.getId() == orgToUpdate.getId()){
                     contained=true;
@@ -286,7 +305,7 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
                     //currentOrgs.remove(currentOrg);
                 }
             }
-            if(!contained){
+            if (!contained) {
                 toSave.add(orgToUpdate);
 //                Log.e(TAG, "updateOrganizzazioni: chel cannnn");
             }
@@ -295,8 +314,6 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
         toSave.forEach(o-> Log.d(TAG, "org: "+o.getId()));
         saveOrganizzazioni(toSave);
     }
-
-
 
 
     @Override
@@ -315,7 +332,7 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
                     // fixme sonarqube segna come bug
                     fis = context.openFileInput(fileName);
                     // fixme sonarqube segna come bug
-                    InputStreamReader inputStreamReader =new InputStreamReader(fis, StandardCharsets.UTF_8);
+                    InputStreamReader inputStreamReader = new InputStreamReader(fis, StandardCharsets.UTF_8);
                     StringBuilder stringBuilder = new StringBuilder();
                     try (BufferedReader reader = new BufferedReader(inputStreamReader)) {
                         String line = reader.readLine();
@@ -331,26 +348,25 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
                         ResponseOrganizzazione responseOrganizzazioni = gson.fromJson(contents, ResponseOrganizzazione.class);
                         List<Organizzazione> organizzazioni = responseOrganizzazioni.getOrganizations();//mLiveOrgs.getValue();
 //                    List<Organizzazione> orgs = mLiveOrgs.getValue();
-                        if(responseOrganizzazioni==null){
+                        if (responseOrganizzazioni == null) {
 //                            Log.d(TAG, "run: lista vuota");
                             organizzazioni.addAll(new ArrayList<>());
-                        }
-                        else{
+                        } else {
 //                            Log.d(TAG, "run: lista non vuota");
 //                          organizzazioni.addAll(responseOrganizzazioni.getOrganizations().stream().distinct().collect(Collectors.toList()));
                             mLiveOrgs.postValue(organizzazioni);
                         }
                         //organizzazioni.clear();
                         //organizzazioni.addAll(responseOrganizzazioni.getOrganizations());
-                        Log.d("TEST","arrivo qua 3");
+                        Log.d("TEST", "arrivo qua 3");
 //                        mLiveOrgs.postValue(organizzazioni.stream().distinct().collect(Collectors.toList()));
 //                        Log.d(TAG, "run: dati letti dal file");
                     }
 
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
 
+                } catch (FileNotFoundException ex) {
+
+                }
             }
         }.start();
         return mLiveOrgs;
@@ -379,14 +395,14 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
             public synchronized void run() {
 
                 File orgJson = new File(context.getFilesDir(), fileName);
-                if (!orgJson.exists()){
+                if (!orgJson.exists()) {
                     try {
                         orgJson.createNewFile();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                     Log.d(TAG, "creazione file");
-                    Log.d(TAG, "doInBackground: "+orgJson.mkdir());
+                    Log.d(TAG, "doInBackground: " + orgJson.mkdir());
                 }
 
                 try {
@@ -395,7 +411,7 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
                     // fixme quest'istruzione delle volte, genera un concurrentModificationException
                     String l = new Gson().toJson(new ResponseOrganizzazione().setOrganizations(orgs));
                     Log.d(TAG, "saving data:");
-                    orgs.forEach(o-> Log.d(TAG, "save org:"+o.getId()));
+                    orgs.forEach(o -> Log.d(TAG, "save org:" + o.getId()));
                     writer.write(l);
                     writer.flush();
                     writer.close();
@@ -407,13 +423,10 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
                 Log.d(TAG, "doInBackground: finished saving data");
             }
         });
-        executorService.shutdown();
-        try {
-            executorService.awaitTermination(1, TimeUnit.MINUTES);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        saveOrganizzazioni(orgs);
     }
+
+
 
     @Override
     public void removeOrganizzazione(Organizzazione org) {

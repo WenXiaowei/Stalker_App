@@ -220,7 +220,7 @@ public class ResponseLuogoTest {
 
     @Test
     public void testSetLuoghi(){
-        ArrayList<AbstractLuogo> l= new ArrayList<>();
+        ArrayList<LuogoPoligono> l= new ArrayList<>();
         LuogoPoligono p= new LuogoPoligono();
         l.add(p);
         responseLuogo.setLuoghi(l);

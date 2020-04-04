@@ -223,7 +223,7 @@
     <string name="not_in_any_place">Non sei in nessun luogo tracciato dell\'organizzazione selezionata!</string>
     <string name="you_left">Hai lasciato %s</string>
     <string name="you_are_in">Sei in %s</string>
-    <string name="facebook_app_id">212692166599390</string><!--todo Da togliere successivamente quando renderemo l'app pubblica   -->
+    <string name="facebook_app_id">212692166599390</string><!--todo configurazione login facebook 6.2:  Da togliere successivamente quando renderemo l'app pubblica   -->
     <string name="fb_login_protocol_scheme">fb212692166599390</string>
     <string name="continua_senza_autenticazione">Continua senza autenticazione</string>
     <string name="title_home">Home</string>
@@ -238,7 +238,7 @@
     <string name="login_ldap">Login LDAP</string>
     <string name="anonimo_question">Anonimo?</string>
     <string name="indirizzo">Indirizzo:</string>
-    <string name="email">Email:</string>
+    <string name="email">Email</string>
     <string name="logout">Logout</string>
     <string name="login">Login</string>
     <string name="icon_dell_organizzazione">icon dell\'organizzazione</string>
@@ -250,4 +250,29 @@
     <string name="attualmente_sei_in">Attualmente sei in:</string>
     <string name="organizzazione_added_to_favorite">Organizzazione aggiunta ai preferiti!</string>
     <string name="organizzazione_removed_from_favorite">Organizzazione rimosso dai preferiti</string>
+    <string name="tracking_terminated">Tracciamento terminato!</string>
+    <string name="initializing_tracking">Inizializzazione del tracciamento!</string>
+    <string name="non_presente_nei_luoghi_tracciati">Non sei presente nei luoghi delle organizzazioni che ti stanno tracciando!</string>
+    <string name="i_tuoi_preferiti">I tuoi preferiti:</string>
+    <string name="should_be_logged_for_favorites">Non hai effettuato accesso, non puoi avere delle organizzazioni preferite, per farlo fai accesso.</string>
+    <string name="not_logged_yet">Non hai fatto Login!</string>
+    <string name="reset">Reset</string>
+    <string name="registrami">Registrami</string>
+    <string name="accedi">Accedi</string>
+    <string name="ripeti_password">Ripeti password</string>
+    <string name="password_dimenticata">Password \ndimenticata</string>
+    <string name="cognome">Cognome</string>
+    <string name="nome">Nome</string>
+    <string name="inserire_indirizzo_mail">Dovresti inserire l\'indirizzo mail!</string>
+    <string name="mail_inviata_con_successo">\"La mail è stata inviata con successo!\"</string>
+    <string name="qualcosa_non_e_andato_bene">\"Qualcosa è andato storto!\nRiprovare più tardi!\"</string>
+    <string name="password_non_coincidono">Password non coincidono!</string>
+    <string name="password_troppo_corta">Password troppo corta!</string>
+    <string name="modificato_con_successo">%s modificato con successo!</string>
+    <string name="modifica_di_fallito">La modifica di %s fallito!</string>
+    <string name="mail_di_verifica_inviata">Ti abbiamo mandato una mail di verifica dell\'indirizzo!</string>
+    <string name="modifica_dati">Modifica Dati</string>
+    <string name="account_esistente_con_questa_mail">Esiste già un account con questa mail!</string>
+    <string name="unknown_error">Errori sconosciuti, riprova più tardi</string>
+    <string name="elimina_account">Elimina account</string>
 </resources>

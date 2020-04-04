@@ -187,7 +187,7 @@
  *       same "printed page" as the copyright notice for easier
  *       identification within third-party archives.
  *
- *    Copyright [yyyy] [name of copyright owner]
+ *    Copyright [2020] [VartTmp7]
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -210,6 +210,7 @@ import androidx.annotation.NonNull;
 
 import com.vartmp7.stalker.gsonbeans.AbstractLuogo;
 import com.vartmp7.stalker.gsonbeans.placecomponent.Coordinata;
+import com.vartmp7.stalker.gsonbeans.placecomponent.Retta;
 
 import java.util.Arrays;
 import java.util.List;
@@ -254,7 +255,18 @@ public class LuogoPoligono extends AbstractLuogo {
 
 
     @Override
-    boolean isInside(Coordinata c) {
+    public Coordinata getCenter() {
+        return null;
+    }
+
+    @Override
+    public double distanceTo(Coordinata c) {
+        return 0;
+    }
+
+    @Override
+    public boolean isInside(Coordinata c) {
         return new RayCasting(getCoordinate(), c).isPointInside();
     }
+
 }

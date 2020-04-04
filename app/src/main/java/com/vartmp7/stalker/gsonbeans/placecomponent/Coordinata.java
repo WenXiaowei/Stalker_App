@@ -269,13 +269,18 @@ public class Coordinata {
         return x * Math.PI / 180;
     }
 
-    public double getDistanceTo(final Coordinata c) {
+    /**
+     * restituisce la distanza in metri della coordinata corrente alla coordinata C
+     * @param anotherCoordinata la seconda coordinata
+     * @return la distanza in metri dalla coordinata corrente alla seconda coordinata
+     */
+    public double getDistanceTo(final Coordinata anotherCoordinata){
 
         long R = 6378137; // Earth’s mean radius in meter
-        double dLat = rad(c.getLatitude() - getLatitude());
-        double dLong = rad(c.getLongitude() - getLongitude());
+        double dLat = rad(anotherCoordinata.getLatitude() - getLatitude());
+        double dLong = rad(anotherCoordinata.getLongitude() - getLongitude());
         double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                Math.cos(rad(getLatitude())) * Math.cos(rad(c.getLatitude())) *
+                Math.cos(rad(getLatitude())) * Math.cos(rad(anotherCoordinata.getLatitude())) *
                         Math.sin(dLong / 2) * Math.sin(dLong / 2);
         double c1 = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
         return R * c1; // returns the distance in meter

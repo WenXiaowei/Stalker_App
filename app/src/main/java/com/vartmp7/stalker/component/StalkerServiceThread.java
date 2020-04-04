@@ -202,97 +202,105 @@
  *    limitations under the License.
  */
 
-package com.vartmp7.stalker;
+package com.vartmp7.stalker.component;
 
 import android.Manifest;
-import android.app.AlertDialog;
-import android.app.Dialog;
+import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.content.res.Resources;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
+import androidx.core.app.ActivityCompat;
 
-import com.facebook.AccessToken;
-import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
-import com.facebook.login.LoginResult;
-import com.facebook.login.widget.LoginButton;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.SignInButton;
-import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FacebookAuthProvider;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.unboundid.ldap.sdk.controls.ManageDsaITRequestControl;
-import com.vartmp7.stalker.ui.login.LoginFragment;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.vartmp7.stalker.gsonbeans.placecomponent.Coordinata;
 
-import java.security.Permission;
+public class StalkerServiceThread extends Thread implements Runnable {
+    private static final String TAG = "StalkerServiceThread";
+    private Context context;
+    private FusedLocationProviderClient fusedLocationProviderClient;
+    private LocationCallback locationCallback;
+    private LocationRequest locationRequest;
+    private Coordinata coordinata = null;
 
 
-/**
- * @author Xiaowei Wen, Lorenzo Taschin
- */
-public class LoginActivity extends AppCompatActivity {
-
-    private static final String TAG = "com.vartmp7.stalker.LoginActivitity";
-    private FirebaseAuth mAuth;
-    ;
-
-    //    keytool -exportcert -alias YOUR_RELEASE_KEY_ALIAS -keystore YOUR_RELEASE_KEY_PATH | openssl sha1 -binary | openssl base64
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-        setTheme(R.style.AppThemeNoActionBar);
-        mAuth = FirebaseAuth.getInstance();
-
-        if (mAuth.getCurrentUser() != null || GoogleSignIn.getLastSignedInAccount(this) != null ) {
-            goToMainActivity();
+    public StalkerServiceThread(Context context,
+                                FusedLocationProviderClient fusedLocationProviderClient
+//                               ,LocationCallback locationCallback
+//                                ,LocationRequest locationRequest
+    ) {
+        this.context = context;
+        this.fusedLocationProviderClient = fusedLocationProviderClient;
+//        this.locationCallback = locationCallback;
+//        this.locationRequest = locationRequest;
+        locationRequest = new LocationRequest()
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                .setExpirationTime(10000000)
+                .setExpirationTime(Long.MAX_VALUE)
+                .setSmallestDisplacement(1f);
         }
-    }
+
+
+
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+    public void run() {
+        super.run();
 
-        FragmentManager manager = getSupportFragmentManager();
-        FragmentTransaction transaction = manager.beginTransaction();
-        LoginFragment fragment = new LoginFragment();
-        transaction.replace(R.id.fcvLoginContainer, fragment);
-        transaction.commit();
+        Looper.prepare();
+        LocationManager manager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1, 1, new LocationListener() {
+                @Override
+                public void onLocationChanged(Location location) {
+                    Log.d(TAG, "onLocationChanged() called with: location = [" + location + "]");
+                }
+                @Override
+                public void onStatusChanged(String provider, int status, Bundle extras) {
+                }
+                @Override
+                public void onProviderEnabled(String provider) {
+                }
 
+                @Override
+                public void onProviderDisabled(String provider) {
+                }
+            });
+            int i = 0;
+            locationCallback = new LocationCallback() {
+                @Override
+                public void onLocationResult(LocationResult locationResult) {
+                    super.onLocationResult(locationResult);
+                    Log.d(TAG, "onLocationResult() called with: locationResult = [" + locationResult + "]");
+                    Location l = locationResult.getLastLocation();
+                    coordinata = new Coordinata(l.getLongitude(), l.getLatitude());
+                }
+            };
+            fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper());
+            Log.d(TAG, "run() called post Looper.prepare");
+            while (true) {
+                if (coordinata != null) {
+                    Log.d(TAG, "run() called" + coordinata);
+                }
+                Log.d(TAG, " iteration: " + i++);
+                try {
+                    sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }else
+            Log.d(TAG, "run() called: permission check failed!");
     }
-
-    public void goToMainActivity() {
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        getApplication().setTheme(R.style.AppTheme);
-        startActivity(intent);
-    }
-
-
 }

@@ -202,97 +202,224 @@
  *    limitations under the License.
  */
 
-package com.vartmp7.stalker;
+package com.vartmp7.stalker.component;
 
-import android.Manifest;
-import android.app.AlertDialog;
-import android.app.Dialog;
+import android.app.Service;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.content.res.Resources;
-import android.os.Bundle;
+import android.hardware.SensorManager;
+import android.location.LocationManager;
+import android.os.Binder;
+import android.os.IBinder;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
-import com.facebook.AccessToken;
-import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
-import com.facebook.login.LoginResult;
-import com.facebook.login.widget.LoginButton;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.SignInButton;
-import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FacebookAuthProvider;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.unboundid.ldap.sdk.controls.ManageDsaITRequestControl;
-import com.vartmp7.stalker.ui.login.LoginFragment;
+import com.google.android.gms.location.LocationServices;
+import com.vartmp7.stalker.gsonbeans.Organizzazione;
 
-import java.security.Permission;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.stream.Collectors;
+
+import static java.lang.Thread.sleep;
 
 
-/**
- * @author Xiaowei Wen, Lorenzo Taschin
- */
-public class LoginActivity extends AppCompatActivity {
+public class StalkerTrackingService extends Service {
+    private static final String TAG = "com.vartmp7.stalker.component.StalkerTrackingService";
 
-    private static final String TAG = "com.vartmp7.stalker.LoginActivitity";
-    private FirebaseAuth mAuth;
-    ;
+    private List<Organizzazione> trackingOrgs = new ArrayList<>();
+    private CallBack callBack;
+    StalkerServiceRunnable current = null;
 
-    //    keytool -exportcert -alias YOUR_RELEASE_KEY_ALIAS -keystore YOUR_RELEASE_KEY_PATH | openssl sha1 -binary | openssl base64
-    @Override
-    protected void onStart() {
-        super.onStart();
 
-        setTheme(R.style.AppThemeNoActionBar);
-        mAuth = FirebaseAuth.getInstance();
+    public void setCallBack(CallBack callBack) {
+        this.callBack = callBack;
+    }
 
-        if (mAuth.getCurrentUser() != null || GoogleSignIn.getLastSignedInAccount(this) != null ) {
-            goToMainActivity();
+    public StalkerTrackingService() {
+    }
+
+
+    public class StalkerBinder extends Binder {
+        public void updateTrackingOrganizations(List<Organizzazione> orgs) {
+            StalkerTrackingService.this.trackingOrgs = orgs;
+            if (orgs.size() != 0)
+                startNewThread();
+            else if (current != null) {
+                if (callBack != null)
+                    callBack.onTrackingTerminated();
+                current.stopThread();
+            }
         }
+
+        public StalkerTrackingService getService() {
+            return StalkerTrackingService.this;
+        }
+
     }
 
+    private void startNewThread() {
+        if (current != null)
+            current.stopThread();
+        if (callBack!=null)
+            Log.d(TAG, "startNewThread: callback != null");
+        else
+//            Log.d(TAG, "startNewThread: callback == null");
+//        current = new StalkerServiceRunnable(
+//                getApplicationContext(),
+//                (LocationManager) getSystemService(Context.LOCATION_SERVICE),
+////                LocationServices.getFusedLocationProviderClient(this),
+//                (SensorManager) getSystemService(Context.SENSOR_SERVICE),
+//                callBack,
+//                trackingOrgs
+//                        .stream()
+//                        .filter(Organizzazione::isTrackingActive)
+//                        .collect(Collectors.toList()));
+        new Thread(current).start();
+        Log.d(TAG, " starting");
+
+    }
+
+    @Nullable
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
-
-        FragmentManager manager = getSupportFragmentManager();
-        FragmentTransaction transaction = manager.beginTransaction();
-        LoginFragment fragment = new LoginFragment();
-        transaction.replace(R.id.fcvLoginContainer, fragment);
-        transaction.commit();
-
+    public IBinder onBind(@NonNull Intent intent) {
+        return new StalkerBinder();
     }
 
-    public void goToMainActivity() {
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        getApplication().setTheme(R.style.AppTheme);
-        startActivity(intent);
+
+    //viene eseguito solo una volta
+    @Override
+    public void onCreate() {
+        super.onCreate();
     }
+
+    // viene eseguito solo una volta
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
+
+    // viene eseguito ogni volta che si fa operazione di bind
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        startNewThread();
+        return super.onStartCommand(intent, flags, startId);
+    }
+
+
+    Timer timer = new Timer();
+
+    private void timer() {
+        timer.schedule(timerTask, 0, 1000);
+    }
+
+    private TimerTask timerTask = new TimerTask() {
+        @Override
+        public void run() {
+            long millis = System.currentTimeMillis() / 1000;
+//            callBack.onCurrentStatusChanged();
+        }
+    };
 
 
 }
+/*
+*       if (checkPermissions()) {
+*    public void steps() {
+        SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        if (sensorManager != null) {
+            Sensor sensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
+            sensorManager.registerListener(new SensorEventListener() {
+                @Override
+                public void onSensorChanged(SensorEvent event) {
+                    Sensor sensor1 = event.sensor;
+                    float[] values = event.values;
+                    int val = -1;
+                    if (values.length > 0)
+                        val = (int) values[0];
+
+                    if (sensor.getType() == Sensor.TYPE_STEP_COUNTER) {
+                        Log.d(TAG, "onSensorChanged: " + val);
+                        Toast.makeText(MainActivity.this,"On sensor changed: "+val, Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+                }
+            }, sensor, SensorManager.SENSOR_DELAY_NORMAL);
+        }
+    }
+    private void readNetWorkPosition() {
+        if (checkPermissions()) {
+            Log.d(TAG, "readNetWorkPosition: ");
+            FusedLocationProviderClient fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+            fusedLocationProviderClient.getLastLocation().addOnSuccessListener(l -> {
+                Log.d(TAG, "readNetWorkPosition: on success ");
+                if (l != null) {
+                    Log.d(TAG, "readNetWorkPosition: " + l.toString());
+                    Log.d(TAG, "readNetWorkPosition: " + l.getLatitude());
+                    Log.d(TAG, "readNetWorkPosition: " + l.getLongitude());
+                    Log.d(TAG, "readNetWorkPosition: accuracy: " + l.getAccuracy());
+                    Log.d(TAG, "readNetWorkPosition: provider " + l.getProvider());
+//                    Log.d(TAG, "readNetWorkPosition: "+l.get;
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.d(TAG, "onFailure: ");
+                }
+            }).addOnCompleteListener(new OnCompleteListener<Location>() {
+                @Override
+                public void onComplete(@NonNull Task<Location> task) {
+                    Log.d(TAG, "onComplete: ");
+//                    Log.d(TAG, "onComplete: "+task.getResult().toString());
+                }
+            });
+
+            LocationRequest request = new LocationRequest();
+            request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+//            request.setPriority(LocationRequest.PRIORITY_NO_POWER);
+//            request.setSmallestDisplacement()
+            fusedLocationProviderClient.requestLocationUpdates(request, new LocationCallback() {
+                @Override
+                public void onLocationAvailability(LocationAvailability locationAvailability) {
+                    super.onLocationAvailability(locationAvailability);
+                    Log.d(TAG, "onLocationAvailability: " + locationAvailability.toString());
+                    ;
+                }
+
+                @Override
+                public void onLocationResult(LocationResult locationResult) {
+                    super.onLocationResult(locationResult);
+                    Log.d(TAG, "onLocationResult: " + locationResult.toString());
+
+                }
+            }, null);
+
+            LocationCallback c = new LocationCallback() {
+
+                public void onLocationResult(LocationResult var1) {
+                }
+
+                public void onLocationAvailability(LocationAvailability var1) {
+                }
+            };
+            fusedLocationProviderClient.requestLocationUpdates(request, c, null);
+
+
+            fusedLocationProviderClient.removeLocationUpdates(c);
+
+
+        }
+//        else
+//            requestPermissions();
+    }
+
+* */

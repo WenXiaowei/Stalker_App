@@ -202,97 +202,118 @@
  *    limitations under the License.
  */
 
-package com.vartmp7.stalker;
+package com.vartmp7.stalker.ui.login;
 
-import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
+import androidx.fragment.app.Fragment;
 
-import com.facebook.AccessToken;
-import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
-import com.facebook.login.LoginResult;
-import com.facebook.login.widget.LoginButton;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.SignInButton;
-import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.unboundid.ldap.sdk.controls.ManageDsaITRequestControl;
-import com.vartmp7.stalker.ui.login.LoginFragment;
+import com.vartmp7.stalker.MainActivity;
+import com.vartmp7.stalker.R;
 
-import java.security.Permission;
-
-
-/**
- * @author Xiaowei Wen, Lorenzo Taschin
- */
-public class LoginActivity extends AppCompatActivity {
-
-    private static final String TAG = "com.vartmp7.stalker.LoginActivitity";
+public class LoginWithMail extends Fragment implements View.OnClickListener {
+    private final static String TAG="com.vartmp7.stalker.ui.login.LoginWithMail";
+    private EditText etEmail, etPassoword;
     private FirebaseAuth mAuth;
-    ;
-
-    //    keytool -exportcert -alias YOUR_RELEASE_KEY_ALIAS -keystore YOUR_RELEASE_KEY_PATH | openssl sha1 -binary | openssl base64
+    @Nullable
     @Override
-    protected void onStart() {
-        super.onStart();
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View root = inflater.inflate(R.layout.form_login_with_mail, container, false);
+        etEmail = root.findViewById(R.id.etEmail);
+        etPassoword = root.findViewById(R.id.etPassword);
 
-        setTheme(R.style.AppThemeNoActionBar);
         mAuth = FirebaseAuth.getInstance();
 
-        if (mAuth.getCurrentUser() != null || GoogleSignIn.getLastSignedInAccount(this) != null ) {
-            goToMainActivity();
-        }
+        root.findViewById(R.id.btnPasswordForgot).setOnClickListener(this);
+        root.findViewById(R.id.btnLogin).setOnClickListener(this);
+        return root;
+    }
+    private void showConfirmDialog() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        LayoutInflater inflater = getLayoutInflater();
+        builder.setView(inflater.inflate(R.layout.password_recover_form, null));
+        builder.setTitle(R.string.sign_in);
+        builder.setMessage("Inserisci la mail con la quale ti sei registrato/a all'applicazione!");
+        builder.setPositiveButton(getString(R.string.conferma), (dialog, which) -> {
+            Dialog d = (Dialog) dialog;
+            EditText et =d.findViewById(R.id.etEmailToRecover);
+            if (!et.getText().toString().trim().equals("")){
+                sendPasswordRecoverMail(et.getText().toString());
+            }else{
+                Toast.makeText(requireContext(), R.string.inserire_indirizzo_mail, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        builder.setNegativeButton(R.string.annulla, (dialog, which) -> dialog.dismiss());
+        builder.create().show();
+
+    }
+
+    private void sendPasswordRecoverMail(String email){
+        mAuth.sendPasswordResetEmail(email).addOnCompleteListener(task -> {
+            int id;
+            if (task.isSuccessful()){
+                id=R.string.mail_inviata_con_successo;
+            }else {
+                id= R.string.qualcosa_non_e_andato_bene;
+            }
+            Toast.makeText(requireContext(),getString(id), Toast.LENGTH_SHORT).show();
+
+        });
     }
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.btnPasswordForgot:
+                showConfirmDialog();
+                break;
+            case R.id.btnLogin:
+                String email = etEmail.getText().toString().trim();
+                if (!email.equals("")){
+                    String password = etPassoword.getText().toString().trim();
+                    mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(
+                            task -> {
+                                if (task.isSuccessful()) {
+                                    // Sign in success, update UI with the signed-in user's information
+                                    Log.d(TAG, "signInWithEmail:success");
+                                    FirebaseUser user = mAuth.getCurrentUser();
+                                    Intent intent = new Intent(requireContext(), MainActivity.class);
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                    requireActivity().getApplication().setTheme(R.style.AppTheme);
+                                    startActivity(intent);
+                                } else {
+                                    // If sign in fails, display a message to the user.
+                                    Log.w(TAG, "signInWithEmail:failure", task.getException());
 
-        FragmentManager manager = getSupportFragmentManager();
-        FragmentTransaction transaction = manager.beginTransaction();
-        LoginFragment fragment = new LoginFragment();
-        transaction.replace(R.id.fcvLoginContainer, fragment);
-        transaction.commit();
+                                    Toast.makeText(requireContext(), "Autenticazione fallita!",
+                                            Toast.LENGTH_SHORT).show();
+                                }
+
+                                // ...
+                            }
+                    );
+                }else{
+                    Toast.makeText(requireContext(),"La mail non è valida!", Toast.LENGTH_SHORT).show();
+                }
+
+                break;
+        }
 
     }
-
-    public void goToMainActivity() {
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        getApplication().setTheme(R.style.AppTheme);
-        startActivity(intent);
-    }
-
 
 }

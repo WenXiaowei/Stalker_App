@@ -208,4 +208,5 @@
     <item android:id="@+id/menuLogin"
         android:title="@string/login">
     </item>
+
 </menu>

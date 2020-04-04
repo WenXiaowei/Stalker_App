@@ -230,6 +230,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.unboundid.ldap.sdk.LDAPException;
 import com.vartmp7.stalker.R;
+import com.vartmp7.stalker.component.NotLogged;
 import com.vartmp7.stalker.component.StalkerLDAP;
 import com.vartmp7.stalker.gsonbeans.Organizzazione;
 
@@ -275,7 +276,7 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
         Organizzazione org = listOrganizzazione.get(position);
 
         View.OnClickListener listener = v -> {
-            switch (v.getId()){
+            switch (v.getId()) {
                 case R.id.btnStartTracking:
                     viewModel.updateOrganizzazione(org.setTrackingActive(!org.isTrackingActive()));
                     notifyItemChanged(position);
@@ -297,9 +298,14 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
                     rotate1.setInterpolator(new LinearInterpolator());
                     holder.ibtnPreferito.startAnimation(rotate1);
 //                    org.setPreferito(!org.isPreferito());
-                    if(org.isPreferito())
-                        viewModel.removePreferito(org);
-                    else viewModel.addPreferito(org);
+
+                    try {
+                        if (org.isPreferito())
+                            viewModel.removePreferito(org);
+                        else viewModel.addPreferito(org);
+                    }catch (NotLogged ex){
+                        Toast.makeText(context, R.string.not_logged_yet, Toast.LENGTH_SHORT).show();
+                    }
                     break;
                 case R.id.sAnonymousSwitch:
                     holder.sAnonimo.isActivated();
@@ -343,7 +349,7 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(R.string.login);
         builder.setMessage("Fai accesso all'organizzazione che hai scelto");
-        builder.setView(LayoutInflater.from(context).inflate(R.layout.dialog_login, null));
+        builder.setView(LayoutInflater.from(context).inflate(R.layout.form_login_with_mail, null));
         builder.setPositiveButton(context.getString(R.string.conferma), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -378,7 +384,8 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
         builder.create().show();
 
     }
-    public Organizzazione getOrganizationAt(int pos){
+
+    public Organizzazione getOrganizationAt(int pos) {
         return listOrganizzazione.get(pos);
     }
 
@@ -397,6 +404,7 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
         CardView cvTrackingitem;
         LinearLayout llInformationToHide, llTitle;
         CircleImageView civIconOrganizzazione;
+
         public ViewHolder(@NonNull View v) {
             super(v);
             tvIndirizzo = v.findViewById(R.id.tvIndirizzo);
