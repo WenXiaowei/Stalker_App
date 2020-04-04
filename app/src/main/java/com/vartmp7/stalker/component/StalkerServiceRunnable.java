@@ -294,7 +294,7 @@ public class StalkerServiceRunnable implements Runnable {
         if (callBack != null)
             callBack.onInitializingTracking();
         Looper.prepare();
-        fusedLocationProviderClient.requestLocationUpdates(request, locationCallback, Looper.myLooper());
+        fusedLocationProviderClient.requestLocationUpdates(request, locationCallback, Looper.getMainLooper());
         new Handler() {
             @Override
             public void handleMessage(Message msg) {
