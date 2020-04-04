@@ -204,25 +204,40 @@
 
 package com.vartmp7.stalker.gsonbeans;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.vartmp7.stalker.gsonbeans.placecomponent.Coordinate;
 
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
 /**
- *
  * @author Xiaowei Wen, Lorenzo Taschin
- * per fare il parsing della gerarchia dei luoghi, guardare la guida.
- * https://www.javadoc.io/doc/org.danilopianini/gson-extras/0.2.1/com/google/gson/typeadapters/RuntimeTypeAdapterFactory.html
  */
-public class ResponseLuogo {
+public abstract class AbstractPlace {
+    public static final String TAG = "com.vartmp7.stalker.gsonbeans.AbstractLuogo";
+    @Getter
+    @Setter
+    @Accessors(chain = true)
+    private long id;
+    @Getter
+    @Setter
+    @Accessors(chain = true)
+    private String name;
+    @Getter
+    @Setter
+    @Accessors(chain = true)
+    private long num_max_people;
 
-    private static final String TAG="com.vartmp7.stalker.GsonBeans.ResponseLuogo";
-    @Getter @Setter @Accessors(chain = true)
-    private List<LuogoPoligono> luoghi;
+    protected AbstractPlace(long id, String name, long num_max_people) {
+        this(id, name);
+        this.num_max_people = num_max_people;
+    }
 
-    public int getPlacesLength(){return luoghi.size();}
-
+    protected AbstractPlace(long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+    abstract public Coordinate getCenter();
+    abstract public double distanceTo(Coordinate c);
+    abstract public boolean isInside(Coordinate c);
 }

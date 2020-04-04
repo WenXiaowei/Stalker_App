@@ -209,11 +209,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RayCasting {
-    private List<Coordinata> coordinate;
-    private Coordinata punto;
+    private List<Coordinate> coordinate;
+    private Coordinate punto;
 
 
-    public RayCasting(List<Coordinata> latLngs, Coordinata latLng) {
+    public RayCasting(List<Coordinate> latLngs, Coordinate latLng) {
         this.coordinate = latLngs;
         this.punto = latLng;
     }
@@ -265,20 +265,20 @@ public class RayCasting {
 //        return edges;
 //    }
 
-    private  ArrayList<Lato> getEdgesFromPoints(List<Coordinata> points) {
-        ArrayList<Lato> edges = new ArrayList<>();
+    private  ArrayList<Edge> getEdgesFromPoints(List<Coordinate> points) {
+        ArrayList<Edge> edges = new ArrayList<>();
         for(int i = 0; i < points.size(); i++) {
-            edges.add(new Lato(points.get(i), i < points.size()-1 ? points.get(i+1) : points.get(0)));
+            edges.add(new Edge(points.get(i), i < points.size()-1 ? points.get(i+1) : points.get(0)));
         }
 
         return edges;
     }
 
-    private  boolean isPointInsideEdges(List<Lato> edges, Coordinata point) {
+    private  boolean isPointInsideEdges(List<Edge> edges, Coordinate point) {
 
         int intersectionCount = 0;
 
-        for(Lato edge : edges) {
+        for(Edge edge : edges) {
 
             if(edge.linesIntersect(point)) {
                 intersectionCount++;

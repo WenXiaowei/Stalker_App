@@ -207,16 +207,12 @@ package com.vartmp7.stalker.repository;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MediatorLiveData;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 
 import com.vartmp7.stalker.component.NotLogged;
-import com.vartmp7.stalker.gsonbeans.Organizzazione;
+import com.vartmp7.stalker.gsonbeans.Organization;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 
 public class OrganizationsRepository {
 
@@ -235,14 +231,14 @@ public class OrganizationsRepository {
         return instance;
     }
 
-    public void updateOrganizzazione(Organizzazione o){
+    public void updateOrganizzazione(Organization o){
        organizationsLocalSource.updateOrganizzazione(o);
     }
-    public void updateOrganizzationi(List<Organizzazione> l){
+    public void updateOrganizzationi(List<Organization> l){
         organizationsLocalSource.updateOrganizzazioni(l);
     }
 
-    public void updateOrganizzazioni(List<Organizzazione> orgs){
+    public void updateOrganizzazioni(List<Organization> orgs){
         organizationsLocalSource.updateOrganizzazioni(orgs);
     }
 
@@ -260,8 +256,8 @@ public class OrganizationsRepository {
         this.organizationFavoritesSource = fa;
         //liveOrganizzazioni = new MediatorLiveData<>();
     }
-    public LiveData<List<Organizzazione>> getOrganizzazioni(){
-        LiveData<List<Organizzazione>> fromLocal = organizationsLocalSource.getOrganizzazioni();
+    public LiveData<List<Organization>> getOrganizzazioni(){
+        LiveData<List<Organization>> fromLocal = organizationsLocalSource.getOrganizzazioni();
         /*liveOrganizzazioni.addSource(fromLocal,organizzazioni->{
             Log.d(TAG, "getOrganizzazioni: ");
             organizzazioni.forEach(o-> Log.d(TAG, "getOrg: "+o.getId()));
@@ -276,7 +272,7 @@ public class OrganizationsRepository {
         return organizationFavoritesSource.getOrganizzazioni();
     }
 
-    public void addToPreferiti(Organizzazione org) throws NotLogged {
+    public void addToPreferiti(Organization org) throws NotLogged {
         if (organizationFavoritesSource!=null){
             org.setPreferito(true);
             updateOrganizzazione(org);
@@ -284,7 +280,7 @@ public class OrganizationsRepository {
         }else throw new NotLogged();
     }
 
-    public void removeFromPreferiti(Organizzazione org) throws NotLogged {
+    public void removeFromPreferiti(Organization org) throws NotLogged {
         if (organizationFavoritesSource!=null){
             org.setPreferito(false);
             updateOrganizzazione(org);
@@ -295,7 +291,7 @@ public class OrganizationsRepository {
 
 
     public void refreshOrganizzazioni(){
-        LiveData<List<Organizzazione>> resultFromWebCall = organizationsWebSource.getOrganizzazioni();
+        LiveData<List<Organization>> resultFromWebCall = organizationsWebSource.getOrganizzazioni();
         /*liveOrganizzazioni.addSource(resultFromWebCall,organizzazioni->{
             Log.d(TAG, "refreshOrganizzazioni: ");
             organizzazioni.forEach(o-> Log.d(TAG, "refreshOrg: "+o.getId()));
@@ -307,9 +303,9 @@ public class OrganizationsRepository {
 
 
 
-        resultFromWebCall.observeForever(new Observer<List<Organizzazione>>() {
+        resultFromWebCall.observeForever(new Observer<List<Organization>>() {
              @Override
-             public void onChanged(List<Organizzazione> organizzazioni) {
+             public void onChanged(List<Organization> organizzazioni) {
                  Log.d(TAG, "onChanged: aggiornare org");
                  organizationsLocalSource.updateOrganizzazioniInfo(organizzazioni);
              }

@@ -204,22 +204,15 @@
 
 package com.vartmp7.stalker.repository;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.Log;
-
-import com.google.gson.GsonBuilder;
-import com.google.gson.TypeAdapterFactory;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.gson.Gson;
-import com.vartmp7.stalker.gsonbeans.AbstractLuogo;
-import com.vartmp7.stalker.gsonbeans.LuogoACirconferenza;
-import com.vartmp7.stalker.gsonbeans.LuogoPoligono;
-import com.vartmp7.stalker.gsonbeans.Organizzazione;
-import com.vartmp7.stalker.gsonbeans.ResponseOrganizzazione;
+import com.vartmp7.stalker.gsonbeans.Organization;
+import com.vartmp7.stalker.gsonbeans.OrganizationResponse;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -233,9 +226,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -247,9 +237,9 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
     private Gson gson;
     //    List<Organizzazione> organizzazioni;
     @Getter(AccessLevel.PUBLIC)
-    private MutableLiveData<List<Organizzazione>> mLiveOrgs;
+    private MutableLiveData<List<Organization>> mLiveOrgs;
 
-    public FileOrganizationsLocalSource(String fileName, Context context, MutableLiveData<List<Organizzazione>> org) {
+    public FileOrganizationsLocalSource(String fileName, Context context, MutableLiveData<List<Organization>> org) {
         this.fileName = fileName;
         this.context = context;
         this.gson = new Gson();
@@ -258,21 +248,21 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
     }
 
     @Override
-    public void updateOrganizzazioni(List<Organizzazione> org) {
-        List<Organizzazione> orgList = mLiveOrgs.getValue();
+    public void updateOrganizzazioni(List<Organization> org) {
+        List<Organization> orgList = mLiveOrgs.getValue();
 
-        for (Organizzazione organizzazione : org) {
-            int i = orgList.indexOf(organizzazione);
+        for (Organization organization : org) {
+            int i = orgList.indexOf(organization);
             orgList.remove(i);
-            orgList.add(i, organizzazione);
+            orgList.add(i, organization);
         }
 
         mLiveOrgs.setValue(orgList);
     }
 
     @Override
-    public void updateOrganizzazione(Organizzazione o) {
-        List<Organizzazione> l = new ArrayList<>(mLiveOrgs.getValue());
+    public void updateOrganizzazione(Organization o) {
+        List<Organization> l = new ArrayList<>(mLiveOrgs.getValue());
         int pos = -1;
         for (int i = 0; i < l.size() && pos == -1; i++)
             if (o.getId() == l.get(i).getId())
@@ -286,16 +276,16 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
     }
 
     @Override
-    public void updateOrganizzazioniInfo(List<Organizzazione> orgsToUpdate) {
+    public void updateOrganizzazioniInfo(List<Organization> orgsToUpdate) {
         orgsToUpdate.forEach(o -> Log.d(TAG, "updateOrganizzazioni: updateOrgs" + o.getId()));
-        List<Organizzazione> currentOrgs = new ArrayList<>(mLiveOrgs.getValue());
-        List<Organizzazione> toSave = new ArrayList<>();
+        List<Organization> currentOrgs = new ArrayList<>(mLiveOrgs.getValue());
+        List<Organization> toSave = new ArrayList<>();
         currentOrgs.forEach(o -> Log.d(TAG, "currentorg: " + o.getId()));
         for (int j = 0; j < orgsToUpdate.size(); j++) {
             boolean contained = false;
-            Organizzazione orgToUpdate = orgsToUpdate.get(j);
+            Organization orgToUpdate = orgsToUpdate.get(j);
             for (int i = 0; i < currentOrgs.size() && !contained; i++) {
-                Organizzazione currentOrg = currentOrgs.get(i);
+                Organization currentOrg = currentOrgs.get(i);
                 if(currentOrg.getId() == orgToUpdate.getId()){
                     contained=true;
                     orgToUpdate.setTrackingActive(currentOrg.isTrackingActive());
@@ -317,7 +307,7 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
 
 
     @Override
-    public LiveData<List<Organizzazione>> getOrganizzazioni() {
+    public LiveData<List<Organization>> getOrganizzazioni() {
         //MutableLiveData<List<Organizzazione>> mLiveOrgs = new MutableLiveData<>();
         //this.mLiveOrgs.setValue(organizzazioni);
 //        Log.d("TEST","arrivo qua1");
@@ -345,8 +335,8 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
                         // Error occurred when opening raw file for reading.
                     } finally {
                         String contents = stringBuilder.toString();
-                        ResponseOrganizzazione responseOrganizzazioni = gson.fromJson(contents, ResponseOrganizzazione.class);
-                        List<Organizzazione> organizzazioni = responseOrganizzazioni.getOrganizations();//mLiveOrgs.getValue();
+                        OrganizationResponse responseOrganizzazioni = gson.fromJson(contents, OrganizationResponse.class);
+                        List<Organization> organizzazioni = responseOrganizzazioni.getOrganizations();//mLiveOrgs.getValue();
 //                    List<Organizzazione> orgs = mLiveOrgs.getValue();
                         if (responseOrganizzazioni == null) {
 //                            Log.d(TAG, "run: lista vuota");
@@ -373,11 +363,11 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
     }
 
     @Override
-    public void saveOrganizzazione(Organizzazione org) {
+    public void saveOrganizzazione(Organization org) {
 
-        LiveData<List<Organizzazione>> liveOrgs = getOrganizzazioni();
+        LiveData<List<Organization>> liveOrgs = getOrganizzazioni();
         if (liveOrgs != null) {
-            List<Organizzazione> orgs = liveOrgs.getValue();
+            List<Organization> orgs = liveOrgs.getValue();
             if (orgs != null) {
                 orgs.add(org);
                 saveOrganizzazioni(orgs);
@@ -387,7 +377,7 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
 
     //@SuppressLint("StaticFieldLeak")
     @Override
-    public synchronized void saveOrganizzazioni(List<Organizzazione> orgs) {
+    public synchronized void saveOrganizzazioni(List<Organization> orgs) {
         ExecutorService executorService = Executors.newSingleThreadExecutor();
 
         executorService.execute(new Runnable() {
@@ -409,7 +399,7 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
                     // fixme sonarqube segna come bug
                     FileWriter writer = new FileWriter(orgJson);
                     // fixme quest'istruzione delle volte, genera un concurrentModificationException
-                    String l = new Gson().toJson(new ResponseOrganizzazione().setOrganizations(orgs));
+                    String l = new Gson().toJson(new OrganizationResponse().setOrganizations(orgs));
                     Log.d(TAG, "saving data:");
                     orgs.forEach(o -> Log.d(TAG, "save org:" + o.getId()));
                     writer.write(l);
@@ -429,10 +419,10 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
 
 
     @Override
-    public void removeOrganizzazione(Organizzazione org) {
-        LiveData<List<Organizzazione>> liveOrgs = getOrganizzazioni();
+    public void removeOrganizzazione(Organization org) {
+        LiveData<List<Organization>> liveOrgs = getOrganizzazioni();
         if (liveOrgs != null) {
-            List<Organizzazione> orgs = liveOrgs.getValue();
+            List<Organization> orgs = liveOrgs.getValue();
             orgs.remove(org);
             saveOrganizzazioni(orgs);
         }

@@ -204,17 +204,13 @@
 
 package com.vartmp7.stalker.gsonbeans.placecomponent;
 
-import com.vartmp7.stalker.gsonbeans.LuogoACirconferenzaTest;
-import com.vartmp7.stalker.gsonbeans.LuogoPoligonoTest;
-import com.vartmp7.stalker.gsonbeans.OrganizzazioneTest;
-
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-        CoordinataTest.class,
-        LatoTest.class,
+        CoordinateTest.class,
+        EdgeTest.class,
         RayCastingTest.class,
         TrackiHistoryTest.class,
         RettaTest.class

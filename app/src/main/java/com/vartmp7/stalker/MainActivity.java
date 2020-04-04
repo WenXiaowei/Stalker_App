@@ -212,8 +212,6 @@
 //     * _g0uY5uQ87yD469NmjFJ4kS7
 package com.vartmp7.stalker;
 
-import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -244,7 +242,7 @@ import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.vartmp7.stalker.gsonbeans.Organizzazione;
+import com.vartmp7.stalker.gsonbeans.Organization;
 import com.vartmp7.stalker.repository.FavoritesSource;
 import com.vartmp7.stalker.repository.FileOrganizationsLocalSource;
 import com.vartmp7.stalker.repository.FirebaseFavoritesSource;
@@ -319,7 +317,7 @@ public class MainActivity extends AppCompatActivity {
 //        liveDataOrganizzazioni.observe(this,observer);
 //        Log.d(TAG,"size:"+liveDataOrganizzazioni.getValue().size());
 
-        MutableLiveData<List<Organizzazione>> list = new MutableLiveData<>(new ArrayList<>());
+        MutableLiveData<List<Organization>> list = new MutableLiveData<>(new ArrayList<>());
         OrganizationsLocalSource localSource = new FileOrganizationsLocalSource("orgs.json", this, list);
         FavoritesSource preferitiRepository = null;
         if (FirebaseAuth.getInstance().getCurrentUser() != null || GoogleSignIn.getLastSignedInAccount(this) != null) {

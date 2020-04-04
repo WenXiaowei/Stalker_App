@@ -205,10 +205,10 @@
 
 package com.vartmp7.stalker;
 
-import com.vartmp7.stalker.gsonbeans.Organizzazione;
+import com.vartmp7.stalker.gsonbeans.Organization;
 
 import java.util.List;
 
 interface Tester {
-    void test(List<Organizzazione> organizzazioni);
+    void test(List<Organization> organizzazioni);
 }

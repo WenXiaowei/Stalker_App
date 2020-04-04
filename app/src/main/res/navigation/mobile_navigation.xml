@@ -231,7 +231,7 @@
 
     <fragment
         android:id="@+id/navigation_preferiti"
-        android:name="com.vartmp7.stalker.ui.preferiti.PreferitiFragment"
+        android:name="com.vartmp7.stalker.ui.favorite.FavoritesFragment"
         android:label="@string/preferiti"
         tools:layout="@layout/fragment_preferiti" >
 
@@ -241,7 +241,7 @@
     </fragment>
     <fragment
         android:id="@+id/navigation_cronologia"
-        android:name="com.vartmp7.stalker.ui.cronologia.CronologiaFragment"
+        android:name="com.vartmp7.stalker.ui.history.HistoryFragment"
         android:label="@string/cronologia"
         tools:layout="@layout/fragment_cronologia" />
 </navigation>

@@ -202,99 +202,132 @@
  *    limitations under the License.
  */
 
-package com.vartmp7.stalker.ui.cronologia;
+package com.vartmp7.stalker.ui.favorite;
 
-import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.pm.PackageManager;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
-import com.google.android.gms.location.LocationServices;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.vartmp7.stalker.R;
-import com.vartmp7.stalker.component.StalkerServiceRunnable;
-import com.vartmp7.stalker.component.StalkerServiceThread;
+import com.vartmp7.stalker.gsonbeans.Organization;
+
+import java.util.List;
+
+import de.hdodenhof.circleimageview.CircleImageView;
+
+public class FavoritesViewAdapter extends RecyclerView.Adapter<FavoritesViewAdapter.ViewHolder> {
+    private static final String TAG = "com.vartmp7.stalker.ui.preferiti.PreferitiViewAdapter";
+    private List<Organization> organizzazioni;
+    private Context context;
+    private FavoritesViewModel viewModel;
 
 
-/**
- * @author Xiaowei Wen, Lorenzo Taschin
- */
-public class CronologiaFragment extends Fragment {
-    public static final String TAG ="com.vartmp7.stalker.ui.cronologia.CronologiaFragment";
+    public void setOrganizzazioni(List<Organization> organizzazioni) {
+        this.organizzazioni = organizzazioni;
+        notifyDataSetChanged();
+    }
 
-    private CronologiaViewModel cronologiaViewModel;
+    public FavoritesViewAdapter(Context context, FavoritesViewModel model, List<Organization> organizzazioni) {
+        this.context=context;
+        this.organizzazioni=organizzazioni;
+        this.viewModel = model;
+    }
 
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-        cronologiaViewModel =
-                new ViewModelProvider(requireActivity()).get(CronologiaViewModel.class);
-        View root = inflater.inflate(R.layout.fragment_cronologia, container, false);
-//        final TextView textView = root.findViewById(R.id.text_dashboard);
-//        cronologiaViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
-//            @Override
-//            public void onChanged(@Nullable String s) {
-//                textView.setText(s);
-//            }
+
+
+    @NonNull
+    @Override
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_preferiti, parent, false);
+        ViewHolder vh = new ViewHolder(view);
+        return vh;
+
+    }
+//    private AlertDialog dialog;
+//    private void showImagePreview(int position){
+//        AlertDialog.Builder builder =new  AlertDialog.Builder(context);
+//        builder.setView(LayoutInflater.from(context).inflate(R.layout.dialog_image_preview,null));
+//               CircleImageView imageView = dialog.findViewById(R.id.previewer_image);
+//        /* calls newDrawable(), otherwise changes may affect source drawable*/
+//        Glide.with(context)
+//                .setDefaultRequestOptions(new RequestOptions().error(R.drawable.icon_stalker))
+//                .load(organizzazioni.get(position).getImage_url())
+//                .into(imageView);
+//        dialog= builder.create();
+//        dialog.show();
+//
+//    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    @Override
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+       Organization org = organizzazioni.get(position);
+        Glide.with(context)
+                .setDefaultRequestOptions(new RequestOptions().error(R.drawable.icon_stalker))
+                .load(organizzazioni.get(position).getImage_url())
+                .into(holder.civIconaOrganizzazione);
+
+
+//        holder.civIconaOrganizzazione.setOnLongClickListener(v -> {
+//            showImagePreview(position);
+//            return false;
 //        });
+//        holder.civIconaOrganizzazione.setOnTouchListener((v, event) -> {
+//            if (dialog.isShowing()) {
+//                v.getParent().requestDisallowInterceptTouchEvent(true);
+//                int action = event.getActionMasked();
+//                if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
+//                    v.getParent().requestDisallowInterceptTouchEvent(false);
+//                    dialog.dismiss();
+//                    return true;
+//                }
+//            }
+//            return false;
+//        });
+        holder.tvNomeOrganizzazione.setText(org.getName());
 
-        root.findViewById(R.id.btnStartThread).setOnClickListener(v-> startThread());
+        holder.btnAddToTracking.setOnClickListener(v->{
+            if (org.isTracking()){
+                Toast.makeText(context,"Organizzazione già presente nell'elenco dei tracking!", Toast.LENGTH_SHORT).show();
+            }else {
+                org.setTracking(true);
+                viewModel.updateOrganizzazione(org);
+                new NavController(context).navigate(R.id.action_navigation_organizations_to_navigation_tracking);
+            }
 
+        });
 
-        return root;
-    }
-
-    public void startThread(){
-
-        if (requireActivity().checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION)== PackageManager.PERMISSION_GRANTED
-            && requireActivity().checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)== PackageManager.PERMISSION_GRANTED){
-            Log.d(TAG, "startThread() called");
-                     StalkerServiceRunnable runnable = new StalkerServiceRunnable(requireContext(),
-                             LocationServices.getFusedLocationProviderClient(requireActivity()),
-                             getViewLifecycleOwner(),null,null,null);
-
-//            new Thread(runnable).start();
-            new StalkerServiceThread(requireContext(),LocationServices.getFusedLocationProviderClient(requireActivity())).start();
-
-
-
-
-        }else{
-            requestPermissions();
-        }
-
-    }
-
-    private void requestPermissions() {
-        requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION},1);
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    public int getItemCount() {
+        return organizzazioni.size();
+    }
 
-        if (requestCode==1 && grantResults.length==2
-                && grantResults[0] == PackageManager.PERMISSION_GRANTED
-                && grantResults[1] == PackageManager.PERMISSION_GRANTED
-        ){
-            startThread();
-        }else{
-            requestPermissions();
+    public Organization getOrganizationAt(int position) {
+        return organizzazioni.get(position);
+    }
+
+    static class ViewHolder extends RecyclerView.ViewHolder{
+        TextView tvNomeOrganizzazione;
+        CircleImageView civIconaOrganizzazione;
+        Button btnAddToTracking;
+        public ViewHolder(@NonNull View itemView) {
+            super(itemView);
+            tvNomeOrganizzazione = itemView.findViewById(R.id.tvNomeOrganizzazione);
+            civIconaOrganizzazione = itemView.findViewById(R.id.civIconOrganizzazionePreferiti);
+            btnAddToTracking = itemView.findViewById(R.id.btnAddToTracking);
         }
     }
 }

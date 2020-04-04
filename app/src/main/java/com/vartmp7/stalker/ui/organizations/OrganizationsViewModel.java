@@ -207,12 +207,10 @@ package com.vartmp7.stalker.ui.organizations;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.vartmp7.stalker.gsonbeans.Organizzazione;
+import com.vartmp7.stalker.gsonbeans.Organization;
 import com.vartmp7.stalker.repository.OrganizationsRepository;
 
 import java.util.List;
-
-import javax.annotation.Nullable;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -225,7 +223,7 @@ public class OrganizationsViewModel extends ViewModel {
 
     private OrganizationsRepository orgRepo;
     @Getter(AccessLevel.PUBLIC)
-    private LiveData<List<Organizzazione>> organizationList;
+    private LiveData<List<Organization>> organizationList;
 
 
     public void initData(OrganizationsRepository orgRepo) {
@@ -238,7 +236,7 @@ public class OrganizationsViewModel extends ViewModel {
     }
 
 
-    public void updateOrganizzazione(Organizzazione o){
+    public void updateOrganizzazione(Organization o){
         orgRepo.updateOrganizzazione(o);
     }
 

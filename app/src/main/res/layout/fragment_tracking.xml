@@ -226,7 +226,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/tvCurrentStatus"
-            android:text="Nessun'organizzazione ti sta tracciando"
+            android:text="Nessun'organization ti sta tracciando"
             android:textSize="15dp"/>
 
     </LinearLayout>

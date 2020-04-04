@@ -207,14 +207,14 @@ package com.vartmp7.stalker;
 
 import androidx.lifecycle.Observer;
 
-import com.vartmp7.stalker.gsonbeans.Organizzazione;
+import com.vartmp7.stalker.gsonbeans.Organization;
 
 import java.util.List;
 
-class TestObserver implements Observer<List<Organizzazione>> {
+class TestObserver implements Observer<List<Organization>> {
     private Tester tester;
     @Override
-    public void onChanged(List<Organizzazione> organizzazioni) {
+    public void onChanged(List<Organization> organizzazioni) {
         if(tester!=null)
             tester.test(organizzazioni);
     }

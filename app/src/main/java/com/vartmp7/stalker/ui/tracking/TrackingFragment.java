@@ -216,7 +216,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -232,7 +231,7 @@ import com.vartmp7.stalker.component.CallBack;
 import com.vartmp7.stalker.component.NotLogged;
 import com.vartmp7.stalker.component.StalkerServiceCallback;
 import com.vartmp7.stalker.component.StalkerTrackingService;
-import com.vartmp7.stalker.gsonbeans.Organizzazione;
+import com.vartmp7.stalker.gsonbeans.Organization;
 import com.vartmp7.stalker.repository.OrganizationsRepository;
 
 import java.lang.ref.WeakReference;
@@ -255,7 +254,7 @@ public class TrackingFragment extends Fragment {
 
     private final static String MSG_CODE = "MSG_CODE";
     private TrackingViewModel trackingViewModel;
-    private List<Organizzazione> organizationToTrack;
+    private List<Organization> organizationToTrack;
     private TrackingViewAdapter mAdapter;
     private TextView tvCurrentStatus;
     private StalkerTrackingService.StalkerBinder binder;
@@ -375,8 +374,8 @@ public class TrackingFragment extends Fragment {
             startAndBindTrackingService();
         if (binder != null) {
             Log.d(TAG, "updateTrackingOrganizationInService");
-            List<Organizzazione> orgs = organizationToTrack.stream().distinct()
-                    .filter(Organizzazione::isTrackingActive)
+            List<Organization> orgs = organizationToTrack.stream().distinct()
+                    .filter(Organization::isTrackingActive)
                     .collect(Collectors.toList());
             binder.updateTrackingOrganizations(orgs);
         }
@@ -398,8 +397,8 @@ public class TrackingFragment extends Fragment {
         }
     }
 
-    private void init(List<Organizzazione> org) {
-        if (org.stream().anyMatch(Organizzazione::isTrackingActive)) {
+    private void init(List<Organization> org) {
+        if (org.stream().anyMatch(Organization::isTrackingActive)) {
             startAndBindTrackingService();
             updateTrackingOrganizationInService();
         }
@@ -423,18 +422,18 @@ public class TrackingFragment extends Fragment {
         organizationToTrack = trackingViewModel.getListOrganizzazione()
                 .getValue()
                 .stream()
-                .filter(Organizzazione::isTracking)
-                .filter(Organizzazione::isTrackingActive)
+                .filter(Organization::isTracking)
+                .filter(Organization::isTrackingActive)
                 .collect(Collectors.toList());
 //        init(organizationToTrack);
         mAdapter = new TrackingViewAdapter(getContext(), trackingViewModel);
         trackingViewModel.getListOrganizzazione().observe(getViewLifecycleOwner(),
                 list -> {
                     Log.d(TAG, "onCreateView: on Changed ");
-                    List<Organizzazione> lis = list.stream().filter(Organizzazione::isTracking).collect(Collectors.toList());
+                    List<Organization> lis = list.stream().filter(Organization::isTracking).collect(Collectors.toList());
                     mAdapter.setList(lis);
 //                    if (lis.stream().anyMatch(Organizzazione::isTrackingActive)) {
-                    organizationToTrack = lis.stream().filter(Organizzazione::isTrackingActive).collect(Collectors.toList());
+                    organizationToTrack = lis.stream().filter(Organization::isTrackingActive).collect(Collectors.toList());
 //                    updateTrackingOrganizationInService();
 //                    }
                 });
@@ -450,7 +449,7 @@ public class TrackingFragment extends Fragment {
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                Organizzazione o = mAdapter.getOrganizationAt(viewHolder.getAdapterPosition());
+                Organization o = mAdapter.getOrganizationAt(viewHolder.getAdapterPosition());
                 o.setTracking(false);
                 o.setTrackingActive(false);
                 trackingViewModel.updateOrganizzazione(o);
@@ -466,7 +465,7 @@ public class TrackingFragment extends Fragment {
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                Organizzazione o = mAdapter.getOrganizationAt(viewHolder.getAdapterPosition());
+                Organization o = mAdapter.getOrganizationAt(viewHolder.getAdapterPosition());
                 mAdapter.notifyItemChanged(viewHolder.getAdapterPosition());
                 try {
 

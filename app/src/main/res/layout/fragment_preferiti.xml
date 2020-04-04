@@ -209,7 +209,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/srflPreferiti"
-    tools:context="com.vartmp7.stalker.ui.preferiti.PreferitiFragment">
+    tools:context="com.vartmp7.stalker.ui.favorite.FavoritesFragment">
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

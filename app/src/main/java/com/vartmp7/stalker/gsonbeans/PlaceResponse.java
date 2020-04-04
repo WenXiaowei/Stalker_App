@@ -202,26 +202,26 @@
  *    limitations under the License.
  */
 
-package com.vartmp7.stalker.ui.cronologia;
+package com.vartmp7.stalker.gsonbeans;
 
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
+import java.util.List;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
 /**
+ *
  * @author Xiaowei Wen, Lorenzo Taschin
+ * per fare il parsing della gerarchia dei luoghi, guardare la guida.
+ * https://www.javadoc.io/doc/org.danilopianini/gson-extras/0.2.1/com/google/gson/typeadapters/RuntimeTypeAdapterFactory.html
  */
-public class CronologiaViewModel extends ViewModel {
-    public static final String TAG ="com.vartmp7.stalker.ui.cronologia.CronologiaViewModel";
+public class PlaceResponse {
 
-    private MutableLiveData<String> mText;
+    private static final String TAG="com.vartmp7.stalker.GsonBeans.ResponseLuogo";
+    @Getter @Setter @Accessors(chain = true)
+    private List<PolygonPlace> luoghi;
 
-    public CronologiaViewModel() {
-        mText = new MutableLiveData<>();
-        mText.setValue("This is cronologia fragment");
-    }
+    public int getPlacesLength(){return luoghi.size();}
 
-    public LiveData<String> getText() {
-        return mText;
-    }
 }

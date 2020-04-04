@@ -204,9 +204,9 @@
 
 package com.vartmp7.stalker.repository;
 
-import com.vartmp7.stalker.gsonbeans.Organizzazione;
-import com.vartmp7.stalker.gsonbeans.ResponseLuogo;
-import com.vartmp7.stalker.gsonbeans.ResponseOrganizzazione;
+import com.vartmp7.stalker.gsonbeans.Organization;
+import com.vartmp7.stalker.gsonbeans.PlaceResponse;
+import com.vartmp7.stalker.gsonbeans.OrganizationResponse;
 import com.vartmp7.stalker.gsonbeans.TrackHistory;
 import com.vartmp7.stalker.gsonbeans.TrackSignal;
 
@@ -222,23 +222,23 @@ import retrofit2.http.Path;
 public interface RestApiService {
     @Headers("Organization-Token: vartmp7")
     @GET("organizations")
-    Call<ResponseOrganizzazione> organizations();
+    Call<OrganizationResponse> organizations();
 
     @Headers("Organization-Token: vartmp7")
     @GET("organizations/{organization_id}")
-    Call<Organizzazione> organization(@Path("organization_id") long id);
+    Call<Organization> organization(@Path("organization_id") long id);
 
     @Headers("Organization-Token: vartmp7")
     @GET("organizations/{organization_id}/places")
-    Call<ResponseLuogo> organizationsPlaces(@Path("organization_id") long id);
+    Call<PlaceResponse> organizationsPlaces(@Path("organization_id") long id);
 
     @Headers("Organization-Token: vartmp7")
     @GET("organizations/{organization_id}/places/{place_id}")
-    Call<ResponseLuogo> organizationsPlaceWithID(@Path("organization_id") long id,@Path("place_id") long placeId);
+    Call<PlaceResponse> organizationsPlaceWithID(@Path("organization_id") long id, @Path("place_id") long placeId);
 
     @Headers("Organization-Token: vartmp7")
     @POST("organizations/{organization_id}/places/{place_id}/tracks")
-    Call<ResponseLuogo> tracking(@Path("organization_id") long id, @Path("place_id") long placeId, @Body TrackSignal signal);
+    Call<PlaceResponse> tracking(@Path("organization_id") long id, @Path("place_id") long placeId, @Body TrackSignal signal);
 
     @Headers("Organization-Token: vartmp7")
     @POST("organizations/{id_orgs}/user/tracks")

@@ -262,7 +262,7 @@
                 android:minWidth="32dp"
                 android:paddingEnd="5dp"
                 android:minHeight="32dp"
-                android:src="@drawable/icon_preferito_no"
+                android:src="@drawable/icon_fav_no"
                 android:background="@android:color/transparent" />
 
 

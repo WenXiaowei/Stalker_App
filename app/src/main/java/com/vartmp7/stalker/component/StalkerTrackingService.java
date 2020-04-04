@@ -205,10 +205,7 @@
 package com.vartmp7.stalker.component;
 
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
-import android.hardware.SensorManager;
-import android.location.LocationManager;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
@@ -216,14 +213,12 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.google.android.gms.location.LocationServices;
-import com.vartmp7.stalker.gsonbeans.Organizzazione;
+import com.vartmp7.stalker.gsonbeans.Organization;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.stream.Collectors;
 
 import static java.lang.Thread.sleep;
 
@@ -231,7 +226,7 @@ import static java.lang.Thread.sleep;
 public class StalkerTrackingService extends Service {
     private static final String TAG = "com.vartmp7.stalker.component.StalkerTrackingService";
 
-    private List<Organizzazione> trackingOrgs = new ArrayList<>();
+    private List<Organization> trackingOrgs = new ArrayList<>();
     private CallBack callBack;
     StalkerServiceRunnable current = null;
 
@@ -245,7 +240,7 @@ public class StalkerTrackingService extends Service {
 
 
     public class StalkerBinder extends Binder {
-        public void updateTrackingOrganizations(List<Organizzazione> orgs) {
+        public void updateTrackingOrganizations(List<Organization> orgs) {
             StalkerTrackingService.this.trackingOrgs = orgs;
             if (orgs.size() != 0)
                 startNewThread();

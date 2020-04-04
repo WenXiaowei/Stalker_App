@@ -207,10 +207,8 @@ package com.vartmp7.stalker.gsonbeans.placecomponent;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import org.junit.runners.Parameterized;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -229,16 +227,16 @@ public class RayCastingTest {
     }
     @Parameterized.Parameters
     public static Collection<Object[]> data() {
-        List<Coordinata> coordinate = Arrays.asList(
-                new Coordinata(0,0),
-                new Coordinata(1,1),
-                new Coordinata(0,2),
-                new Coordinata(-1,1)
+        List<Coordinate> coordinate = Arrays.asList(
+                new Coordinate(0,0),
+                new Coordinate(1,1),
+                new Coordinate(0,2),
+                new Coordinate(-1,1)
         );
         //RayCasting raycasting = new RayCasting(coordinate,new Coordinata(0,1));
         return Arrays.asList(new Object[][]{
-                {new RayCasting(coordinate,new Coordinata(0,1)),true},
-                {new RayCasting(coordinate,new Coordinata(0.01d,2)),false}
+                {new RayCasting(coordinate,new Coordinate(0,1)),true},
+                {new RayCasting(coordinate,new Coordinate(0.01d,2)),false}
         });
     }
 
@@ -249,13 +247,13 @@ public class RayCastingTest {
 
     @Test
     public void testIsInsideWhenItShould(){
-        List<Coordinata> coordinate = Arrays.asList(
-                new Coordinata(0,0),
-                new Coordinata(1,1),
-                new Coordinata(0,2),
-                new Coordinata(-1,1)
+        List<Coordinate> coordinate = Arrays.asList(
+                new Coordinate(0,0),
+                new Coordinate(1,1),
+                new Coordinate(0,2),
+                new Coordinate(-1,1)
         );
-        RayCasting raycasting = new RayCasting(coordinate,new Coordinata(0,1));
+        RayCasting raycasting = new RayCasting(coordinate,new Coordinate(0,1));
         assertTrue(raycasting.isPointInside());
     }
 

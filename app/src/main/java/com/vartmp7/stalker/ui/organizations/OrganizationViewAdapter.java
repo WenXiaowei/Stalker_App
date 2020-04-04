@@ -205,8 +205,6 @@
 package com.vartmp7.stalker.ui.organizations;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -218,14 +216,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.LiveData;
 import androidx.navigation.NavController;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.vartmp7.stalker.R;
-import com.vartmp7.stalker.gsonbeans.Organizzazione;
+import com.vartmp7.stalker.gsonbeans.Organization;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -235,7 +232,7 @@ import java.util.List;
  */
 public class OrganizationViewAdapter extends RecyclerView.Adapter<OrganizationViewAdapter.ViewHolder> {
     public static final String TAG = "com.vartmp7.stalker.ui.organizations.OrganizationAdapter";
-    private List<Organizzazione> listaOrganizzazione;
+    private List<Organization> listaOrganization;
     private Context context;
     private NavController navController;
     private OrganizationsViewModel viewModel;
@@ -244,12 +241,12 @@ public class OrganizationViewAdapter extends RecyclerView.Adapter<OrganizationVi
         this.context = context;
         this.viewModel= organizationsViewModel;
         this.navController = controller;
-        listaOrganizzazione=new ArrayList<>();
+        listaOrganization =new ArrayList<>();
     }
 
-    public void setOrganizations(List<Organizzazione> newData){
+    public void setOrganizations(List<Organization> newData){
 //        this.listaOrganizzazione= new ArrayList<>();
-        this.listaOrganizzazione= newData;
+        this.listaOrganization = newData;
         this.notifyDataSetChanged();
     }
 
@@ -263,11 +260,11 @@ public class OrganizationViewAdapter extends RecyclerView.Adapter<OrganizationVi
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Organizzazione org = listaOrganizzazione.get(position);
+        Organization org = listaOrganization.get(position);
         int colorIndex = position % 5;
         Glide.with(context)
                 .setDefaultRequestOptions(new RequestOptions().error(R.drawable.icon_stalker))
-                .load(listaOrganizzazione.get(position).getImage_url())
+                .load(listaOrganization.get(position).getImage_url())
                 .into(holder.ivIconOrganizzazione);
 
         holder.nomeOrganizzazione.setText(org.getName());
@@ -345,7 +342,7 @@ public class OrganizationViewAdapter extends RecyclerView.Adapter<OrganizationVi
 
     @Override
     public int getItemCount() {
-        return listaOrganizzazione.size();
+        return listaOrganization.size();
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {

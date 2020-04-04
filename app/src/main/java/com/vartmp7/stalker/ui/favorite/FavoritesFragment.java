@@ -202,31 +202,144 @@
  *    limitations under the License.
  */
 
-package com.vartmp7.stalker.gsonbeans;
+package com.vartmp7.stalker.ui.favorite;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.firebase.auth.FirebaseAuth;
+import com.vartmp7.stalker.R;
+import com.vartmp7.stalker.component.NotLogged;
+import com.vartmp7.stalker.gsonbeans.Organization;
+import com.vartmp7.stalker.repository.OrganizationsRepository;
 
 import java.util.ArrayList;
+import java.util.List;
 
-import static junit.framework.TestCase.assertEquals;
-
-@RunWith(JUnit4.class)
-public class ResponseLuogoTest {
-
-
-    private ResponseLuogo responseLuogo= new ResponseLuogo();
-
-    @Test
-    public void testSetLuoghi(){
-        ArrayList<LuogoPoligono> l= new ArrayList<>();
-        LuogoPoligono p= new LuogoPoligono();
-        l.add(p);
-        responseLuogo.setLuoghi(l);
-
-        assertEquals(responseLuogo.getPlacesLength(),1);
+import lombok.AccessLevel;
+import lombok.Getter;
+import okhttp3.OkHttpClient;
 
 
+/**
+ * @author Xiaowei Wen, Lorenzo Taschin
+ */
+public class FavoritesFragment extends Fragment  implements SwipeRefreshLayout.OnRefreshListener {
+    public static final String TAG ="com.vartmp7.stalker.ui.preferiti.PreferitiFragment";
+
+    private FavoritesViewModel favViewModel;
+    private FavoritesViewAdapter favViewAdapter;
+    private RecyclerView favRecyclerView;
+    @Getter(AccessLevel.PUBLIC)
+    private MutableLiveData<List<Organization>> listMutableLiveData;
+    private SwipeRefreshLayout preferitiSwipeLayout;
+
+    private boolean isUserLogged(){
+        return FirebaseAuth.getInstance().getCurrentUser()!=null || GoogleSignIn.getLastSignedInAccount(requireContext())!=null;
+    }
+
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             ViewGroup container, Bundle savedInstanceState) {
+        View root = inflater.inflate(R.layout.fragment_preferiti, container, false);
+        if (!isUserLogged()){
+            TextView tv=root.findViewById(R.id.tvHeaderFavorites);
+            tv.setText(R.string.should_be_logged_for_favorites);
+            requireActivity().openOptionsMenu();
+            return root;
+        }
+        listMutableLiveData = new MutableLiveData<>();
+        listMutableLiveData.setValue(new ArrayList<>());
+        this.favRecyclerView = (RecyclerView) root.findViewById(R.id.preferitiRecyclerView);
+        /*favViewModel =
+                  new ViewModelProvider(getActivity()).get(PreferitiViewModel.class);*/
+         //TODO le seguenti righe vanno riviste
+        OkHttpClient httpClient= new OkHttpClient();
+        String serverUrl="";
+
+        //orgRepo.saveOrganizzazione(new Org
+        // anizzazione());
+        //orgRepo.updateOrganizzazioni();
+        // fixme queste tre istanziazioni non servono più, e non serve neanche fare init, basta getInstance - Wen
+//        OrganizationsLocalSource localSource = new FileOrganizationsLocalSource("orgs.json",getContext(), listMutableLiveData);
+//        OrganizationsWebSource webSource = new RESTOrganizationsWebSource(httpClient,listMutableLiveData,"asd");
+//        FavoritesSource favoritesSource = new FirebaseFavoritesSource("1",FirebaseFirestore.getInstance());
+        //OrganizationsRepository.init(localSource,webSource,favoritesSource);
+        OrganizationsRepository orgRepo = OrganizationsRepository.getInstance();
+//        orgRepo.setFavoriteSource();
+        //fine del todo
+
+        this.favViewModel = new FavoritesViewModel(orgRepo);
+
+        preferitiSwipeLayout = root.findViewById(R.id.srflPreferiti);
+        //final TextView textView = root.findViewById(R.id.text_notifications);
+
+        Log.d(TAG,"onCreate");
+
+        favViewModel.init();
+        initRecyclerView();
+        favViewModel.getOrganizzazioni().observe(getViewLifecycleOwner(), new Observer<List<Organization>>() {
+            @Override
+            public void onChanged(List<Organization> organizzazioni) {
+                favViewAdapter.setOrganizzazioni(organizzazioni/*.stream().filter(Organizzazione::isPreferito).collect(Collectors.toList())*/);
+                Log.e(TAG, "onChanged: refresh" );
+//                preferitiSwipeLayout.setRefreshing(false);
+            }
+        });
+
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                Organization o = favViewAdapter.getOrganizationAt(viewHolder.getAdapterPosition());
+                int id;
+                try {
+                    favViewModel.removeFromPreferiti(o);
+                    favViewAdapter.notifyItemRemoved(viewHolder.getAdapterPosition());
+                    id=R.string.organizzazione_removed_from_favorite;
+                } catch (NotLogged notLogged) {
+                    id=R.string.not_logged_yet;
+//                    notLogged.printStackTrace();
+                }
+
+
+                Toast.makeText(requireContext(), getString(id), Toast.LENGTH_SHORT).show();
+
+            }
+        }).attachToRecyclerView(favRecyclerView);
+        return root;
+    }
+
+    private void initRecyclerView(){
+        if(favViewModel.getOrganizzazioni().getValue()==null) Log.d(TAG,"è null!");
+       favViewAdapter = new FavoritesViewAdapter(getContext(), favViewModel,new ArrayList<>()/*favViewModel.getOrganizzazioni().getValue()*/);
+        RecyclerView.LayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        favRecyclerView.setLayoutManager(linearLayoutManager);
+        favRecyclerView.setAdapter(favViewAdapter);
+    }
+
+
+    @Override
+    public void onRefresh() {
+//            preferitiSwipeLayout.setRefreshing(true);
+            favViewModel.refresh();
     }
 }

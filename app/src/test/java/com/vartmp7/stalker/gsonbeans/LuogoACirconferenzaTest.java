@@ -205,7 +205,7 @@
 package com.vartmp7.stalker.gsonbeans;
 
 
-import com.vartmp7.stalker.gsonbeans.placecomponent.Coordinata;
+import com.vartmp7.stalker.gsonbeans.placecomponent.Coordinate;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -219,15 +219,15 @@ import static junit.framework.TestCase.assertEquals;
 @RunWith(Parameterized.class)
 public class LuogoACirconferenzaTest {
 
-    private static final Coordinata CENTRO = new Coordinata(0, 0);
+    private static final Coordinate CENTRO = new Coordinate(0, 0);
     private static final double METERS = 111320D;
-    private LuogoACirconferenza circonferenza;
-    private Coordinata punto, centro;
+    private CircumferencePlace circonferenza;
+    private Coordinate punto, centro;
     private boolean isInside;
     private Double raggio;
 
 
-    public LuogoACirconferenzaTest(LuogoACirconferenza circonferenza, Coordinata centro, Coordinata punto, Double raggio, boolean isInside) {
+    public LuogoACirconferenzaTest(CircumferencePlace circonferenza, Coordinate centro, Coordinate punto, Double raggio, boolean isInside) {
         this.punto = punto;
         this.centro = centro;
         this.circonferenza = circonferenza;
@@ -242,8 +242,8 @@ public class LuogoACirconferenzaTest {
 
     @Test
     public void testEqualsHashCode() {
-        LuogoACirconferenza c1 = new LuogoACirconferenza(1, "Cerchio");
-        c1.setRaggio(raggio).setCentro(circonferenza.getCentro());
+        CircumferencePlace c1 = new CircumferencePlace(1, "Cerchio");
+        c1.setRaggio(raggio).setCenter(circonferenza.getCenter());
 
         assertEquals(c1, circonferenza);
         assertEquals(c1.hashCode(), circonferenza.hashCode());
@@ -251,35 +251,35 @@ public class LuogoACirconferenzaTest {
 
     @Test
     public void testGetters() {
-        assertEquals(circonferenza.getCentro(), CENTRO);
+        assertEquals(circonferenza.getCenter(), CENTRO);
         assertEquals(circonferenza.getRaggio(), raggio);
     }
 
 
     @Parameterized.Parameters
     public static Collection parametro() {
-        LuogoACirconferenza c1 = new LuogoACirconferenza(1, "Cerchio");
-        c1.setCentro(new Coordinata(0, 0)).setRaggio(METERS);
+        CircumferencePlace c1 = new CircumferencePlace(1, "Cerchio");
+        c1.setCenter(new Coordinate(0, 0)).setRaggio(METERS);
 
-        Coordinata coordinata = new Coordinata(0, 0);
-        LuogoACirconferenza c2 = new LuogoACirconferenza(1, "Cerchio", coordinata, METERS);
+        Coordinate coordinate = new Coordinate(0, 0);
+        CircumferencePlace c2 = new CircumferencePlace(1, "Cerchio", coordinate, METERS);
 
 
-        coordinata = new Coordinata(0, 0);
-        LuogoACirconferenza c3 = new LuogoACirconferenza(1, "Cerchio", coordinata, METERS, 10);
+        coordinate = new Coordinate(0, 0);
+        CircumferencePlace c3 = new CircumferencePlace(1, "Cerchio", coordinate, METERS, 10);
 
-        LuogoACirconferenza c4 = new LuogoACirconferenza(1, "Cerchio");
-        c4.setCentro(new Coordinata(0, 0)).setRaggio(METERS);
-        LuogoACirconferenza c5 = new LuogoACirconferenza(1, "Cerchio");
-        c5.setCentro(new Coordinata(0, 0)).setRaggio(METERS);
+        CircumferencePlace c4 = new CircumferencePlace(1, "Cerchio");
+        c4.setCenter(new Coordinate(0, 0)).setRaggio(METERS);
+        CircumferencePlace c5 = new CircumferencePlace(1, "Cerchio");
+        c5.setCenter(new Coordinate(0, 0)).setRaggio(METERS);
 
         return Arrays.asList(new Object[][]{
-                {c1, CENTRO, new Coordinata(0.5, 0.5), METERS, true},
-                {c2, CENTRO, new Coordinata(2, 2), METERS, false},
-                {c3, CENTRO, new Coordinata(0, 1), METERS, true},
-                {c4, CENTRO, new Coordinata(0.9, 0), METERS, true},
-                {c5, CENTRO, new Coordinata(0.71, 0.71), METERS, false},
-                {c5, CENTRO, new Coordinata(0.70, 0.70), METERS, true}
+                {c1, CENTRO, new Coordinate(0.5, 0.5), METERS, true},
+                {c2, CENTRO, new Coordinate(2, 2), METERS, false},
+                {c3, CENTRO, new Coordinate(0, 1), METERS, true},
+                {c4, CENTRO, new Coordinate(0.9, 0), METERS, true},
+                {c5, CENTRO, new Coordinate(0.71, 0.71), METERS, false},
+                {c5, CENTRO, new Coordinate(0.70, 0.70), METERS, true}
 //                {, new Coordinata(45.411502, 11.888165), true}
         });
     }

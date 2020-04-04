@@ -204,94 +204,66 @@
 
 package com.vartmp7.stalker.gsonbeans;
 
-import android.os.Parcel;
-import android.os.Parcelable;
+import com.vartmp7.stalker.gsonbeans.placecomponent.RayCasting;
 
-import com.unboundid.ldap.sdk.persist.LDAPGetter;
+import androidx.annotation.NonNull;
 
-import lombok.AccessLevel;
+import com.vartmp7.stalker.gsonbeans.placecomponent.Coordinate;
+
+import java.util.List;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
-import java.io.Serializable;
-import java.util.List;
-import java.util.Objects;
-
 /**
  * @author Xiaowei Wen, Lorenzo Taschin
  */
-public class Organizzazione implements Serializable {
-    public static final String TAG = "com.vartmp7.stalker.gsonbeans.Organizzazione";
+public class PolygonPlace extends AbstractPlace {
+    @Getter
+    @Setter
+    @Accessors(chain = true)
+    private List<Coordinate> coordinate;
 
-    @Getter(AccessLevel.PUBLIC) @Setter(AccessLevel.PUBLIC) @Accessors(chain = true)
-    private String address;
-    @Getter @Setter @Accessors(chain = true)
-    private String city;
-    @Getter @Setter @Accessors(chain = true)
-    private String email;
-    @Getter @Setter @Accessors(chain = true)
-    private long id;
-    @Getter @Setter @Accessors(chain = true)
-    private String name;
-    @Getter @Setter @Accessors(chain = true)
-    private String nation;
-    @Getter @Setter @Accessors(chain = true)
-    private String phone_number;
-    @Getter @Setter @Accessors(chain = true)
-    private String postal_code;
-    @Getter @Setter @Accessors(chain = true)
-    private String region;
-    @Getter @Setter @Accessors(chain = true)
-    private String type;
-    @Getter @Setter @Accessors(chain = true)
-    private String ldap_common_name;
-    @Getter @Setter @Accessors(chain = true)
-    private String ldap_domain_component;
-    @Getter @Setter @Accessors(chain = true)
-    private String ldap_port;
-    @Getter @Setter @Accessors(chain = true)
-    private String image_url;
-    @Getter @Setter @Accessors(chain = true)
-    private List<LuogoPoligono> luoghi;
-    @Getter @Setter @Accessors(chain = true)
-    private boolean isPreferito = false;
-    @Getter @Setter @Accessors(chain = true)
-    private boolean isTracking = false;
-    @Getter @Setter @Accessors(chain = true)
-    private boolean isExpanded = false;
-    @Getter @Setter @Accessors(chain = true)
-    private boolean isLogged = false;
-    @Getter @Setter @Accessors(chain = true)
-    private boolean isAnonimo = false;
-    @Getter @Setter @Accessors(chain = true)
-    private boolean isTrackingActive=false;
+    public PolygonPlace() {
+        super(0, null);
+    }
 
-    public Organizzazione() {}
+    PolygonPlace(long id, String name, List<Coordinate> coordinate) {
+        super(id, name);
+        this.coordinate = coordinate;
+
+    }
+
+    PolygonPlace(long id, String name, long num_max_people, List<Coordinate> coordinate) {
+        super(id, name, num_max_people);
+        this.coordinate = coordinate;
+    }
+
+
+    @NonNull
+    @Override
+    public String toString() {
+        return "\nid: " + getId() +
+                "\nNome: " + getName() +
+                "\nNum. Max Persone " + getNum_max_people() +
+                "\nCoordinate: " + getCoordinate().toString();
+    }
+
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Organizzazione)) return false;
-        Organizzazione that = (Organizzazione) o;
-        return getId() == that.getId() /*&&
-                Objects.equals(getAddress(), that.getAddress()) &&
-                Objects.equals(getCity(), that.getCity()) &&
-                Objects.equals(getEmail(), that.getEmail()) &&
-                Objects.equals(getName(), that.getName()) &&
-                Objects.equals(getNation(), that.getNation()) &&
-                Objects.equals(getPhone_number(), that.getPhone_number()) &&
-                Objects.equals(getPostal_code(), that.getPostal_code()) &&
-                Objects.equals(getRegion(), that.getRegion()) &&
-                Objects.equals(getType(), that.getType()) &&
-                Objects.equals(getLdap_common_name(), that.getLdap_common_name()) &&
-                Objects.equals(getLdap_domain_component(), that.getLdap_domain_component()) &&
-                Objects.equals(getLdap_port(), that.getLdap_port()) &&
-                Objects.equals(getLuoghi(), that.getLuoghi())*/;
+    public Coordinate getCenter() {
+        return null;
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(address, city, email, id, name, nation, phone_number, postal_code, region, type, ldap_common_name, ldap_domain_component, ldap_port, image_url, luoghi, isPreferito(), isTracking(), isExpanded(), isLogged(), isAnonimo(), isTrackingActive());
+    public double distanceTo(Coordinate c) {
+        return 0;
     }
+
+    @Override
+    public boolean isInside(Coordinate c) {
+        return new RayCasting(getCoordinate(), c).isPointInside();
+    }
+
 }

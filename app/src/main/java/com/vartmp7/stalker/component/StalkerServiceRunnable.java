@@ -209,31 +209,21 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.hardware.SensorManager;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 
-import androidx.core.app.ActivityCompat;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationAvailability;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
-import com.google.android.gms.tasks.Task;
-import com.vartmp7.stalker.gsonbeans.LuogoPoligono;
-import com.vartmp7.stalker.gsonbeans.Organizzazione;
-import com.vartmp7.stalker.gsonbeans.placecomponent.Coordinata;
+import com.vartmp7.stalker.gsonbeans.Organization;
+import com.vartmp7.stalker.gsonbeans.placecomponent.Coordinate;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static java.lang.Thread.sleep;
@@ -241,13 +231,13 @@ import static java.lang.Thread.sleep;
 
 public class StalkerServiceRunnable implements Runnable {
     private static final String TAG = "com.vartmp7.stalker.component.StalkerServiceRunnable";
-    private List<Organizzazione> trackingOrgs;
+    private List<Organization> trackingOrgs;
     private int i = 0;
     private boolean isRunning;
     private CallBack callBack;
     private FusedLocationProviderClient fusedLocationProviderClient;
     private SensorManager sensorManager;
-    private MutableLiveData<Coordinata> coordinata = null;
+    private MutableLiveData<Coordinate> coordinata = null;
     private LifecycleOwner lifecycleOwner;
     private Context context;
     private LocationRequest request;
@@ -257,7 +247,7 @@ public class StalkerServiceRunnable implements Runnable {
                                   LifecycleOwner owner,
                                   SensorManager sensorManager,
                                   CallBack callBack,
-                                  List<Organizzazione> trackingOrg) {
+                                  List<Organization> trackingOrg) {
         this.context = context;
         this.sensorManager = sensorManager;
         this.lifecycleOwner = owner;
@@ -276,7 +266,7 @@ public class StalkerServiceRunnable implements Runnable {
             public void onLocationResult(LocationResult locationResult) {
                 super.onLocationResult(locationResult);
                 Log.d(TAG, "onLocationResult() called with: locationResult = [" + locationResult + "]");
-                coordinata.postValue(new Coordinata(locationResult.getLastLocation().getLongitude(),
+                coordinata.postValue(new Coordinate(locationResult.getLastLocation().getLongitude(),
                         locationResult.getLastLocation().getLatitude()));
             }
         };

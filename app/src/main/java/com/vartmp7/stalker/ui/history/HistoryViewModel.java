@@ -202,82 +202,26 @@
  *    limitations under the License.
  */
 
-package com.vartmp7.stalker.gsonbeans;
+package com.vartmp7.stalker.ui.history;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
 
-import java.util.ArrayList;
-import java.util.List;
+/**
+ * @author Xiaowei Wen, Lorenzo Taschin
+ */
+public class HistoryViewModel extends ViewModel {
+    public static final String TAG ="com.vartmp7.stalker.ui.cronologia.CronologiaViewModel";
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+    private MutableLiveData<String> mText;
 
-@RunWith(JUnit4.class)
-public class OrganizzazioneTest {
-    private static final  String address="Via trieste";
-    private static final  String city="Padova";
-    private static final  String email="info@stalker.com";
-    private static final  long id=1;
-    private static final  String name="UNIPD";
-    private static final  String nation="IT";
-    private static final  String phone_number="0049xxxxxxx";
-    private static final  String postal_code="35021";
-    private static final  String region="Veneto";
-    private static final  String type="private";
-    private static final  String ldap_common_name="com.unipd";
-    private static final  String ldap_domain_component="cn=wen,cn=xiaowei";
-    private static final  String ldap_port="250";
-    private static final  Boolean isPreferito = false;
-    private static final  List<LuogoPoligono> luoghi=new ArrayList<>();
-    private static final Organizzazione org = new Organizzazione()
-                                                    .setAddress(address)
-            .setCity(city).setEmail(email).setId(id).setName(name).setNation(nation).setPhone_number(phone_number)
-            .setPostal_code(postal_code).setRegion(region).setType(type).setLdap_common_name(ldap_common_name)
-            .setLdap_domain_component(ldap_domain_component).setLdap_port(ldap_port)
-            .setPreferito(isPreferito).setLuoghi(luoghi);
-
-    private Organizzazione organizzazione;
-    @Before
-    public void setUp() throws Exception {
-        organizzazione=new Organizzazione()
-                .setAddress(address)
-                .setCity(city).setEmail(email).setId(id).setName(name).setNation(nation).setPhone_number(phone_number)
-                .setPostal_code(postal_code).setRegion(region).setType(type).setLdap_common_name(ldap_common_name)
-                .setLdap_domain_component(ldap_domain_component).setLdap_port(ldap_port)
-                .setPreferito(isPreferito).setLuoghi(luoghi);
+    public HistoryViewModel() {
+        mText = new MutableLiveData<>();
+        mText.setValue("This is cronologia fragment");
     }
 
-
-    @Test
-    public void testEqualsHashCode(){
-        assertEquals(org,organizzazione);
-        assertEquals(org.toString(),organizzazione.toString());
-        assertEquals(org.hashCode(),organizzazione.hashCode());
-
-    }
-
-    @Test
-    public void testGetterSetter(){
-
-//        assertEquals(org.getAddress(),organizzazione.getAddress());
-//        assertEquals(org.getCity(),organizzazione.getCity());
-//        assertEquals(org.getEmail(),organizzazione.getEmail());
-//        assertEquals(org.getId(),organizzazione.getId());
-//        assertEquals(org.getName(),organizzazione.getName());
-//        assertEquals(org.getNation(),organizzazione.getNation());
-//        assertEquals(org.getPhone_number(),organizzazione.getPhone_number());
-//        assertEquals(org.getPostal_code(),organizzazione.getPostal_code());
-//        assertEquals(org.getRegion(),organizzazione.getRegion());
-//        assertEquals(org.getType(),organizzazione.getType());
-//        assertEquals(org.getLdap_common_name(),organizzazione.getLdap_common_name());
-//        assertEquals(org.getLdap_domain_component(),organizzazione.getLdap_domain_component());
-//        assertEquals(org.getLdap_port(),organizzazione.getLdap_port());
-//        assertEquals(org.isPreferito(),organizzazione.isPreferito());
-//        assertEquals(org.getLuoghi(),organizzazione.getLuoghi());
-//        assertEquals(org.hashCode(), organizzazione.hashCode());
+    public LiveData<String> getText() {
+        return mText;
     }
 }

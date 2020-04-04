@@ -206,8 +206,6 @@ package com.vartmp7.stalker.repository;
 
 import androidx.lifecycle.LiveData;
 
-import com.vartmp7.stalker.gsonbeans.Organizzazione;
-
 import java.util.List;
 
 

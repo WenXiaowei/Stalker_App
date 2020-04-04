@@ -205,9 +205,6 @@
 package com.vartmp7.stalker.gsonbeans.placecomponent;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
-import com.vartmp7.stalker.gsonbeans.placecomponent.Coordinata;
 
 import java.util.Objects;
 
@@ -226,9 +223,9 @@ public class Retta {
     }
 
     private double q;
-    private Coordinata a, b;
+    private Coordinate a, b;
 
-    public Retta(Coordinata c1, Coordinata c2) {
+    public Retta(Coordinate c1, Coordinate c2) {
         this.m = (c2.getLatitude() - c1.getLatitude()) / (c2.getLongitude() - c1.getLongitude());
         this.q = (((c2.getLatitude() - c1.getLatitude())*(-1)*c1.getLongitude()) / (c2.getLongitude() - c1.getLongitude())) + c1.getLatitude();
         a= c1;
@@ -248,19 +245,19 @@ public class Retta {
      *              un numero < 0 se la coordinata c è a sinistra della retta (a,b)
      */
 
-    public double distanceToCoordinate(Coordinata c){
+    public double distanceToCoordinate(Coordinate c){
         return (b.getLongitude()-c.getLongitude())-(a.getLatitude()-c.getLatitude())/(a.getLatitude()-c.getLatitude());
     }
     public double calcoloLatitude(double longitude) {
         return this.m * longitude + this.q;
     }
 
-    public Coordinata intersezione(Retta r) {
+    public Coordinate intersezione(Retta r) {
         //System.out.println("x/:"+(-this.q + r.q));
         //System.out.println("/x:"+(this.m - r.m));
         double x = (-this.q + r.q) / (this.m - r.m);
 
-        return new Coordinata(calcoloLatitude(x),x);
+        return new Coordinate(calcoloLatitude(x),x);
     }
 
     @Override

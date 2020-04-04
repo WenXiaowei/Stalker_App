@@ -205,16 +205,13 @@
 package com.vartmp7.stalker.component;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Looper;
-import android.os.Message;
 import android.util.Log;
 
 import androidx.core.app.ActivityCompat;
@@ -223,7 +220,7 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
-import com.vartmp7.stalker.gsonbeans.placecomponent.Coordinata;
+import com.vartmp7.stalker.gsonbeans.placecomponent.Coordinate;
 
 public class StalkerServiceThread extends Thread implements Runnable {
     private static final String TAG = "StalkerServiceThread";
@@ -231,7 +228,7 @@ public class StalkerServiceThread extends Thread implements Runnable {
     private FusedLocationProviderClient fusedLocationProviderClient;
     private LocationCallback locationCallback;
     private LocationRequest locationRequest;
-    private Coordinata coordinata = null;
+    private Coordinate coordinate = null;
 
 
     public StalkerServiceThread(Context context,
@@ -284,14 +281,14 @@ public class StalkerServiceThread extends Thread implements Runnable {
                     super.onLocationResult(locationResult);
                     Log.d(TAG, "onLocationResult() called with: locationResult = [" + locationResult + "]");
                     Location l = locationResult.getLastLocation();
-                    coordinata = new Coordinata(l.getLongitude(), l.getLatitude());
+                    coordinate = new Coordinate(l.getLongitude(), l.getLatitude());
                 }
             };
             fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper());
             Log.d(TAG, "run() called post Looper.prepare");
             while (true) {
-                if (coordinata != null) {
-                    Log.d(TAG, "run() called" + coordinata);
+                if (coordinate != null) {
+                    Log.d(TAG, "run() called" + coordinate);
                 }
                 Log.d(TAG, " iteration: " + i++);
                 try {

@@ -211,27 +211,21 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
-import com.vartmp7.stalker.gsonbeans.Organizzazione;
+import com.vartmp7.stalker.gsonbeans.Organization;
 import com.vartmp7.stalker.repository.FavoritesSource;
-import com.vartmp7.stalker.repository.FileOrganizationsLocalSource;
 import com.vartmp7.stalker.repository.OrganizationsLocalSource;
 import com.vartmp7.stalker.repository.OrganizationsRepository;
 import com.vartmp7.stalker.repository.OrganizationsWebSource;
-import com.vartmp7.stalker.ui.organizations.OrganizationsViewModel;
 
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.mockito.stubbing.OngoingStubbing;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -239,10 +233,6 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.doCallRealMethod;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
@@ -252,8 +242,8 @@ public class OrganizationsRepositoryTest {
     private OrganizationsRepository orgRepo;
     private LifecycleOwner lifecycleOwner;
     private TestObserver observer;
-    private List<Organizzazione> firsts;
-    private List<Organizzazione> expected;
+    private List<Organization> firsts;
+    private List<Organization> expected;
     private OrganizationsLocalSource localSource;
 
 
@@ -263,19 +253,19 @@ public class OrganizationsRepositoryTest {
     @Before
     public void setup(){
         firsts = Arrays.asList(
-                new Organizzazione().setId(1).setName("asd").setTracking(false),
-                new Organizzazione().setId(2).setName("lol").setTracking(false),
-                new Organizzazione().setId(3).setName("lll").setTracking(false)
+                new Organization().setId(1).setName("asd").setTracking(false),
+                new Organization().setId(2).setName("lol").setTracking(false),
+                new Organization().setId(3).setName("lll").setTracking(false)
         );
-        final MutableLiveData<List<Organizzazione>> localLiveData = new MutableLiveData<>();
+        final MutableLiveData<List<Organization>> localLiveData = new MutableLiveData<>();
         localSource = Mockito.mock(OrganizationsLocalSource.class);
         OrganizationsWebSource webSource = Mockito.mock(OrganizationsWebSource.class);
-        when(webSource.getOrganizzazioni()).then((Answer<LiveData<List<Organizzazione>>>) invocation -> {
-            MutableLiveData<List<Organizzazione>> liveData = new MutableLiveData<>();
+        when(webSource.getOrganizzazioni()).then((Answer<LiveData<List<Organization>>>) invocation -> {
+            MutableLiveData<List<Organization>> liveData = new MutableLiveData<>();
             liveData.postValue(Arrays.asList(
-                    new Organizzazione().setId(1).setName("changed").setTracking(false),
-                    new Organizzazione().setId(2).setName("lol").setTracking(true),
-                    new Organizzazione().setId(37).setName("new org").setTracking(false))
+                    new Organization().setId(1).setName("changed").setTracking(false),
+                    new Organization().setId(2).setName("lol").setTracking(true),
+                    new Organization().setId(37).setName("new org").setTracking(false))
             );
             return  liveData;
         });
@@ -289,8 +279,8 @@ public class OrganizationsRepositoryTest {
     @Test
     public void testGet(){
         expected=firsts;
-        when(localSource.getOrganizzazioni()).then((Answer<LiveData<List<Organizzazione>>>) invocation -> {
-            MutableLiveData<List<Organizzazione>> liveData = new MutableLiveData<>();
+        when(localSource.getOrganizzazioni()).then((Answer<LiveData<List<Organization>>>) invocation -> {
+            MutableLiveData<List<Organization>> liveData = new MutableLiveData<>();
             liveData.postValue(firsts);
             return  liveData;
         });
@@ -318,12 +308,12 @@ public class OrganizationsRepositoryTest {
 
     @Test
     public void testRefresh(){
-        List<Organizzazione> fromWeb = new ArrayList<>(Arrays.asList(
-                new Organizzazione().setId(1).setName("changed").setTracking(false),
-                new Organizzazione().setId(2).setName("lol").setTracking(true),
-                new Organizzazione().setId(37).setName("new org").setTracking(false))
+        List<Organization> fromWeb = new ArrayList<>(Arrays.asList(
+                new Organization().setId(1).setName("changed").setTracking(false),
+                new Organization().setId(2).setName("lol").setTracking(true),
+                new Organization().setId(37).setName("new org").setTracking(false))
         );
-        List<Organizzazione> refreshed = new ArrayList<>(firsts);
+        List<Organization> refreshed = new ArrayList<>(firsts);
 
         TestUtil.updateOrganizationsFromOrganizationsLists(refreshed,fromWeb);
         observer.setTester(organizzazioni -> {

@@ -202,98 +202,80 @@
  *    limitations under the License.
  */
 
-package com.vartmp7.stalker.ui.preferiti;
+package com.vartmp7.stalker.gsonbeans;
 
-import android.util.Log;
 
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MediatorLiveData;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModel;
+import com.vartmp7.stalker.gsonbeans.placecomponent.Coordinate;
 
-import com.vartmp7.stalker.component.NotLogged;
-import com.vartmp7.stalker.gsonbeans.Organizzazione;
-import com.vartmp7.stalker.repository.OrganizationsRepository;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Objects;
 
-import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
 /**
  * @author Xiaowei Wen, Lorenzo Taschin
+ * @version 1.0
+ * <p>
+ * Usato per rappresentare dei luoghi con una forma di circonferenza.
  */
-public class PreferitiViewModel extends ViewModel {
-    public static final String TAG ="com.vartmp7.stalker.ui.preferiti.PreferitiViewModel";
-    private OrganizationsRepository orgRepo;
+public class CircumferencePlace extends AbstractPlace {
+    public static final String TAG = "com.vartmp7.stalker.gsonbeans.LuogoACirconferenza";
 
-    private LiveData<List<Long>> mutableliveDataOrgIds;
-    private LiveData<List<Organizzazione>> liveDataOrganizzazioni;
-    @Getter(AccessLevel.PUBLIC)
-    private MediatorLiveData<List<Organizzazione>> organizzazioni;
-    private MutableLiveData<Boolean> organizationsQueryExhausted;
-    private MutableLiveData<Boolean> firebaseQueryExhausted;
+    @Setter
+    @Accessors(chain = true)
+    private Coordinate center;
+    @Getter
+    @Setter
+    @Accessors(chain = true)
+    private Double raggio;
 
-    public PreferitiViewModel(OrganizationsRepository orgRepo) {
-        this.orgRepo=orgRepo;
-    }
-    public void updateOrganizzazione(Organizzazione org){
-        orgRepo.updateOrganizzazione(org);
-    }
-
-    public void init(){
-        this.organizzazioni = new MediatorLiveData<>();
-        //this.liveDataOrganizzazioni = orgRepo.getOrganizzazioni();
-        //this.mutableliveDataOrgIds = orgRepo.getPreferiti();
-        this.firebaseQueryExhausted = new MutableLiveData<>(false);
-        this.organizationsQueryExhausted = new MutableLiveData<>(false);
-        refresh();
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof CircumferencePlace)) return false;
+        CircumferencePlace that = (CircumferencePlace) o;
+        return getCenter().equals(that.getCenter()) &&
+                getRaggio().equals(that.getRaggio());
     }
 
-    public void refresh(){
-        //MutableLiveData<List<Organizzazione>> listOrgs= new MutableLiveData<>();
-        this.firebaseQueryExhausted.setValue(false);
-        this.organizationsQueryExhausted.setValue(false);
-
-        this.liveDataOrganizzazioni = orgRepo.getOrganizzazioni();
-        this.mutableliveDataOrgIds = orgRepo.getPreferiti();
-
-
-        this.organizzazioni.addSource(liveDataOrganizzazioni, organizzazioni ->{
-            Log.e(TAG,"PORCODIOOO");
-            organizationsQueryExhausted.setValue(true);
-        });
-        this.organizzazioni.addSource(mutableliveDataOrgIds, orgIds->{
-                Log.e(TAG,"CANN DIOOO");
-                firebaseQueryExhausted.setValue(true);
-        });
-        //orgRepo.refreshOrganizzazioni();
-
-        //listOrgs.setValue(Arrays.asList(new Organizzazione().setId(1212)));
-
-
-        final Observer<Boolean> queryExhaustedObserver =  new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean aBoolean) {
-                Log.e(TAG,"cambiamento");
-                if(firebaseQueryExhausted.getValue() && organizationsQueryExhausted.getValue()){
-                    final List<Long> orgIds = mutableliveDataOrgIds.getValue();
-                    organizzazioni.postValue(
-                            liveDataOrganizzazioni.getValue()
-                                    .stream()
-                                    .filter(o-> orgIds.contains(o.getId()))
-                                    .collect(Collectors.toList())
-                    );
-                }
-            }
-        };
-        this.organizzazioni.addSource(organizationsQueryExhausted, queryExhaustedObserver);
-        this.organizzazioni.addSource(firebaseQueryExhausted,queryExhaustedObserver);
+    @Override
+    public int hashCode() {
+        return Objects.hash(getCenter(), getRaggio());
     }
-    public void removeFromPreferiti(Organizzazione org) throws NotLogged {
-        orgRepo.removeFromPreferiti(org);
+
+    public CircumferencePlace(long id, String name) {
+        super(id, name);
+    }
+
+    @Override
+    public Coordinate getCenter() {
+        return center;
+    }
+
+    @Override
+    public double distanceTo(@NotNull Coordinate c) {
+        return c.getDistanceTo(center);
+    }
+
+    CircumferencePlace(long id, String name, Coordinate center, double raggio) {
+        super(id, name);
+        this.center = center;
+        this.raggio = raggio;
+    }
+
+    CircumferencePlace(long id, String name, Coordinate center, double raggio, long num_max_people) {
+        super(id, name, num_max_people);
+        this.center = center;
+        this.raggio = raggio;
+    }
+
+    @Override
+    public boolean isInside(Coordinate c) {
+        double distanza = center.getDistanceTo(c);
+        return distanza <= raggio;
     }
 
 }

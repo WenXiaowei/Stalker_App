@@ -205,14 +205,14 @@
 <resources>
     <string name="app_name">Stalker</string>
     <string name="stalker">Stalker</string>
-    <string name="seleziona_l_organizzazione">Seleziona l\'organizzazione:</string>
+    <string name="seleziona_l_organizzazione">Seleziona l\'organization:</string>
 
     <string name="sign_in">Accedi</string>
     <string name="sign_up">Registrati</string>
-    <string name="nessun_organizzazione_ti_sta_stalkerando">Nessun\'organizzazione ti sta stalkerando!</string>
+    <string name="nessun_organizzazione_ti_sta_stalkerando">Nessun\'organization ti sta stalkerando!</string>
     <string name="status">Status</string>
     <string name="elenco_luoghi">Elenco Luoghi:</string>
-    <string name="elenco_dei_luoghi_tracciati_per_l_organizzazione_selezionata">Elenco dei luoghi tracciati per l\'organizzazione selezionata:</string>
+    <string name="elenco_dei_luoghi_tracciati_per_l_organizzazione_selezionata">Elenco dei luoghi tracciati per l\'organization selezionata:</string>
     <string name="start_track">Start Track</string>
     <string name="agg">Agg.</string>
     <string name="username">Username</string>
@@ -220,7 +220,7 @@
     <string name="annulla">Annulla</string>
     <string name="stop">Stop</string>
     <string name="conferma">Conferma</string>
-    <string name="not_in_any_place">Non sei in nessun luogo tracciato dell\'organizzazione selezionata!</string>
+    <string name="not_in_any_place">Non sei in nessun luogo tracciato dell\'organization selezionata!</string>
     <string name="you_left">Hai lasciato %s</string>
     <string name="you_are_in">Sei in %s</string>
     <string name="facebook_app_id">212692166599390</string><!--todo configurazione login facebook 6.2:  Da togliere successivamente quando renderemo l'app pubblica   -->
@@ -241,12 +241,12 @@
     <string name="email">Email</string>
     <string name="logout">Logout</string>
     <string name="login">Login</string>
-    <string name="icon_dell_organizzazione">icon dell\'organizzazione</string>
+    <string name="icon_dell_organizzazione">icon dell\'organization</string>
     <string name="dettagli">Dettagli</string>
     <string name="nascondi">Nascondi</string>
     <string name="tipo_organizzazione">Tipo Organizzazione: </string>
     <string name="n_d">N.D.</string>
-    <string name="nessun_luogo_tracciabile_per_quest_organizzazione">Nessun luogo tracciabile per quest\'organizzazione</string>
+    <string name="nessun_luogo_tracciabile_per_quest_organizzazione">Nessun luogo tracciabile per quest\'organization</string>
     <string name="attualmente_sei_in">Attualmente sei in:</string>
     <string name="organizzazione_added_to_favorite">Organizzazione aggiunta ai preferiti!</string>
     <string name="organizzazione_removed_from_favorite">Organizzazione rimosso dai preferiti</string>

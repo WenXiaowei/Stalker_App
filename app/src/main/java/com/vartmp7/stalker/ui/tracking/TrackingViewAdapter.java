@@ -232,7 +232,7 @@ import com.unboundid.ldap.sdk.LDAPException;
 import com.vartmp7.stalker.R;
 import com.vartmp7.stalker.component.NotLogged;
 import com.vartmp7.stalker.component.StalkerLDAP;
-import com.vartmp7.stalker.gsonbeans.Organizzazione;
+import com.vartmp7.stalker.gsonbeans.Organization;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -245,19 +245,19 @@ import de.hdodenhof.circleimageview.CircleImageView;
  */
 public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapter.ViewHolder> {
     public static final String TAG = "com.vartmp7.stalker.ui.home.TrackingViewAdapter";
-    private List<Organizzazione> listOrganizzazione;
+    private List<Organization> listOrganization;
     private Context context;
     private TrackingViewModel viewModel;
 
 
     public TrackingViewAdapter(Context context, TrackingViewModel viewModel) {
-        listOrganizzazione = new ArrayList<>();
+        listOrganization = new ArrayList<>();
         this.context = context;
         this.viewModel = viewModel;
     }
 
-    public void setList(List<Organizzazione> org) {
-        this.listOrganizzazione = org;
+    public void setList(List<Organization> org) {
+        this.listOrganization = org;
         notifyDataSetChanged();
     }
 
@@ -273,7 +273,7 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
     @Size
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Organizzazione org = listOrganizzazione.get(position);
+        Organization org = listOrganization.get(position);
 
         View.OnClickListener listener = v -> {
             switch (v.getId()) {
@@ -292,7 +292,7 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
                     showLoginDialog();
                     break;
                 case R.id.ibtnAddToPreferiti:
-                    holder.ibtnPreferito.setImageResource(!org.isPreferito() ? R.drawable.icon_preferito_si : R.drawable.icon_preferito_no);
+                    holder.ibtnPreferito.setImageResource(!org.isPreferito() ? R.drawable.icon_fav_si : R.drawable.icon_fav_no);
                     RotateAnimation rotate1 = new RotateAnimation(0, 216, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
                     rotate1.setDuration(500);
                     rotate1.setInterpolator(new LinearInterpolator());
@@ -336,7 +336,7 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
 
 //        holder.tvElencoLuoghi =
         holder.tvIndirizzo.setText(org.getAddress());
-        holder.ibtnPreferito.setImageResource(org.isPreferito() ? R.drawable.icon_preferito_si : R.drawable.icon_preferito_no);
+        holder.ibtnPreferito.setImageResource(org.isPreferito() ? R.drawable.icon_fav_si : R.drawable.icon_fav_no);
 
         holder.ibtnPreferito.setOnClickListener(listener);
 
@@ -385,13 +385,13 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
 
     }
 
-    public Organizzazione getOrganizationAt(int pos) {
-        return listOrganizzazione.get(pos);
+    public Organization getOrganizationAt(int pos) {
+        return listOrganization.get(pos);
     }
 
     @Override
     public int getItemCount() {
-        return listOrganizzazione.size();
+        return listOrganization.size();
     }
 
 

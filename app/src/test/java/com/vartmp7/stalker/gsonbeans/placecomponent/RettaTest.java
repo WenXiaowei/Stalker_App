@@ -205,9 +205,6 @@
 package com.vartmp7.stalker.gsonbeans.placecomponent;
 
 
-import com.vartmp7.stalker.gsonbeans.placecomponent.Coordinata;
-import com.vartmp7.stalker.gsonbeans.placecomponent.Retta;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -225,11 +222,11 @@ public class RettaTest {
     private Retta r;
 
     private Retta rettaProva;
-    private Coordinata coordinataRes;
+    private Coordinate coordinateRes;
 
-    public RettaTest(final Retta r, final Coordinata c) {
+    public RettaTest(final Retta r, final Coordinate c) {
         this.rettaProva = r;
-        this.coordinataRes = c;
+        this.coordinateRes = c;
     }
 
 
@@ -260,18 +257,18 @@ public class RettaTest {
     public void testIntersezione() {
         r = new Retta(3, 1);
         Retta r1 = new Retta(-1, 2);
-        Coordinata c = r.intersezione(r1);
+        Coordinate c = r.intersezione(r1);
 //        assertEquals(0.25,c.getLatitude(),DELTA);
 //        assertEquals(1.75,c.getLongitude(),DELTA);
 
-        assertEquals(c, new Coordinata(1.75f, 0.25f));
+        assertEquals(c, new Coordinate(1.75f, 0.25f));
     }
 
     @Test
     public void testIntersezioneRettaNulla() {
         r = new Retta(3, 1);
         Retta r2 = new Retta(0, 1);
-        Coordinata c = r.intersezione(r2);
+        Coordinate c = r.intersezione(r2);
 //        assertEquals(c, new Coordinata(0,1));
     }
 
@@ -279,8 +276,8 @@ public class RettaTest {
     public void testIntersezioneRetteNulla() {
         r = new Retta(1, 0);
         Retta r2 = new Retta(0, 1);
-        Coordinata c = r.intersezione(r2);
-        assertEquals(c, new Coordinata(1, 1));
+        Coordinate c = r.intersezione(r2);
+        assertEquals(c, new Coordinate(1, 1));
     }
 
     // serie di test
@@ -288,8 +285,8 @@ public class RettaTest {
     @Parameterized.Parameters
     public static Collection rette() {
         return Arrays.asList(new Object[][]{
-                {new Retta(1, 0), new Coordinata(1, 1)},
-                {new Retta(2, 1), new Coordinata(15, 7)}
+                {new Retta(1, 0), new Coordinate(1, 1)},
+                {new Retta(2, 1), new Coordinate(15, 7)}
                 // todo aggiungere altre rette e punti da calcolare
         });
     }
@@ -297,17 +294,17 @@ public class RettaTest {
     @Test
     public void testConSetRette() {
         System.out.println("retta: " + rettaProva);
-        assertEquals(rettaProva.calcoloLatitude(coordinataRes.getLongitude()), coordinataRes.getLatitude(), DELTA);
+        assertEquals(rettaProva.calcoloLatitude(coordinateRes.getLongitude()), coordinateRes.getLatitude(), DELTA);
     }
 
 
     @Test
     public void coordinateTorre() {
 
-        Retta r1 = new Retta(new Coordinata(45.411555, 11.887476), new Coordinata(45.411108, 11.887787));
-        Retta r2 = new Retta(new Coordinata(45.411442, 11.887942), new Coordinata(45.411222, 11.887319));
-        Coordinata intersezione = r1.intersezione(r2);
-        Coordinata c = new Coordinata(45.41133218, 11.88763102); // coordinata di intersezione
+        Retta r1 = new Retta(new Coordinate(45.411555, 11.887476), new Coordinate(45.411108, 11.887787));
+        Retta r2 = new Retta(new Coordinate(45.411442, 11.887942), new Coordinate(45.411222, 11.887319));
+        Coordinate intersezione = r1.intersezione(r2);
+        Coordinate c = new Coordinate(45.41133218, 11.88763102); // coordinata di intersezione
         // calcolata a mano
         assertEquals(c.getLatitude(), intersezione.getLatitude(), DELTA);
         assertEquals(c.getLongitude(), intersezione.getLongitude(), DELTA);

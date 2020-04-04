@@ -204,59 +204,89 @@
 
 package com.vartmp7.stalker.gsonbeans;
 
-import android.widget.ArrayAdapter;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import java.io.Serializable;
+import java.util.List;
+import java.util.Objects;
 
-import java.util.ArrayList;
+/**
+ * @author Xiaowei Wen, Lorenzo Taschin
+ */
+public class Organization implements Serializable {
+    public static final String TAG = "com.vartmp7.stalker.gsonbeans.Organizzazione";
 
-import static junit.framework.TestCase.assertEquals;
-import static junit.framework.TestCase.assertNotSame;
+    @Getter(AccessLevel.PUBLIC) @Setter(AccessLevel.PUBLIC) @Accessors(chain = true)
+    private String address;
+    @Getter @Setter @Accessors(chain = true)
+    private String city;
+    @Getter @Setter @Accessors(chain = true)
+    private String email;
+    @Getter @Setter @Accessors(chain = true)
+    private long id;
+    @Getter @Setter @Accessors(chain = true)
+    private String name;
+    @Getter @Setter @Accessors(chain = true)
+    private String nation;
+    @Getter @Setter @Accessors(chain = true)
+    private String phone_number;
+    @Getter @Setter @Accessors(chain = true)
+    private String postal_code;
+    @Getter @Setter @Accessors(chain = true)
+    private String region;
+    @Getter @Setter @Accessors(chain = true)
+    private String type;
+    @Getter @Setter @Accessors(chain = true)
+    private String ldap_common_name;
+    @Getter @Setter @Accessors(chain = true)
+    private String ldap_domain_component;
+    @Getter @Setter @Accessors(chain = true)
+    private String ldap_port;
+    @Getter @Setter @Accessors(chain = true)
+    private String image_url;
+    @Getter @Setter @Accessors(chain = true)
+    private List<PolygonPlace> luoghi;
+    @Getter @Setter @Accessors(chain = true)
+    private boolean isPreferito = false;
+    @Getter @Setter @Accessors(chain = true)
+    private boolean isTracking = false;
+    @Getter @Setter @Accessors(chain = true)
+    private boolean isExpanded = false;
+    @Getter @Setter @Accessors(chain = true)
+    private boolean isLogged = false;
+    @Getter @Setter @Accessors(chain = true)
+    private boolean isAnonimo = false;
+    @Getter @Setter @Accessors(chain = true)
+    private boolean isTrackingActive=false;
 
-@RunWith(JUnit4.class)
-public class ResponseOrganizzazioneTest {
+    public Organization() {}
 
-    private ResponseOrganizzazione response;
-    ArrayList<Organizzazione> l;
-
-    @Before
-    public void setUp(){
-        response = new ResponseOrganizzazione();
-         l = new ArrayList<>();
-        l.add(new Organizzazione().setName("UNIPD"));
-
-        response.setOrganizations(l);
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Organization)) return false;
+        Organization that = (Organization) o;
+        return getId() == that.getId() /*&&
+                Objects.equals(getAddress(), that.getAddress()) &&
+                Objects.equals(getCity(), that.getCity()) &&
+                Objects.equals(getEmail(), that.getEmail()) &&
+                Objects.equals(getName(), that.getName()) &&
+                Objects.equals(getNation(), that.getNation()) &&
+                Objects.equals(getPhone_number(), that.getPhone_number()) &&
+                Objects.equals(getPostal_code(), that.getPostal_code()) &&
+                Objects.equals(getRegion(), that.getRegion()) &&
+                Objects.equals(getType(), that.getType()) &&
+                Objects.equals(getLdap_common_name(), that.getLdap_common_name()) &&
+                Objects.equals(getLdap_domain_component(), that.getLdap_domain_component()) &&
+                Objects.equals(getLdap_port(), that.getLdap_port()) &&
+                Objects.equals(getLuoghi(), that.getLuoghi())*/;
     }
 
-    @Test
-    public void testResponse(){
-        assertEquals(l,l);
-        assertEquals(l.hashCode(),l.hashCode());
-        assertEquals(l, response.getOrganizations());
-
-        ResponseOrganizzazione re = new ResponseOrganizzazione();
-        re.setOrganizations(l);
-
-        assertEquals(response, re);
-
-
-        assertEquals(response.hashCode(), response.hashCode());
-
-
-        assertEquals(response.getOrganizzationsLength(),1);
-//        l.add(new Organizzazione().setName("boh"));
-
-        assertEquals(l, response.getOrganizations());
-
-        ArrayList<String> data = new ArrayList<>();
-        data.add("Scegli un'organizzazione");
-        data.add("UNIPD");
-
-        assertEquals(response.getDataForSpinner()[0],data.toArray(new String[0])[0]);
-        assertEquals(response.getDataForSpinner()[1],data.toArray(new String[0])[1]);
+    @Override
+    public int hashCode() {
+        return Objects.hash(address, city, email, id, name, nation, phone_number, postal_code, region, type, ldap_common_name, ldap_domain_component, ldap_port, image_url, luoghi, isPreferito(), isTracking(), isExpanded(), isLogged(), isAnonimo(), isTrackingActive());
     }
-
 }

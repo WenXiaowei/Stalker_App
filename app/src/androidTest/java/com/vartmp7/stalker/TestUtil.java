@@ -211,7 +211,7 @@ import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LifecycleRegistry;
 
-import com.vartmp7.stalker.gsonbeans.Organizzazione;
+import com.vartmp7.stalker.gsonbeans.Organization;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -230,15 +230,15 @@ public class TestUtil {
         return owner;
     }
     /**/
-    public static void updateOrganizationsFromOrganizationsLists(List<Organizzazione> toUpdate, List<Organizzazione> updater){
-        List<Organizzazione> toUpdateBackup = new ArrayList<>(toUpdate);
+    public static void updateOrganizationsFromOrganizationsLists(List<Organization> toUpdate, List<Organization> updater){
+        List<Organization> toUpdateBackup = new ArrayList<>(toUpdate);
         toUpdate.clear();
         Log.d(TAG, "updateOrganizationsFromOrganizationsLists: "+toUpdateBackup.size());
         for(int i=0;i<updater.size();i++){
-            Organizzazione orgUpdated = updater.get(i);
+            Organization orgUpdated = updater.get(i);
             boolean contained=false;
             for (int j=0;j<toUpdateBackup.size() &&!contained;j++){
-                Organizzazione currentOrg = toUpdateBackup.get(j);
+                Organization currentOrg = toUpdateBackup.get(j);
                 if(orgUpdated.getId()==currentOrg.getId()){
                     Log.d(TAG, "preso "+orgUpdated.getId()+"name"+orgUpdated.getName());
                     contained=true;

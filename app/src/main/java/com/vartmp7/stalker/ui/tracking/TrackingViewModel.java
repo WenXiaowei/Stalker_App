@@ -205,11 +205,10 @@
 package com.vartmp7.stalker.ui.tracking;
 
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.vartmp7.stalker.component.NotLogged;
-import com.vartmp7.stalker.gsonbeans.Organizzazione;
+import com.vartmp7.stalker.gsonbeans.Organization;
 import com.vartmp7.stalker.repository.OrganizationsRepository;
 
 import java.util.List;
@@ -228,16 +227,16 @@ public class TrackingViewModel extends ViewModel {
     @Setter(AccessLevel.PUBLIC) @Getter(AccessLevel.PUBLIC)
     private OrganizationsRepository repository;
 
-    public LiveData<List<Organizzazione>> getListOrganizzazione() {
+    public LiveData<List<Organization>> getListOrganizzazione() {
         return repository.getOrganizzazioni();
     }
 
-    public void updateOrganizzazione(Organizzazione o) {
+    public void updateOrganizzazione(Organization o) {
         repository.updateOrganizzazione(o);
     }
 
     public void activeAllTrackingOrganization(boolean active){
-        List<Organizzazione> l=repository.getOrganizzazioni().getValue().stream().filter(Organizzazione::isTracking).collect(Collectors.toList());
+        List<Organization> l=repository.getOrganizzazioni().getValue().stream().filter(Organization::isTracking).collect(Collectors.toList());
         l.forEach(organizzazione -> organizzazione.setTrackingActive(active));
         repository.updateOrganizzationi(l);
     }
@@ -246,11 +245,11 @@ public class TrackingViewModel extends ViewModel {
         this.repository = repository;
     }
 
-    public void removePreferito(Organizzazione o) throws NotLogged {
+    public void removePreferito(Organization o) throws NotLogged {
         repository.removeFromPreferiti(o);
     }
 
-    public void addPreferito(Organizzazione o) throws NotLogged {
+    public void addPreferito(Organization o) throws NotLogged {
         repository.addToPreferiti(o);
     }
 

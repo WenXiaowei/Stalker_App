@@ -206,22 +206,22 @@ package com.vartmp7.stalker.repository;
 
 import androidx.lifecycle.LiveData;
 
-import com.vartmp7.stalker.gsonbeans.Organizzazione;
+import com.vartmp7.stalker.gsonbeans.Organization;
 
 import java.util.List;
 
 public interface OrganizationsLocalSource {
-    void updateOrganizzazioniInfo(List<Organizzazione> orgsToUpdate);
+    void updateOrganizzazioniInfo(List<Organization> orgsToUpdate);
 
-    LiveData<List<Organizzazione>> getOrganizzazioni();
+    LiveData<List<Organization>> getOrganizzazioni();
 
-    void saveOrganizzazione(Organizzazione org);
+    void saveOrganizzazione(Organization org);
 
-    void saveOrganizzazioni(List<Organizzazione> orgs);
+    void saveOrganizzazioni(List<Organization> orgs);
 
-    void removeOrganizzazione(Organizzazione org);
+    void removeOrganizzazione(Organization org);
 
-    void updateOrganizzazione(Organizzazione org);
+    void updateOrganizzazione(Organization org);
 
-    void updateOrganizzazioni(List<Organizzazione> orgs);
+    void updateOrganizzazioni(List<Organization> orgs);
 }

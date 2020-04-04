@@ -205,15 +205,11 @@
 package com.vartmp7.stalker.repository;
 
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.vartmp7.stalker.gsonbeans.Organizzazione;
+import com.vartmp7.stalker.gsonbeans.Organization;
 
-import org.junit.Before;
 import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.MockitoRule;
 
 import static org.junit.Assert.assertTrue;
@@ -223,9 +219,9 @@ public class FirebaseFavoritesRepositoryTest {
 
     private static final String TAG="com.vartmp7.stalker.model.FirebaseFavoritesRepositoryTest";
 
-    private static final Organizzazione org1= new Organizzazione().setName("UNIPD").setAddress("Via trieste");
-    private static final Organizzazione org2= new Organizzazione().setName("UNIPD 2").setAddress("Via trieste 2");
-    private static final Organizzazione org3= new Organizzazione().setName("Alì").setAddress("Via roma 2");
+    private static final Organization org1= new Organization().setName("UNIPD").setAddress("Via trieste");
+    private static final Organization org2= new Organization().setName("UNIPD 2").setAddress("Via trieste 2");
+    private static final Organization org3= new Organization().setName("Alì").setAddress("Via roma 2");
     @Mock
     private FirebaseFavoritesSource ffr;
     @Mock

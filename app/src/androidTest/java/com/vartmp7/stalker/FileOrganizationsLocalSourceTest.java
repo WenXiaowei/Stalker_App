@@ -209,17 +209,15 @@ import android.content.Context;
 import android.util.Log;
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
-import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.LifecycleRegistry;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.google.gson.Gson;
-import com.vartmp7.stalker.gsonbeans.Organizzazione;
-import com.vartmp7.stalker.gsonbeans.ResponseOrganizzazione;
+import com.vartmp7.stalker.gsonbeans.Organization;
+import com.vartmp7.stalker.gsonbeans.OrganizationResponse;
 import com.vartmp7.stalker.repository.FileOrganizationsLocalSource;
 
 import org.junit.Before;
@@ -227,32 +225,26 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 @RunWith(AndroidJUnit4.class)
 public class FileOrganizationsLocalSourceTest {
     private static final String TAG ="com.vartmp7.stalker.FileOrganizationsLocalSourceTest" ;
     private FileOrganizationsLocalSource source;
     private TestObserver observer;
-    private List<Organizzazione> firsts;
-    private List<Organizzazione> expected;
+    private List<Organization> firsts;
+    private List<Organization> expected;
     private static boolean triggered;
     private LifecycleOwner lifecycleOwner;
 
@@ -267,8 +259,8 @@ public class FileOrganizationsLocalSourceTest {
 
 
     @SuppressWarnings("unchecked")
-    public static Observer<List<Organizzazione>> mockObserver() {
-        return (Observer<List<Organizzazione>>) Mockito.mock(Observer.class);
+    public static Observer<List<Organization>> mockObserver() {
+        return (Observer<List<Organization>>) Mockito.mock(Observer.class);
     }
 
 
@@ -281,12 +273,12 @@ public class FileOrganizationsLocalSourceTest {
         Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
         this.lifecycleOwner = TestUtil.mockLifecycleOwner();
         firsts = Arrays.asList(
-                new Organizzazione().setId(1).setName("asd").setTracking(false),
-                new Organizzazione().setId(2).setName("lol").setTracking(false),
-                new Organizzazione().setId(3).setName("lll").setTracking(false)
+                new Organization().setId(1).setName("asd").setTracking(false),
+                new Organization().setId(2).setName("lol").setTracking(false),
+                new Organization().setId(3).setName("lll").setTracking(false)
         );
         try (PrintWriter pw = new PrintWriter(context.openFileOutput("prova.json",Context.MODE_PRIVATE))){
-            ResponseOrganizzazione r = new ResponseOrganizzazione().setOrganizations(firsts);
+            OrganizationResponse r = new OrganizationResponse().setOrganizations(firsts);
             pw.println(new Gson().toJson(r));
             pw.flush();
             Log.d(TAG,"ok");
@@ -311,7 +303,7 @@ public class FileOrganizationsLocalSourceTest {
     @Test
     public void testSave() {
         Log.d(TAG,"as");
-        expected = Arrays.asList(new Organizzazione().setId(12));
+        expected = Arrays.asList(new Organization().setId(12));
         observer.setTester(organizzazioni -> {
             Log.e(TAG, "testSave: observer triggered");
             if(!organizzazioni.equals(firsts)){
@@ -328,11 +320,11 @@ public class FileOrganizationsLocalSourceTest {
 
     @Test
     public void testUpdateOrganizzazione(){
-        List<Organizzazione> toUpdate = new ArrayList<>();
-        for (Organizzazione org: firsts){
-            toUpdate.add(new Organizzazione().setId(org.getId()).setName((org.getName())));
+        List<Organization> toUpdate = new ArrayList<>();
+        for (Organization org: firsts){
+            toUpdate.add(new Organization().setId(org.getId()).setName((org.getName())));
         }
-        Organizzazione o = toUpdate.get(0).setId(firsts.get(0).getId()).setName("updated");
+        Organization o = toUpdate.get(0).setId(firsts.get(0).getId()).setName("updated");
         //toUpdate.sort(Comparator.comparing(Organizzazione::getId));
         expected = toUpdate;
         observer.setTester(organizzazioni->{
@@ -350,10 +342,10 @@ public class FileOrganizationsLocalSourceTest {
 
     @Test
     public void testUpdateOrganizzazioni(){
-        List<Organizzazione> updater = new ArrayList<>(Arrays.asList(
-                new Organizzazione().setId(firsts.get(0).getId()).setName("updated1"),
-                new Organizzazione().setId(firsts.get(1).getId()).setName("updated2").setTracking(true),
-                new Organizzazione().setId(36).setName("new org")
+        List<Organization> updater = new ArrayList<>(Arrays.asList(
+                new Organization().setId(firsts.get(0).getId()).setName("updated1"),
+                new Organization().setId(firsts.get(1).getId()).setName("updated2").setTracking(true),
+                new Organization().setId(36).setName("new org")
         ));
         expected = new ArrayList<>(firsts);
         TestUtil.updateOrganizationsFromOrganizationsLists(expected,updater);

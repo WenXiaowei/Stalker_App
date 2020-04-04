@@ -204,40 +204,29 @@
 
 package com.vartmp7.stalker.gsonbeans;
 
-import com.vartmp7.stalker.gsonbeans.placecomponent.Coordinata;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.Accessors;
+import java.util.ArrayList;
 
-/**
- * @author Xiaowei Wen, Lorenzo Taschin
- */
-public abstract class AbstractLuogo {
-    public static final String TAG = "com.vartmp7.stalker.gsonbeans.AbstractLuogo";
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    private long id;
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    private String name;
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    private long num_max_people;
+import static junit.framework.TestCase.assertEquals;
 
-    protected AbstractLuogo(long id, String name, long num_max_people) {
-        this(id, name);
-        this.num_max_people = num_max_people;
+@RunWith(JUnit4.class)
+public class PlaceResponseTest {
+
+
+    private PlaceResponse placeResponse = new PlaceResponse();
+
+    @Test
+    public void testSetLuoghi(){
+        ArrayList<PolygonPlace> l= new ArrayList<>();
+        PolygonPlace p= new PolygonPlace();
+        l.add(p);
+        placeResponse.setLuoghi(l);
+
+        assertEquals(placeResponse.getPlacesLength(),1);
+
+
     }
-
-    protected AbstractLuogo(long id, String name) {
-        this.id = id;
-        this.name = name;
-    }
-    abstract public Coordinata getCenter();
-    abstract public double distanceTo(Coordinata c);
-    abstract public boolean isInside(Coordinata c);
 }
