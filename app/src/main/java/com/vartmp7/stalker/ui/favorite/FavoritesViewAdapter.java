@@ -254,22 +254,6 @@ public class FavoritesViewAdapter extends RecyclerView.Adapter<FavoritesViewAdap
         return vh;
 
     }
-//    private AlertDialog dialog;
-//    private void showImagePreview(int position){
-//        AlertDialog.Builder builder =new  AlertDialog.Builder(context);
-//        builder.setView(LayoutInflater.from(context).inflate(R.layout.dialog_image_preview,null));
-//               CircleImageView imageView = dialog.findViewById(R.id.previewer_image);
-//        /* calls newDrawable(), otherwise changes may affect source drawable*/
-//        Glide.with(context)
-//                .setDefaultRequestOptions(new RequestOptions().error(R.drawable.icon_stalker))
-//                .load(organizzazioni.get(position).getImage_url())
-//                .into(imageView);
-//        dialog= builder.create();
-//        dialog.show();
-//
-//    }
-
-    @SuppressLint("ClickableViewAccessibility")
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
        Organization org = organizzazioni.get(position);
@@ -278,23 +262,6 @@ public class FavoritesViewAdapter extends RecyclerView.Adapter<FavoritesViewAdap
                 .load(organizzazioni.get(position).getImage_url())
                 .into(holder.civIconaOrganizzazione);
 
-
-//        holder.civIconaOrganizzazione.setOnLongClickListener(v -> {
-//            showImagePreview(position);
-//            return false;
-//        });
-//        holder.civIconaOrganizzazione.setOnTouchListener((v, event) -> {
-//            if (dialog.isShowing()) {
-//                v.getParent().requestDisallowInterceptTouchEvent(true);
-//                int action = event.getActionMasked();
-//                if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
-//                    v.getParent().requestDisallowInterceptTouchEvent(false);
-//                    dialog.dismiss();
-//                    return true;
-//                }
-//            }
-//            return false;
-//        });
         holder.tvNomeOrganizzazione.setText(org.getName());
 
         holder.btnAddToTracking.setOnClickListener(v->{

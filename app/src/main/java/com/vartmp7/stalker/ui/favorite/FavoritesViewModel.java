@@ -226,7 +226,7 @@ import lombok.Getter;
  * @author Xiaowei Wen, Lorenzo Taschin
  */
 public class FavoritesViewModel extends ViewModel {
-    public static final String TAG ="com.vartmp7.stalker.ui.preferiti.PreferitiViewModel";
+    public static final String TAG = "com.vartmp7.stalker.ui.preferiti.PreferitiViewModel";
     private OrganizationsRepository orgRepo;
 
     private LiveData<List<Long>> mutableliveDataOrgIds;
@@ -236,15 +236,16 @@ public class FavoritesViewModel extends ViewModel {
     private MutableLiveData<Boolean> organizationsQueryExhausted;
     private MutableLiveData<Boolean> firebaseQueryExhausted;
 
-    public FavoritesViewModel(OrganizationsRepository orgRepo) {
-        this.orgRepo=orgRepo;
+    public FavoritesViewModel() {
     }
-    public void updateOrganizzazione(Organization org){
+
+    public void updateOrganizzazione(Organization org) {
         orgRepo.updateOrganizzazione(org);
     }
 
-    public void init(){
+    public void init(OrganizationsRepository orgRepo) {
         this.organizzazioni = new MediatorLiveData<>();
+        this.orgRepo = orgRepo;
         //this.liveDataOrganizzazioni = orgRepo.getOrganizzazioni();
         //this.mutableliveDataOrgIds = orgRepo.getPreferiti();
         this.firebaseQueryExhausted = new MutableLiveData<>(false);
@@ -252,7 +253,8 @@ public class FavoritesViewModel extends ViewModel {
         refresh();
     }
 
-    public void refresh(){
+    public void refresh() {
+        int i = 0;
         //MutableLiveData<List<Organizzazione>> listOrgs= new MutableLiveData<>();
         this.firebaseQueryExhausted.setValue(false);
         this.organizationsQueryExhausted.setValue(false);
@@ -260,38 +262,39 @@ public class FavoritesViewModel extends ViewModel {
         this.liveDataOrganizzazioni = orgRepo.getOrganizzazioni();
         this.mutableliveDataOrgIds = orgRepo.getPreferiti();
 
-
-        this.organizzazioni.addSource(liveDataOrganizzazioni, organizzazioni ->{
-            Log.e(TAG,"PORCODIOOO");
+        this.organizzazioni.addSource(liveDataOrganizzazioni, organizzazioni -> {
+            Log.e(TAG, "PORCODIOOO");
             organizationsQueryExhausted.setValue(true);
         });
-        this.organizzazioni.addSource(mutableliveDataOrgIds, orgIds->{
-                Log.e(TAG,"CANN DIOOO");
-                firebaseQueryExhausted.setValue(true);
+        this.organizzazioni.addSource(mutableliveDataOrgIds, orgIds -> {
+            Log.e(TAG, "CANN DIOOO");
+            firebaseQueryExhausted.setValue(true);
         });
         //orgRepo.refreshOrganizzazioni();
 
         //listOrgs.setValue(Arrays.asList(new Organizzazione().setId(1212)));
 
 
-        final Observer<Boolean> queryExhaustedObserver =  new Observer<Boolean>() {
+        final Observer<Boolean> queryExhaustedObserver = new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean aBoolean) {
-                Log.e(TAG,"cambiamento");
-                if(firebaseQueryExhausted.getValue() && organizationsQueryExhausted.getValue()){
+                Log.e(TAG, "cambiamento");
+                if (firebaseQueryExhausted.getValue() && organizationsQueryExhausted.getValue()) {
+                    Log.d(TAG, "onChanged: if sotto cambiamento");
                     final List<Long> orgIds = mutableliveDataOrgIds.getValue();
-                    organizzazioni.postValue(
-                            liveDataOrganizzazioni.getValue()
-                                    .stream()
-                                    .filter(o-> orgIds.contains(o.getId()))
-                                    .collect(Collectors.toList())
-                    );
+                    List<Organization> list = liveDataOrganizzazioni.getValue()
+                            .stream()
+                            .filter(o -> orgIds.contains(o.getId()))
+                            .collect(Collectors.toList());
+                    Log.i(TAG, "onChanged: " + list);
+                    organizzazioni.postValue(list);
                 }
             }
         };
         this.organizzazioni.addSource(organizationsQueryExhausted, queryExhaustedObserver);
-        this.organizzazioni.addSource(firebaseQueryExhausted,queryExhaustedObserver);
+        this.organizzazioni.addSource(firebaseQueryExhausted, queryExhaustedObserver);
     }
+
     public void removeFromPreferiti(Organization org) throws NotLogged {
         orgRepo.removeFromPreferiti(org);
     }

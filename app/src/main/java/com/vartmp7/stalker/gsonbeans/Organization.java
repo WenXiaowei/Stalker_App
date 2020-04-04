@@ -265,6 +265,33 @@ public class Organization implements Serializable {
     public Organization() {}
 
     @Override
+    public String toString() {
+        return "Organization{" +
+                "address='" + address + '\'' +
+                ", city='" + city + '\'' +
+                ", email='" + email + '\'' +
+                ", id=" + id +
+                ", name='" + name + '\'' +
+                ", nation='" + nation + '\'' +
+                ", phone_number='" + phone_number + '\'' +
+                ", postal_code='" + postal_code + '\'' +
+                ", region='" + region + '\'' +
+                ", type='" + type + '\'' +
+                ", ldap_common_name='" + ldap_common_name + '\'' +
+                ", ldap_domain_component='" + ldap_domain_component + '\'' +
+                ", ldap_port='" + ldap_port + '\'' +
+                ", image_url='" + image_url + '\'' +
+                ", luoghi=" + luoghi +
+                ", isPreferito=" + isPreferito +
+                ", isTracking=" + isTracking +
+                ", isExpanded=" + isExpanded +
+                ", isLogged=" + isLogged +
+                ", isAnonimo=" + isAnonimo +
+                ", isTrackingActive=" + isTrackingActive +
+                '}';
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Organization)) return false;
