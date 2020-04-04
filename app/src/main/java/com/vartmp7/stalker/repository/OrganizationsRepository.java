@@ -207,6 +207,7 @@ package com.vartmp7.stalker.repository;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 
@@ -223,6 +224,7 @@ public class OrganizationsRepository {
     private OrganizationsWebSource organizationsWebSource;
     private FavoritesSource organizationFavoritesSource;
     private static OrganizationsRepository instance;
+    //private MediatorLiveData<List<Organizzazione>> liveOrganizzazioni;
 
     public static synchronized OrganizationsRepository getInstance(){
         if (instance==null){
@@ -251,9 +253,18 @@ public class OrganizationsRepository {
         this.organizationsLocalSource = orgsLocalSource;
         this.organizationsWebSource = orgsWebSource;
         this.organizationFavoritesSource = fa;
+        //liveOrganizzazioni = new MediatorLiveData<>();
     }
     public LiveData<List<Organizzazione>> getOrganizzazioni(){
-        return organizationsLocalSource.getOrganizzazioni();
+        LiveData<List<Organizzazione>> fromLocal = organizationsLocalSource.getOrganizzazioni();
+        /*liveOrganizzazioni.addSource(fromLocal,organizzazioni->{
+            Log.d(TAG, "getOrganizzazioni: ");
+            organizzazioni.forEach(o-> Log.d(TAG, "getOrg: "+o.getId()));
+            liveOrganizzazioni.postValue(organizzazioni);
+            liveOrganizzazioni.removeSource(fromLocal);
+        });
+        return liveOrganizzazioni;*/
+        return fromLocal;
     }
 
     public LiveData<List<Long>> getPreferiti(){
@@ -286,14 +297,30 @@ public class OrganizationsRepository {
 
     public void refreshOrganizzazioni(){
         LiveData<List<Organizzazione>> resultFromWebCall = organizationsWebSource.getOrganizzazioni();
+        /*liveOrganizzazioni.addSource(resultFromWebCall,organizzazioni->{
+            Log.d(TAG, "refreshOrganizzazioni: ");
+            organizzazioni.forEach(o-> Log.d(TAG, "refreshOrg: "+o.getId()));
+            organizationsLocalSource.updateOrganizzazioni(organizzazioni);
+            liveOrganizzazioni.removeSource(resultFromWebCall);
+        });*/
+
+
+
+
+
         resultFromWebCall.observeForever(new Observer<List<Organizzazione>>() {
              @Override
              public void onChanged(List<Organizzazione> organizzazioni) {
-                 resultFromWebCall.removeObserver(this);
                  Log.d(TAG, "onChanged: aggiornare org");
+                 organizzazioni.forEach(o-> Log.d(TAG, "onChanged: "+o.getId()));
                  organizationsLocalSource.updateOrganizzazioni(organizzazioni);
              }
          });
+
+
+
+
+
         /*MutableLiveData<Boolean> webQueryExhausted = new MutableLiveData<Boolean>(false);
         MutableLiveData<Boolean> localQueryExhausted = new MutableLiveData<Boolean>(false);
         resultFromWebCall.observeForever(organizzazioni->{

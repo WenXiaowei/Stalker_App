@@ -350,14 +350,14 @@ public class FileOrganizationsLocalSourceTest {
 
     @Test
     public void testUpdateOrganizzazioni(){
-        List<Organizzazione> toUpdate = Arrays.asList(
+        List<Organizzazione> updater = new ArrayList<>(Arrays.asList(
                 new Organizzazione().setId(firsts.get(0).getId()).setName("updated1"),
                 new Organizzazione().setId(firsts.get(1).getId()).setName("updated2").setTracking(true),
                 new Organizzazione().setId(36).setName("new org")
-        );
+        ));
         expected = new ArrayList<>(firsts);
-
-        for(int i=0;i<toUpdate.size();i++){
+        TestUtil.updateOrganizationsFromOrganizationsLists(expected,updater);
+       /* for(int i=0;i<toUpdate.size();i++){
             Organizzazione orgToUpdate = toUpdate.get(i);
             boolean contained=false;
             for (int j=0;j<expected.size() &&!contained;j++){
@@ -371,21 +371,22 @@ public class FileOrganizationsLocalSourceTest {
                 }
             }
             if(!contained) expected.add(orgToUpdate);
-        }
+        }*/
+        expected.forEach(o-> Log.d(TAG, "testUpdateOrganizzazioni: EXPECTED:"+o.getId()+"name "+o.getName()));
 
         observer.setTester(organizzazioni->{
             Log.d(TAG, "testUpdateOrganizzazioni: observer triggered");
             if(!organizzazioni.equals(firsts)){
                 //organizzazioni.sort(Comparator.comparing(Organizzazione::getId));
-                organizzazioni.forEach(organizzazione -> Log.d(TAG,"testUpdateOrganizzazioni: id: "+organizzazione.getId()+", name: "+organizzazione.getName()));
+                organizzazioni.forEach(organizzazione -> Log.d(TAG,"testUpdateOrganizzazioni: ACTUAL: "+organizzazione.getId()+", name: "+organizzazione.getName()));
                 assertEquals(organizzazioni,expected);
             }else{
                 Log.d(TAG, "testUpdateOrganizzazioni: pescate organizzazioni iniziali");
             }
         });
-        source.updateOrganizzazioni(toUpdate);
-        source.updateOrganizzazioni(toUpdate);
-        source.updateOrganizzazioni(toUpdate);
+        source.updateOrganizzazioni(updater);
+        source.updateOrganizzazioni(updater);
+        source.updateOrganizzazioni(updater);
     }
 
 }

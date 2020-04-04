@@ -204,6 +204,8 @@
 
 package com.vartmp7.stalker.repository;
 
+import android.util.Log;
+
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.gson.Gson;
@@ -263,13 +265,15 @@ public class RESTOrganizationsWebSource implements OrganizationsWebSource {
                         .setTrackingActive(true)
                     .setImage_url("https://cdn.discordapp.com/attachments/690970576415621201/691008560363995208/Schermata_2020-03-21_alle_20.41.13.png"));*/
 
-
-                 mutableLiveDataOrganizzazioni.postValue(Arrays.asList(
+                List<Organizzazione> orgs = Arrays.asList(
                     new Organizzazione().setId(count).setName("unipd"+count).setTracking(true).setImage_url("https://cdn.discordapp.com/attachments/690970576415621201/691008560363995208/Schermata_2020-03-21_alle_20.41.13.png"),
                     new Organizzazione().setId(count+1).setName("unipd"+(count+1)).setTracking(true).setImage_url("https://cdn.discordapp.com/attachments/690970576415621201/691008560363995208/Schermata_2020-03-21_alle_20.41.13.png"),
                     new Organizzazione().setId(count+2).setName("unipd"+(count+2)).setTracking(true).setImage_url("https://cdn.discordapp.com/attachments/690970576415621201/691008560363995208/Schermata_2020-03-21_alle_20.41.13.png"),
                     new Organizzazione().setId(count+3).setName("unipd"+(count+3)).setTracking(true).setImage_url("https://cdn.discordapp.com/attachments/690970576415621201/691008560363995208/Schermata_2020-03-21_alle_20.41.13.png")
-                ));
+                );
+                orgs.forEach(o-> Log.d(TAG, "onFailure: "+o.getId()));
+                mutableLiveDataOrganizzazioni.postValue(orgs);
+
 
 //                mutableLiveDataOrganizzazioni.postValue(orgs.stream().distinct().collect(Collectors.toList()));
             }
