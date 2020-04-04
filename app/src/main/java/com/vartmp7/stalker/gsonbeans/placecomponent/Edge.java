@@ -204,15 +204,13 @@
 
 package com.vartmp7.stalker.gsonbeans.placecomponent;
 
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-
 import java.util.Objects;
 
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
-public class Lato {
+public class Edge {
     public static final String TAG = "com.vartmp7.stalker.gsonbeans.placecomponent.lato";
     @Getter
     @Setter
@@ -231,7 +229,7 @@ public class Lato {
     @Accessors(chain = true)
     private double endY;
 
-    public Lato(Coordinata a, Coordinata b) {
+    public Edge(Coordinate a, Coordinate b) {
         this.startX = a.getLongitude();
         this.startY = a.getLatitude();
         this.endX = b.getLongitude();
@@ -241,12 +239,12 @@ public class Lato {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Lato)) return false;
-        Lato lato = (Lato) o;
-        return Double.compare(lato.getStartX(), getStartX()) == 0 &&
-                Double.compare(lato.getStartY(), getStartY()) == 0 &&
-                Double.compare(lato.getEndX(), getEndX()) == 0 &&
-                Double.compare(lato.getEndY(), getEndY()) == 0;
+        if (!(o instanceof Edge)) return false;
+        Edge edge = (Edge) o;
+        return Double.compare(edge.getStartX(), getStartX()) == 0 &&
+                Double.compare(edge.getStartY(), getStartY()) == 0 &&
+                Double.compare(edge.getEndX(), getEndX()) == 0 &&
+                Double.compare(edge.getEndY(), getEndY()) == 0;
     }
 
     @Override
@@ -255,13 +253,13 @@ public class Lato {
     }
 
     //restituisce true sse il lato interseca con il segmento che unisce  'coordinata' con (Double.Max_VALUE,Double.MAX_VALUE)
-    public boolean linesIntersect(Coordinata coordinata) {
+    public boolean linesIntersect(Coordinate coordinate) {
         final double X1 = startX;
         final double Y1 = startY;
         final double X2 = endX;
         final double Y2 = endY;
-        final double X3 = coordinata.getLongitude();
-        final double Y3 = coordinata.getLatitude();
+        final double X3 = coordinate.getLongitude();
+        final double Y3 = coordinate.getLatitude();
         final double X4 = Double.MAX_VALUE;
         final double Y4 = Double.MAX_VALUE;
 

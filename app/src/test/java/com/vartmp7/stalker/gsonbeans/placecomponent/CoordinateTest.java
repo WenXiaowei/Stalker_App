@@ -204,11 +204,8 @@
 
 package com.vartmp7.stalker.gsonbeans.placecomponent;
 
-import com.vartmp7.stalker.gsonbeans.placecomponent.Coordinata;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import org.junit.runners.Parameterized;
 
 import java.util.Arrays;
@@ -218,14 +215,14 @@ import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
 
 @RunWith(Parameterized.class)
-public class CoordinataTest {
+public class CoordinateTest {
 
     private final static double DELTA_METRI=0.1d;
 
-    private Coordinata c1, c2;
+    private Coordinate c1, c2;
     private double latitudine, longitudine;
 
-    public CoordinataTest(Coordinata c1, Coordinata c2, double latitudine, double longitudine) {
+    public CoordinateTest(Coordinate c1, Coordinate c2, double latitudine, double longitudine) {
         this.c1 = c1;
         this.c2 = c2;
         this.latitudine = latitudine;
@@ -240,11 +237,11 @@ public class CoordinataTest {
 
     @Parameterized.Parameters
     public static Collection<Object[]> data() {
-        Coordinata c = new Coordinata(1,1);
+        Coordinate c = new Coordinate(1,1);
         return Arrays.asList(new Object[][]{
-                {new Coordinata(0,1), new Coordinata(0,1),0,1,},
-                {new Coordinata(),new Coordinata(),0,0},
-                {c, new Coordinata(c),1,1},
+                {new Coordinate(0,1), new Coordinate(0,1),0,1,},
+                {new Coordinate(),new Coordinate(),0,0},
+                {c, new Coordinate(c),1,1},
         });
     }
 
@@ -263,7 +260,7 @@ public class CoordinataTest {
     }
     @Test
     public void testSetters(){
-        Coordinata c =new Coordinata();
+        Coordinate c =new Coordinate();
         c1.setLatitude(latitudine);
         c1.setLongitude(longitudine);
         assertEquals(c1.getLongitude(), longitudine);
@@ -272,8 +269,8 @@ public class CoordinataTest {
 
     @Test
     public void distanzaTraCoordinate(){
-        Coordinata c1 = new Coordinata(45.411220, 11.887316);
-        Coordinata c2 = new Coordinata(45.411110, 11.887791);
+        Coordinate c1 = new Coordinate(45.411220, 11.887316);
+        Coordinate c2 = new Coordinate(45.411110, 11.887791);
 
         assertEquals(c1.getDistanceTo(c2),39.04d,DELTA_METRI);
     }

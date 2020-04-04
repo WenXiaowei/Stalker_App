@@ -205,7 +205,6 @@
 package com.vartmp7.stalker.gsonbeans.placecomponent;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import java.util.Objects;
 
@@ -217,7 +216,7 @@ import lombok.experimental.Accessors;
  * @author Xiaowei Wen, Lorenzo Taschin
  */
 
-public class Coordinata {
+public class Coordinate {
 
     public static final String TAG = "com.vartmp7.stalker.gsonbeans.placecomponent.Coordinata";
     @Getter
@@ -229,15 +228,15 @@ public class Coordinata {
     @Accessors(chain = true)
     private double longitude = 0; //x
 
-    public Coordinata() {
+    public Coordinate() {
     }
 
-    public Coordinata(Coordinata c) {
+    public Coordinate(Coordinate c) {
         latitude = c.getLatitude();
         longitude = c.getLongitude();
     }
 
-    public Coordinata(double latitudine, double longitude) {
+    public Coordinate(double latitudine, double longitude) {
         this.latitude = latitudine;
         this.longitude = longitude;
     }
@@ -254,8 +253,8 @@ public class Coordinata {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Coordinata)) return false;
-        Coordinata that = (Coordinata) o;
+        if (!(o instanceof Coordinate)) return false;
+        Coordinate that = (Coordinate) o;
         return Double.compare(that.getLatitude(), getLatitude()) == 0 &&
                 Double.compare(that.getLongitude(), getLongitude()) == 0;
     }
@@ -271,16 +270,16 @@ public class Coordinata {
 
     /**
      * restituisce la distanza in metri della coordinata corrente alla coordinata C
-     * @param anotherCoordinata la seconda coordinata
+     * @param anotherCoordinate la seconda coordinata
      * @return la distanza in metri dalla coordinata corrente alla seconda coordinata
      */
-    public double getDistanceTo(final Coordinata anotherCoordinata){
+    public double getDistanceTo(final Coordinate anotherCoordinate){
 
         long R = 6378137; // Earth’s mean radius in meter
-        double dLat = rad(anotherCoordinata.getLatitude() - getLatitude());
-        double dLong = rad(anotherCoordinata.getLongitude() - getLongitude());
+        double dLat = rad(anotherCoordinate.getLatitude() - getLatitude());
+        double dLong = rad(anotherCoordinate.getLongitude() - getLongitude());
         double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                Math.cos(rad(getLatitude())) * Math.cos(rad(anotherCoordinata.getLatitude())) *
+                Math.cos(rad(getLatitude())) * Math.cos(rad(anotherCoordinate.getLatitude())) *
                         Math.sin(dLong / 2) * Math.sin(dLong / 2);
         double c1 = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
         return R * c1; // returns the distance in meter

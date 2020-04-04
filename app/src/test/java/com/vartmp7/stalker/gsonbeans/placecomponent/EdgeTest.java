@@ -216,14 +216,14 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(Parameterized.class)
-public class LatoTest {
+public class EdgeTest {
 
     private static final double DELTA=0d;
-    private Lato lato;
+    private Edge edge;
     private double x1,y1,x2,y2;
 
-    public LatoTest(Lato lato, double x1, double y1, double x2, double y2) {
-        this.lato = lato;
+    public EdgeTest(Edge edge, double x1, double y1, double x2, double y2) {
+        this.edge = edge;
         this.x1 = x1;
         this.y1 = y1;
         this.x2 = x2;
@@ -232,23 +232,23 @@ public class LatoTest {
 
     @Test
     public void testLinesIntersectWhenItShouldNot(){
-        Lato l=new Lato(new Coordinata(0,0),new Coordinata(1,1));
-        Coordinata p = new Coordinata(3,3);
+        Edge l=new Edge(new Coordinate(0,0),new Coordinate(1,1));
+        Coordinate p = new Coordinate(3,3);
         assertFalse(l.linesIntersect(p));
     }
 
     @Test
     public void testLinesIntersectWhenPointIsOnEdge(){
-        Lato l2=new Lato(new Coordinata(0,0),new Coordinata(1,1));
-        Coordinata p2 = new Coordinata(0.5d,0.5d);
+        Edge l2=new Edge(new Coordinate(0,0),new Coordinate(1,1));
+        Coordinate p2 = new Coordinate(0.5d,0.5d);
         assertTrue(l2.linesIntersect(p2));
     }
 
 
     @Test
     public void testLinesIntersectWhenItShould(){
-        Lato l=new Lato(new Coordinata(0,0),new Coordinata(1,2));
-        Coordinata p = new Coordinata(0,1);
+        Edge l=new Edge(new Coordinate(0,0),new Coordinate(1,2));
+        Coordinate p = new Coordinate(0,1);
         assertTrue(l.linesIntersect(p));
     }
 
@@ -257,7 +257,7 @@ public class LatoTest {
     @Parameterized.Parameters
     public static Collection<Object[]> data() {
 
-        Lato l1 = new Lato(new Coordinata(0,0),new Coordinata(1,1));
+        Edge l1 = new Edge(new Coordinate(0,0),new Coordinate(1,1));
         return Arrays.asList(new Object[][]{
                 {l1,0,0,1,1}
         });
@@ -265,22 +265,22 @@ public class LatoTest {
 
     @Test
     public void testToStringHashCode(){
-        Lato l = new Lato(new Coordinata(x1,y1),new Coordinata(x2,y2));
+        Edge l = new Edge(new Coordinate(x1,y1),new Coordinate(x2,y2));
 
-        assertEquals(lato,l);
-        assertEquals(lato.hashCode(),l.hashCode());
+        assertEquals(edge,l);
+        assertEquals(edge.hashCode(),l.hashCode());
     }
 
     @Test
     public void testGetters(){
-        Lato l = new Lato(new Coordinata(x1,y1),new Coordinata(x2,y2));
+        Edge l = new Edge(new Coordinate(x1,y1),new Coordinate(x2,y2));
         l.setStartX(x1);
         l.setStartY(y1);
         l.setEndX(x2);
         l.setEndY(y2);
-        assertEquals(lato.getStartX(),l.getStartX(),DELTA);
-        assertEquals(lato.getStartY(),l.getStartY(),DELTA);
-        assertEquals(lato.getEndX(),l.getEndX(),DELTA);
-        assertEquals(lato.getEndY(),l.getEndY(),DELTA);
+        assertEquals(edge.getStartX(),l.getStartX(),DELTA);
+        assertEquals(edge.getStartY(),l.getStartY(),DELTA);
+        assertEquals(edge.getEndX(),l.getEndX(),DELTA);
+        assertEquals(edge.getEndY(),l.getEndY(),DELTA);
     }
 }
