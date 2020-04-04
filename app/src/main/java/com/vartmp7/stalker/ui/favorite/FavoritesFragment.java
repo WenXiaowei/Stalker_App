@@ -263,14 +263,13 @@ public class FavoritesFragment extends Fragment implements SwipeRefreshLayout.On
         if (!isUserLogged()) {
             TextView tv = root.findViewById(R.id.tvHeaderFavorites);
             tv.setText(R.string.should_be_logged_for_favorites);
+            tv.setTextSize(18);
             requireActivity().openOptionsMenu();
             return root;
         }
-        listMutableLiveData = new MutableLiveData<>();
-        listMutableLiveData.setValue(new ArrayList<>());
+        listMutableLiveData = new MutableLiveData<>(new ArrayList<>());
+
         this.favRecyclerView = root.findViewById(R.id.preferitiRecyclerView);
-        /*favViewModel =
-                  new ViewModelProvider(getActivity()).get(PreferitiViewModel.class);*/
 
         OrganizationsRepository orgRepo = OrganizationsRepository.getInstance();
 
@@ -318,7 +317,7 @@ public class FavoritesFragment extends Fragment implements SwipeRefreshLayout.On
     private void initRecyclerView() {
         if (favViewModel.getOrganizzazioni().getValue() == null) Log.d(TAG, "è null!");
         favViewAdapter = new FavoritesViewAdapter(getContext(), favViewModel,
-                favViewModel.getOrganizzazioni().getValue());
+                new ArrayList<>());
         RecyclerView.LayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         favRecyclerView.setLayoutManager(linearLayoutManager);
         favRecyclerView.setAdapter(favViewAdapter);

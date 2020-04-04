@@ -225,7 +225,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class RESTOrganizationsWebSource implements OrganizationsWebSource {
+public class RESTObtainer implements Obtainer {
     private static final String TAG = "com.vartmp7.stalker.repository.RESTOrganizationsRepository";
     private String serverUrl;
     private OkHttpClient httpClient;
@@ -237,7 +237,7 @@ public class RESTOrganizationsWebSource implements OrganizationsWebSource {
     private MutableLiveData<List<Organization>> mutableLiveDataOrganizzazioni;
 
 
-    public RESTOrganizationsWebSource(OkHttpClient httpClient, MutableLiveData<List<Organization>> list , String serverUrl) {
+    public RESTObtainer(OkHttpClient httpClient, MutableLiveData<List<Organization>> list , String serverUrl) {
         this.httpClient = httpClient;
         this.serverUrl = serverUrl;
         //this.mutableLiveDataOrganizzazioni= list;
@@ -245,7 +245,7 @@ public class RESTOrganizationsWebSource implements OrganizationsWebSource {
     }
 
     @Override
-    public MutableLiveData<List<Organization>> getOrganizzazioni() {
+    public MutableLiveData<List<Organization>> getOrganizations() {
         count++;
 //        Log.e(TAG, count + "");
 

@@ -274,6 +274,7 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Organization org = listOrganization.get(position);
+        holder.ibtnPreferito.setImageResource(org.isPreferito() ? R.drawable.icon_fav_si : R.drawable.icon_fav_no);
 
         View.OnClickListener listener = v -> {
             switch (v.getId()) {
@@ -336,7 +337,6 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
 
 //        holder.tvElencoLuoghi =
         holder.tvIndirizzo.setText(org.getAddress());
-        holder.ibtnPreferito.setImageResource(org.isPreferito() ? R.drawable.icon_fav_si : R.drawable.icon_fav_no);
 
         holder.ibtnPreferito.setOnClickListener(listener);
 

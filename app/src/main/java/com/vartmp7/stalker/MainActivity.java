@@ -244,12 +244,12 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.vartmp7.stalker.gsonbeans.Organization;
 import com.vartmp7.stalker.repository.FavoritesSource;
-import com.vartmp7.stalker.repository.FileOrganizationsLocalSource;
+import com.vartmp7.stalker.repository.FileStorage;
 import com.vartmp7.stalker.repository.FirebaseFavoritesSource;
-import com.vartmp7.stalker.repository.OrganizationsLocalSource;
+import com.vartmp7.stalker.repository.Storage;
 import com.vartmp7.stalker.repository.OrganizationsRepository;
-import com.vartmp7.stalker.repository.OrganizationsWebSource;
-import com.vartmp7.stalker.repository.RESTOrganizationsWebSource;
+import com.vartmp7.stalker.repository.Obtainer;
+import com.vartmp7.stalker.repository.RESTObtainer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -318,13 +318,13 @@ public class MainActivity extends AppCompatActivity {
 //        Log.d(TAG,"size:"+liveDataOrganizzazioni.getValue().size());
 
         MutableLiveData<List<Organization>> list = new MutableLiveData<>(new ArrayList<>());
-        OrganizationsLocalSource localSource = new FileOrganizationsLocalSource("orgs.json", this, list);
+        Storage localSource = new FileStorage("orgs.json", this, list);
         FavoritesSource preferitiRepository = null;
         if (FirebaseAuth.getInstance().getCurrentUser() != null || GoogleSignIn.getLastSignedInAccount(this) != null) {
             preferitiRepository = new FirebaseFavoritesSource(getUserId(), FirebaseFirestore.getInstance());
         }
 
-        OrganizationsWebSource webSource = new RESTOrganizationsWebSource(Tools.getUnsafeOkHttpClient(), list, "https://asdasd.com");
+        Obtainer webSource = new RESTObtainer(Tools.getUnsafeOkHttpClient(), list, "https://asdasd.com");
         OrganizationsRepository.init(localSource, webSource, preferitiRepository);
 
 

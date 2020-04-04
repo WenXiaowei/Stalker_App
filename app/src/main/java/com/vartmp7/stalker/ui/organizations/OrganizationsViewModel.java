@@ -232,7 +232,7 @@ public class OrganizationsViewModel extends ViewModel {
         }
         this.orgRepo = orgRepo;
         //TODO togliere questo casting
-        this.organizationList = orgRepo.getOrganizzazioni();
+        this.organizationList = orgRepo.getOrganizations();
     }
 
 

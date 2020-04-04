@@ -242,7 +242,6 @@ public class OrganizationsFragment extends Fragment implements SwipeRefreshLayou
         View root = inflater.inflate(R.layout.fragment_organizations, container, false);
         organizzazioneViewModel = new ViewModelProvider(requireActivity()).get(OrganizationsViewModel.class);
         organizzazioneViewModel.initData(OrganizationsRepository.getInstance());
-
         swipeRefreshLayout = root.findViewById(R.id.srfl);
         swipeRefreshLayout.setOnRefreshListener(this);
         swipeRefreshLayout.setColorSchemeColors(Color.BLACK, Color.GREEN, Color.MAGENTA);

@@ -230,7 +230,7 @@ import java.util.concurrent.Executors;
 import lombok.AccessLevel;
 import lombok.Getter;
 
-public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
+public class FileStorage implements Storage {
     private static final String TAG = "com.vartmp7.stalker.repository.FileOrganizationsLocalSource";
     private String fileName;
     private Context context;
@@ -239,7 +239,7 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
     @Getter(AccessLevel.PUBLIC)
     private MutableLiveData<List<Organization>> mLiveOrgs;
 
-    public FileOrganizationsLocalSource(String fileName, Context context, MutableLiveData<List<Organization>> org) {
+    public FileStorage(String fileName, Context context, MutableLiveData<List<Organization>> org) {
         this.fileName = fileName;
         this.context = context;
         this.gson = new Gson();
@@ -248,7 +248,7 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
     }
 
     @Override
-    public void updateOrganizzazioni(List<Organization> org) {
+    public void updateOrganizations(List<Organization> org) {
         List<Organization> orgList = mLiveOrgs.getValue();
 
         for (Organization organization : org) {
@@ -261,7 +261,7 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
     }
 
     @Override
-    public void updateOrganizzazione(Organization o) {
+    public void updateOrganization(Organization o) {
         List<Organization> l = new ArrayList<>(mLiveOrgs.getValue());
         int pos = -1;
         for (int i = 0; i < l.size() && pos == -1; i++)
@@ -271,12 +271,12 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
         if (pos != -1) {
             l.remove(pos);
             l.add(pos, o);
-            saveOrganizzazioni(l);
+            saveOrganizations(l);
         }
     }
 
     @Override
-    public void updateOrganizzazioniInfo(List<Organization> orgsToUpdate) {
+    public void updateOrganizationInfo(List<Organization> orgsToUpdate) {
         orgsToUpdate.forEach(o -> Log.d(TAG, "updateOrganizzazioni: updateOrgs" + o.getId()));
         List<Organization> currentOrgs = new ArrayList<>(mLiveOrgs.getValue());
         List<Organization> toSave = new ArrayList<>();
@@ -302,12 +302,12 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
         }
         Log.d(TAG, "updateOrganizzazioni: futureOrgs");
         toSave.forEach(o-> Log.d(TAG, "org: "+o.getId()));
-        saveOrganizzazioni(toSave);
+        saveOrganizations(toSave);
     }
 
 
     @Override
-    public LiveData<List<Organization>> getOrganizzazioni() {
+    public LiveData<List<Organization>> getOrganizations() {
         //MutableLiveData<List<Organizzazione>> mLiveOrgs = new MutableLiveData<>();
         //this.mLiveOrgs.setValue(organizzazioni);
 //        Log.d("TEST","arrivo qua1");
@@ -363,21 +363,21 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
     }
 
     @Override
-    public void saveOrganizzazione(Organization org) {
+    public void saveOrganization(Organization org) {
 
-        LiveData<List<Organization>> liveOrgs = getOrganizzazioni();
+        LiveData<List<Organization>> liveOrgs = getOrganizations();
         if (liveOrgs != null) {
             List<Organization> orgs = liveOrgs.getValue();
             if (orgs != null) {
                 orgs.add(org);
-                saveOrganizzazioni(orgs);
+                saveOrganizations(orgs);
             }
         }
     }
 
     //@SuppressLint("StaticFieldLeak")
     @Override
-    public synchronized void saveOrganizzazioni(List<Organization> orgs) {
+    public synchronized void saveOrganizations(List<Organization> orgs) {
         ExecutorService executorService = Executors.newSingleThreadExecutor();
 
         executorService.execute(new Runnable() {
@@ -419,15 +419,16 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
 
 
     @Override
-    public void removeOrganizzazione(Organization org) {
-        LiveData<List<Organization>> liveOrgs = getOrganizzazioni();
+    public void removeOrganization(Organization org) {
+        LiveData<List<Organization>> liveOrgs = getOrganizations();
         if (liveOrgs != null) {
             List<Organization> orgs = liveOrgs.getValue();
             orgs.remove(org);
-            saveOrganizzazioni(orgs);
+            saveOrganizations(orgs);
         }
 
     }
+
 
 
 }

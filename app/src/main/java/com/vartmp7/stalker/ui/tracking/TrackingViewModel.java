@@ -228,7 +228,7 @@ public class TrackingViewModel extends ViewModel {
     private OrganizationsRepository repository;
 
     public LiveData<List<Organization>> getListOrganizzazione() {
-        return repository.getOrganizzazioni();
+        return repository.getOrganizations();
     }
 
     public void updateOrganizzazione(Organization o) {
@@ -236,7 +236,7 @@ public class TrackingViewModel extends ViewModel {
     }
 
     public void activeAllTrackingOrganization(boolean active){
-        List<Organization> l=repository.getOrganizzazioni().getValue().stream().filter(Organization::isTracking).collect(Collectors.toList());
+        List<Organization> l=repository.getOrganizations().getValue().stream().filter(Organization::isTracking).collect(Collectors.toList());
         l.forEach(organizzazione -> organizzazione.setTrackingActive(active));
         repository.updateOrganizzationi(l);
     }

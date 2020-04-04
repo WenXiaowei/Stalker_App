@@ -218,46 +218,54 @@ public class OrganizationsRepository {
 
     private static final String TAG = "com.vartmp7.stalker.repository.OrganizationsRepository";
 
-    private OrganizationsLocalSource organizationsLocalSource;
-    private OrganizationsWebSource organizationsWebSource;
+    private Storage storage;
+    private Obtainer obtainer;
     private FavoritesSource organizationFavoritesSource;
     private static OrganizationsRepository instance;
     //private MediatorLiveData<List<Organizzazione>> liveOrganizzazioni;
 
-    public static synchronized OrganizationsRepository getInstance(){
-        if (instance==null){
+    public static synchronized OrganizationsRepository getInstance() {
+        if (instance == null) {
             throw new AssertionError("You have to call init first!");
         }
         return instance;
     }
 
-    public void updateOrganizzazione(Organization o){
-       organizationsLocalSource.updateOrganizzazione(o);
-    }
-    public void updateOrganizzationi(List<Organization> l){
-        organizationsLocalSource.updateOrganizzazioni(l);
+    public void updateOrganizzazione(Organization o) {
+        storage.updateOrganization(o);
     }
 
-    public void updateOrganizzazioni(List<Organization> orgs){
-        organizationsLocalSource.updateOrganizzazioni(orgs);
+    public void updateOrganizzationi(List<Organization> l) {
+        storage.updateOrganizations(l);
     }
 
-    public synchronized static OrganizationsRepository init(OrganizationsLocalSource orgsLocalSource, OrganizationsWebSource orgsWebSource, FavoritesSource fa){
-        if (instance == null){
-            instance = new OrganizationsRepository( orgsLocalSource,  orgsWebSource,fa);
+    public void updateOrganizzazioni(List<Organization> orgs) {
+        storage.updateOrganizations(orgs);
+    }
+
+    public synchronized static OrganizationsRepository init(Storage orgsLocalSource, Obtainer orgsWebSource, FavoritesSource fa) {
+        if (instance == null) {
+            instance = new OrganizationsRepository(orgsLocalSource, orgsWebSource, fa);
         }
         return instance;
     }
 
 
-    protected OrganizationsRepository( OrganizationsLocalSource orgsLocalSource, OrganizationsWebSource orgsWebSource,FavoritesSource fa) {
-        this.organizationsLocalSource = orgsLocalSource;
-        this.organizationsWebSource = orgsWebSource;
+    protected OrganizationsRepository(Storage orgsLocalSource, Obtainer orgsWebSource, FavoritesSource fa) {
+        this.storage = orgsLocalSource;
+        this.obtainer = orgsWebSource;
         this.organizationFavoritesSource = fa;
         //liveOrganizzazioni = new MediatorLiveData<>();
     }
-    public LiveData<List<Organization>> getOrganizzazioni(){
-        LiveData<List<Organization>> fromLocal = organizationsLocalSource.getOrganizzazioni();
+
+    public LiveData<List<Organization>> getOrganizations() {
+        LiveData<List<Organization>> fromLocal = storage.getOrganizations();
+        Log.d(TAG, "getOrganizations() before if");
+        if (organizationFavoritesSource != null){
+            Log.d(TAG, "getOrganizations() dentro if");
+            organizationFavoritesSource.refresh();
+        }
+        Log.d(TAG, "getOrganizzazioni: " + fromLocal.getValue());
         /*liveOrganizzazioni.addSource(fromLocal,organizzazioni->{
             Log.d(TAG, "getOrganizzazioni: ");
             organizzazioni.forEach(o-> Log.d(TAG, "getOrg: "+o.getId()));
@@ -268,30 +276,29 @@ public class OrganizationsRepository {
         return fromLocal;
     }
 
-    public LiveData<List<Long>> getPreferiti(){
-        return organizationFavoritesSource.getOrganizzazioni();
+    public LiveData<List<Long>> getPreferiti() {
+        return organizationFavoritesSource.getFavoriteOrganizationID();
     }
 
     public void addToPreferiti(Organization org) throws NotLogged {
-        if (organizationFavoritesSource!=null){
+        if (organizationFavoritesSource != null) {
             org.setPreferito(true);
             updateOrganizzazione(org);
-            organizationFavoritesSource.addOrganizzazione(org.getId());
-        }else throw new NotLogged();
+            organizationFavoritesSource.addOrganization(org.getId());
+        } else throw new NotLogged();
     }
 
     public void removeFromPreferiti(Organization org) throws NotLogged {
-        if (organizationFavoritesSource!=null){
+        if (organizationFavoritesSource != null) {
             org.setPreferito(false);
             updateOrganizzazione(org);
-            organizationFavoritesSource.removeOrganizzazione(org.getId());
-        }else throw new NotLogged();
+            organizationFavoritesSource.removeOrganization(org.getId());
+        } else throw new NotLogged();
     }
 
 
-
-    public void refreshOrganizzazioni(){
-        LiveData<List<Organization>> resultFromWebCall = organizationsWebSource.getOrganizzazioni();
+    public void refreshOrganizzazioni() {
+        LiveData<List<Organization>> resultFromWebCall = obtainer.getOrganizations();
         /*liveOrganizzazioni.addSource(resultFromWebCall,organizzazioni->{
             Log.d(TAG, "refreshOrganizzazioni: ");
             organizzazioni.forEach(o-> Log.d(TAG, "refreshOrg: "+o.getId()));
@@ -300,16 +307,13 @@ public class OrganizationsRepository {
         });*/
 
 
-
-
-
         resultFromWebCall.observeForever(new Observer<List<Organization>>() {
-             @Override
-             public void onChanged(List<Organization> organizzazioni) {
-                 Log.d(TAG, "onChanged: aggiornare org");
-                 organizationsLocalSource.updateOrganizzazioniInfo(organizzazioni);
-             }
-         });
+            @Override
+            public void onChanged(List<Organization> organizzazioni) {
+                Log.d(TAG, "onChanged: aggiornare org");
+                storage.updateOrganizationInfo(organizzazioni);
+            }
+        });
 
 
 

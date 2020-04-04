@@ -215,9 +215,9 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.vartmp7.stalker.gsonbeans.Organization;
 import com.vartmp7.stalker.repository.FavoritesSource;
-import com.vartmp7.stalker.repository.OrganizationsLocalSource;
+import com.vartmp7.stalker.repository.Storage;
 import com.vartmp7.stalker.repository.OrganizationsRepository;
-import com.vartmp7.stalker.repository.OrganizationsWebSource;
+import com.vartmp7.stalker.repository.Obtainer;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -244,7 +244,7 @@ public class OrganizationsRepositoryTest {
     private TestObserver observer;
     private List<Organization> firsts;
     private List<Organization> expected;
-    private OrganizationsLocalSource localSource;
+    private Storage localSource;
 
 
     @Rule
@@ -258,9 +258,9 @@ public class OrganizationsRepositoryTest {
                 new Organization().setId(3).setName("lll").setTracking(false)
         );
         final MutableLiveData<List<Organization>> localLiveData = new MutableLiveData<>();
-        localSource = Mockito.mock(OrganizationsLocalSource.class);
-        OrganizationsWebSource webSource = Mockito.mock(OrganizationsWebSource.class);
-        when(webSource.getOrganizzazioni()).then((Answer<LiveData<List<Organization>>>) invocation -> {
+        localSource = Mockito.mock(Storage.class);
+        Obtainer webSource = Mockito.mock(Obtainer.class);
+        when(webSource.getOrganizations()).then((Answer<LiveData<List<Organization>>>) invocation -> {
             MutableLiveData<List<Organization>> liveData = new MutableLiveData<>();
             liveData.postValue(Arrays.asList(
                     new Organization().setId(1).setName("changed").setTracking(false),
@@ -279,12 +279,12 @@ public class OrganizationsRepositoryTest {
     @Test
     public void testGet(){
         expected=firsts;
-        when(localSource.getOrganizzazioni()).then((Answer<LiveData<List<Organization>>>) invocation -> {
+        when(localSource.getOrganizations()).then((Answer<LiveData<List<Organization>>>) invocation -> {
             MutableLiveData<List<Organization>> liveData = new MutableLiveData<>();
             liveData.postValue(firsts);
             return  liveData;
         });
-        orgRepo.getOrganizzazioni().observe(lifecycleOwner,organizzazioni -> {
+        orgRepo.getOrganizations().observe(lifecycleOwner, organizzazioni -> {
             Log.d(TAG, "testGet: triggered");
             organizzazioni.forEach(o-> Log.d(TAG, "testGet: org"+o.getId()));
             assertEquals(expected,organizzazioni);

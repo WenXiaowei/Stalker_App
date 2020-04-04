@@ -245,7 +245,9 @@ public class FavoritesViewModel extends ViewModel {
 
     public void init(OrganizationsRepository orgRepo) {
         this.organizzazioni = new MediatorLiveData<>();
+        this.organizzazioni.setValue(orgRepo.getOrganizations().getValue());
         this.orgRepo = orgRepo;
+
         //this.liveDataOrganizzazioni = orgRepo.getOrganizzazioni();
         //this.mutableliveDataOrgIds = orgRepo.getPreferiti();
         this.firebaseQueryExhausted = new MutableLiveData<>(false);
@@ -259,7 +261,7 @@ public class FavoritesViewModel extends ViewModel {
         this.firebaseQueryExhausted.setValue(false);
         this.organizationsQueryExhausted.setValue(false);
 
-        this.liveDataOrganizzazioni = orgRepo.getOrganizzazioni();
+        this.liveDataOrganizzazioni = orgRepo.getOrganizations();
         this.mutableliveDataOrgIds = orgRepo.getPreferiti();
 
         this.organizzazioni.addSource(liveDataOrganizzazioni, organizzazioni -> {
@@ -275,20 +277,18 @@ public class FavoritesViewModel extends ViewModel {
         //listOrgs.setValue(Arrays.asList(new Organizzazione().setId(1212)));
 
 
-        final Observer<Boolean> queryExhaustedObserver = new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean aBoolean) {
-                Log.e(TAG, "cambiamento");
-                if (firebaseQueryExhausted.getValue() && organizationsQueryExhausted.getValue()) {
-                    Log.d(TAG, "onChanged: if sotto cambiamento");
-                    final List<Long> orgIds = mutableliveDataOrgIds.getValue();
-                    List<Organization> list = liveDataOrganizzazioni.getValue()
-                            .stream()
-                            .filter(o -> orgIds.contains(o.getId()))
-                            .collect(Collectors.toList());
-                    Log.i(TAG, "onChanged: " + list);
-                    organizzazioni.postValue(list);
-                }
+        final Observer<Boolean> queryExhaustedObserver = aBoolean -> {
+            Log.e(TAG, "cambiamento");
+            if (firebaseQueryExhausted.getValue() && organizationsQueryExhausted.getValue()) {
+                Log.d(TAG, "onChanged: if sotto cambiamento");
+                final List<Long> orgIds = mutableliveDataOrgIds.getValue();
+                List<Organization> list = liveDataOrganizzazioni.getValue()
+                        .stream()
+                        .filter(o -> orgIds.contains(o.getId()))
+                        .collect(Collectors.toList());
+                list.forEach(o-> orgRepo.updateOrganizzazione(o.setPreferito(true)));
+                Log.i(TAG, "onChanged: " + list);
+                organizzazioni.postValue(list);
             }
         };
         this.organizzazioni.addSource(organizationsQueryExhausted, queryExhaustedObserver);

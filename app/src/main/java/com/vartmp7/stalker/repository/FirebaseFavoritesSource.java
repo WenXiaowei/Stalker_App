@@ -276,7 +276,7 @@ public class FirebaseFavoritesSource implements FavoritesSource {
 
 
     @Override
-    public void addOrganizzazione(Long orgId) {
+    public void addOrganization(Long orgId) {
         db.collection("utenti").document(userId).
                 update(FIELDNAME_ORGANIZZAZIONI, FieldValue.arrayUnion(orgId))
                 .addOnSuccessListener(aVoid ->{
@@ -341,8 +341,9 @@ public class FirebaseFavoritesSource implements FavoritesSource {
     }
 */
 
+
     @Override
-    public void removeOrganizzazione(Long orgId) {
+    public void removeOrganization(Long orgId) {
         db.collection("utenti").document(userId).
                 update(FIELDNAME_ORGANIZZAZIONI, FieldValue.arrayRemove(orgId))
                 .addOnSuccessListener(aVoid ->{
@@ -377,7 +378,7 @@ public class FirebaseFavoritesSource implements FavoritesSource {
 
 
 
-    public LiveData<List<Long>> getOrganizzazioni() {
+    public LiveData<List<Long>> getFavoriteOrganizationID() {
         db.collection("utenti").document(userId)
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {
@@ -386,7 +387,7 @@ public class FirebaseFavoritesSource implements FavoritesSource {
                         if (data != null) {
                             final List<Long> orgIds = (List<Long>) data.get(FIELDNAME_ORGANIZZAZIONI);
                             Log.w(TAG, "data got from firebase:");
-                            orgIds.forEach(l->Log.d(TAG,"orgId:"+l));
+//                            orgIds.forEach(l->Log.d(TAG,"orgId:"+l));
                             mutableliveDataOrgIds.postValue(orgIds);
                             Log.w(TAG, "id delle org preferite ottenuti correttamente");
                         }
@@ -406,7 +407,7 @@ public class FirebaseFavoritesSource implements FavoritesSource {
                         if (data != null) {
                             final List<Long> orgIds = (List<Long>) data.get(FIELDNAME_ORGANIZZAZIONI);
                             Log.w(TAG, "data got from firebase:");
-                            orgIds.forEach(l->Log.d(TAG,"orgId:"+l));
+//                            orgIds.forEach(l->Log.d(TAG,"orgId:"+l));
                             mutableliveDataOrgIds.setValue(orgIds);
                             Log.w(TAG, "id delle org preferite ottenuti correttamente");
                         }
