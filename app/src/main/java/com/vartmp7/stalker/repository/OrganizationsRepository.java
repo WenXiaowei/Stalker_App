@@ -288,7 +288,7 @@ public class OrganizationsRepository {
         resultFromWebCall.observeForever(new Observer<List<Organizzazione>>() {
              @Override
              public void onChanged(List<Organizzazione> organizzazioni) {
-                 resultFromWebCall.removeObserver(this);
+                 //resultFromWebCall.removeObserver(this);
                  Log.d(TAG, "onChanged: aggiornare org");
                  organizationsLocalSource.updateOrganizzazioniInfo(organizzazioni);
              }
