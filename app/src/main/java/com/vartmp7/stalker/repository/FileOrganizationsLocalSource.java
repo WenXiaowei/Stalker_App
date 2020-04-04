@@ -278,7 +278,6 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
             for(int i=0; i<currentOrgs.size() && !contained; i++){
                 Organizzazione currentOrg = currentOrgs.get(i);
                 if(currentOrg.getId() == orgToUpdate.getId()){
-                    Log.d(TAG, +currentOrg.getId()+"="+orgToUpdate.getId());
                     contained=true;
                     orgToUpdate.setTrackingActive(currentOrg.isTrackingActive());
                     orgToUpdate.setTracking(currentOrg.isTracking());
@@ -293,7 +292,7 @@ public class FileOrganizationsLocalSource implements OrganizationsLocalSource {
             }
         }
         Log.d(TAG, "updateOrganizzazioni: futureOrgs");
-        currentOrgs.forEach(o-> Log.d(TAG, "org: "+o.getId()));
+        toSave.forEach(o-> Log.d(TAG, "org: "+o.getId()));
         saveOrganizzazioni(toSave);
     }
 

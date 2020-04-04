@@ -205,14 +205,22 @@
 
 package com.vartmp7.stalker;
 
+import android.util.Log;
+
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LifecycleRegistry;
+
+import com.vartmp7.stalker.gsonbeans.Organizzazione;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class TestUtil {
+    private static final String TAG="com.vartmp7.stalker.TestUtil";
 
     public static LifecycleOwner mockLifecycleOwner() {
         LifecycleOwner owner = mock(LifecycleOwner.class);
@@ -221,4 +229,31 @@ public class TestUtil {
         when(owner.getLifecycle()).thenReturn(lifecycle);
         return owner;
     }
+    /**/
+    public static void updateOrganizationsFromOrganizationsLists(List<Organizzazione> toUpdate, List<Organizzazione> updater){
+        List<Organizzazione> toUpdateBackup = new ArrayList<>(toUpdate);
+        toUpdate.clear();
+        Log.d(TAG, "updateOrganizationsFromOrganizationsLists: "+toUpdateBackup.size());
+        for(int i=0;i<updater.size();i++){
+            Organizzazione orgUpdated = updater.get(i);
+            boolean contained=false;
+            for (int j=0;j<toUpdateBackup.size() &&!contained;j++){
+                Organizzazione currentOrg = toUpdateBackup.get(j);
+                if(orgUpdated.getId()==currentOrg.getId()){
+                    Log.d(TAG, "preso "+orgUpdated.getId()+"name"+orgUpdated.getName());
+                    contained=true;
+                    orgUpdated.setTrackingActive(currentOrg.isTrackingActive());
+                    orgUpdated.setTracking(currentOrg.isTracking());
+                    orgUpdated.setPreferito(currentOrg.isPreferito());
+                    toUpdate.add(orgUpdated);
+                }else{
+                    Log.d(TAG, "escluso "+orgUpdated.getId());
+                }
+            }
+            if(!contained) toUpdate.add(orgUpdated);
+        }
+
+        toUpdate.forEach(o-> Log.d(TAG, "updateOrganizationsFromOrganizationsLists: "+o.getId()+" "+o.getName()));
+    }
+
 }

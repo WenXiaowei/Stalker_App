@@ -242,6 +242,7 @@ public class OrganizationViewAdapter extends RecyclerView.Adapter<OrganizationVi
     public OrganizationViewAdapter(Context context, NavController controller) {
         this.context = context;
         this.navController = controller;
+        listaOrganizzazione=new ArrayList<>();
     }
 
     public void setOrganizations(List<Organizzazione> newData){
