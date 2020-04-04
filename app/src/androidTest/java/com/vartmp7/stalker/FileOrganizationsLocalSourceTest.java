@@ -217,6 +217,7 @@ import androidx.lifecycle.Observer;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 
+import com.google.gson.Gson;
 import com.vartmp7.stalker.gsonbeans.Organizzazione;
 import com.vartmp7.stalker.gsonbeans.ResponseOrganizzazione;
 import com.vartmp7.stalker.repository.FileOrganizationsLocalSource;
@@ -256,35 +257,14 @@ public class FileOrganizationsLocalSourceTest {
     private LifecycleOwner lifecycleOwner;
 
 
-    private class TestObserver implements Observer<List<Organizzazione>>{
-        private Tester tester;
-        @Override
-        public void onChanged(List<Organizzazione> organizzazioni) {
-            if(tester!=null)
-                tester.test(organizzazioni);
-        }
-        public TestObserver  setTester(Tester tester){
-            this.tester=tester;
-            return this;
-        }
 
-    }
 
-    private interface Tester{
-        void test(List<Organizzazione> organizzazioni);
-    }
 
 
     @Rule
     public TestRule rule = new InstantTaskExecutorRule();
 
-    private static LifecycleOwner mockLifecycleOwner() {
-        LifecycleOwner owner = mock(LifecycleOwner.class);
-        LifecycleRegistry lifecycle = new LifecycleRegistry(owner);
-        lifecycle.handleLifecycleEvent(Lifecycle.Event.ON_RESUME);
-        when(owner.getLifecycle()).thenReturn(lifecycle);
-        return owner;
-    }
+
 
     @SuppressWarnings("unchecked")
     public static Observer<List<Organizzazione>> mockObserver() {
@@ -299,7 +279,7 @@ public class FileOrganizationsLocalSourceTest {
     @Before
     public void setUpTest(){
         Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        this.lifecycleOwner = mockLifecycleOwner();
+        this.lifecycleOwner = TestUtil.mockLifecycleOwner();
         firsts = Arrays.asList(
                 new Organizzazione().setId(1).setName("asd").setTracking(false),
                 new Organizzazione().setId(2).setName("lol").setTracking(false),
@@ -307,7 +287,7 @@ public class FileOrganizationsLocalSourceTest {
         );
         try (PrintWriter pw = new PrintWriter(context.openFileOutput("prova.json",Context.MODE_PRIVATE))){
             ResponseOrganizzazione r = new ResponseOrganizzazione().setOrganizations(firsts);
-            pw.println(r);
+            pw.println(new Gson().toJson(r));
             pw.flush();
             Log.d(TAG,"ok");
         }catch(FileNotFoundException e){
@@ -321,20 +301,23 @@ public class FileOrganizationsLocalSourceTest {
     @Test
     public void testGet(){
         observer.setTester(organizzazioni -> {
+            Log.d(TAG, "testGet: observer triggered");
             organizzazioni.forEach(organizzazione -> Log.d(TAG, "testGet: "+organizzazione.getId()));
-           assertEquals(organizzazioni,firsts);
+            assertEquals(organizzazioni,firsts);
+            Log.d(TAG, "testGet: test terminated");
         });
     }
 
-  /*  @Test
+    @Test
     public void testSave() {
         Log.d(TAG,"as");
         expected = Arrays.asList(new Organizzazione().setId(12));
         observer.setTester(organizzazioni -> {
-            Log.e(TAG, "testSave: triggered");
+            Log.e(TAG, "testSave: observer triggered");
             if(!organizzazioni.equals(firsts)){
                 organizzazioni.forEach(organizzazione -> Log.d(TAG, "testSave: "+organizzazione.getId()));
                 assertEquals(organizzazioni,expected);
+                Log.d(TAG, "testSave: test terminated");
             }else{
                 Log.d(TAG, "testSave: pescate organizzazioni iniziali");
             }
@@ -344,22 +327,66 @@ public class FileOrganizationsLocalSourceTest {
     }
 
     @Test
-    public void testUpdate(){
-        Log.d(TAG,"as");
-        List<Organizzazione> tmp = new ArrayList<>(firsts);
-        Organizzazione o = tmp.get(0);
-        o.setName("updated");
-        o.setTracking(true);
-        tmp.sort(Comparator.comparing(Organizzazione::getId));
-        expected = new ArrayList<>(tmp);
-        source.getOrganizzazioni().observe(lifecycleOwner,organizzazioni->{
-            Log.d(TAG, "updateTest: observer triggered");
-            organizzazioni.sort(Comparator.comparing(Organizzazione::getId));
-            organizzazioni.forEach(organizzazione -> Log.d(TAG,"id: "+organizzazione.getId()+", name: "+organizzazione.getName()));
-            assertEquals(organizzazioni,expected);
+    public void testUpdateOrganizzazione(){
+        List<Organizzazione> toUpdate = new ArrayList<>();
+        for (Organizzazione org: firsts){
+            toUpdate.add(new Organizzazione().setId(org.getId()).setName((org.getName())));
+        }
+        Organizzazione o = toUpdate.get(0).setId(firsts.get(0).getId()).setName("updated");
+        //toUpdate.sort(Comparator.comparing(Organizzazione::getId));
+        expected = toUpdate;
+        observer.setTester(organizzazioni->{
+            Log.d(TAG, "testUpdateOrganizzazione: observer triggered");
+            if(!organizzazioni.equals(firsts)){
+                //organizzazioni.sort(Comparator.comparing(Organizzazione::getId));
+                organizzazioni.forEach(organizzazione -> Log.d(TAG,"testUpdateOrganizzazione: id: "+organizzazione.getId()+", name: "+organizzazione.getName()));
+                assertEquals(organizzazioni,expected);
+            }else{
+                Log.d(TAG, "testUpdateOrganizzazione: pescate organizzazioni iniziali");
+            }
         });
         source.updateOrganizzazione(o);
-
     }
-*/
+
+    @Test
+    public void testUpdateOrganizzazioni(){
+        List<Organizzazione> updater = new ArrayList<>(Arrays.asList(
+                new Organizzazione().setId(firsts.get(0).getId()).setName("updated1"),
+                new Organizzazione().setId(firsts.get(1).getId()).setName("updated2").setTracking(true),
+                new Organizzazione().setId(36).setName("new org")
+        ));
+        expected = new ArrayList<>(firsts);
+        TestUtil.updateOrganizationsFromOrganizationsLists(expected,updater);
+       /* for(int i=0;i<toUpdate.size();i++){
+            Organizzazione orgToUpdate = toUpdate.get(i);
+            boolean contained=false;
+            for (int j=0;j<expected.size() &&!contained;j++){
+                Organizzazione currentOrg = expected.get(j);
+                if(orgToUpdate.getId()==currentOrg.getId()){
+                    contained=true;
+                    orgToUpdate.setTrackingActive(currentOrg.isTrackingActive());
+                    orgToUpdate.setTracking(currentOrg.isTracking());
+                    orgToUpdate.setPreferito(currentOrg.isPreferito());
+                    expected.set(i,orgToUpdate);
+                }
+            }
+            if(!contained) expected.add(orgToUpdate);
+        }*/
+        expected.forEach(o-> Log.d(TAG, "testUpdateOrganizzazioni: EXPECTED:"+o.getId()+"name "+o.getName()));
+
+        observer.setTester(organizzazioni->{
+            Log.d(TAG, "testUpdateOrganizzazioni: observer triggered");
+            if(!organizzazioni.equals(firsts)){
+                //organizzazioni.sort(Comparator.comparing(Organizzazione::getId));
+                organizzazioni.forEach(organizzazione -> Log.d(TAG,"testUpdateOrganizzazioni: ACTUAL: "+organizzazione.getId()+", name: "+organizzazione.getName()));
+                assertEquals(organizzazioni,expected);
+            }else{
+                Log.d(TAG, "testUpdateOrganizzazioni: pescate organizzazioni iniziali");
+            }
+        });
+        source.updateOrganizzazioni(updater);
+        source.updateOrganizzazioni(updater);
+        source.updateOrganizzazioni(updater);
+    }
+
 }

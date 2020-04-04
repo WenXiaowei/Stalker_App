@@ -717,7 +717,7 @@ public class MainActivity extends AppCompatActivity {
 //        FavoritesSource preferitiRepository = new FirebaseFavoritesSource(getUserId(), FirebaseFirestore.getInstance());
 
         OrganizationsWebSource webSource = new RESTOrganizationsWebSource(Tools.getUnsafeOkHttpClient(), list, "https://asdasd.com");
-        OrganizationsRepository repository = OrganizationsRepository.init(localSource, webSource, preferitiRepository);
+        OrganizationsRepository.init(localSource, webSource, preferitiRepository);
 
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)

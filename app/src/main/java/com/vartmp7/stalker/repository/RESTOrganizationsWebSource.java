@@ -204,6 +204,8 @@
 
 package com.vartmp7.stalker.repository;
 
+import android.util.Log;
+
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.gson.Gson;
@@ -213,6 +215,7 @@ import com.vartmp7.stalker.gsonbeans.ResponseOrganizzazione;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -237,7 +240,8 @@ public class RESTOrganizationsWebSource implements OrganizationsWebSource {
     public RESTOrganizationsWebSource(OkHttpClient httpClient,MutableLiveData<List<Organizzazione>> list ,String serverUrl) {
         this.httpClient = httpClient;
         this.serverUrl = serverUrl;
-        this.mutableLiveDataOrganizzazioni= list;
+        //this.mutableLiveDataOrganizzazioni= list;
+        mutableLiveDataOrganizzazioni=new MutableLiveData<>();
     }
 
     @Override
@@ -254,22 +258,24 @@ public class RESTOrganizationsWebSource implements OrganizationsWebSource {
         call.enqueue(new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                List<Organizzazione> orgs = mutableLiveDataOrganizzazioni.getValue();
+                /*List<Organizzazione> orgs = mutableLiveDataOrganizzazioni.getValue();
 
                 orgs.add(new Organizzazione().setName("unipd " + count).setId(count)
                         .setTracking(true)
                         .setTrackingActive(true)
-                    .setImage_url("https://cdn.discordapp.com/attachments/690970576415621201/691008560363995208/Schermata_2020-03-21_alle_20.41.13.png"));
+                    .setImage_url("https://cdn.discordapp.com/attachments/690970576415621201/691008560363995208/Schermata_2020-03-21_alle_20.41.13.png"));*/
 
-                /*
-                mutableLiveOrgs.postValue(Arrays.asList(
-                    new Organizzazione().setId(++count),
-                    new Organizzazione().setId(++count),
-                    new Organizzazione().setId(++count),
-                    new Organizzazione().setId(++count)
-                ));*/
+                List<Organizzazione> orgs = Arrays.asList(
+                    new Organizzazione().setId(count).setName("unipd"+count).setTracking(true).setImage_url("https://cdn.discordapp.com/attachments/690970576415621201/691008560363995208/Schermata_2020-03-21_alle_20.41.13.png"),
+                    new Organizzazione().setId(count+1).setName("unipd"+(count+1)).setTracking(true).setImage_url("https://cdn.discordapp.com/attachments/690970576415621201/691008560363995208/Schermata_2020-03-21_alle_20.41.13.png"),
+                    new Organizzazione().setId(count+2).setName("unipd"+(count+2)).setTracking(true).setImage_url("https://cdn.discordapp.com/attachments/690970576415621201/691008560363995208/Schermata_2020-03-21_alle_20.41.13.png"),
+                    new Organizzazione().setId(count+3).setName("unipd"+(count+3)).setTracking(true).setImage_url("https://cdn.discordapp.com/attachments/690970576415621201/691008560363995208/Schermata_2020-03-21_alle_20.41.13.png")
+                );
+                orgs.forEach(o-> Log.d(TAG, "onFailure: "+o.getId()));
+                mutableLiveDataOrganizzazioni.postValue(orgs);
 
-                mutableLiveDataOrganizzazioni.postValue(orgs.stream().distinct().collect(Collectors.toList()));
+
+//                mutableLiveDataOrganizzazioni.postValue(orgs.stream().distinct().collect(Collectors.toList()));
             }
 
             @Override

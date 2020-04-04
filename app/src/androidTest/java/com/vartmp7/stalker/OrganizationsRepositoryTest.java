@@ -187,7 +187,7 @@
  *       same "printed page" as the copyright notice for easier
  *       identification within third-party archives.
  *
- *    Copyright [2020] [VartTmp7]
+ *    Copyright [yyyy] [name of copyright owner]
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -200,182 +200,144 @@
  *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
+ *
  */
 
-package com.vartmp7.stalker.repository;
+package com.vartmp7.stalker;
 
 import android.util.Log;
 
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.vartmp7.stalker.gsonbeans.Organizzazione;
+import com.vartmp7.stalker.repository.FavoritesSource;
+import com.vartmp7.stalker.repository.FileOrganizationsLocalSource;
+import com.vartmp7.stalker.repository.OrganizationsLocalSource;
+import com.vartmp7.stalker.repository.OrganizationsRepository;
+import com.vartmp7.stalker.repository.OrganizationsWebSource;
+import com.vartmp7.stalker.ui.organizations.OrganizationsViewModel;
+
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TestRule;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
+import org.mockito.stubbing.OngoingStubbing;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-public class OrganizationsRepository {
+import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doCallRealMethod;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.when;
 
-    private static final String TAG = "com.vartmp7.stalker.repository.OrganizationsRepository";
-
-    private OrganizationsLocalSource organizationsLocalSource;
-    private OrganizationsWebSource organizationsWebSource;
-    private FavoritesSource organizationFavoritesSource;
-    private static OrganizationsRepository instance;
-    //private MediatorLiveData<List<Organizzazione>> liveOrganizzazioni;
-
-    public static synchronized OrganizationsRepository getInstance(){
-        if (instance==null){
-            throw new AssertionError("You have to call init first!");
-        }
-        return instance;
-    }
-
-    public void updateOrganizzazione(Organizzazione o){
-       organizationsLocalSource.updateOrganizzazione(o);
-    }
-
-    public void updateOrganizzazioni(List<Organizzazione> orgs){
-        organizationsLocalSource.updateOrganizzazioni(orgs);
-    }
-
-    public synchronized static OrganizationsRepository init(OrganizationsLocalSource orgsLocalSource, OrganizationsWebSource orgsWebSource, FavoritesSource fa){
-        if (instance == null){
-            instance = new OrganizationsRepository( orgsLocalSource,  orgsWebSource,fa);
-        }
-        return instance;
-    }
+@RunWith(AndroidJUnit4.class)
+public class OrganizationsRepositoryTest {
+    private final String TAG="com.vartmp7.stalker.OrganizationsRepositoryTest";
+    private OrganizationsRepository orgRepo;
+    private LifecycleOwner lifecycleOwner;
+    private TestObserver observer;
+    private List<Organizzazione> firsts;
+    private List<Organizzazione> expected;
+    private OrganizationsLocalSource localSource;
 
 
-    protected OrganizationsRepository( OrganizationsLocalSource orgsLocalSource, OrganizationsWebSource orgsWebSource,FavoritesSource fa) {
-        this.organizationsLocalSource = orgsLocalSource;
-        this.organizationsWebSource = orgsWebSource;
-        this.organizationFavoritesSource = fa;
-        //liveOrganizzazioni = new MediatorLiveData<>();
-    }
-    public LiveData<List<Organizzazione>> getOrganizzazioni(){
-        LiveData<List<Organizzazione>> fromLocal = organizationsLocalSource.getOrganizzazioni();
-        /*liveOrganizzazioni.addSource(fromLocal,organizzazioni->{
-            Log.d(TAG, "getOrganizzazioni: ");
-            organizzazioni.forEach(o-> Log.d(TAG, "getOrg: "+o.getId()));
-            liveOrganizzazioni.postValue(organizzazioni);
-            liveOrganizzazioni.removeSource(fromLocal);
+    @Rule
+    public TestRule rule = new InstantTaskExecutorRule();
+
+    @Before
+    public void setup(){
+        firsts = Arrays.asList(
+                new Organizzazione().setId(1).setName("asd").setTracking(false),
+                new Organizzazione().setId(2).setName("lol").setTracking(false),
+                new Organizzazione().setId(3).setName("lll").setTracking(false)
+        );
+        final MutableLiveData<List<Organizzazione>> localLiveData = new MutableLiveData<>();
+        localSource = Mockito.mock(OrganizationsLocalSource.class);
+        OrganizationsWebSource webSource = Mockito.mock(OrganizationsWebSource.class);
+        when(webSource.getOrganizzazioni()).then((Answer<LiveData<List<Organizzazione>>>) invocation -> {
+            MutableLiveData<List<Organizzazione>> liveData = new MutableLiveData<>();
+            liveData.postValue(Arrays.asList(
+                    new Organizzazione().setId(1).setName("changed").setTracking(false),
+                    new Organizzazione().setId(2).setName("lol").setTracking(true),
+                    new Organizzazione().setId(37).setName("new org").setTracking(false))
+            );
+            return  liveData;
         });
-        return liveOrganizzazioni;*/
-        return fromLocal;
+        FavoritesSource favoritesSource = Mockito.mock(FavoritesSource.class);
+        orgRepo = OrganizationsRepository.init(localSource,webSource,favoritesSource);
+        lifecycleOwner = TestUtil.mockLifecycleOwner();
+        //observer = new TestObserver();
+        //orgRepo.getOrganizzazioni().observe(lifecycleOwner,observer);
     }
 
-    public LiveData<List<Long>> getPreferiti(){
-        return organizationFavoritesSource.getOrganizzazioni();
-    }
-
-    public void addToPreferiti(Organizzazione org){
-        org.setPreferito(true);
-        updateOrganizzazione(org);
-        organizationFavoritesSource.addOrganizzazione(org.getId());
-    }
-
-    public void removeFromPreferiti(Organizzazione org){
-        org.setPreferito(false);
-        updateOrganizzazione(org);
-        organizationFavoritesSource.removeOrganizzazione(org.getId());
-    }
-
-
-    public void saveOrganizzazione(){
-    }
-
-    // in teoria il metodo non serve
-    public void removeOrganizzazione(Organizzazione o){
-
-    }
-
-
-
-
-    public void refreshOrganizzazioni(){
-        LiveData<List<Organizzazione>> resultFromWebCall = organizationsWebSource.getOrganizzazioni();
-        /*liveOrganizzazioni.addSource(resultFromWebCall,organizzazioni->{
-            Log.d(TAG, "refreshOrganizzazioni: ");
-            organizzazioni.forEach(o-> Log.d(TAG, "refreshOrg: "+o.getId()));
-            organizationsLocalSource.updateOrganizzazioni(organizzazioni);
-            liveOrganizzazioni.removeSource(resultFromWebCall);
-        });*/
-
-
-
-
-
-        resultFromWebCall.observeForever(new Observer<List<Organizzazione>>() {
-             @Override
-             public void onChanged(List<Organizzazione> organizzazioni) {
-                 Log.d(TAG, "onChanged: aggiornare org");
-                 organizzazioni.forEach(o-> Log.d(TAG, "onChanged: "+o.getId()));
-                 organizationsLocalSource.updateOrganizzazioni(organizzazioni);
-             }
-         });
-
-
-
-
-
-        /*MutableLiveData<Boolean> webQueryExhausted = new MutableLiveData<Boolean>(false);
-        MutableLiveData<Boolean> localQueryExhausted = new MutableLiveData<Boolean>(false);
-        resultFromWebCall.observeForever(organizzazioni->{
-            webQueryExhausted.setValue(true);
+    @Test
+    public void testGet(){
+        expected=firsts;
+        when(localSource.getOrganizzazioni()).then((Answer<LiveData<List<Organizzazione>>>) invocation -> {
+            MutableLiveData<List<Organizzazione>> liveData = new MutableLiveData<>();
+            liveData.postValue(firsts);
+            return  liveData;
         });
-        LiveData<List<Organizzazione>> resultFromLocalQuery = organizationsLocalSource.getOrganizzazioni();
-        resultFromLocalQuery.observeForever(organizzazioni->{
-           localQueryExhausted.setValue(true);
+        orgRepo.getOrganizzazioni().observe(lifecycleOwner,organizzazioni -> {
+            Log.d(TAG, "testGet: triggered");
+            organizzazioni.forEach(o-> Log.d(TAG, "testGet: org"+o.getId()));
+            assertEquals(expected,organizzazioni);
         });
-        final Observer<Boolean> queryObserver = new Observer<Boolean>() {
+    }
+
+
+
+
+    @Test
+    public void testUpdateOrganizzazioni(){
+        /*doAnswer(new Answer<Void>() {
             @Override
-            public void onChanged(Boolean aBoolean) {
-                if(webQueryExhausted.getValue() && localQueryExhausted.getValue()){
-                    localQueryExhausted.removeObserver(this);
-                    webQueryExhausted.removeObserver(this);
-                    for (Organizzazione orgFromWeb: resultFromWebCall.getValue()){
-                        for (Organizzazione org: resultFromLocalQuery.getValue()) {
-                            if(org.getId()==orgFromWeb.getId()){
-                                orgFromWeb.setPreferito(org.isPreferito());
-                                orgFromWeb.setTracking(org.isTracking());
-                                orgFromWeb.setTrackingActive(org.isTracking());
-                                rg=orgFromWeb;o
-                            }
-                        }
-                    }
-                    List<Organizzazione> toSave = resultFromLocalQuery.getValue();
-                    Log.d(TAG, "refreshOrganizzazioni: org che verranno salvate");
-                    toSave.forEach(o-> Log.d(TAG, "refreshOrganizzazioni: "+o.getId()+" "+o.getName()+o.isPreferito()));
-                    organizationsLocalSource.saveOrganizzazioni(toSave);
-                }
+            public Void answer(InvocationOnMock invocation) throws Throwable {
+                return null;
             }
-        };
-        localQueryExhausted.observeForever(queryObserver);
-        webQueryExhausted.observeForever(queryObserver);*/
+        }).doReturn(null).when(localSource.updateOrganizzazioni(anyList()));*/
     }
 
-    public void addToActiveTracking(Organizzazione o) {
-        o.setTrackingActive(true);
-        updateOrganizzazione(o);
+
+
+    @Test
+    public void testRefresh(){
+        List<Organizzazione> fromWeb = new ArrayList<>(Arrays.asList(
+                new Organizzazione().setId(1).setName("changed").setTracking(false),
+                new Organizzazione().setId(2).setName("lol").setTracking(true),
+                new Organizzazione().setId(37).setName("new org").setTracking(false))
+        );
+        List<Organizzazione> refreshed = new ArrayList<>(firsts);
+
+        TestUtil.updateOrganizationsFromOrganizationsLists(refreshed,fromWeb);
+        observer.setTester(organizzazioni -> {
+            Log.d(TAG, "testRefresh: triggered");
+            if(!organizzazioni.equals(firsts)){
+                organizzazioni.forEach(o-> Log.d(TAG, "testRefresh: org"+o.getId()));
+                assertEquals(expected,organizzazioni);
+            }else{
+                Log.d(TAG, "testRefresh: pescate organizzaizoni iniziali");
+            }
+        });
+        orgRepo.refreshOrganizzazioni();
+        //orgRepo.refreshOrganizzazioni();
     }
-
-    public void addToTracking(Organizzazione o) {
-        o.setTracking(true);
-        updateOrganizzazione(o);
-    }
-
-    /*
-    metodi più specifici, se in futuro si rendessero disponibili delle API più specifiche.
-    Potrebbero avere senso per occupare meno banda e alleggerire il carico lato server,
-
-    param: lista degli id delle organizzazioni
-    List<Organizzazione> getOrganizzazioni(List<String> organizationIds);
-
-    param: id di un'organizzazione
-    Organizzazione getOrganizzazione(List<String> organizationId);
-    */
-
 }
+
+

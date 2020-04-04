@@ -206,6 +206,7 @@ package com.vartmp7.stalker.ui.organizations;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -248,7 +249,8 @@ public class OrganizationsFragment extends Fragment implements SwipeRefreshLayou
         recyclerView = root.findViewById(R.id.rvListaOrganizzazioni);
 
         setUpRecyclerView();
-        organizzazioneViewModel.getOrganizationList().observe(requireActivity(), list -> {
+        organizzazioneViewModel.getOrganizationList().observe(getViewLifecycleOwner(), list -> {
+            Log.e(TAG, "onCreateView: triggered");
             mAdapter.setOrganizations(list);
             mAdapter.notifyDataSetChanged();
             swipeRefreshLayout.setRefreshing(false);
