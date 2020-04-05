@@ -254,6 +254,9 @@ import com.vartmp7.stalker.repository.RESTObtainer;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+
 /**
  * @author Xiaowei Wen, Lorenzo Taschin
  */
@@ -266,6 +269,8 @@ public class MainActivity extends AppCompatActivity {
     public static final String PREFERENCE_FILE = "stalker";
     public static final String PREFERENCE_NOT_LOGIN = "not_login";
     private GoogleSignInClient mGoogleSignInClient;
+
+    public static OrganizationsRepository repository;
 
     @Override
     public Resources.Theme getTheme() {
@@ -287,6 +292,19 @@ public class MainActivity extends AppCompatActivity {
                 R.id.navigation_organizations, R.id.navigation_tracking, R.id.navigation_preferiti, R.id.navigation_cronologia)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+
+
+
+        MutableLiveData<List<Organization>> list = new MutableLiveData<>(new ArrayList<>());
+        Storage localStorage = new FileStorage("orgs.json", this, list);
+        FavoritesSource preferitiRepository = null;
+        if (FirebaseAuth.getInstance().getCurrentUser() != null || GoogleSignIn.getLastSignedInAccount(this) != null) {
+            preferitiRepository = new FirebaseFavoritesSource(getUserId(), FirebaseFirestore.getInstance());
+        }
+        Obtainer webSource = new RESTObtainer(Tools.getUnsafeOkHttpClient(), list, "https://asdasd.com");
+
+         repository = new OrganizationsRepository(localStorage, webSource, preferitiRepository);
+
 
 //        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
@@ -317,15 +335,6 @@ public class MainActivity extends AppCompatActivity {
 //        liveDataOrganizzazioni.observe(this,observer);
 //        Log.d(TAG,"size:"+liveDataOrganizzazioni.getValue().size());
 
-        MutableLiveData<List<Organization>> list = new MutableLiveData<>(new ArrayList<>());
-        Storage localSource = new FileStorage("orgs.json", this, list);
-        FavoritesSource preferitiRepository = null;
-        if (FirebaseAuth.getInstance().getCurrentUser() != null || GoogleSignIn.getLastSignedInAccount(this) != null) {
-            preferitiRepository = new FirebaseFavoritesSource(getUserId(), FirebaseFirestore.getInstance());
-        }
-
-        Obtainer webSource = new RESTObtainer(Tools.getUnsafeOkHttpClient(), list, "https://asdasd.com");
-        OrganizationsRepository.init(localSource, webSource, preferitiRepository);
 
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)

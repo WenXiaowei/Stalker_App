@@ -224,6 +224,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.firebase.auth.FirebaseAuth;
+import com.vartmp7.stalker.MainActivity;
 import com.vartmp7.stalker.R;
 import com.vartmp7.stalker.component.NotLogged;
 import com.vartmp7.stalker.gsonbeans.Organization;
@@ -271,13 +272,13 @@ public class FavoritesFragment extends Fragment implements SwipeRefreshLayout.On
 
         this.favRecyclerView = root.findViewById(R.id.preferitiRecyclerView);
 
-        OrganizationsRepository orgRepo = OrganizationsRepository.getInstance();
+//        OrganizationsRepository orgRepo = OrganizationsRepository.getInstance();
 
         this.favViewModel = new ViewModelProvider(requireActivity()).get(FavoritesViewModel.class);
 
         preferitiSwipeLayout = root.findViewById(R.id.srflPreferiti);
 
-        favViewModel.init(orgRepo);
+        favViewModel.init(MainActivity.repository);
         initRecyclerView();
 
         favViewModel.getOrganizzazioni().observe(getViewLifecycleOwner(), organizzazioni -> {

@@ -336,21 +336,23 @@ public class FileStorage implements Storage {
                     } finally {
                         String contents = stringBuilder.toString();
                         OrganizationResponse responseOrganizzazioni = gson.fromJson(contents, OrganizationResponse.class);
-                        List<Organization> organizzazioni = responseOrganizzazioni.getOrganizations();//mLiveOrgs.getValue();
+                        if (responseOrganizzazioni!=null){
+
+                            //fixme ogni tanto sputa un null pointer
+                            List<Organization> organizzazioni = responseOrganizzazioni.getOrganizations();//mLiveOrgs.getValue();
 //                    List<Organizzazione> orgs = mLiveOrgs.getValue();
-                        if (responseOrganizzazioni == null) {
-//                            Log.d(TAG, "run: lista vuota");
-                            organizzazioni.addAll(new ArrayList<>());
-                        } else {
-//                            Log.d(TAG, "run: lista non vuota");
+                            //                            Log.d(TAG, "run: lista non vuota");
 //                          organizzazioni.addAll(responseOrganizzazioni.getOrganizations().stream().distinct().collect(Collectors.toList()));
                             mLiveOrgs.postValue(organizzazioni);
-                        }
-                        //organizzazioni.clear();
-                        //organizzazioni.addAll(responseOrganizzazioni.getOrganizations());
-                        Log.d("TEST", "arrivo qua 3");
+                            //organizzazioni.clear();
+                            //organizzazioni.addAll(responseOrganizzazioni.getOrganizations());
+                            Log.d("TEST", "arrivo qua 3");
 //                        mLiveOrgs.postValue(organizzazioni.stream().distinct().collect(Collectors.toList()));
 //                        Log.d(TAG, "run: dati letti dal file");
+                        }else{
+                            Log.e(TAG, "run: ResponseOrganizzazioni null");
+                        }
+
                     }
 
 

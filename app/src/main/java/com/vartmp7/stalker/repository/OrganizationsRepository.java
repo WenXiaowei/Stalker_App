@@ -221,15 +221,8 @@ public class OrganizationsRepository {
     private Storage storage;
     private Obtainer obtainer;
     private FavoritesSource organizationFavoritesSource;
-    private static OrganizationsRepository instance;
     //private MediatorLiveData<List<Organizzazione>> liveOrganizzazioni;
 
-    public static synchronized OrganizationsRepository getInstance() {
-        if (instance == null) {
-            throw new AssertionError("You have to call init first!");
-        }
-        return instance;
-    }
 
     public void updateOrganizzazione(Organization o) {
         storage.updateOrganization(o);
@@ -243,15 +236,7 @@ public class OrganizationsRepository {
         storage.updateOrganizations(orgs);
     }
 
-    public synchronized static OrganizationsRepository init(Storage orgsLocalSource, Obtainer orgsWebSource, FavoritesSource fa) {
-        if (instance == null) {
-            instance = new OrganizationsRepository(orgsLocalSource, orgsWebSource, fa);
-        }
-        return instance;
-    }
-
-
-    protected OrganizationsRepository(Storage orgsLocalSource, Obtainer orgsWebSource, FavoritesSource fa) {
+    public OrganizationsRepository(Storage orgsLocalSource, Obtainer orgsWebSource, FavoritesSource fa) {
         this.storage = orgsLocalSource;
         this.obtainer = orgsWebSource;
         this.organizationFavoritesSource = fa;

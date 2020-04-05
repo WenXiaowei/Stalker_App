@@ -214,15 +214,33 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavArgs;
+import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.vartmp7.stalker.MainActivity;
 import com.vartmp7.stalker.R;
 
+import com.vartmp7.stalker.Tools;
+import com.vartmp7.stalker.gsonbeans.Organization;
+import com.vartmp7.stalker.repository.FavoritesSource;
+import com.vartmp7.stalker.repository.FileStorage;
+import com.vartmp7.stalker.repository.FirebaseFavoritesSource;
+import com.vartmp7.stalker.repository.Obtainer;
 import com.vartmp7.stalker.repository.OrganizationsRepository;
+import com.vartmp7.stalker.repository.RESTObtainer;
+import com.vartmp7.stalker.repository.Storage;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class OrganizationsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
     public static final String TAG = "com.vartmp7.stalker.ui.organizations.OrganizationsFragment";
@@ -231,6 +249,7 @@ public class OrganizationsFragment extends Fragment implements SwipeRefreshLayou
     private RecyclerView recyclerView;
     private OrganizationViewAdapter mAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private OrganizationsRepository organizationsRepository;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -238,30 +257,51 @@ public class OrganizationsFragment extends Fragment implements SwipeRefreshLayou
 
     }
 
+    private String getUserId() {
+        if (FirebaseAuth.getInstance().getCurrentUser() != null)
+            return FirebaseAuth.getInstance().getCurrentUser().getUid();
+        if (GoogleSignIn.getLastSignedInAccount(requireContext()) != null)
+            return GoogleSignIn.getLastSignedInAccount(requireContext()).getId();
+        return "";
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        int actionId = OrganizationsFragmentDirections.actionNavigationOrganizationsToNavigationTracking().getActionId();
+
+        NavDirections navDirections = OrganizationsFragmentDirections.actionNavigationOrganizationsToNavigationTracking();
+
+
+    }
+
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_organizations, container, false);
         organizzazioneViewModel = new ViewModelProvider(requireActivity()).get(OrganizationsViewModel.class);
-        organizzazioneViewModel.initData(OrganizationsRepository.getInstance());
+
+        organizzazioneViewModel.initData(MainActivity.repository);
+
+
+
+
         swipeRefreshLayout = root.findViewById(R.id.srfl);
         swipeRefreshLayout.setOnRefreshListener(this);
         swipeRefreshLayout.setColorSchemeColors(Color.BLACK, Color.GREEN, Color.MAGENTA);
         recyclerView = root.findViewById(R.id.rvListaOrganizzazioni);
 
         setUpRecyclerView();
-        organizzazioneViewModel.getOrganizationList().observe(getViewLifecycleOwner(), list -> {
+        organizzazioneViewModel.getOrganizationList().observe(getViewLifecycleOwner(), lista -> {
             Log.e(TAG, "onCreateView: triggered");
-            mAdapter.setOrganizations(list);
+            mAdapter.setOrganizations(lista);
             mAdapter.notifyDataSetChanged();
             swipeRefreshLayout.setRefreshing(false);
         });
-
-
 
         return root;
     }
 
     private void setUpRecyclerView() {
-        mAdapter = new OrganizationViewAdapter(getContext(), organizzazioneViewModel,Navigation.findNavController(requireActivity(),
+        mAdapter = new OrganizationViewAdapter(getContext(), organizzazioneViewModel, Navigation.findNavController(requireActivity(),
                 R.id.nav_host_fragment));
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);

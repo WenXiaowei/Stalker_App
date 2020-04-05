@@ -216,7 +216,7 @@ gradlew clean test jacocoTestDebugUnitTestReport sonarqube
 apply plugin: 'com.onesignal.androidsdk.onesignal-gradle-plugin'
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
-
+apply plugin: "androidx.navigation.safeargs"
 
 buildscript {
     repositories {

@@ -270,7 +270,7 @@ public class OrganizationsRepositoryTest {
             return  liveData;
         });
         FavoritesSource favoritesSource = Mockito.mock(FavoritesSource.class);
-        orgRepo = OrganizationsRepository.init(localSource,webSource,favoritesSource);
+        orgRepo = new OrganizationsRepository(localSource,webSource,favoritesSource);
         lifecycleOwner = TestUtil.mockLifecycleOwner();
         //observer = new TestObserver();
         //orgRepo.getOrganizzazioni().observe(lifecycleOwner,observer);

@@ -226,6 +226,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.vartmp7.stalker.MainActivity;
 import com.vartmp7.stalker.R;
 import com.vartmp7.stalker.component.CallBack;
 import com.vartmp7.stalker.component.NotLogged;
@@ -418,7 +419,7 @@ public class TrackingFragment extends Fragment {
 
 
         trackingViewModel = new ViewModelProvider(requireActivity()).get(TrackingViewModel.class);
-        trackingViewModel.init(OrganizationsRepository.getInstance());
+        trackingViewModel.init(MainActivity.repository);
         organizationToTrack = trackingViewModel.getListOrganizzazione()
                 .getValue()
                 .stream()

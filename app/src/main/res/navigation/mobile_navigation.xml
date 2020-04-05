@@ -216,10 +216,10 @@
         android:label="@string/organizzazioni"
         tools:layout="@layout/fragment_organizations">
 
-
         <action
             android:id="@+id/action_navigation_organizations_to_navigation_tracking"
             app:destination="@id/navigation_tracking" />
+        <argument android:name="repo" />
     </fragment>
     <fragment
         android:id="@+id/navigation_tracking"
