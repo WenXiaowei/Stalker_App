@@ -277,4 +277,8 @@
     <string name="elimina_account">Elimina account</string>
     <string name="luogo_cambiato">Luogo cambiato: %1$s</string>
     <string name="sei_in_tale_dei_tali">Sei in %s di \"%s\"!</string>
+    <string name="ok">Ok</string>
+    <string name="app_necessita_di_permessi">Ho bisogno dei permessi per funzionare!</string>
+    <string name="permission_denied_explanation">Applicazione ha bisogno dei permessi!</string>
+    <string name="settings">Impostazione</string>
 </resources>

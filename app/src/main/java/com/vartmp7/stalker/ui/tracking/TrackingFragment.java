@@ -213,10 +213,12 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -236,6 +238,8 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.snackbar.Snackbar;
+import com.vartmp7.stalker.BuildConfig;
 import com.vartmp7.stalker.MainActivity;
 import com.vartmp7.stalker.R;
 import com.vartmp7.stalker.component.StalkerTrackingService;
@@ -403,8 +407,9 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
 //        trackingViewModel.updateOrganizations(organizationToTrack);
         trackingViewModel.activeAllTrackingOrganization(isTrackingActive);
     }
+    private View root;
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle b) {
-        View root = inflater.inflate(R.layout.fragment_tracking, container, false);
+        root = inflater.inflate(R.layout.fragment_tracking, container, false);
 
         tvCurrentStatus = root.findViewById(R.id.tvCurrentStatus);
 
@@ -550,21 +555,17 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
         // Provide an additional rationale to the user. This would happen if the user denied the
         // request previously, but didn't check the "Don't ask again" checkbox.
         if (shouldProvideRationale) {
-//            Log.i(TAG, "Displaying permission rationale to provide additional context.");
-//            Snackbar.make(
-//                    findViewById(R.id.activity_main),
-//                    R.string.permission_rationale,
-//                    Snackbar.LENGTH_INDEFINITE)
-//                    .setAction(R.string.ok, new View.OnClickListener() {
-//                        @Override
-//                        public void onClick(View view) {
-//                            // Request permission
-//                            ActivityCompat.requestPermissions(requireContext(),
-//                                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-//                                    REQUEST_PERMISSIONS_REQUEST_CODE);
-//                        }
-//                    })
-//                    .show();
+            Log.i(TAG, "Displaying permission rationale to provide additional context.");
+            Snackbar.make(root,
+                    getString(R.string.app_necessita_di_permessi),
+                    Snackbar.LENGTH_INDEFINITE)
+                    .setAction(R.string.ok, view -> {
+                        // Request permission
+                        ActivityCompat.requestPermissions(requireActivity(),
+                                new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                                REQUEST_PERMISSIONS_REQUEST_CODE);
+                    })
+                    .show();
         } else {
             Log.i(TAG, "Requesting permission");
             // Request permission. It's possible this can be auto answered if device policy
@@ -592,25 +593,22 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
             } else {
                 // Permission denied.
                 setButtonsState(false);
-//                Snackbar.make(
-//                        findViewById(R.id.activity_main),
-//                        R.string.permission_denied_explanation,
-//                        Snackbar.LENGTH_INDEFINITE)
-//                        .setAction(R.string.settings, new View.OnClickListener() {
-//                            @Override
-//                            public void onClick(View view) {
-//                                // Build intent that displays the App settings screen.
-//                                Intent intent = new Intent();
-//                                intent.setAction(
-//                                        Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-//                                Uri uri = Uri.fromParts("package",
-//                                        BuildConfig.APPLICATION_ID, null);
-//                                intent.setData(uri);
-//                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                                startActivity(intent);
-//                            }
-//                        })
-//                        .show();
+                Snackbar.make(
+                        root,
+                        R.string.permission_denied_explanation,
+                        Snackbar.LENGTH_INDEFINITE)
+                        .setAction(R.string.settings, view -> {
+                            // Build intent that displays the App settings screen.
+                            Intent intent = new Intent();
+                            intent.setAction(
+                                    Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                            Uri uri = Uri.fromParts("package",
+                                    BuildConfig.APPLICATION_ID, null);
+                            intent.setData(uri);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
+                        })
+                        .show();
             }
         }
     }
