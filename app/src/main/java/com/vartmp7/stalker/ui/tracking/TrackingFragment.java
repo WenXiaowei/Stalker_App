@@ -228,12 +228,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.vartmp7.stalker.MainActivity;
 import com.vartmp7.stalker.R;
+import com.vartmp7.stalker.StalkerTrackingService;
 import com.vartmp7.stalker.component.CallBack;
 import com.vartmp7.stalker.component.NotLogged;
 import com.vartmp7.stalker.component.StalkerServiceCallback;
-import com.vartmp7.stalker.component.StalkerTrackingService;
 import com.vartmp7.stalker.gsonbeans.Organization;
-import com.vartmp7.stalker.repository.OrganizationsRepository;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
@@ -258,7 +257,7 @@ public class TrackingFragment extends Fragment {
     private List<Organization> organizationToTrack;
     private TrackingViewAdapter mAdapter;
     private TextView tvCurrentStatus;
-    private StalkerTrackingService.StalkerBinder binder;
+    private StalkerTrackingService.LocalBinder binder;
     private Handler handler = new StalkerHandler(this);
     private CallBack callback = new StalkerServiceCallback(handler) {
         @Override
@@ -308,9 +307,9 @@ public class TrackingFragment extends Fragment {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             isBound = true;
-            binder = (StalkerTrackingService.StalkerBinder) service;
-            binder.updateTrackingOrganizations(organizationToTrack);
-            binder.getService().setCallBack(callback);
+            binder = (StalkerTrackingService.LocalBinder) service;
+//            binder.updateTrackingOrganizations(organizationToTrack);
+//            binder.getService().setCallBack(callback);
             Log.d(TAG, "onServiceConnected: ");
         }
 
@@ -378,7 +377,7 @@ public class TrackingFragment extends Fragment {
             List<Organization> orgs = organizationToTrack.stream().distinct()
                     .filter(Organization::isTrackingActive)
                     .collect(Collectors.toList());
-            binder.updateTrackingOrganizations(orgs);
+//            binder.updateTrackingOrganizations(orgs);
         }
     }
 

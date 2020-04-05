@@ -244,6 +244,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.vartmp7.stalker.MainActivity;
 import com.vartmp7.stalker.R;
 
+import org.jetbrains.annotations.NotNull;
+
 import static android.content.Context.MODE_PRIVATE;
 
 public class LoginFragment extends Fragment implements View.OnClickListener{
@@ -329,30 +331,27 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
         Log.d(TAG, "handleFacebookAccessToken: " + credential.getProvider());
         mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(requireActivity(), new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "signInWithCredential:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            goToMainActivity();
+                .addOnCompleteListener(requireActivity(), task -> {
+                    if (task.isSuccessful()) {
+                        // Sign in success, update UI with the signed-in user's information
+                        Log.d(TAG, "signInWithCredential:success");
+                        FirebaseUser user = mAuth.getCurrentUser();
+                        goToMainActivity();
 //                            updateUI(user);
-                            if (user != null)
-                                Log.d(TAG, "onComplete: " + user.getDisplayName());
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w(TAG, "signInWithCredential:failure", task.getException());
-                            Toast.makeText(requireContext(), "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
+                        if (user != null)
+                            Log.d(TAG, "onComplete: " + user.getDisplayName());
+                    } else {
+                        // If sign in fails, display a message to the user.
+                        Log.w(TAG, "signInWithCredential:failure", task.getException());
+                        Toast.makeText(requireContext(), "Authentication failed.",
+                                Toast.LENGTH_SHORT).show();
 //                            updateUI(null);
-                        }
-
-                        // ...
                     }
+
+                    // ...
                 });
     }
-    private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
+    private void handleSignInResult(@NotNull Task<GoogleSignInAccount> completedTask) {
         try {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
             goToMainActivity();
@@ -364,8 +363,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
 
             // Please refer to the GoogleSignInStatusCodes class reference for more information.
             Log.w(TAG, "signInResult:failed code=" + e.getStatusCode());
-            Log.w(TAG, "signInResult: eccezione=" + e.getMessage());
-
+            Toast.makeText(requireContext(),"Accesso fallito, riprovare più tardi!", Toast.LENGTH_SHORT).show();
 //            updateUI(null);
         }
     }

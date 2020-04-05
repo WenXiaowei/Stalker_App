@@ -275,4 +275,5 @@
     <string name="account_esistente_con_questa_mail">Esiste già un account con questa mail!</string>
     <string name="unknown_error">Errori sconosciuti, riprova più tardi</string>
     <string name="elimina_account">Elimina account</string>
+    <string name="luogo_cambiato">Luogo cambiato: %1$s</string>
 </resources>

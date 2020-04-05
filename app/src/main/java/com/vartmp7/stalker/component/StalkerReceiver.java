@@ -204,143 +204,25 @@
 
 package com.vartmp7.stalker.component;
 
-import android.Manifest;
-import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.pm.PackageManager;
-import android.hardware.SensorManager;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
+import android.content.Intent;
+import android.location.Location;
 import android.util.Log;
+import android.widget.Toast;
 
-import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.MutableLiveData;
+import com.vartmp7.stalker.StalkerTrackingService;
 
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
-import com.vartmp7.stalker.gsonbeans.Organization;
-import com.vartmp7.stalker.gsonbeans.placecomponent.Coordinate;
+public class StalkerReceiver extends BroadcastReceiver {
+    private static final String TAG = "BroadcastReceiver";
 
-import java.util.List;
-
-import static java.lang.Thread.sleep;
-
-
-public class StalkerServiceRunnable implements Runnable {
-    private static final String TAG = "com.vartmp7.stalker.component.StalkerServiceRunnable";
-    private List<Organization> trackingOrgs;
-    private int i = 0;
-    private boolean isRunning;
-    private CallBack callBack;
-    private FusedLocationProviderClient fusedLocationProviderClient;
-    private SensorManager sensorManager;
-    private MutableLiveData<Coordinate> coordinata = null;
-    private LifecycleOwner lifecycleOwner;
-    private Context context;
-    private LocationRequest request;
-    private LocationCallback locationCallback;
-    public StalkerServiceRunnable(Context context,
-                                  FusedLocationProviderClient locationProviderClient,
-                                  LifecycleOwner owner,
-                                  SensorManager sensorManager,
-                                  CallBack callBack,
-                                  List<Organization> trackingOrg) {
-        this.context = context;
-        this.sensorManager = sensorManager;
-        this.lifecycleOwner = owner;
-        this.isRunning = true;
-        this.trackingOrgs = trackingOrg;
-        this.callBack = callBack;
-        this.fusedLocationProviderClient = locationProviderClient;
-        coordinata = new MutableLiveData<>();
-        request = new LocationRequest();
-        request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        request.setMaxWaitTime(2);
-        request.setSmallestDisplacement(10);
-
-        locationCallback = new LocationCallback() {
-            @Override
-            public void onLocationResult(LocationResult locationResult) {
-                super.onLocationResult(locationResult);
-                Log.d(TAG, "onLocationResult() called with: locationResult = [" + locationResult + "]");
-                coordinata.postValue(new Coordinate(locationResult.getLastLocation().getLongitude(),
-                        locationResult.getLastLocation().getLatitude()));
-            }
-        };
-
-    }
-
-
-    private static final int SECONDS_TO_WAIT = 3;
-
-    @SuppressLint("HandlerLeak")
     @Override
-    public void run() {
-
-        Log.d(TAG, "run: thread Starting");
-        if (callBack != null)
-            callBack.onInitializingTracking();
-        Looper.prepare();
-        fusedLocationProviderClient.requestLocationUpdates(request, locationCallback, Looper.getMainLooper());
-        new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                super.handleMessage(msg);
-                Log.d(TAG, "handleMessage: ");
-            }
-        };
-
-        if (context.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
-                context.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            Log.d(TAG, "run: location permissions granted");
-
-            while (isRunning) {
-                Log.d(TAG, "run() called "+ i++);
-                try {
-                    sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-            Looper.loop();
-
-            Log.d(TAG, "run: while terminating");
-            if (callBack != null)
-                callBack.onTrackingTerminated();
-
-        } else {
-            Log.d(TAG, "run() permission not granted");
+    public void onReceive(Context context, Intent intent) {
+        Location location = intent.getParcelableExtra(StalkerTrackingService.EXTRA_LOCATION);
+        if (location != null) {
+            Log.d(TAG, "onReceive: ");
+            Toast.makeText(context, location.toString(),
+                    Toast.LENGTH_SHORT).show();
         }
-
-
-    }
-
-    private String timerFormat(int i) {
-        String time = "";
-        int secondi = i % 60;
-        int minuti = ((i - secondi) % 3600) / 60;
-        int ore = (i - secondi - minuti * 60) / 3600;
-        if (ore == 0) {
-            time += "00";
-        } else {
-            time += ore < 10 ? "0" + ore : ore;
-        }
-        time += ":";
-        if (minuti == 0) {
-            time += "00";
-        } else
-            time += (minuti < 10 ? "0" + minuti : minuti);
-        time += ":";
-        if (secondi == 0)
-            time += "00";
-        else time += (secondi < 10 ? "0" + secondi : secondi);
-        return time;
-    }
-
-    void stopThread() {
-        this.isRunning = false;
     }
 }
