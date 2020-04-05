@@ -218,17 +218,21 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.preference.PreferenceManager;
 
-import com.google.android.gms.location.LocationServices;
 import com.vartmp7.stalker.R;
 import com.vartmp7.stalker.StalkerTrackingService;
 import com.vartmp7.stalker.Tools;
 import com.vartmp7.stalker.component.StalkerReceiver;
+
+import java.util.ArrayList;
 
 
 /**
@@ -238,94 +242,15 @@ public class HistoryFragment extends Fragment {
     public static final String TAG ="com.vartmp7.stalker.ui.cronologia.CronologiaFragment";
 
     private HistoryViewModel historyViewModel;
-    private Intent startServiceInten;
-    private StalkerReceiver mReceiver;
-    // A reference to the service used to get location updates.
-    private StalkerTrackingService mService = null;
 
-    // Tracks the bound state of the service.
-    private boolean mBound = false;
-    private final ServiceConnection mServiceConnection = new ServiceConnection() {
-
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            StalkerTrackingService.LocalBinder binder = (StalkerTrackingService.LocalBinder) service;
-            mService = binder.getService();
-            mBound = true;
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            mService = null;
-            mBound = false;
-        }
-    };
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-        historyViewModel =
-                new ViewModelProvider(requireActivity()).get(HistoryViewModel.class);
-        View root = inflater.inflate(R.layout.fragment_cronologia, container, false);
-
-        mReceiver = new StalkerReceiver();
-        startServiceInten= new Intent(requireContext(), StalkerTrackingService.class);
-        root.findViewById(R.id.btnStartThread).setOnClickListener(v-> startThread());
-
-
-        return root;
-    }
-
-
-    public void startThread(){
-
-        if (requireActivity().checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION)== PackageManager.PERMISSION_GRANTED
-            && requireActivity().checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)== PackageManager.PERMISSION_GRANTED
-            && requireActivity().checkSelfPermission(Manifest.permission.ACCESS_BACKGROUND_LOCATION)== PackageManager.PERMISSION_GRANTED
-        ){
-            requireContext().startService(startServiceInten);
-        }else{
-            requestPermissions();
-        }
-
-    }
-
-    private void requestPermissions() {
-        requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION},1);
-    }
-
+    @Nullable
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+            View v = inflater.inflate(R.layout.fragment_cronologia, container,false);
 
-        if (requestCode==1 && grantResults.length==3
-                && grantResults[0] == PackageManager.PERMISSION_GRANTED
-                && grantResults[1] == PackageManager.PERMISSION_GRANTED
-                && grantResults[2] == PackageManager.PERMISSION_GRANTED
-        ){
 
-            startThread();
-        }else{
-            requestPermissions();
-        }
+        return v;
     }
 
-    @Override
-    public void onStart() {
-
-        requireContext().bindService(startServiceInten, mServiceConnection,
-                Context.BIND_AUTO_CREATE);
-        super.onStart();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        LocalBroadcastManager.getInstance(requireContext()).registerReceiver(mReceiver,
-                new IntentFilter(StalkerTrackingService.ACTION_BROADCAST));
-    }
-    @Override
-    public void onPause() {
-        LocalBroadcastManager.getInstance(requireContext()).unregisterReceiver(mReceiver);
-        super.onPause();
-    }
 
 }

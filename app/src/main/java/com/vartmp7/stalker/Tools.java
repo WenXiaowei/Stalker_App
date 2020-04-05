@@ -206,7 +206,10 @@ package com.vartmp7.stalker;
 
 import android.content.Context;
 import android.location.Location;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
+
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.security.cert.CertificateException;
 import java.text.DateFormat;
@@ -274,7 +277,7 @@ public class Tools {
      *
      * @param context The {@link Context}.
      */
-    static boolean requestingLocationUpdates(Context context) {
+   public static boolean requestingLocationUpdates(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context)
                 .getBoolean(KEY_REQUESTING_LOCATION_UPDATES, false);
     }
@@ -303,4 +306,8 @@ public class Tools {
         return context.getString(R.string.luogo_cambiato,
                 DateFormat.getDateTimeInstance().format(new Date()));
     }
+    static boolean isUserLogged(Context context) {
+        return FirebaseAuth.getInstance().getCurrentUser() != null || GoogleSignIn.getLastSignedInAccount(context) != null;
+    }
+
 }

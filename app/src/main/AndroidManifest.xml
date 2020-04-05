@@ -22,7 +22,7 @@
             android:enabled="true"
             android:exported="true"
             android:foregroundServiceType="location"
-            ></service>
+            android:permission="android.permission.FOREGROUND_SERVICE"/>
 
         <activity
             android:name=".MainActivity"

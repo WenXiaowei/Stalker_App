@@ -234,6 +234,8 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
+import org.jetbrains.annotations.NotNull;
+
 public class StalkerTrackingService extends Service {
     private static final String PACKAGE_NAME = "com.vartmp7.stalker.StalkerTrackingService";
     private static final String NOTIFICATION_CHANNEL_ID = "channel_01";
@@ -382,9 +384,7 @@ public class StalkerTrackingService extends Service {
         }
     }
 
-    /**
-     * Returns the {@link NotificationCompat} used as part of the foreground service.
-     */
+
     private Notification getNotification() {
         Intent intent = new Intent(this, StalkerTrackingService.class);
 
@@ -455,7 +455,7 @@ public class StalkerTrackingService extends Service {
         }
     }
 
-    public boolean serviceIsRunningInForeground(Context context) {
+    public boolean serviceIsRunningInForeground(@NotNull Context context) {
         ActivityManager manager = (ActivityManager) context.getSystemService(
                 Context.ACTIVITY_SERVICE);
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(

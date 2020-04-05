@@ -212,9 +212,21 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.vartmp7.stalker.StalkerTrackingService;
+import com.vartmp7.stalker.gsonbeans.Organization;
+
+import java.util.List;
 
 public class StalkerReceiver extends BroadcastReceiver {
     private static final String TAG = "BroadcastReceiver";
+    List<Organization> organizations;
+
+    public StalkerReceiver(List<Organization> orgs) {
+        this.organizations = orgs;
+    }
+
+    public void setOrganizations(List<Organization> organizations) {
+        this.organizations = organizations;
+    }
 
     @Override
     public void onReceive(Context context, Intent intent) {

@@ -283,7 +283,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        if (!isUserLogged() && !getSharedPreferences(PREFERENCE_FILE, MODE_PRIVATE).getBoolean(PREFERENCE_NOT_LOGIN, false))
+        if (!Tools.isUserLogged(this) && !getSharedPreferences(PREFERENCE_FILE, MODE_PRIVATE).getBoolean(PREFERENCE_NOT_LOGIN, false))
             goToLoginActivity(false);
         BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
@@ -350,7 +350,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        if (isUserLogged()) {
+        if (Tools.isUserLogged(MainActivity.this)) {
             inflater.inflate(R.menu.setting_menu, menu);
             //todo capire come disattivare la scelta per cambiare password!
             if (FirebaseAuth.getInstance().getCurrentUser() != null) {
@@ -384,7 +384,6 @@ public class MainActivity extends AppCompatActivity {
             case R.id.menuModificaDati:
                 showEditInfoDialog();
                 break;
-
             default:
 
         }
@@ -444,9 +443,6 @@ public class MainActivity extends AppCompatActivity {
         return "";
     }
 
-    private boolean isUserLogged() {
-        return FirebaseAuth.getInstance().getCurrentUser() != null || GoogleSignIn.getLastSignedInAccount(MainActivity.this) != null;
-    }
 
     public void logout() {
         FirebaseAuth.getInstance().signOut();

@@ -204,10 +204,14 @@
 
 package com.vartmp7.stalker.ui.tracking;
 
+import android.Manifest;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -216,12 +220,17 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -229,12 +238,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.vartmp7.stalker.MainActivity;
 import com.vartmp7.stalker.R;
 import com.vartmp7.stalker.StalkerTrackingService;
+import com.vartmp7.stalker.Tools;
 import com.vartmp7.stalker.component.CallBack;
 import com.vartmp7.stalker.component.NotLogged;
+import com.vartmp7.stalker.component.StalkerReceiver;
 import com.vartmp7.stalker.component.StalkerServiceCallback;
 import com.vartmp7.stalker.gsonbeans.Organization;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -243,7 +255,7 @@ import java.util.stream.Collectors;
 /**
  * @author Xiaowei Wen, Lorenzo Taschin
  */
-public class TrackingFragment extends Fragment {
+public class TrackingFragment extends Fragment implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private final static String TAG = "com.vartmp7.stalker.ui.home.HomeFragment";
     private final static String PLACE_MSG = "PLACE_MSG";
@@ -259,51 +271,10 @@ public class TrackingFragment extends Fragment {
     private TextView tvCurrentStatus;
     private StalkerTrackingService.LocalBinder binder;
     private Handler handler = new StalkerHandler(this);
-    private CallBack callback = new StalkerServiceCallback(handler) {
-        @Override
-        public void onCurrentStatusChanged(String[] str) {
-            Message msg = new Message();
-            Bundle b = new Bundle();
-            b.putInt(MSG_CODE, TRACKING_MSG_CODE);
-            b.putStringArray(PLACE_MSG, str);
-            msg.setData(b);
-            handler.sendMessage(msg);
-        }
-
-        @Override
-        public void onTrackingTerminated() {
-            handler.sendEmptyMessage(TRACKING_STOP_MSG_CODE);
-        }
-
-        @Override
-        public void onInitializingTracking() {
-            handler.sendEmptyMessage(TRACKING_INITIALIZING_MSG_CODE);
-        }
-
-        @Override
-        public void notInsideAnyPlaces() {
-            handler.sendEmptyMessage(TRACKING_NOT_IN_PLACE_MSG_CODE);
-        }
-    };
-    private Intent serviceIntent;
-
-    private StalkerTrackingServiceConnetion serviceConnection = new StalkerTrackingServiceConnetion();
-
-    private View.OnClickListener listener = v -> {
-        switch (v.getId()) {
-            case R.id.btnStartAll:
-                trackingViewModel.activeAllTrackingOrganization(true);
-                startAndBindTrackingService();
-                break;
-            case R.id.btnStopAll:
-                trackingViewModel.activeAllTrackingOrganization(false);
-                stopTrackingService();
-                break;
-        }
-    };
 
     class StalkerTrackingServiceConnetion implements ServiceConnection {
         private boolean isBound = false;
+
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             isBound = true;
@@ -324,12 +295,6 @@ public class TrackingFragment extends Fragment {
             Log.d(TAG, "onServiceDisconnected: ");
         }
 
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        handler.removeCallbacksAndMessages(null);
     }
 
     public static class StalkerHandler extends Handler {
@@ -369,41 +334,37 @@ public class TrackingFragment extends Fragment {
         }
     }
 
-    private void updateTrackingOrganizationInService() {
-        if (binder == null)
-            startAndBindTrackingService();
-        if (binder != null) {
-            Log.d(TAG, "updateTrackingOrganizationInService");
-            List<Organization> orgs = organizationToTrack.stream().distinct()
-                    .filter(Organization::isTrackingActive)
-                    .collect(Collectors.toList());
-//            binder.updateTrackingOrganizations(orgs);
-        }
-    }
+    private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
 
+    // The BroadcastReceiver used to listen from broadcasts from the service.
+    private StalkerReceiver myReceiver;
 
-    private void startAndBindTrackingService() {
-        serviceIntent = new Intent(requireContext(), StalkerTrackingService.class);
-        requireContext().startService(serviceIntent);
-        requireContext().bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE);
-    }
+    // A reference to the service used to get location updates.
+    private StalkerTrackingService mService = null;
 
+    // Tracks the bound state of the service.
+    private boolean mBound = false;
 
-    private void stopTrackingService() {
-        if (serviceIntent != null) {
-            Log.d(TAG, "stopTrackingService: " + serviceConnection.isBound());
-            if (serviceConnection.isBound())
-                requireContext().unbindService(serviceConnection);
-        }
-    }
+    // UI elements.
+    private Button mRequestLocationUpdatesButton;
+    private Button mRemoveLocationUpdatesButton;
 
-    private void init(List<Organization> org) {
-        if (org.stream().anyMatch(Organization::isTrackingActive)) {
-            startAndBindTrackingService();
-            updateTrackingOrganizationInService();
+    // Monitors the state of the connection to the service.
+    private final ServiceConnection mServiceConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            StalkerTrackingService.LocalBinder binder = (StalkerTrackingService.LocalBinder) service;
+            mService = binder.getService();
+            mBound = true;
         }
 
-    }
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mService = null;
+            mBound = false;
+        }
+    };
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle b) {
         View root = inflater.inflate(R.layout.fragment_tracking, container, false);
@@ -413,6 +374,12 @@ public class TrackingFragment extends Fragment {
 //        btnStartAllTracking.setOnClickListener(listener);
 //        btnStopAllTracking.setOnClickListener(listener);
         tvCurrentStatus = root.findViewById(R.id.tvCurrentStatus);
+
+        mRequestLocationUpdatesButton = root.findViewById(R.id.btnStartAll);
+        mRemoveLocationUpdatesButton = root.findViewById(R.id.btnStopAll);
+
+
+        myReceiver = new StalkerReceiver(new ArrayList<>());
 
         RecyclerView recyclerView = root.findViewById(R.id.trackingRecycleView);
 
@@ -435,6 +402,7 @@ public class TrackingFragment extends Fragment {
 //                    if (lis.stream().anyMatch(Organizzazione::isTrackingActive)) {
                     organizationToTrack = lis.stream().filter(Organization::isTrackingActive).collect(Collectors.toList());
 //                    updateTrackingOrganizationInService();
+                    myReceiver.setOrganizations(organizationToTrack);
 //                    }
                 });
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
@@ -472,7 +440,7 @@ public class TrackingFragment extends Fragment {
                     if (o.isPreferito())
                         trackingViewModel.removePreferito(o);
                     else trackingViewModel.addPreferito(o);
-                }catch (NotLogged ex){
+                } catch (NotLogged ex) {
 
                     Toast.makeText(requireContext(), R.string.not_logged_yet, Toast.LENGTH_SHORT).show();
                 }
@@ -486,5 +454,163 @@ public class TrackingFragment extends Fragment {
         return root;
     }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        mRequestLocationUpdatesButton.setOnClickListener(view1 -> {
+            if (!checkPermissions()) {
+                requestPermissions();
+            } else {
+                mService.requestLocationUpdates();
+            }
+        });
+
+        mRemoveLocationUpdatesButton.setOnClickListener(view12 -> mService.removeLocationUpdates());
+
+        // Restore the state of the buttons when the activity (re)launches.
+        setButtonsState(Tools.requestingLocationUpdates(requireContext()));
+
+        // Bind to the service. If the service is in foreground mode, this signals to the service
+        // that since this activity is in the foreground, the service can exit foreground mode.
+        requireContext().bindService(new Intent(requireContext(), StalkerTrackingService.class), mServiceConnection,
+                Context.BIND_AUTO_CREATE);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        PreferenceManager.getDefaultSharedPreferences(requireContext())
+                .registerOnSharedPreferenceChangeListener(this);
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        LocalBroadcastManager.getInstance(requireContext()).registerReceiver(myReceiver,
+                new IntentFilter(StalkerTrackingService.ACTION_BROADCAST));
+    }
+
+    @Override
+    public void onPause() {
+        LocalBroadcastManager.getInstance(requireContext()).unregisterReceiver(myReceiver);
+        super.onPause();
+    }
+
+    @Override
+    public void onStop() {
+        if (mBound) {
+            // Unbind from the service. This signals to the service that this activity is no longer
+            // in the foreground, and the service can respond by promoting itself to a foreground
+            // service.
+            requireContext().unbindService(mServiceConnection);
+            mBound = false;
+        }
+        PreferenceManager.getDefaultSharedPreferences(requireContext())
+                .unregisterOnSharedPreferenceChangeListener(this);
+        super.onStop();
+    }
+
+    /**
+     * Returns the current state of the permissions needed.
+     */
+    private boolean checkPermissions() {
+        return PackageManager.PERMISSION_GRANTED == ActivityCompat.checkSelfPermission(requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION);
+    }
+
+    private void requestPermissions() {
+        boolean shouldProvideRationale =
+                ActivityCompat.shouldShowRequestPermissionRationale(requireActivity(),
+                        Manifest.permission.ACCESS_FINE_LOCATION);
+
+        // Provide an additional rationale to the user. This would happen if the user denied the
+        // request previously, but didn't check the "Don't ask again" checkbox.
+        if (shouldProvideRationale) {
+//            Log.i(TAG, "Displaying permission rationale to provide additional context.");
+//            Snackbar.make(
+//                    findViewById(R.id.activity_main),
+//                    R.string.permission_rationale,
+//                    Snackbar.LENGTH_INDEFINITE)
+//                    .setAction(R.string.ok, new View.OnClickListener() {
+//                        @Override
+//                        public void onClick(View view) {
+//                            // Request permission
+//                            ActivityCompat.requestPermissions(requireContext(),
+//                                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+//                                    REQUEST_PERMISSIONS_REQUEST_CODE);
+//                        }
+//                    })
+//                    .show();
+        } else {
+            Log.i(TAG, "Requesting permission");
+            // Request permission. It's possible this can be auto answered if device policy
+            // sets the permission in a given state or the user denied the permission
+            // previously and checked "Never ask again".
+            ActivityCompat.requestPermissions(requireActivity(),
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    REQUEST_PERMISSIONS_REQUEST_CODE);
+        }
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        Log.i(TAG, "onRequestPermissionResult");
+        if (requestCode == REQUEST_PERMISSIONS_REQUEST_CODE) {
+            if (grantResults.length <= 0) {
+                // If user interaction was interrupted, the permission request is cancelled and you
+                // receive empty arrays.
+                Log.i(TAG, "User interaction was cancelled.");
+            } else if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission was granted.
+                mService.requestLocationUpdates();
+            } else {
+                // Permission denied.
+                setButtonsState(false);
+//                Snackbar.make(
+//                        findViewById(R.id.activity_main),
+//                        R.string.permission_denied_explanation,
+//                        Snackbar.LENGTH_INDEFINITE)
+//                        .setAction(R.string.settings, new View.OnClickListener() {
+//                            @Override
+//                            public void onClick(View view) {
+//                                // Build intent that displays the App settings screen.
+//                                Intent intent = new Intent();
+//                                intent.setAction(
+//                                        Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+//                                Uri uri = Uri.fromParts("package",
+//                                        BuildConfig.APPLICATION_ID, null);
+//                                intent.setData(uri);
+//                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                                startActivity(intent);
+//                            }
+//                        })
+//                        .show();
+            }
+        }
+    }
+
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
+        // Update the buttons state depending on whether location updates are being requested.
+        if (s.equals(Tools.KEY_REQUESTING_LOCATION_UPDATES)) {
+            setButtonsState(sharedPreferences.getBoolean(Tools.KEY_REQUESTING_LOCATION_UPDATES,
+                    false));
+        }
+    }
+
+    private void setButtonsState(boolean requestingLocationUpdates) {
+        if (requestingLocationUpdates) {
+            mRequestLocationUpdatesButton.setEnabled(false);
+            mRemoveLocationUpdatesButton.setEnabled(true);
+        } else {
+            mRequestLocationUpdatesButton.setEnabled(true);
+            mRemoveLocationUpdatesButton.setEnabled(false);
+        }
+    }
 
 }
