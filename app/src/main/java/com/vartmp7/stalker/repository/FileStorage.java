@@ -256,7 +256,7 @@ public class FileStorage implements Storage {
             orgList.add(i, organization);
             Log.d(TAG, "updateOrganizations: " + organization);
         }
-
+        saveOrganizations(orgList);
         mLiveOrgs.setValue(orgList);
     }
 

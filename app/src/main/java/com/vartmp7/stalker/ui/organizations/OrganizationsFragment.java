@@ -293,7 +293,7 @@ public class OrganizationsFragment extends Fragment implements SwipeRefreshLayou
         organizzazioneViewModel.getOrganizationList().observe(getViewLifecycleOwner(), lista -> {
 //            Log.e(TAG, "onCreateView: triggered");
             Log.e(TAG, "stampa organizzazioni fetchate: ");
-            lista.forEach(o-> Log.e(TAG, "onCreateView: "+o.getId()+" name "+o.getName()+" isPreferito"+o.isPreferito()));
+            lista.forEach(o-> Log.e(TAG, "onCreateView: "+o.getId()+" name "+o.getName()+" isPreferito"+o.isFavorite()));
             mAdapter.setOrganizations(lista);
             mAdapter.notifyDataSetChanged();
             swipeRefreshLayout.setRefreshing(false);

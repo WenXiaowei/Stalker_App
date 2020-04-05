@@ -400,7 +400,8 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
             mService.removeLocationUpdates();
         }
         organizationToTrack.forEach(organization -> organization.setTrackingActive(isTrackingActive));
-        trackingViewModel.updateOrganizations(organizationToTrack);
+//        trackingViewModel.updateOrganizations(organizationToTrack);
+        trackingViewModel.activeAllTrackingOrganization(isTrackingActive);
     }
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle b) {
         View root = inflater.inflate(R.layout.fragment_tracking, container, false);

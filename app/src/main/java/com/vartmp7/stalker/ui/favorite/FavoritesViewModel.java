@@ -320,7 +320,7 @@ public class FavoritesViewModel extends ViewModel {
                     .filter(o->o.getId()!=org.getId())
                     .collect(Collectors.toList())
             );
-        orgRepo.removeFromPreferiti(org);
+        orgRepo.removeFavorite(org);
     }
 
 }
