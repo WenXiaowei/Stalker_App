@@ -261,6 +261,8 @@ public class OrganizationsRepository {
         return fromLocal;
     }
 
+
+
     public LiveData<List<Long>> getPreferiti() {
         return organizationFavoritesSource.getFavoriteOrganizationID();
     }
@@ -281,6 +283,13 @@ public class OrganizationsRepository {
         } else throw new NotLogged();
     }
 
+private final Observer<List<Organization>> observer = new Observer<List<Organization>>() {
+        @Override
+        public void onChanged(List<Organization> organizzazioni) {
+            Log.d(TAG, "onChanged: aggiornare org");
+            storage.updateOrganizationInfo(organizzazioni);
+        }
+    };
 
     public void refreshOrganizzazioni() {
         LiveData<List<Organization>> resultFromWebCall = obtainer.getOrganizations();
@@ -292,15 +301,7 @@ public class OrganizationsRepository {
         });*/
 
 
-        resultFromWebCall.observeForever(new Observer<List<Organization>>() {
-            @Override
-            public void onChanged(List<Organization> organizzazioni) {
-                Log.d(TAG, "onChanged: aggiornare org");
-                storage.updateOrganizationInfo(organizzazioni);
-            }
-        });
-
-
+        resultFromWebCall.observeForever(observer);
 
 
 

@@ -313,6 +313,13 @@ public class FavoritesViewModel extends ViewModel {
     }
 
     public void removeFromPreferiti(Organization org) throws NotLogged {
+        if(organizzazioni.getValue()!=null)
+            organizzazioni.postValue(
+                organizzazioni.getValue()
+                    .stream()
+                    .filter(o->o.getId()!=org.getId())
+                    .collect(Collectors.toList())
+            );
         orgRepo.removeFromPreferiti(org);
     }
 
