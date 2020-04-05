@@ -208,21 +208,18 @@ import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.location.Location;
 import android.os.Binder;
-import android.os.Build;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
@@ -231,12 +228,8 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.vartmp7.stalker.MainActivity;
 import com.vartmp7.stalker.R;
 import com.vartmp7.stalker.Tools;
-import com.vartmp7.stalker.component.StalkerServiceCallback;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -399,22 +392,22 @@ public class StalkerTrackingService extends Service {
         intent.putExtra(EXTRA_STARTED_FROM_NOTIFICATION, true);
 
         // The PendingIntent that leads to a call to onStartCommand() in this service.
-        PendingIntent servicePendingIntent = PendingIntent.getService(this, 0, intent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
-
+//        PendingIntent servicePendingIntent = PendingIntent.getService(this, 0, intent,
+//                PendingIntent.FLAG_UPDATE_CURRENT);
+//
         // The PendingIntent to launch activity.
-        PendingIntent activityPendingIntent = PendingIntent.getActivity(this, 0,
-                new Intent(this, MainActivity.class), 0);
+//        PendingIntent activityPendingIntent = PendingIntent.getActivity(this, 0,
+//                new Intent(this, MainActivity.class), 0);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
 //                .addAction(R.drawable.icon, getString(R.string.launch_activity),
 //                        activityPendingIntent)
 //                .addAction(R.drawable.ic_cancel, getString(R.string.remove_location_updates),
 //                        servicePendingIntent)
-//                .setContentText(text)
+                .setContentText(text)
                 .setContentTitle(Tools.getLocationTitle(this))
                 .setOngoing(true)
-                .setPriority(Notification.PRIORITY_HIGH)
+                .setPriority(Notification.BADGE_ICON_LARGE)
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setTicker(text)
                 .setWhen(System.currentTimeMillis());
@@ -428,15 +421,12 @@ public class StalkerTrackingService extends Service {
     private void getLastLocation() {
         try {
             mFusedLocationClient.getLastLocation()
-                    .addOnCompleteListener(new OnCompleteListener<Location>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Location> task) {
-                            if (task.isSuccessful() && task.getResult() != null) {
-                                mLocation = task.getResult();
-                                onNewLocation(task.getResult());
-                            } else {
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful() && task.getResult() != null) {
+                            mLocation = task.getResult();
+                            onNewLocation(task.getResult());
+                        } else {
 //                                Log.w(TAG, "Failed to get location.");
-                            }
                         }
                     });
         } catch (SecurityException unlikely) {

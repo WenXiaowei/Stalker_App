@@ -224,11 +224,11 @@ public class OrganizationsRepository {
     //private MediatorLiveData<List<Organizzazione>> liveOrganizzazioni;
 
 
-    public void updateOrganizzazione(Organization o) {
+    public void updateOrganization(Organization o) {
         storage.updateOrganization(o);
     }
 
-    public void updateOrganizzationi(List<Organization> l) {
+    public void updateOrganizations(List<Organization> l) {
         storage.updateOrganizations(l);
     }
 
@@ -261,28 +261,28 @@ public class OrganizationsRepository {
         return fromLocal;
     }
 
-    public LiveData<List<Long>> getPreferiti() {
+    public LiveData<List<Long>> getFavorites() {
         return organizationFavoritesSource.getFavoriteOrganizationID();
     }
 
-    public void addToPreferiti(Organization org) throws NotLogged {
+    public void addFavorite(Organization org) throws NotLogged {
         if (organizationFavoritesSource != null) {
-            org.setPreferito(true);
-            updateOrganizzazione(org);
+            org.setFavorite(true);
+            updateOrganization(org);
             organizationFavoritesSource.addOrganization(org.getId());
         } else throw new NotLogged();
     }
 
-    public void removeFromPreferiti(Organization org) throws NotLogged {
+    public void removeFavorite(Organization org) throws NotLogged {
         if (organizationFavoritesSource != null) {
-            org.setPreferito(false);
-            updateOrganizzazione(org);
+            org.setFavorite(false);
+            updateOrganization(org);
             organizationFavoritesSource.removeOrganization(org.getId());
         } else throw new NotLogged();
     }
 
 
-    public void refreshOrganizzazioni() {
+    public void refreshOrganizations() {
         LiveData<List<Organization>> resultFromWebCall = obtainer.getOrganizations();
         /*liveOrganizzazioni.addSource(resultFromWebCall,organizzazioni->{
             Log.d(TAG, "refreshOrganizzazioni: ");

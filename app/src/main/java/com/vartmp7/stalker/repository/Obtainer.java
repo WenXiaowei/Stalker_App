@@ -212,7 +212,5 @@ import java.util.List;
 
 public interface Obtainer {
     LiveData<List<Organization>> getOrganizations();
-    //void saveOrganizzazione(Organizzazione o);
-    //void removeOrganizzazione(Organizzazione o);
-    //void updateOrganizzazioni();
+
 }

@@ -325,7 +325,7 @@ public class OrganizationsRepositoryTest {
                 Log.d(TAG, "testRefresh: pescate organizzaizoni iniziali");
             }
         });
-        orgRepo.refreshOrganizzazioni();
+        orgRepo.refreshOrganizations();
         //orgRepo.refreshOrganizzazioni();
     }
 }

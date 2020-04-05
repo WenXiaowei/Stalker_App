@@ -237,7 +237,7 @@ public class OrganizationsViewModel extends ViewModel {
 
 
     public void updateOrganizzazione(Organization o){
-        orgRepo.updateOrganizzazione(o);
+        orgRepo.updateOrganization(o);
     }
 
    /* public void updateData() {
@@ -254,6 +254,6 @@ public class OrganizationsViewModel extends ViewModel {
 //    }
 
     public void refresh() {
-        orgRepo.refreshOrganizzazioni();
+        orgRepo.refreshOrganizations();
     }
 }

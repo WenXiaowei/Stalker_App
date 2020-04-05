@@ -250,15 +250,15 @@ public class Organization implements Serializable {
     @Getter @Setter @Accessors(chain = true)
     private List<PolygonPlace> places;
     @Getter @Setter @Accessors(chain = true)
-    private boolean isPreferito = false;
+    private boolean isFavorite = false;
     @Getter @Setter @Accessors(chain = true)
     private boolean isTracking = false;
-    @Getter @Setter @Accessors(chain = true)
-    private boolean isExpanded = false;
+//    @Getter @Setter @Accessors(chain = true)
+//    private boolean isExpanded = false;
     @Getter @Setter @Accessors(chain = true)
     private boolean isLogged = false;
     @Getter @Setter @Accessors(chain = true)
-    private boolean isAnonimo = false;
+    private boolean isAnonymous = false;
     @Getter @Setter @Accessors(chain = true)
     private boolean isTrackingActive=false;
 
@@ -282,11 +282,10 @@ public class Organization implements Serializable {
                 ", ldap_port='" + ldap_port + '\'' +
                 ", image_url='" + image_url + '\'' +
                 ", luoghi=" + places +
-                ", isPreferito=" + isPreferito +
+                ", isPreferito=" + isFavorite +
                 ", isTracking=" + isTracking +
-                ", isExpanded=" + isExpanded +
                 ", isLogged=" + isLogged +
-                ", isAnonimo=" + isAnonimo +
+                ", isAnonimo=" + isAnonymous +
                 ", isTrackingActive=" + isTrackingActive +
                 '}';
     }
@@ -314,6 +313,6 @@ public class Organization implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(address, city, email, id, name, nation, phone_number, postal_code, region, type, ldap_common_name, ldap_domain_component, ldap_port, image_url, places, isPreferito(), isTracking(), isExpanded(), isLogged(), isAnonimo(), isTrackingActive());
+        return Objects.hash(address, city, email, id, name, nation, phone_number, postal_code, region, type, ldap_common_name, ldap_domain_component, ldap_port, image_url, places, isFavorite(), isTracking(), isLogged(), isAnonymous(), isTrackingActive());
     }
 }

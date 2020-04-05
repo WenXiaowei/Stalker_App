@@ -227,8 +227,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.constraintlayout.solver.LinearSystem;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -254,7 +252,6 @@ import org.jetbrains.annotations.NotNull;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -285,7 +282,7 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
             Message msg = new Message();
             Bundle b = new Bundle();
             String message;
-//          todo da cambiare cosa far vedere all'utente.
+//              todo da cambiare cosa far vedere all'utente.
 //            Log.d(TAG, "handling new Location in callback");
 //            organizationToTrack.stream().filter(Organization::isTrackingActive).collect(Collectors.toList());
 
@@ -319,14 +316,10 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
         }
 
         @Override
-        public void onTrackingTerminated() {
-
-        }
+        public void onTrackingTerminated() {}
 
         @Override
-        public void onInitializingTracking() {
-
-        }
+        public void onInitializingTracking() {}
     };
 
     public static class StalkerHandler extends Handler {
@@ -396,24 +389,30 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
             mBound = false;
         }
     };
-
+    public void setAllOrganizationTracking(boolean isTrackingActive){
+        if (isTrackingActive){
+            if (!checkPermissions()) {
+                requestPermissions();
+            } else {
+                mService.requestLocationUpdates();
+            }
+        }else{
+            mService.removeLocationUpdates();
+        }
+        organizationToTrack.forEach(organization -> organization.setTrackingActive(isTrackingActive));
+        trackingViewModel.updateOrganizations(organizationToTrack);
+    }
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle b) {
         View root = inflater.inflate(R.layout.fragment_tracking, container, false);
 
-//        Button btnStartAllTracking = root.findViewById(R.id.btnStartAll);
-//        Button btnStopAllTracking = root.findViewById(R.id.btnStopAll);
-//        btnStartAllTracking.setOnClickListener(listener);
-//        btnStopAllTracking.setOnClickListener(listener);
         tvCurrentStatus = root.findViewById(R.id.tvCurrentStatus);
 
         mRequestLocationUpdatesButton = root.findViewById(R.id.btnStartAll);
         mRemoveLocationUpdatesButton = root.findViewById(R.id.btnStopAll);
 
-
         myReceiver = new StalkerReceiver(new ArrayList<>());
 
         RecyclerView recyclerView = root.findViewById(R.id.trackingRecycleView);
-
 
         trackingViewModel = new ViewModelProvider(requireActivity()).get(TrackingViewModel.class);
         trackingViewModel.init(MainActivity.repository);
@@ -423,18 +422,15 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
                 .filter(Organization::isTracking)
                 .filter(Organization::isTrackingActive)
                 .collect(Collectors.toList());
-//        init(organizationToTrack);
+
         mAdapter = new TrackingViewAdapter(getContext(), trackingViewModel);
         trackingViewModel.getListOrganizzazione().observe(getViewLifecycleOwner(),
                 list -> {
                     Log.d(TAG, "onCreateView: on Changed ");
                     List<Organization> lis = list.stream().filter(Organization::isTracking).collect(Collectors.toList());
                     mAdapter.setList(lis);
-//                    if (lis.stream().anyMatch(Organizzazione::isTrackingActive)) {
                     organizationToTrack = lis.stream().filter(Organization::isTrackingActive).collect(Collectors.toList());
-//                    updateTrackingOrganizationInService();
                     myReceiver.setOrganizations(organizationToTrack);
-//                    }
                 });
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
@@ -468,7 +464,7 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
                 mAdapter.notifyItemChanged(viewHolder.getAdapterPosition());
                 try {
 
-                    if (o.isPreferito())
+                    if (o.isFavorite())
                         trackingViewModel.removePreferito(o);
                     else trackingViewModel.addPreferito(o);
                 } catch (NotLogged ex) {
@@ -476,7 +472,7 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
                     Toast.makeText(requireContext(), R.string.not_logged_yet, Toast.LENGTH_SHORT).show();
                 }
 
-                Toast.makeText(requireContext(), o.isPreferito() ? getString(R.string.organizzazione_added_to_favorite) :
+                Toast.makeText(requireContext(), o.isFavorite() ? getString(R.string.organizzazione_added_to_favorite) :
                         getString(R.string.organizzazione_removed_from_favorite), Toast.LENGTH_SHORT).show();
 
             }
@@ -489,15 +485,8 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mRequestLocationUpdatesButton.setOnClickListener(view1 -> {
-            if (!checkPermissions()) {
-                requestPermissions();
-            } else {
-                mService.requestLocationUpdates();
-            }
-        });
-
-        mRemoveLocationUpdatesButton.setOnClickListener(view12 -> mService.removeLocationUpdates());
+        mRequestLocationUpdatesButton.setOnClickListener(view1 -> setAllOrganizationTracking(true));
+        mRemoveLocationUpdatesButton.setOnClickListener(view12 -> setAllOrganizationTracking(false));
 
         // Restore the state of the buttons when the activity (re)launches.
         setButtonsState(Tools.requestingLocationUpdates(requireContext()));
@@ -507,6 +496,7 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
         requireContext().bindService(new Intent(requireContext(), StalkerTrackingService.class), mServiceConnection,
                 Context.BIND_AUTO_CREATE);
     }
+
 
     @Override
     public void onStart() {

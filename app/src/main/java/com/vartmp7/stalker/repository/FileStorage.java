@@ -250,11 +250,11 @@ public class FileStorage implements Storage {
     @Override
     public void updateOrganizations(List<Organization> org) {
         List<Organization> orgList = mLiveOrgs.getValue();
-
         for (Organization organization : org) {
             int i = orgList.indexOf(organization);
             orgList.remove(i);
             orgList.add(i, organization);
+            Log.d(TAG, "updateOrganizations: " + organization);
         }
 
         mLiveOrgs.setValue(orgList);
@@ -286,11 +286,11 @@ public class FileStorage implements Storage {
             Organization orgToUpdate = orgsToUpdate.get(j);
             for (int i = 0; i < currentOrgs.size() && !contained; i++) {
                 Organization currentOrg = currentOrgs.get(i);
-                if(currentOrg.getId() == orgToUpdate.getId()){
-                    contained=true;
+                if (currentOrg.getId() == orgToUpdate.getId()) {
+                    contained = true;
                     orgToUpdate.setTrackingActive(currentOrg.isTrackingActive());
                     orgToUpdate.setTracking(currentOrg.isTracking());
-                    orgToUpdate.setPreferito(currentOrg.isPreferito());
+                    orgToUpdate.setFavorite(currentOrg.isFavorite());
                     toSave.add(orgToUpdate);
                     //currentOrgs.remove(currentOrg);
                 }
@@ -301,7 +301,7 @@ public class FileStorage implements Storage {
             }
         }
         Log.d(TAG, "updateOrganizzazioni: futureOrgs");
-        toSave.forEach(o-> Log.d(TAG, "org: "+o.getId()));
+        toSave.forEach(o -> Log.d(TAG, "org: " + o.getId()));
         saveOrganizations(toSave);
     }
 
@@ -336,7 +336,7 @@ public class FileStorage implements Storage {
                     } finally {
                         String contents = stringBuilder.toString();
                         OrganizationResponse responseOrganizzazioni = gson.fromJson(contents, OrganizationResponse.class);
-                        if (responseOrganizzazioni!=null){
+                        if (responseOrganizzazioni != null) {
 
                             //fixme ogni tanto sputa un null pointer
                             List<Organization> organizzazioni = responseOrganizzazioni.getOrganizations();//mLiveOrgs.getValue();
@@ -349,7 +349,7 @@ public class FileStorage implements Storage {
                             Log.d("TEST", "arrivo qua 3");
 //                        mLiveOrgs.postValue(organizzazioni.stream().distinct().collect(Collectors.toList()));
 //                        Log.d(TAG, "run: dati letti dal file");
-                        }else{
+                        } else {
                             Log.e(TAG, "run: ResponseOrganizzazioni null");
                         }
 
@@ -419,7 +419,6 @@ public class FileStorage implements Storage {
     }
 
 
-
     @Override
     public void removeOrganization(Organization org) {
         LiveData<List<Organization>> liveOrgs = getOrganizations();
@@ -430,7 +429,6 @@ public class FileStorage implements Storage {
         }
 
     }
-
 
 
 }

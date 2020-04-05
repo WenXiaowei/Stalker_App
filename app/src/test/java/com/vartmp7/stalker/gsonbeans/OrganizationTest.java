@@ -238,7 +238,7 @@ public class OrganizationTest {
             .setCity(city).setEmail(email).setId(id).setName(name).setNation(nation).setPhone_number(phone_number)
             .setPostal_code(postal_code).setRegion(region).setType(type).setLdap_common_name(ldap_common_name)
             .setLdap_domain_component(ldap_domain_component).setLdap_port(ldap_port)
-            .setPreferito(isPreferito).setPlaces(luoghi);
+            .setFavorite(isPreferito).setPlaces(luoghi);
 
     private Organization organization;
     @Before
@@ -248,7 +248,7 @@ public class OrganizationTest {
                 .setCity(city).setEmail(email).setId(id).setName(name).setNation(nation).setPhone_number(phone_number)
                 .setPostal_code(postal_code).setRegion(region).setType(type).setLdap_common_name(ldap_common_name)
                 .setLdap_domain_component(ldap_domain_component).setLdap_port(ldap_port)
-                .setPreferito(isPreferito).setPlaces(luoghi);
+                .setFavorite(isPreferito).setPlaces(luoghi);
     }
 
 

@@ -244,7 +244,7 @@ public class TestUtil {
                     contained=true;
                     orgUpdated.setTrackingActive(currentOrg.isTrackingActive());
                     orgUpdated.setTracking(currentOrg.isTracking());
-                    orgUpdated.setPreferito(currentOrg.isPreferito());
+                    orgUpdated.setFavorite(currentOrg.isFavorite());
                     toUpdate.add(orgUpdated);
                 }else{
                     Log.d(TAG, "escluso "+orgUpdated.getId());

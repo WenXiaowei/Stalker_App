@@ -249,7 +249,7 @@ public class FavoritesViewModel extends ViewModel {
                         .stream()
                         .filter(o -> orgIds.contains(o.getId()))
                         .collect(Collectors.toList());
-                list.forEach(o-> orgRepo.updateOrganizzazione(o.setPreferito(true)));
+                list.forEach(o-> orgRepo.updateOrganization(o.setFavorite(true)));
                 Log.i(TAG, "onChanged: " + list);
                 organizzazioni.postValue(list);
 //                organizzazioni.removeSource(liveDataOrganizzazioni);
@@ -272,7 +272,7 @@ public class FavoritesViewModel extends ViewModel {
 
 
     public void updateOrganizzazione(Organization org) {
-        orgRepo.updateOrganizzazione(org);
+        orgRepo.updateOrganization(org);
     }
 
     public void init(OrganizationsRepository orgRepo) {
@@ -295,7 +295,7 @@ public class FavoritesViewModel extends ViewModel {
         this.organizationsQueryExhausted.setValue(false);
 
         this.liveDataOrganizzazioni = orgRepo.getOrganizations();
-        this.mutableliveDataOrgIds = orgRepo.getPreferiti();
+        this.mutableliveDataOrgIds = orgRepo.getFavorites();
 
         this.organizzazioni.addSource(liveDataOrganizzazioni, storageObserver);
         this.organizzazioni.addSource(mutableliveDataOrgIds,firebaseObserver);
@@ -313,7 +313,7 @@ public class FavoritesViewModel extends ViewModel {
     }
 
     public void removeFromPreferiti(Organization org) throws NotLogged {
-        orgRepo.removeFromPreferiti(org);
+        orgRepo.removeFavorite(org);
     }
 
 }

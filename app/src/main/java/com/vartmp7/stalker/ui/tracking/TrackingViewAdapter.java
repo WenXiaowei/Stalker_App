@@ -274,7 +274,7 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Organization org = listOrganization.get(position);
-        holder.ibtnPreferito.setImageResource(org.isPreferito() ? R.drawable.icon_fav_si : R.drawable.icon_fav_no);
+        holder.ibtnPreferito.setImageResource(org.isFavorite() ? R.drawable.icon_fav_si : R.drawable.icon_fav_no);
 
         View.OnClickListener listener = v -> {
             switch (v.getId()) {
@@ -293,7 +293,7 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
                     showLoginDialog();
                     break;
                 case R.id.ibtnAddToPreferiti:
-                    holder.ibtnPreferito.setImageResource(!org.isPreferito() ? R.drawable.icon_fav_si : R.drawable.icon_fav_no);
+                    holder.ibtnPreferito.setImageResource(!org.isFavorite() ? R.drawable.icon_fav_si : R.drawable.icon_fav_no);
                     RotateAnimation rotate1 = new RotateAnimation(0, 216, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
                     rotate1.setDuration(500);
                     rotate1.setInterpolator(new LinearInterpolator());
@@ -301,7 +301,7 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
 //                    org.setPreferito(!org.isPreferito());
 
                     try {
-                        if (org.isPreferito())
+                        if (org.isFavorite())
                             viewModel.removePreferito(org);
                         else viewModel.addPreferito(org);
                     } catch (NotLogged ex) {
@@ -310,7 +310,7 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
                     break;
                 case R.id.sAnonymousSwitch:
                     holder.sAnonimo.isActivated();
-                    viewModel.updateOrganizzazione(org.setAnonimo(holder.sAnonimo.isActivated()));
+                    viewModel.updateOrganizzazione(org.setAnonymous(holder.sAnonimo.isActivated()));
                     break;
             }
         };

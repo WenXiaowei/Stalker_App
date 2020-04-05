@@ -232,13 +232,13 @@ public class TrackingViewModel extends ViewModel {
     }
 
     public void updateOrganizzazione(Organization o) {
-        repository.updateOrganizzazione(o);
+        repository.updateOrganization(o);
     }
 
     public void activeAllTrackingOrganization(boolean active){
         List<Organization> l=repository.getOrganizations().getValue().stream().filter(Organization::isTracking).collect(Collectors.toList());
         l.forEach(organizzazione -> organizzazione.setTrackingActive(active));
-        repository.updateOrganizzationi(l);
+        repository.updateOrganizations(l);
     }
 
     public void init(OrganizationsRepository repository) {
@@ -246,11 +246,14 @@ public class TrackingViewModel extends ViewModel {
     }
 
     public void removePreferito(Organization o) throws NotLogged {
-        repository.removeFromPreferiti(o);
+        repository.removeFavorite(o);
+    }
+    public void updateOrganizations(List<Organization> list){
+        repository.updateOrganizations(list);
     }
 
     public void addPreferito(Organization o) throws NotLogged {
-        repository.addToPreferiti(o);
+        repository.addFavorite(o);
     }
 
 }

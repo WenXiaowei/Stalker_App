@@ -215,7 +215,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -228,17 +227,13 @@ import com.vartmp7.stalker.MainActivity;
 import com.vartmp7.stalker.R;
 import com.vartmp7.stalker.component.NotLogged;
 import com.vartmp7.stalker.gsonbeans.Organization;
-import com.vartmp7.stalker.repository.OrganizationsRepository;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import lombok.AccessLevel;
 import lombok.Getter;
-import okhttp3.OkHttpClient;
 
 
 /**
@@ -284,7 +279,7 @@ public class FavoritesFragment extends Fragment implements SwipeRefreshLayout.On
 
         favViewModel.getOrganizzazioni().observe(getViewLifecycleOwner(), organizzazioni -> {
 
-            favViewAdapter.setOrganizzazioni(organizzazioni.stream().filter(Organization::isPreferito).collect(Collectors.toList()));
+            favViewAdapter.setOrganizzazioni(organizzazioni.stream().filter(Organization::isFavorite).collect(Collectors.toList()));
 //            Log.e(TAG," triggered");
             preferitiSwipeLayout.setRefreshing(false);
         });
