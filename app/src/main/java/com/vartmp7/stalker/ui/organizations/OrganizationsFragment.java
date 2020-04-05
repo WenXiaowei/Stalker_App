@@ -291,7 +291,7 @@ public class OrganizationsFragment extends Fragment implements SwipeRefreshLayou
 
         setUpRecyclerView();
         organizzazioneViewModel.getOrganizationList().observe(getViewLifecycleOwner(), lista -> {
-            Log.e(TAG, "onCreateView: triggered");
+//            Log.e(TAG, "onCreateView: triggered");
             mAdapter.setOrganizations(lista);
             mAdapter.notifyDataSetChanged();
             swipeRefreshLayout.setRefreshing(false);

@@ -356,14 +356,16 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
         try {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
             goToMainActivity();
-//            Log.d(TAG, "handleSignInResult: " + account.getDisplayName());
+            Log.d(TAG, "handleSignInResult: " + account.getDisplayName());
             // Signed in successfully, show authenticated UI.
 
 //            updateUI(account);
         } catch (ApiException e) {
-            // The ApiException status code indicates the detailed failure reason.
+
             // Please refer to the GoogleSignInStatusCodes class reference for more information.
-//            Log.w(TAG, "signInResult:failed code=" + e.getStatusCode());
+            Log.w(TAG, "signInResult:failed code=" + e.getStatusCode());
+            Log.w(TAG, "signInResult: eccezione=" + e.getMessage());
+
 //            updateUI(null);
         }
     }

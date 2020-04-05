@@ -277,6 +277,7 @@ public class FavoritesFragment extends Fragment implements SwipeRefreshLayout.On
         this.favViewModel = new ViewModelProvider(requireActivity()).get(FavoritesViewModel.class);
 
         preferitiSwipeLayout = root.findViewById(R.id.srflPreferiti);
+        preferitiSwipeLayout.setOnRefreshListener(this);
 
         favViewModel.init(MainActivity.repository);
         initRecyclerView();
@@ -284,7 +285,7 @@ public class FavoritesFragment extends Fragment implements SwipeRefreshLayout.On
         favViewModel.getOrganizzazioni().observe(getViewLifecycleOwner(), organizzazioni -> {
 
             favViewAdapter.setOrganizzazioni(organizzazioni.stream().filter(Organization::isPreferito).collect(Collectors.toList()));
-
+//            Log.e(TAG," triggered");
             preferitiSwipeLayout.setRefreshing(false);
         });
 
@@ -326,7 +327,8 @@ public class FavoritesFragment extends Fragment implements SwipeRefreshLayout.On
 
     @Override
     public void onRefresh() {
-        preferitiSwipeLayout.setRefreshing(true);
+//        preferitiSwipeLayout.setRefreshing(true);
         favViewModel.refresh();
+//        Log.e(TAG, "onRefresh: ");
     }
 }
