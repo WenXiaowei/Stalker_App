@@ -204,49 +204,30 @@
 
 package com.vartmp7.stalker.ui.history;
 
-import android.Manifest;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.ServiceConnection;
-import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.os.IBinder;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.preference.PreferenceManager;
 
 import com.vartmp7.stalker.R;
-import com.vartmp7.stalker.StalkerTrackingService;
-import com.vartmp7.stalker.Tools;
-import com.vartmp7.stalker.component.StalkerReceiver;
-
-import java.util.ArrayList;
 
 
 /**
  * @author Xiaowei Wen, Lorenzo Taschin
  */
 public class HistoryFragment extends Fragment {
-    public static final String TAG ="com.vartmp7.stalker.ui.cronologia.CronologiaFragment";
+    public static final String TAG = "com.vartmp7.stalker.ui.cronologia.CronologiaFragment";
 
     private HistoryViewModel historyViewModel;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-            View v = inflater.inflate(R.layout.fragment_cronologia, container,false);
+        View v = inflater.inflate(R.layout.fragment_cronologia, container, false);
 
 
         return v;

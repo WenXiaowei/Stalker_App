@@ -202,7 +202,7 @@
  *    limitations under the License.
  */
 
-package com.vartmp7.stalker;
+package com.vartmp7.stalker.component;
 
 import android.app.ActivityManager;
 import android.app.Notification;
@@ -233,6 +233,9 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.vartmp7.stalker.MainActivity;
+import com.vartmp7.stalker.R;
+import com.vartmp7.stalker.Tools;
 import com.vartmp7.stalker.component.StalkerServiceCallback;
 
 import org.jetbrains.annotations.NotNull;
@@ -343,7 +346,7 @@ public class StalkerTrackingService extends Service {
         // service. If this method is called due to a configuration change in MainActivity, we
         // do nothing. Otherwise, we make this service a foreground service.
         if (!mChangingConfiguration && Tools.requestingLocationUpdates(this)) {
-            Log.i(TAG, "Starting foreground service");
+//            Log.i(TAG, "Starting foreground service");
 
             startForeground(NOTIFICATION_ID, getNotification());
         }
@@ -362,7 +365,7 @@ public class StalkerTrackingService extends Service {
     }
 
     public void requestLocationUpdates() {
-        Log.i(TAG, "Requesting location updates");
+//        Log.i(TAG, "Requesting location updates");
         Tools.setRequestingLocationUpdates(this, true);
         startService(new Intent(getApplicationContext(), StalkerTrackingService.class));
         try {
@@ -370,19 +373,19 @@ public class StalkerTrackingService extends Service {
                     mLocationCallback, Looper.myLooper());
         } catch (SecurityException unlikely) {
             Tools.setRequestingLocationUpdates(this, false);
-            Log.e(TAG, "Lost location permission. Could not request updates. " + unlikely);
+//            Log.e(TAG, "Lost location permission. Could not request updates. " + unlikely);
         }
     }
 
     public void removeLocationUpdates() {
-        Log.i(TAG, "Removing location updates");
+//        Log.i(TAG, "Removing location updates");
         try {
             mFusedLocationClient.removeLocationUpdates(mLocationCallback);
             Tools.setRequestingLocationUpdates(this, false);
             stopSelf();
         } catch (SecurityException unlikely) {
             Tools.setRequestingLocationUpdates(this, true);
-            Log.e(TAG, "Lost location permission. Could not remove updates. " + unlikely);
+//            Log.e(TAG, "Lost location permission. Could not remove updates. " + unlikely);
         }
     }
 
@@ -432,21 +435,21 @@ public class StalkerTrackingService extends Service {
                                 mLocation = task.getResult();
                                 onNewLocation(task.getResult());
                             } else {
-                                Log.w(TAG, "Failed to get location.");
+//                                Log.w(TAG, "Failed to get location.");
                             }
                         }
                     });
         } catch (SecurityException unlikely) {
-            Log.e(TAG, "Lost location permission." + unlikely);
+//            Log.e(TAG, "Lost location permission." + unlikely);
         }
     }
 
     private void onNewLocation(Location location) {
-        Log.i(TAG, "New location: " + location);
+//        Log.i(TAG, "New location: " + location);
 
         mLocation = location;
         if (serviceCallback != null){
-            Log.d(TAG, "onNewLocation: calling back");
+//            Log.d(TAG, "onNewLocation: calling back");
             serviceCallback.onNewLocation(location);
         }
 

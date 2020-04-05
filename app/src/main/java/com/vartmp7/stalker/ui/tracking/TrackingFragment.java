@@ -240,7 +240,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.vartmp7.stalker.MainActivity;
 import com.vartmp7.stalker.R;
-import com.vartmp7.stalker.StalkerTrackingService;
+import com.vartmp7.stalker.component.StalkerTrackingService;
 import com.vartmp7.stalker.Tools;
 import com.vartmp7.stalker.component.NotLogged;
 import com.vartmp7.stalker.component.StalkerReceiver;
@@ -248,6 +248,8 @@ import com.vartmp7.stalker.component.StalkerServiceCallback;
 import com.vartmp7.stalker.gsonbeans.Organization;
 import com.vartmp7.stalker.gsonbeans.PolygonPlace;
 import com.vartmp7.stalker.gsonbeans.placecomponent.Coordinate;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -284,18 +286,18 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
             Bundle b = new Bundle();
             String message;
 //          todo da cambiare cosa far vedere all'utente.
-            Log.d(TAG, "handling new Location in callback");
+//            Log.d(TAG, "handling new Location in callback");
 //            organizationToTrack.stream().filter(Organization::isTrackingActive).collect(Collectors.toList());
 
             List<PolygonPlace> places = new ArrayList<>();
             organizationToTrack.forEach(organization -> places.addAll(organization.getPlaces()));
             Coordinate coordinate = new Coordinate(l.getLatitude(), l.getLongitude());
-            Log.d(TAG, "onNewLocation: ");
+//            Log.d(TAG, "onNewLocation: ");
             Optional<PolygonPlace> optionalPolygonPlace = places.stream().filter(p -> p.isInside(coordinate)).findAny();
 
             if (optionalPolygonPlace.isPresent()) {
                 PolygonPlace place = optionalPolygonPlace.get();
-                Log.d(TAG, "onNewLocation: you are in a place, " + place.getName());
+//                Log.d(TAG, "onNewLocation: you are in a place, " + place.getName());
 
                 Optional<Organization> any = organizationToTrack.stream()
                         .filter(organization -> organization.getPlaces()
@@ -303,12 +305,8 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
                                 .anyMatch(polygonPlace -> place.getId() == polygonPlace.getId()))
                         .findAny();
 
-                if (any.isPresent()) {
-                    message = getString(R.string.sei_in_tale_dei_tali, place.getName(), any.get().getName());
-                    Log.d(TAG, "onNewLocation: sending mesg to handler: " + message);
-                }else{
-                    message = getString(R.string.non_presente_nei_luoghi_tracciati);
-                }
+                //                    Log.d(TAG, "onNewLocation: sending mesg to handler: " + message);
+                message = any.map(organization -> getString(R.string.sei_in_tale_dei_tali, place.getName(), organization.getName())).orElseGet(() -> getString(R.string.non_presente_nei_luoghi_tracciati));
 
             } else {
                 message = getString(R.string.non_presente_nei_luoghi_tracciati);
@@ -339,7 +337,7 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
         }
 
         @Override
-        public void handleMessage(Message msg) {
+        public void handleMessage(@NotNull Message msg) {
             super.handleMessage(msg);
             Log.d(TAG, "handleMessage: ");
             TrackingFragment fragment = reference.get();
@@ -360,7 +358,7 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
             //gestione degli messaggi non empty, se sono più di un caso, allora può essere convertito in switch
             int code = b.getInt(MSG_CODE, -1);
             if (code == TRACKING_MSG_CODE) {
-                Log.d(TAG, "handleMessage: " + b.getString(PLACE_MSG));
+//                Log.d(TAG, "handleMessage: " + b.getString(PLACE_MSG));
                 fragment.tvCurrentStatus.setText(b.getString(PLACE_MSG));
             }
         }

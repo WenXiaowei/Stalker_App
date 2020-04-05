@@ -286,7 +286,7 @@ public class Tools {
      * Stores the location updates state in SharedPreferences.
      * @param requestingLocationUpdates The location updates state.
      */
-    static void setRequestingLocationUpdates(Context context, boolean requestingLocationUpdates) {
+    public static void setRequestingLocationUpdates(Context context, boolean requestingLocationUpdates) {
         PreferenceManager.getDefaultSharedPreferences(context)
                 .edit()
                 .putBoolean(KEY_REQUESTING_LOCATION_UPDATES, requestingLocationUpdates)
@@ -297,16 +297,16 @@ public class Tools {
      * Returns the {@code location} object as a human readable string.
      * @param location  The {@link Location}.
      */
-    static String getLocationText(Location location) {
+    public static String getLocationText(Location location) {
         return location == null ? "Unknown location" :
                 "(" + location.getLatitude() + ", " + location.getLongitude() + ")";
     }
 
-    static String getLocationTitle(Context context) {
+    public static String getLocationTitle(Context context) {
         return context.getString(R.string.luogo_cambiato,
                 DateFormat.getDateTimeInstance().format(new Date()));
     }
-    static boolean isUserLogged(Context context) {
+    public static boolean isUserLogged(Context context) {
         return FirebaseAuth.getInstance().getCurrentUser() != null || GoogleSignIn.getLastSignedInAccount(context) != null;
     }
 

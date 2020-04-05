@@ -211,8 +211,10 @@ import android.location.Location;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.vartmp7.stalker.StalkerTrackingService;
+import com.vartmp7.stalker.component.StalkerTrackingService;
 import com.vartmp7.stalker.gsonbeans.Organization;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -229,8 +231,9 @@ public class StalkerReceiver extends BroadcastReceiver {
     }
 
     @Override
-    public void onReceive(Context context, Intent intent) {
+    public void onReceive(Context context, @NotNull Intent intent) {
         Location location = intent.getParcelableExtra(StalkerTrackingService.EXTRA_LOCATION);
+
         if (location != null) {
             Log.d(TAG, "onReceive: ");
             Toast.makeText(context, location.toString(),
