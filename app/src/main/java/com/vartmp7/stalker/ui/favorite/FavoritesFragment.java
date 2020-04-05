@@ -278,11 +278,18 @@ public class FavoritesFragment extends Fragment implements SwipeRefreshLayout.On
         initRecyclerView();
 
         favViewModel.getOrganizzazioni().observe(getViewLifecycleOwner(), organizzazioni -> {
+            List<Organization> orgs = organizzazioni;
 
-            favViewAdapter.setOrganizzazioni(organizzazioni.stream().filter(Organization::isFavorite).collect(Collectors.toList()));
+            Log.e(TAG,"trigger");
+            organizzazioni
+                    .stream()
+                    .filter(Organization::isPreferito)
+                    .forEach(o-> Log.d(TAG, "org: "+o.getId()+" "+o.getName()+" "+o.isTracking()));
+            favViewAdapter.setOrganizzazioni(organizzazioni.stream().filter(Organization::isPreferito).distinct().collect(Collectors.toList()));
 //            Log.e(TAG," triggered");
             preferitiSwipeLayout.setRefreshing(false);
         });
+
 
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
             @Override
