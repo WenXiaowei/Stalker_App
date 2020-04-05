@@ -210,7 +210,7 @@ import com.vartmp7.stalker.gsonbeans.Organization;
 
 import java.util.List;
 
-public interface Storage  extends  Obtainer{
+public interface Storage extends Obtainer {
 
     void updateOrganizationInfo(List<Organization> orgsToUpdate);
 

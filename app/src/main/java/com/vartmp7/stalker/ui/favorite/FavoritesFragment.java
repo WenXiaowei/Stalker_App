@@ -283,9 +283,9 @@ public class FavoritesFragment extends Fragment implements SwipeRefreshLayout.On
             Log.e(TAG,"trigger");
             organizzazioni
                     .stream()
-                    .filter(Organization::isPreferito)
+                    .filter(Organization::isFavorite)
                     .forEach(o-> Log.d(TAG, "org: "+o.getId()+" "+o.getName()+" "+o.isTracking()));
-            favViewAdapter.setOrganizzazioni(organizzazioni.stream().filter(Organization::isPreferito).distinct().collect(Collectors.toList()));
+            favViewAdapter.setOrganizzazioni(organizzazioni.stream().filter(Organization::isFavorite).distinct().collect(Collectors.toList()));
 //            Log.e(TAG," triggered");
             preferitiSwipeLayout.setRefreshing(false);
         });
