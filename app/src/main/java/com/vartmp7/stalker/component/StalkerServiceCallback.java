@@ -213,5 +213,4 @@ public abstract class StalkerServiceCallback implements CallBack{
         this.handler = handler;
     }
 
-
 }

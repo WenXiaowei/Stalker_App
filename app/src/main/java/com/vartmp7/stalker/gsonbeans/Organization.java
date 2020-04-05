@@ -248,7 +248,7 @@ public class Organization implements Serializable {
     @Getter @Setter @Accessors(chain = true)
     private String image_url;
     @Getter @Setter @Accessors(chain = true)
-    private List<PolygonPlace> luoghi;
+    private List<PolygonPlace> places;
     @Getter @Setter @Accessors(chain = true)
     private boolean isPreferito = false;
     @Getter @Setter @Accessors(chain = true)
@@ -281,7 +281,7 @@ public class Organization implements Serializable {
                 ", ldap_domain_component='" + ldap_domain_component + '\'' +
                 ", ldap_port='" + ldap_port + '\'' +
                 ", image_url='" + image_url + '\'' +
-                ", luoghi=" + luoghi +
+                ", luoghi=" + places +
                 ", isPreferito=" + isPreferito +
                 ", isTracking=" + isTracking +
                 ", isExpanded=" + isExpanded +
@@ -314,6 +314,6 @@ public class Organization implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(address, city, email, id, name, nation, phone_number, postal_code, region, type, ldap_common_name, ldap_domain_component, ldap_port, image_url, luoghi, isPreferito(), isTracking(), isExpanded(), isLogged(), isAnonimo(), isTrackingActive());
+        return Objects.hash(address, city, email, id, name, nation, phone_number, postal_code, region, type, ldap_common_name, ldap_domain_component, ldap_port, image_url, places, isPreferito(), isTracking(), isExpanded(), isLogged(), isAnonimo(), isTrackingActive());
     }
 }

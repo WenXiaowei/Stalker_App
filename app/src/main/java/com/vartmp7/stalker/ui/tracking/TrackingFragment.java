@@ -212,6 +212,7 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -226,6 +227,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.solver.LinearSystem;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -239,16 +242,18 @@ import com.vartmp7.stalker.MainActivity;
 import com.vartmp7.stalker.R;
 import com.vartmp7.stalker.StalkerTrackingService;
 import com.vartmp7.stalker.Tools;
-import com.vartmp7.stalker.component.CallBack;
 import com.vartmp7.stalker.component.NotLogged;
 import com.vartmp7.stalker.component.StalkerReceiver;
 import com.vartmp7.stalker.component.StalkerServiceCallback;
 import com.vartmp7.stalker.gsonbeans.Organization;
+import com.vartmp7.stalker.gsonbeans.PolygonPlace;
+import com.vartmp7.stalker.gsonbeans.placecomponent.Coordinate;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -257,7 +262,7 @@ import java.util.stream.Collectors;
  */
 public class TrackingFragment extends Fragment implements SharedPreferences.OnSharedPreferenceChangeListener {
 
-    private final static String TAG = "com.vartmp7.stalker.ui.home.HomeFragment";
+    private final static String TAG = "com.vartmp7.stalker.ui.home.TrackingFragment";
     private final static String PLACE_MSG = "PLACE_MSG";
     private final static int TRACKING_MSG_CODE = 1;
     private final static int TRACKING_STOP_MSG_CODE = 2;
@@ -271,31 +276,60 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
     private TextView tvCurrentStatus;
     private StalkerTrackingService.LocalBinder binder;
     private Handler handler = new StalkerHandler(this);
-
-    class StalkerTrackingServiceConnetion implements ServiceConnection {
-        private boolean isBound = false;
+    private StalkerServiceCallback callback = new StalkerServiceCallback(handler) {
 
         @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            isBound = true;
-            binder = (StalkerTrackingService.LocalBinder) service;
-//            binder.updateTrackingOrganizations(organizationToTrack);
-//            binder.getService().setCallBack(callback);
-            Log.d(TAG, "onServiceConnected: ");
-        }
+        public void onNewLocation(Location l) {
+            Message msg = new Message();
+            Bundle b = new Bundle();
+            String message;
+//          todo da cambiare cosa far vedere all'utente.
+            Log.d(TAG, "handling new Location in callback");
+//            organizationToTrack.stream().filter(Organization::isTrackingActive).collect(Collectors.toList());
 
-        public boolean isBound() {
-            return isBound;
+            List<PolygonPlace> places = new ArrayList<>();
+            organizationToTrack.forEach(organization -> places.addAll(organization.getPlaces()));
+            Coordinate coordinate = new Coordinate(l.getLatitude(), l.getLongitude());
+            Log.d(TAG, "onNewLocation: ");
+            Optional<PolygonPlace> optionalPolygonPlace = places.stream().filter(p -> p.isInside(coordinate)).findAny();
+
+            if (optionalPolygonPlace.isPresent()) {
+                PolygonPlace place = optionalPolygonPlace.get();
+                Log.d(TAG, "onNewLocation: you are in a place, " + place.getName());
+
+                Optional<Organization> any = organizationToTrack.stream()
+                        .filter(organization -> organization.getPlaces()
+                                .stream()
+                                .anyMatch(polygonPlace -> place.getId() == polygonPlace.getId()))
+                        .findAny();
+
+                if (any.isPresent()) {
+                    message = getString(R.string.sei_in_tale_dei_tali, place.getName(), any.get().getName());
+                    Log.d(TAG, "onNewLocation: sending mesg to handler: " + message);
+                }else{
+                    message = getString(R.string.non_presente_nei_luoghi_tracciati);
+                }
+
+            } else {
+                message = getString(R.string.non_presente_nei_luoghi_tracciati);
+            }
+            b.putInt(MSG_CODE, TRACKING_MSG_CODE);
+            b.putString(PLACE_MSG, message);
+            msg.setData(b);
+            handler.sendMessage(msg);
+
         }
 
         @Override
-        public void onServiceDisconnected(ComponentName name) {
-            isBound = false;
-            binder = null;
-            Log.d(TAG, "onServiceDisconnected: ");
+        public void onTrackingTerminated() {
+
         }
 
-    }
+        @Override
+        public void onInitializingTracking() {
+
+        }
+    };
 
     public static class StalkerHandler extends Handler {
         WeakReference<TrackingFragment> reference;
@@ -307,6 +341,7 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
+            Log.d(TAG, "handleMessage: ");
             TrackingFragment fragment = reference.get();
             Bundle b = msg.getData();
             //gestione dei empty message
@@ -323,13 +358,10 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
             }
 
             //gestione degli messaggi non empty, se sono più di un caso, allora può essere convertito in switch
-            int code = msg.getData().getInt(MSG_CODE, -1);
+            int code = b.getInt(MSG_CODE, -1);
             if (code == TRACKING_MSG_CODE) {
-                String[] a = b.getStringArray(PLACE_MSG);
-                if (a != null && a.length >= 3) {
-                    String s = String.format(Locale.getDefault(), "Sei in %s dell'organizzazione \"%s\" da %s", a[0], a[1], a[2]);
-                    fragment.tvCurrentStatus.setText(s);
-                }
+                Log.d(TAG, "handleMessage: " + b.getString(PLACE_MSG));
+                fragment.tvCurrentStatus.setText(b.getString(PLACE_MSG));
             }
         }
     }
@@ -356,6 +388,7 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
         public void onServiceConnected(ComponentName name, IBinder service) {
             StalkerTrackingService.LocalBinder binder = (StalkerTrackingService.LocalBinder) service;
             mService = binder.getService();
+            binder.setServiceCallback(callback);
             mBound = true;
         }
 

@@ -264,8 +264,8 @@
     <string name="cognome">Cognome</string>
     <string name="nome">Nome</string>
     <string name="inserire_indirizzo_mail">Dovresti inserire l\'indirizzo mail!</string>
-    <string name="mail_inviata_con_successo">\"La mail è stata inviata con successo!\"</string>
-    <string name="qualcosa_non_e_andato_bene">\"Qualcosa è andato storto!\nRiprovare più tardi!\"</string>
+    <string name="mail_inviata_con_successo">La mail è stata inviata con successo!</string>
+    <string name="qualcosa_non_e_andato_bene">Qualcosa è andato storto!\nRiprovare più tardi!</string>
     <string name="password_non_coincidono">Password non coincidono!</string>
     <string name="password_troppo_corta">Password troppo corta!</string>
     <string name="modificato_con_successo">%s modificato con successo!</string>
@@ -276,4 +276,5 @@
     <string name="unknown_error">Errori sconosciuti, riprova più tardi</string>
     <string name="elimina_account">Elimina account</string>
     <string name="luogo_cambiato">Luogo cambiato: %1$s</string>
+    <string name="sei_in_tale_dei_tali">Sei in %s di \"%s\"!</string>
 </resources>

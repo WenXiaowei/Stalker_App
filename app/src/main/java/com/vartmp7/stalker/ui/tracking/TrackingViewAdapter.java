@@ -304,7 +304,7 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
                         if (org.isPreferito())
                             viewModel.removePreferito(org);
                         else viewModel.addPreferito(org);
-                    }catch (NotLogged ex){
+                    } catch (NotLogged ex) {
                         Toast.makeText(context, R.string.not_logged_yet, Toast.LENGTH_SHORT).show();
                     }
                     break;
@@ -330,7 +330,12 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
             holder.ibtnTrackingStatus.setImageResource(R.drawable.ic_tracking_off);
             holder.btnTracciami.setText(R.string.track_me);
         }
+        if (org.getPlaces() != null) {
 
+            StringBuilder builder = new StringBuilder();
+            org.getPlaces().forEach(p -> builder.append(p.getName()));
+            holder.tvElencoLuoghi.setText(builder.toString());
+        }
 
         holder.tvNomeOrganizzazione.setText(org.getName());
         holder.llTitle.setOnClickListener(listener);

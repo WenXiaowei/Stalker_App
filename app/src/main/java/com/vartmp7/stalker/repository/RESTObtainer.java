@@ -211,11 +211,15 @@ import androidx.lifecycle.MutableLiveData;
 import com.google.gson.Gson;
 import com.vartmp7.stalker.gsonbeans.Organization;
 import com.vartmp7.stalker.gsonbeans.OrganizationResponse;
+import com.vartmp7.stalker.gsonbeans.PolygonPlace;
+import com.vartmp7.stalker.gsonbeans.placecomponent.Coordinate;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -237,11 +241,11 @@ public class RESTObtainer implements Obtainer {
     private MutableLiveData<List<Organization>> mutableLiveDataOrganizzazioni;
 
 
-    public RESTObtainer(OkHttpClient httpClient, MutableLiveData<List<Organization>> list , String serverUrl) {
+    public RESTObtainer(OkHttpClient httpClient, MutableLiveData<List<Organization>> list, String serverUrl) {
         this.httpClient = httpClient;
         this.serverUrl = serverUrl;
         //this.mutableLiveDataOrganizzazioni= list;
-        mutableLiveDataOrganizzazioni=new MutableLiveData<>();
+        mutableLiveDataOrganizzazioni = new MutableLiveData<>();
     }
 
     @Override
@@ -278,14 +282,26 @@ public class RESTObtainer implements Obtainer {
                     new Organizzazione().setId(++count),
                     new Organizzazione().setId(++count)
                 ));*/
+                ArrayList<Coordinate> torreArchimede = new ArrayList<>();
+                torreArchimede.add(new Coordinate(45.411555, 11.887476));
+                torreArchimede.add(new Coordinate(45.411442, 11.887942));
+                torreArchimede.add(new Coordinate(45.411108, 11.887787));
+                torreArchimede.add(new Coordinate(45.411222, 11.887319));
+                PolygonPlace t = new PolygonPlace();
+                t.setId(1).setName("org").setNum_max_people(10);
+                t.setCoordinate(torreArchimede);
 
                 List<Organization> orgs = Arrays.asList(
-                    new Organization().setId(count).setName("unipd"+count).setTracking(true).setImage_url("https://cdn.discordapp.com/attachments/690970576415621201/691008560363995208/Schermata_2020-03-21_alle_20.41.13.png"),
-                    new Organization().setId(count+1).setName("unipd"+(count+1)).setTracking(true).setImage_url("https://cdn.discordapp.com/attachments/690970576415621201/691008560363995208/Schermata_2020-03-21_alle_20.41.13.png"),
-                    new Organization().setId(count+2).setName("unipd"+(count+2)).setTracking(true).setImage_url("https://cdn.discordapp.com/attachments/690970576415621201/691008560363995208/Schermata_2020-03-21_alle_20.41.13.png"),
-                    new Organization().setId(count+3).setName("unipd"+(count+3)).setTracking(true).setImage_url("https://cdn.discordapp.com/attachments/690970576415621201/691008560363995208/Schermata_2020-03-21_alle_20.41.13.png")
-                );
-                orgs.forEach(o-> Log.d(TAG, "onFailure: "+o.getId()));
+                        new Organization().setId(count).setName("unipd" + count).setTracking(true).setImage_url("https://cdn.discordapp.com/attachments/690970576415621201/691008560363995208/Schermata_2020-03-21_alle_20.41.13.png")
+                                .setPlaces(Collections.singletonList(t)),
+                        new Organization().setId(count + 1).setName("unipd" + (count + 1)).setTracking(true).setImage_url("https://cdn.discordapp.com/attachments/690970576415621201/691008560363995208/Schermata_2020-03-21_alle_20.41.13.png")
+                                .setPlaces(Collections.singletonList(t)),
+                        new Organization().setId(count + 2).setName("unipd" + (count + 2)).setTracking(true).setImage_url("https://cdn.discordapp.com/attachments/690970576415621201/691008560363995208/Schermata_2020-03-21_alle_20.41.13.png")
+                                .setPlaces(Collections.singletonList(t)),
+                        new Organization().setId(count + 3).setName("unipd" + (count + 3)).setTracking(true).setImage_url("https://cdn.discordapp.com/attachments/690970576415621201/691008560363995208/Schermata_2020-03-21_alle_20.41.13.png")
+                                .setPlaces(Collections.singletonList(t))
+                        );
+                orgs.forEach(o -> Log.d(TAG, "onFailure: " + o.getId()));
                 mutableLiveDataOrganizzazioni.postValue(orgs);
 
 

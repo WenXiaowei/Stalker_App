@@ -233,6 +233,7 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.vartmp7.stalker.component.StalkerServiceCallback;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -266,6 +267,7 @@ public class StalkerTrackingService extends Service {
     private Handler mServiceHandler;
 
     private Location mLocation;
+    private StalkerServiceCallback serviceCallback;
 
     @Override
     public void onCreate() {
@@ -443,6 +445,10 @@ public class StalkerTrackingService extends Service {
         Log.i(TAG, "New location: " + location);
 
         mLocation = location;
+        if (serviceCallback != null){
+            Log.d(TAG, "onNewLocation: calling back");
+            serviceCallback.onNewLocation(location);
+        }
 
         // Notify anyone listening for broadcasts about the new location.
         Intent intent = new Intent(ACTION_BROADCAST);
@@ -474,7 +480,7 @@ public class StalkerTrackingService extends Service {
         mLocationRequest.setInterval(UPDATE_INTERVAL_IN_MILLISECONDS);
         mLocationRequest.setMaxWaitTime(1000);
         mLocationRequest.setInterval(1_000);
-        mLocationRequest.setSmallestDisplacement(10);
+        mLocationRequest.setSmallestDisplacement(2);
         mLocationRequest.setFastestInterval(1000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
@@ -482,6 +488,10 @@ public class StalkerTrackingService extends Service {
     public class LocalBinder extends Binder {
         public StalkerTrackingService getService() {
             return StalkerTrackingService.this;
+        }
+
+        public void setServiceCallback(StalkerServiceCallback callback) {
+            StalkerTrackingService.this.serviceCallback = callback;
         }
     }
 }
