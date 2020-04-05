@@ -210,9 +210,9 @@
     <gradient
         android:angle="45"
         android:centerX="35%"
-        android:centerColor="#ff3385ff"
-        android:startColor="#ff3385ff"
-        android:endColor="#ff3385ff"
+        android:centerColor="@color/vartmp7bluChiaro"
+        android:startColor="@color/vartmp7bluChiaro"
+        android:endColor="@color/vartmp7bluChiaro"
         android:type="linear"
         />
     <padding
