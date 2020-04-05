@@ -225,9 +225,9 @@
             android:gravity="center_vertical"
             android:orientation="horizontal"
             android:paddingStart="5dp"
+            android:paddingEnd="5dp"
             android:paddingTop="5dp"
-            android:paddingBottom="5dp"
-            tools:ignore="RtlSymmetry">
+            android:paddingBottom="5dp">
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/civIconOrganizzazione"
@@ -237,13 +237,13 @@
 
             <TextView
                 android:id="@+id/tvNomeOrganizzazione"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="14"
                 android:paddingStart="5dp"
                 android:textAlignment="center"
                 android:textColor="@color/black"
-                android:textSize="25dp" />
+                android:textSize="25sp" />
 
             <ImageButton
                 android:id="@+id/ibtnTrackingOn"
@@ -274,6 +274,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:paddingStart="5dp"
+            android:paddingEnd="5dp"
             android:visibility="gone">
 
             <LinearLayout
@@ -304,13 +305,14 @@
 
                 <Button
                     android:id="@+id/btnStartTracking"
-
+                    android:background="@drawable/refresh_btn_style"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/track_me" />
 
                 <Button
                     android:id="@+id/btnLoginLDAP"
+                    android:background="@drawable/refresh_btn_style"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/login_ldap" />

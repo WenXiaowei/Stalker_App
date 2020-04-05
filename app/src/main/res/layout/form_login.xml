@@ -214,7 +214,7 @@
 
     <com.facebook.login.widget.LoginButton
         android:id="@+id/login_button"
-        android:layout_width="wrap_content"
+        android:layout_width="192dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="280dp"
@@ -225,7 +225,7 @@
 
     <com.google.android.gms.common.SignInButton
         android:id="@+id/btn_googleSignIn"
-        android:layout_width="195dp"
+        android:layout_width="192dp"
         android:layout_height="50dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -236,54 +236,48 @@
     <Button
         android:id="@+id/btnProcediSenzaAuth"
         android:layout_width="192dp"
-        android:textColor="@color/white"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:background="@drawable/refresh_btn_style"
         android:text="@string/continua_senza_autenticazione"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.506"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_googleSignIn"
-        app:layout_constraintVertical_bias="0.092" />
+        app:layout_constraintTop_toBottomOf="@+id/btn_signIn" />
 
-    <LinearLayout
+    <Button
+        android:id="@+id/btn_signIn"
         android:layout_width="192dp"
-        android:layout_height="60dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
-
-        android:gravity="center_horizontal"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_height="48dp"
+        android:layout_marginBottom="8dp"
+        android:layout_weight="1"
+        android:background="@drawable/refresh_btn_style"
+        android:paddingStart="@dimen/botton_paddings"
+        android:paddingEnd="@dimen/botton_paddings"
+        android:text="@string/sign_up"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toTopOf="@+id/btnProcediSenzaAuth"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/btn_signUp"
+        android:layout_width="192dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="110dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="109dp"
+        android:layout_marginBottom="8dp"
+        android:layout_weight="1"
+        android:background="@drawable/refresh_btn_style"
+        android:paddingStart="@dimen/botton_paddings"
+        android:paddingEnd="@dimen/botton_paddings"
+        android:text="@string/sign_in"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toTopOf="@+id/btn_signIn"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnProcediSenzaAuth"
-        app:layout_constraintVertical_bias="0.174">
+        app:layout_constraintTop_toBottomOf="@+id/btn_googleSignIn" />
 
-        <Button
-            android:id="@+id/btn_signIn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/white"
-            android:layout_weight="1"
-            android:paddingStart="@dimen/botton_paddings"
-            android:paddingEnd="@dimen/botton_paddings"
-            android:background="@drawable/refresh_btn_style"
-            android:text="@string/sign_up" />
-
-        <Button
-            android:id="@+id/btn_signUp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:textColor="@color/white"
-            android:paddingStart="@dimen/botton_paddings"
-            android:paddingEnd="@dimen/botton_paddings"
-            android:background="@drawable/refresh_btn_style"
-            android:text="@string/sign_in"
-          />
-
-    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

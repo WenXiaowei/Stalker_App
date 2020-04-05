@@ -281,4 +281,7 @@
     <string name="app_necessita_di_permessi">Ho bisogno dei permessi per funzionare!</string>
     <string name="permission_denied_explanation">Applicazione ha bisogno dei permessi!</string>
     <string name="settings">Impostazione</string>
+    <string name="ferma_tutti">Ferma \nTutti</string>
+    <string name="avvia_tutti">Avvia\n tutti</string>
+    <string name="nessun_organization_ti_sta_tracciando">Nessun\'organization ti sta tracciando</string>
 </resources>

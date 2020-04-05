@@ -224,13 +224,13 @@
 
     <ImageView
         android:id="@+id/imageView2"
-        android:layout_width="235dp"
+        android:layout_width="192dp"
         android:layout_height="158dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="4dp"
         android:src="@drawable/icon_stalker_login"
         android:text="@string/stalker"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.443"
+        app:layout_constraintHorizontal_bias="0.515"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
