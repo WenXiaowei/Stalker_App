@@ -12,8 +12,10 @@ android:
     - extra
   licenses:
     - 'android-sdk-preview-license-52d11cd2'
-    - 'android-sdk-license-.+'
-    - 'google-gdk-license-.+'
+    - 'android-sdk-license-28.+'
+    - 'google-gdk-license-28.+'
+    - 'android-sdk-license-29.+'
+    - 'google-gdk-license-29.+'
 #before_script:	
 #  - echo no | android create avd --force -n test -t android-24 --abi armeabi-v7a
 #  - emulator -avd test -no-audio -no-window &	
