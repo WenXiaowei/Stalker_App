@@ -246,6 +246,8 @@ public class Organization implements Serializable {
     @Getter @Setter @Accessors(chain = true)
     private String ldap_port;
     @Getter @Setter @Accessors(chain = true)
+    private String ldap_url;
+    @Getter @Setter @Accessors(chain = true)
     private String image_url;
     @Getter @Setter @Accessors(chain = true)
     private List<PolygonPlace> places;
@@ -253,14 +255,17 @@ public class Organization implements Serializable {
     private boolean isFavorite = false;
     @Getter @Setter @Accessors(chain = true)
     private boolean isTracking = false;
-//    @Getter @Setter @Accessors(chain = true)
-//    private boolean isExpanded = false;
     @Getter @Setter @Accessors(chain = true)
     private boolean isLogged = false;
     @Getter @Setter @Accessors(chain = true)
     private boolean isAnonymous = false;
     @Getter @Setter @Accessors(chain = true)
     private boolean isTrackingActive=false;
+    @Getter @Setter @Accessors(chain = true)
+    private String personalCn;
+    @Getter @Setter @Accessors(chain = true)
+    private String ldapPassword;
+
 
     public Organization() {}
 

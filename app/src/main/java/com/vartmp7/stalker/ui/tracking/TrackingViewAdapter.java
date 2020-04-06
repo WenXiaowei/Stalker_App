@@ -290,7 +290,7 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
                     }
                     break;
                 case R.id.btnLoginLDAP:
-                    showLoginDialog();
+                    showLoginDialog((Button) v, holder.sAnonimo, org);
                     break;
                 case R.id.ibtnAddToPreferiti:
                     holder.ibtnPreferito.setImageResource(!org.isFavorite() ? R.drawable.icon_fav_si : R.drawable.icon_fav_no);
@@ -350,30 +350,38 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
         holder.sAnonimo.setOnClickListener(listener);
     }
 
-    public void showLoginDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+    public void showLoginDialog(Button v, Switch anonimo, Organization organization) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.StalkerDialogTheme);
         builder.setTitle(R.string.login);
         builder.setMessage("Fai accesso all'organizzazione che hai scelto");
-        builder.setView(LayoutInflater.from(context).inflate(R.layout.form_login_with_mail, null));
+        builder.setView(LayoutInflater.from(context).inflate(R.layout.form_login_with_ldap, null));
         builder.setPositiveButton(context.getString(R.string.conferma), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Dialog d = (Dialog) dialog;
                         EditText etUsername = d.findViewById(R.id.etUsername);
                         EditText etPassword = d.findViewById(R.id.etPassword);
+                        // todo sostituire il server address con organization.getLdap_url() e getLdap_port()
                         StalkerLDAP ldap = new StalkerLDAP("10.0.2.2", 389,
                                 etUsername.getText().toString(), etPassword.getText().toString());
                         try {
                             ldap.bind();
                             ldap.search();
-                            Toast.makeText(context, "Logged", Toast.LENGTH_SHORT).show();
+                            v.setText(R.string.logged);
+                            organization.setLogged(true);
+                            organization.setPersonalCn(etUsername.getText().toString());
+                            organization.setLdapPassword(etPassword.getText().toString());
+                            viewModel.updateOrganizzazione(organization);
+                            anonimo.setEnabled(true);
+                            anonimo.setChecked(true);
+                            Toast.makeText(context, R.string.logged, Toast.LENGTH_SHORT).show();
 //                            ((Button)findViewById(R.id.btnShowLoginDialog)).setText("logged");
                         } catch (LDAPException e) {
-
+                            Toast.makeText(context, R.string.connection_to_ldap_failed, Toast.LENGTH_SHORT).show();
                         } catch (ExecutionException e) {
+                            Toast.makeText(context, R.string.ldap_login_failed_check_credentials, Toast.LENGTH_SHORT).show();
                         } catch (InterruptedException e) {
-                            Toast.makeText(context, "Qualcosa è andato storto, ri " +
-                                    "provare più tardi", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, context.getString(R.string.something_went_wrong), Toast.LENGTH_SHORT).show();
                         }
 
                     }
