@@ -309,18 +309,21 @@
                     android:background="@drawable/refresh_btn_style"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textColor="@color/white"
                     android:text="@string/track_me" />
 
                 <Button
                     android:id="@+id/btnLoginLDAP"
                     android:background="@drawable/refresh_btn_style"
                     android:layout_width="wrap_content"
+                    android:textColor="@color/white"
                     android:layout_height="wrap_content"
                     android:text="@string/login_ldap" />
 
                 <Switch
                     android:id="@+id/sAnonymousSwitch"
                     android:layout_width="0dp"
+                    android:enabled="false"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="5dp"
                     android:layout_weight="1"

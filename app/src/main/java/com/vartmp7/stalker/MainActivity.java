@@ -212,6 +212,7 @@
 //     * _g0uY5uQ87yD469NmjFJ4kS7
 package com.vartmp7.stalker;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -394,7 +395,8 @@ public class MainActivity extends AppCompatActivity {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null)
             return;
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this,R.style.StalkerDialogTheme);
+//        AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.modifica_dati);
         LayoutInflater inflater = this.getLayoutInflater();
         View view = inflater.inflate(R.layout.edit_dati_form, null);
@@ -403,7 +405,8 @@ public class MainActivity extends AppCompatActivity {
         etNewMail.setText(currentUser.getEmail());
         EditText etPassword = view.findViewById(R.id.etPassword);
         EditText etRPassword = view.findViewById(R.id.etRipetiPassword);
-        builder.setView(view)
+        builder.setIcon(R.drawable.ic_edit_black_24dp)
+                .setView(view)
                 .setPositiveButton(R.string.conferma, (dialog, which) -> {
                     if (!etNewMail.getText().toString().trim().equalsIgnoreCase(currentUser.getEmail())) {
                         currentUser.updateEmail(etNewMail.getText().toString()).addOnCompleteListener(task -> {

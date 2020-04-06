@@ -202,36 +202,22 @@
   ~    limitations under the License.
   -->
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
-
-    <EditText
-        android:id="@+id/etPassword"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:textColor="@color/white"
-        android:textColorHint="@color/white"
-        android:importantForAutofill="no"
-        android:layout_marginBottom="16dp"
-        android:maxLines="1"
-        android:fontFamily="sans-serif"
-        android:hint="@string/password"
-        android:inputType="textPassword" />
-
-    <EditText
-        android:id="@+id/etRipetiPassword"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:importantForAutofill="no"
-        android:textColor="@color/white"
-        android:layout_marginTop="4dp"
-        android:maxLines="1"
-        android:layout_marginBottom="16dp"
-        android:textColorHint="@color/white"
-        android:fontFamily="sans-serif"
-        android:hint="@string/ripeti_password"
-        android:inputType="textPassword" />
-</LinearLayout>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <corners android:radius="25dp" />
+    <gradient
+        android:angle="45"
+        android:centerColor="@color/vartmp7bluChiaro"
+        android:centerX="35%"
+        android:endColor="@color/vartmp7bluChiaro"
+        android:startColor="@color/vartmp7bluChiaro"
+        android:type="linear" />
+    <padding
+        android:bottom="0dp"
+        android:left="0dp"
+        android:right="0dp"
+        android:top="0dp" />
+    <stroke
+        android:width="2dp"
+        android:color="#ffffffff" />
+</shape>

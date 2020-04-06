@@ -214,4 +214,15 @@
     <style name="ImagePreviewerTheme" >
         <item name="android:windowIsFloating">false</item>
     </style>
+    <style name="StalkerDialogTheme" parent="@android:style/Theme.Dialog" >
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:minWidth">300dp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:headerDividersEnabled">false</item>
+        <item name="android:typeface">normal</item>
+        <item name="android:windowTitleBackgroundStyle">@color/vartmp7bluChiaro</item>
+        <item name="android:background">@color/vartmp7bluChiaro</item>
+        <item name="buttonStyle">@drawable/refresh_btn_style</item>
+    </style>
 </resources>

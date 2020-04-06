@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<!--
   ~                                  Apache License
   ~                            Version 2.0, January 2004
   ~                         http://www.apache.org/licenses/
@@ -202,36 +202,8 @@
   ~    limitations under the License.
   -->
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
-
-    <EditText
-        android:id="@+id/etPassword"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:textColor="@color/white"
-        android:textColorHint="@color/white"
-        android:importantForAutofill="no"
-        android:layout_marginBottom="16dp"
-        android:maxLines="1"
-        android:fontFamily="sans-serif"
-        android:hint="@string/password"
-        android:inputType="textPassword" />
-
-    <EditText
-        android:id="@+id/etRipetiPassword"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:importantForAutofill="no"
-        android:textColor="@color/white"
-        android:layout_marginTop="4dp"
-        android:maxLines="1"
-        android:layout_marginBottom="16dp"
-        android:textColorHint="@color/white"
-        android:fontFamily="sans-serif"
-        android:hint="@string/ripeti_password"
-        android:inputType="textPassword" />
-</LinearLayout>
+<vector android:height="24dp" android:tint="#FFFFFF"
+    android:viewportHeight="24.0" android:viewportWidth="24.0"
+    android:width="24dp" xmlns:android="http://schemas.android.com/apk/res/android">
+    <path android:fillColor="#FF000000" android:pathData="M3,17.25V21h3.75L17.81,9.94l-3.75,-3.75L3,17.25zM20.71,7.04c0.39,-0.39 0.39,-1.02 0,-1.41l-2.34,-2.34c-0.39,-0.39 -1.02,-0.39 -1.41,0l-1.83,1.83 3.75,3.75 1.83,-1.83z"/>
+</vector>
