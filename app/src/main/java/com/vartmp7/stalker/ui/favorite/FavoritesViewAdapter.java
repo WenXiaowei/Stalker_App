@@ -210,6 +210,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -274,6 +275,15 @@ public class FavoritesViewAdapter extends RecyclerView.Adapter<FavoritesViewAdap
             }
 
         });
+        holder.ivDetails.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+    }
+    private void showDetailsDialog(Organization organization){
 
     }
 
@@ -290,11 +300,13 @@ public class FavoritesViewAdapter extends RecyclerView.Adapter<FavoritesViewAdap
         TextView tvNomeOrganizzazione;
         CircleImageView civIconaOrganizzazione;
         Button btnAddToTracking;
+        ImageButton ivDetails;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             tvNomeOrganizzazione = itemView.findViewById(R.id.tvNomeOrganizzazione);
             civIconaOrganizzazione = itemView.findViewById(R.id.civIconOrganizzazionePreferiti);
             btnAddToTracking = itemView.findViewById(R.id.btnAddToTracking);
+            ivDetails= itemView.findViewById(R.id.ivDetails);
         }
     }
 }

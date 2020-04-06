@@ -219,7 +219,8 @@
         android:layout_height="150dp"
         android:layout_margin="5dp"
         android:contentDescription="@string/icon_dell_organizzazione"
-        app:civ_border_width="2dp" />
+        app:civ_border_width="2dp"
+        app:civ_border_color="#cccccc"/>
 
     <TextView
         android:id="@+id/tvNomeOrganizzazione"
@@ -229,11 +230,21 @@
         android:layout_weight="4"
         android:layout_height="wrap_content" />
 
-    <Button
-        android:id="@+id/btnAddToTracking"
-        android:layout_width="64dp"
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <Button
+            android:id="@+id/btnAddToTracking"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:background="@drawable/ic_add_circle_outline_black_24dp" />
+        <ImageView
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:id="@+id/ivDetails"
+            android:src="@drawable/ic_info_black_24dp"/>
+    </LinearLayout>
 
-        android:layout_height="64dp"
-        android:background="@drawable/ic_add_circle_outline_black_24dp" />
 
 </LinearLayout>
