@@ -214,6 +214,8 @@ import com.google.gson.Gson;
 import com.vartmp7.stalker.gsonbeans.Organization;
 import com.vartmp7.stalker.gsonbeans.OrganizationResponse;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -248,7 +250,7 @@ public class FileStorage implements Storage {
     }
 
     @Override
-    public void updateOrganizations(List<Organization> org) {
+    public void updateOrganizations(@NotNull List<Organization> org) {
         List<Organization> orgList = mLiveOrgs.getValue();
         for (Organization organization : org) {
             int i = orgList.indexOf(organization);
@@ -276,7 +278,7 @@ public class FileStorage implements Storage {
     }
 
     @Override
-    public void updateOrganizationInfo(List<Organization> orgsToUpdate) {
+    public void updateOrganizationInfo(@NotNull List<Organization> orgsToUpdate) {
         orgsToUpdate.forEach(o -> Log.d(TAG, "updateOrganizzazioni: updateOrgs" + o.getId()));
         List<Organization> currentOrgs = new ArrayList<>(mLiveOrgs.getValue());
         List<Organization> toSave = new ArrayList<>();

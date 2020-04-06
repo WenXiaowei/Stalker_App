@@ -205,7 +205,6 @@
 package com.vartmp7.stalker.ui.login;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -218,13 +217,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
-import com.vartmp7.stalker.MainActivity;
 import com.vartmp7.stalker.R;
+
+import org.jetbrains.annotations.NotNull;
 
 public class SignUpWithMail extends Fragment implements View.OnClickListener {
     private static final String TAG = "com.vartmp7.stalker.ui.login.RegisterWithMail";
@@ -301,7 +299,7 @@ public class SignUpWithMail extends Fragment implements View.OnClickListener {
     }
 
     @Override
-    public void onClick(View v) {
+    public void onClick(@NotNull View v) {
         switch (v.getId()) {
             case R.id.btnReset:
                 etEmail.setText("");

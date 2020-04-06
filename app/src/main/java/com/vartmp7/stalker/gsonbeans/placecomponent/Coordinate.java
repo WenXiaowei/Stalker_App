@@ -206,6 +206,9 @@ package com.vartmp7.stalker.gsonbeans.placecomponent;
 
 import androidx.annotation.NonNull;
 
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Objects;
 
 import lombok.Getter;
@@ -231,7 +234,7 @@ public class Coordinate {
     public Coordinate() {
     }
 
-    public Coordinate(Coordinate c) {
+    public Coordinate(@NotNull Coordinate c) {
         latitude = c.getLatitude();
         longitude = c.getLongitude();
     }
@@ -264,6 +267,7 @@ public class Coordinate {
         return Objects.hash(getLatitude(), getLongitude());
     }
 
+    @Contract(pure = true)
     private double rad(double x) {
         return x * Math.PI / 180;
     }
@@ -273,7 +277,7 @@ public class Coordinate {
      * @param anotherCoordinate la seconda coordinata
      * @return la distanza in metri dalla coordinata corrente alla seconda coordinata
      */
-    public double getDistanceTo(final Coordinate anotherCoordinate){
+    public double getDistanceTo(@NotNull final Coordinate anotherCoordinate){
 
         long R = 6378137; // Earth’s mean radius in meter
         double dLat = rad(anotherCoordinate.getLatitude() - getLatitude());

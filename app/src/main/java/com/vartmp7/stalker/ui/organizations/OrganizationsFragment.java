@@ -214,9 +214,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavArgs;
 import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -225,22 +223,9 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.vartmp7.stalker.MainActivity;
 import com.vartmp7.stalker.R;
-
-import com.vartmp7.stalker.Tools;
-import com.vartmp7.stalker.gsonbeans.Organization;
-import com.vartmp7.stalker.repository.FavoritesSource;
-import com.vartmp7.stalker.repository.FileStorage;
-import com.vartmp7.stalker.repository.FirebaseFavoritesSource;
-import com.vartmp7.stalker.repository.Obtainer;
 import com.vartmp7.stalker.repository.OrganizationsRepository;
-import com.vartmp7.stalker.repository.RESTObtainer;
-import com.vartmp7.stalker.repository.Storage;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class OrganizationsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
     public static final String TAG = "com.vartmp7.stalker.ui.organizations.OrganizationsFragment";

@@ -204,6 +204,7 @@
 
 package com.vartmp7.stalker.gsonbeans;
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import lombok.AccessLevel;
@@ -302,6 +303,7 @@ public class Organization implements Serializable {
                 '}';
     }
 
+    @Contract(value = "null -> false", pure = true)
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

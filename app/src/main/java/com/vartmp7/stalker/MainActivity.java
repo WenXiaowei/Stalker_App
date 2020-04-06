@@ -252,6 +252,8 @@ import com.vartmp7.stalker.repository.OrganizationsRepository;
 import com.vartmp7.stalker.repository.Obtainer;
 import com.vartmp7.stalker.repository.RESTObtainer;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -370,7 +372,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NotNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menuLogout:
                 if (FirebaseAuth.getInstance().getCurrentUser() != null) {

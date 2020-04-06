@@ -205,6 +205,8 @@
 package com.vartmp7.stalker.gsonbeans.placecomponent;
 
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -265,7 +267,8 @@ public class RayCasting {
 //        return edges;
 //    }
 
-    private  ArrayList<Edge> getEdgesFromPoints(List<Coordinate> points) {
+    @NotNull
+    private  ArrayList<Edge> getEdgesFromPoints(@NotNull List<Coordinate> points) {
         ArrayList<Edge> edges = new ArrayList<>();
         for(int i = 0; i < points.size(); i++) {
             edges.add(new Edge(points.get(i), i < points.size()-1 ? points.get(i+1) : points.get(0)));
@@ -274,7 +277,7 @@ public class RayCasting {
         return edges;
     }
 
-    private  boolean isPointInsideEdges(List<Edge> edges, Coordinate point) {
+    private  boolean isPointInsideEdges(@NotNull List<Edge> edges, Coordinate point) {
 
         int intersectionCount = 0;
 

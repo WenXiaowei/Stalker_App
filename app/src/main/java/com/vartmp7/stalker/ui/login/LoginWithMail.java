@@ -224,6 +224,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.vartmp7.stalker.MainActivity;
 import com.vartmp7.stalker.R;
 
+import org.jetbrains.annotations.NotNull;
+
 public class LoginWithMail extends Fragment implements View.OnClickListener {
     private final static String TAG="com.vartmp7.stalker.ui.login.LoginWithMail";
     private EditText etEmail, etPassoword;
@@ -277,7 +279,7 @@ public class LoginWithMail extends Fragment implements View.OnClickListener {
     }
 
     @Override
-    public void onClick(View v) {
+    public void onClick(@NotNull View v) {
         switch (v.getId()){
             case R.id.btnPasswordForgot:
                 showConfirmDialog();

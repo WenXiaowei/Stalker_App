@@ -204,6 +204,8 @@
 
 package com.vartmp7.stalker.gsonbeans;
 
+import org.jetbrains.annotations.Contract;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -238,6 +240,7 @@ public class OrganizationResponse {
         return organizations.size();
     }
 
+    @Contract(value = "null -> false", pure = true)
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

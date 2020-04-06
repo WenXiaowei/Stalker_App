@@ -211,6 +211,8 @@ import androidx.preference.PreferenceManager;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.firebase.auth.FirebaseAuth;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.security.cert.CertificateException;
 import java.text.DateFormat;
 import java.util.Date;
@@ -230,6 +232,7 @@ import okhttp3.OkHttpClient;
 public class Tools {
     public static final String TAG ="com.vartmp7.stalker.tools";
 
+    @NotNull
     public static OkHttpClient getUnsafeOkHttpClient(){
         try {
             final TrustManager[] trustAllCerts = new TrustManager[]{
@@ -297,12 +300,14 @@ public class Tools {
      * Returns the {@code location} object as a human readable string.
      * @param location  The {@link Location}.
      */
+    @NotNull
     public static String getLocationText(Location location) {
         return location == null ? "Unknown location" :
                 "(" + location.getLatitude() + ", " + location.getLongitude() + ")";
     }
 
-    public static String getLocationTitle(Context context) {
+    @NotNull
+    public static String getLocationTitle(@NotNull Context context) {
         return context.getString(R.string.luogo_cambiato,
                 DateFormat.getDateTimeInstance().format(new Date()));
     }

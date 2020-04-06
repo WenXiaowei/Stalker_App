@@ -208,6 +208,8 @@ import android.util.Log;
 
 import com.google.gson.annotations.Expose;
 
+import org.jetbrains.annotations.Contract;
+
 import java.lang.annotation.Target;
 import java.util.Objects;
 
@@ -246,6 +248,7 @@ public class TrackSignal {
     @Expose
     private String date_time;
 
+    @Contract(value = "null -> false", pure = true)
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

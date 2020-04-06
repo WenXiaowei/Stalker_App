@@ -204,6 +204,9 @@
 
 package com.vartmp7.stalker.gsonbeans.placecomponent;
 
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Objects;
 
 import lombok.Getter;
@@ -236,6 +239,7 @@ public class Edge {
         this.endY = b.getLatitude();
     }
 
+    @Contract(value = "null -> false", pure = true)
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -253,7 +257,7 @@ public class Edge {
     }
 
     //restituisce true sse il lato interseca con il segmento che unisce  'coordinata' con (Double.Max_VALUE,Double.MAX_VALUE)
-    public boolean linesIntersect(Coordinate coordinate) {
+    public boolean linesIntersect(@NotNull Coordinate coordinate) {
         final double X1 = startX;
         final double Y1 = startY;
         final double X2 = endX;
@@ -270,6 +274,7 @@ public class Edge {
                 * relativeCCW(X3, Y3, X4, Y4, X2, Y2) <= 0));
     }
 
+    @Contract(pure = true)
     private int relativeCCW(final double X1, final double Y1, double X2, double Y2, double PX,
                             double PY) {
         X2 -= X1;

@@ -227,7 +227,6 @@ import com.vartmp7.stalker.R;
 import com.vartmp7.stalker.gsonbeans.Organization;
 
 import org.jetbrains.annotations.NotNull;
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;

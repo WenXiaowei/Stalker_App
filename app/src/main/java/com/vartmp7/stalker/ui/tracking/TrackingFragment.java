@@ -282,7 +282,7 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
     private StalkerServiceCallback callback = new StalkerServiceCallback(handler) {
 
         @Override
-        public void onNewLocation(Location l) {
+        public void onNewLocation(@NotNull Location l) {
             Message msg = new Message();
             Bundle b = new Bundle();
             String message;
@@ -615,7 +615,7 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
 
 
     @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, @NotNull String s) {
         // Update the buttons state depending on whether location updates are being requested.
         if (s.equals(Tools.KEY_REQUESTING_LOCATION_UPDATES)) {
             setButtonsState(sharedPreferences.getBoolean(Tools.KEY_REQUESTING_LOCATION_UPDATES,

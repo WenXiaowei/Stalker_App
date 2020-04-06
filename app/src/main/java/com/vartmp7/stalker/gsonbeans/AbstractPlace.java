@@ -206,6 +206,8 @@ package com.vartmp7.stalker.gsonbeans;
 
 import com.vartmp7.stalker.gsonbeans.placecomponent.Coordinate;
 
+import org.jetbrains.annotations.Contract;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;

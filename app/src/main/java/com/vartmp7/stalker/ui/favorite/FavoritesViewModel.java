@@ -216,6 +216,8 @@ import com.vartmp7.stalker.component.NotLogged;
 import com.vartmp7.stalker.gsonbeans.Organization;
 import com.vartmp7.stalker.repository.OrganizationsRepository;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -275,7 +277,7 @@ public class FavoritesViewModel extends ViewModel {
         orgRepo.updateOrganization(org);
     }
 
-    public void init(OrganizationsRepository orgRepo) {
+    public void init(@NotNull OrganizationsRepository orgRepo) {
         this.organizzazioni = new MediatorLiveData<>();
         this.organizzazioni.setValue(orgRepo.getOrganizations().getValue());
         this.orgRepo = orgRepo;

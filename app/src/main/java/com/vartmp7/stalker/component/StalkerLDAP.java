@@ -204,10 +204,6 @@
 
 package com.vartmp7.stalker.component;
 
-import android.util.Log;
-
-import androidx.annotation.NonNull;
-
 import com.unboundid.ldap.sdk.BindResult;
 import com.unboundid.ldap.sdk.LDAPConnection;
 import com.unboundid.ldap.sdk.LDAPException;
