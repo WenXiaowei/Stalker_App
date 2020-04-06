@@ -296,4 +296,6 @@
     <string name="icona_dell_organizzazione">Icona dell\'organizzazione</string>
     <string name="template_indirizzo">via: "%s , %s, CAP: %s, %s, %s.</string>
     <string name="template_ldap">url: \"%s\", port: %s, dn: \"%s\", cn: \"%s\".</string>
+    <string name="chiudi">Chiudi</string>
+    <string name="elenco_delle_organizzazioni_disponibili">Elenco delle organizzazioni disponibili:</string>
 </resources>

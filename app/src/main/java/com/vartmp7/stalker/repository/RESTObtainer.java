@@ -209,6 +209,7 @@ import android.util.Log;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.gson.Gson;
+import com.vartmp7.stalker.MainActivity;
 import com.vartmp7.stalker.gsonbeans.Organization;
 import com.vartmp7.stalker.gsonbeans.OrganizationResponse;
 import com.vartmp7.stalker.gsonbeans.PolygonPlace;
@@ -223,15 +224,18 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import okhttp3.Call;
-import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.Response;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
 
 public class RESTObtainer implements Obtainer {
+
+    //    public static final String URL_SERVER="https://stalker-be.ddns.net/";
+    public static final String URL_SERVER = "http::/localhost:5000";
     private static final String TAG = "com.vartmp7.stalker.repository.RESTOrganizationsRepository";
-    private String serverUrl;
     private OkHttpClient httpClient;
     private Gson gson = new Gson();
 
@@ -241,47 +245,28 @@ public class RESTObtainer implements Obtainer {
     private MutableLiveData<List<Organization>> mutableLiveDataOrganizzazioni;
 
 
-    public RESTObtainer(OkHttpClient httpClient, MutableLiveData<List<Organization>> list, String serverUrl) {
+    public RESTObtainer(OkHttpClient httpClient, MutableLiveData<List<Organization>> list) {
         this.httpClient = httpClient;
-        this.serverUrl = serverUrl;
         //this.mutableLiveDataOrganizzazioni= list;
         mutableLiveDataOrganizzazioni = new MutableLiveData<>();
     }
 
     @Override
     public MutableLiveData<List<Organization>> getOrganizations() {
-        count++;
-//        Log.e(TAG, count + "");
-
-        //TODO togliere hardcoded-mock e decommentare codice per chiamata alle REST API
-        final Request request = new Request.Builder()
-                .url(serverUrl)
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(URL_SERVER)
                 .build();
-        Call call = httpClient.newCall(request);
-//        MutableLiveData<List<Organizzazione>> mutableLiveOrgs = new MutableLiveData<>();
-        call.enqueue(new Callback() {
+        RestApiService service = retrofit.create(RestApiService.class);
+        Call<OrganizationResponse> organizations = service.organizations();
+        organizations.enqueue(new Callback<OrganizationResponse>() {
             @Override
-            public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                /*List<Organizzazione> orgs = mutableLiveDataOrganizzazioni.getValue();
+            public void onResponse(@NotNull Call<OrganizationResponse> call, @NotNull Response<OrganizationResponse> response) {
+                mutableLiveDataOrganizzazioni.postValue(response.body().getOrganizations());
+            }
 
-                LuogoPoligono l = new LuogoPoligono()
-                        .setCoordinate(Arrays.asList(new Coordinata(45.411660, 11.887027),new Coordinata(45.411846, 11.887572),
-                                new Coordinata(45.411730, 11.887650), new Coordinata(45.411544, 11.887106)))
-                        .setOrganizationName("UNIPD").setId(2);
+            @Override
+            public void onFailure(@NotNull Call<OrganizationResponse> call, @NotNull Throwable throwable) {
 
-                orgs.add(new Organizzazione().setName("unipd " + count).setId(count)
-                        .setTracking(true)
-                        .setTrackingActive(true)
-                    .setImage_url("https://cdn.discordapp.com/attachments/690970576415621201/691008560363995208/Schermata_2020-03-21_alle_20.41.13.png")
-                .setLuoghi(
-                        Arrays.asList(l, l.setId(1))));
-                /*
-                mutableLiveOrgs.postValue(Arrays.asList(
-                    new Organizzazione().setId(++count),
-                    new Organizzazione().setId(++count),
-                    new Organizzazione().setId(++count),
-                    new Organizzazione().setId(++count)
-                ));*/
                 ArrayList<Coordinate> torreArchimede = new ArrayList<>();
                 torreArchimede.add(new Coordinate(45.411555, 11.887476));
                 torreArchimede.add(new Coordinate(45.411442, 11.887942));
@@ -300,26 +285,13 @@ public class RESTObtainer implements Obtainer {
                                 .setPlaces(Collections.singletonList(t)),
                         new Organization().setId(count + 3).setName("unipd" + (count + 3)).setTracking(true).setImage_url("https://cdn.discordapp.com/attachments/690970576415621201/691008560363995208/Schermata_2020-03-21_alle_20.41.13.png")
                                 .setPlaces(Collections.singletonList(t))
-                        );
+                );
                 orgs.forEach(o -> Log.d(TAG, "onFailure: " + o.getId()));
                 mutableLiveDataOrganizzazioni.postValue(orgs);
-
-
-//                mutableLiveDataOrganizzazioni.postValue(orgs.stream().distinct().collect(Collectors.toList()));
             }
 
-            @Override
-            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                OrganizationResponse organizationResponse = gson.fromJson(response.body().string(), OrganizationResponse.class);
-                // todo filtrare le organizzazioni.
-                List<Organization> list = organizationResponse.getOrganizations();
-                list.stream().distinct().map(Organization::getId).collect(Collectors.toList());
 
-//                mutableLiveDataOrganizzazioni.setValue(responseOrganizzazione.getOrganizations());
-
-            }
         });
-
         return mutableLiveDataOrganizzazioni;
     }
 

@@ -202,113 +202,125 @@
  *    limitations under the License.
  */
 
-package com.vartmp7.stalker.gsonbeans.placecomponent;
+package com.vartmp7.stalker.repository;
 
+import android.util.Log;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import androidx.lifecycle.MutableLiveData;
 
+import com.google.gson.Gson;
+import com.vartmp7.stalker.gsonbeans.Organization;
+import com.vartmp7.stalker.gsonbeans.OrganizationResponse;
+import com.vartmp7.stalker.gsonbeans.PolygonPlace;
+import com.vartmp7.stalker.gsonbeans.placecomponent.Coordinate;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
-import static org.junit.Assert.assertEquals;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
-@RunWith(Parameterized.class)
-public class RettaTest {
+public class RESTObtainerMocked implements Obtainer {
+    private static final String TAG = "com.vartmp7.stalker.repository.RESTOrganizationsRepository";
+    private String serverUrl;
+    private OkHttpClient httpClient;
+    private Gson gson = new Gson();
 
-    private static final Double DELTA = 0.00001d;
-    private Retta r;
 
-    private Retta rettaProva;
-    private Coordinate coordinateRes;
+    static int count = 0;
 
-    public RettaTest(final Retta r, final Coordinate c) {
-        this.rettaProva = r;
-        this.coordinateRes = c;
+    private MutableLiveData<List<Organization>> mutableLiveDataOrganizzazioni;
+
+
+    public RESTObtainerMocked(OkHttpClient httpClient, MutableLiveData<List<Organization>> list, String serverUrl) {
+        this.httpClient = httpClient;
+        this.serverUrl = serverUrl;
+        //this.mutableLiveDataOrganizzazioni= list;
+        mutableLiveDataOrganizzazioni = new MutableLiveData<>();
     }
 
+    @Override
+    public MutableLiveData<List<Organization>> getOrganizations() {
+        count++;
+//        Log.e(TAG, count + "");
+
+        //TODO togliere hardcoded-mock e decommentare codice per chiamata alle REST API
+        final Request request = new Request.Builder()
+                .url(serverUrl)
+                .build();
+        Call call = httpClient.newCall(request);
+//        MutableLiveData<List<Organizzazione>> mutableLiveOrgs = new MutableLiveData<>();
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                /*List<Organizzazione> orgs = mutableLiveDataOrganizzazioni.getValue();
+
+                LuogoPoligono l = new LuogoPoligono()
+                        .setCoordinate(Arrays.asList(new Coordinata(45.411660, 11.887027),new Coordinata(45.411846, 11.887572),
+                                new Coordinata(45.411730, 11.887650), new Coordinata(45.411544, 11.887106)))
+                        .setOrganizationName("UNIPD").setId(2);
+
+                orgs.add(new Organizzazione().setName("unipd " + count).setId(count)
+                        .setTracking(true)
+                        .setTrackingActive(true)
+                    .setImage_url("https://cdn.discordapp.com/attachments/690970576415621201/691008560363995208/Schermata_2020-03-21_alle_20.41.13.png")
+                .setLuoghi(
+                        Arrays.asList(l, l.setId(1))));
+                /*
+                mutableLiveOrgs.postValue(Arrays.asList(
+                    new Organizzazione().setId(++count),
+                    new Organizzazione().setId(++count),
+                    new Organizzazione().setId(++count),
+                    new Organizzazione().setId(++count)
+                ));*/
+                ArrayList<Coordinate> torreArchimede = new ArrayList<>();
+                torreArchimede.add(new Coordinate(45.411555, 11.887476));
+                torreArchimede.add(new Coordinate(45.411442, 11.887942));
+                torreArchimede.add(new Coordinate(45.411108, 11.887787));
+                torreArchimede.add(new Coordinate(45.411222, 11.887319));
+                PolygonPlace t = new PolygonPlace();
+                t.setId(1).setName("org").setNum_max_people(10);
+                t.setCoordinate(torreArchimede);
+
+                List<Organization> orgs = Arrays.asList(
+                        new Organization().setId(count).setName("unipd" + count).setTracking(true).setImage_url("https://cdn.discordapp.com/attachments/690970576415621201/691008560363995208/Schermata_2020-03-21_alle_20.41.13.png")
+                                .setPlaces(Collections.singletonList(t)),
+                        new Organization().setId(count + 1).setName("unipd" + (count + 1)).setTracking(true).setImage_url("https://cdn.discordapp.com/attachments/690970576415621201/691008560363995208/Schermata_2020-03-21_alle_20.41.13.png")
+                                .setPlaces(Collections.singletonList(t)),
+                        new Organization().setId(count + 2).setName("unipd" + (count + 2)).setTracking(true).setImage_url("https://cdn.discordapp.com/attachments/690970576415621201/691008560363995208/Schermata_2020-03-21_alle_20.41.13.png")
+                                .setPlaces(Collections.singletonList(t)),
+                        new Organization().setId(count + 3).setName("unipd" + (count + 3)).setTracking(true).setImage_url("https://cdn.discordapp.com/attachments/690970576415621201/691008560363995208/Schermata_2020-03-21_alle_20.41.13.png")
+                                .setPlaces(Collections.singletonList(t))
+                        );
+                orgs.forEach(o -> Log.d(TAG, "onFailure: " + o.getId()));
+                mutableLiveDataOrganizzazioni.postValue(orgs);
 
 
+//                mutableLiveDataOrganizzazioni.postValue(orgs.stream().distinct().collect(Collectors.toList()));
+            }
 
-    @Before
-    public void initialize() {
-        r = new Retta(1, 0);
-    }
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                OrganizationResponse organizationResponse = gson.fromJson(response.body().string(), OrganizationResponse.class);
+                // todo filtrare le organizzazioni.
+                List<Organization> list = organizationResponse.getOrganizations();
+                list.stream().distinct().map(Organization::getId).collect(Collectors.toList());
 
+//                mutableLiveDataOrganizzazioni.setValue(responseOrganizzazione.getOrganizations());
 
-    @Test
-    public void testRettaOrizzontale() {
-        r = new Retta(0, 0);
-
-        assertEquals(r.calcoloLatitude(0), 0, DELTA);
-    }
-
-    @Test
-    public void testRetta() {
-        r = new Retta(3, 1);
-
-        assertEquals(r.calcoloLatitude(1), 4, DELTA);
-    }
-
-
-    @Test
-    public void testIntersezione() {
-        r = new Retta(3, 1);
-        Retta r1 = new Retta(-1, 2);
-        Coordinate c = r.intersezione(r1);
-//        assertEquals(0.25,c.getLatitude(),DELTA);
-//        assertEquals(1.75,c.getLongitude(),DELTA);
-
-        assertEquals(c, new Coordinate(1.75f, 0.25f));
-    }
-
-    @Test
-    public void testIntersezioneRettaNulla() {
-        r = new Retta(3, 1);
-        Retta r2 = new Retta(0, 1);
-        Coordinate c = r.intersezione(r2);
-//        assertEquals(c, new Coordinata(0,1));
-    }
-
-    @Test
-    public void testIntersezioneRetteNulla() {
-        r = new Retta(1, 0);
-        Retta r2 = new Retta(0, 1);
-        Coordinate c = r.intersezione(r2);
-        assertEquals(c, new Coordinate(1, 1));
-    }
-
-    // serie di test
-
-    @Parameterized.Parameters
-    public static Collection rette() {
-        return Arrays.asList(new Object[][]{
-                {new Retta(1, 0), new Coordinate(1, 1)},
-                {new Retta(2, 1), new Coordinate(15, 7)}
-                // todo aggiungere altre rette e punti da calcolare
+            }
         });
-    }
 
-    @Test
-    public void testConSetRette() {
-        System.out.println("retta: " + rettaProva);
-        assertEquals(rettaProva.calcoloLatitude(coordinateRes.getLongitude()), coordinateRes.getLatitude(), DELTA);
-    }
-
-
-    @Test
-    public void coordinateTorre() {
-
-        Retta r1 = new Retta(new Coordinate(45.411555, 11.887476), new Coordinate(45.411108, 11.887787));
-        Retta r2 = new Retta(new Coordinate(45.411442, 11.887942), new Coordinate(45.411222, 11.887319));
-        Coordinate intersezione = r1.intersezione(r2);
-        Coordinate c = new Coordinate(45.41133218, 11.88763102); // coordinata di intersezione
-        // calcolata a mano
-        assertEquals(c.getLatitude(), intersezione.getLatitude(), DELTA);
-        assertEquals(c.getLongitude(), intersezione.getLongitude(), DELTA);
-
+        return mutableLiveDataOrganizzazioni;
     }
 
 

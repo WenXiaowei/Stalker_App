@@ -232,10 +232,6 @@ public class OrganizationsRepository {
         storage.updateOrganizations(l);
     }
 
-    public void updateOrganizzazioni(List<Organization> orgs) {
-        storage.updateOrganizations(orgs);
-    }
-
     public OrganizationsRepository(Storage orgsLocalSource, Obtainer orgsWebSource, FavoritesSource fa) {
         this.storage = orgsLocalSource;
         this.obtainer = orgsWebSource;
@@ -245,12 +241,12 @@ public class OrganizationsRepository {
 
     public LiveData<List<Organization>> getOrganizations() {
         LiveData<List<Organization>> fromLocal = storage.getOrganizations();
-        Log.d(TAG, "getOrganizations() before if");
-        if (organizationFavoritesSource != null){
-            Log.d(TAG, "getOrganizations() dentro if");
+//        Log.d(TAG, "getOrganizations() before if");
+        if (organizationFavoritesSource != null) {
+//            Log.d(TAG, "getOrganizations() dentro if");
             organizationFavoritesSource.refresh();
         }
-        Log.d(TAG, "getOrganizzazioni: " + fromLocal.getValue());
+//        Log.d(TAG, "getOrganizzazioni: " + fromLocal.getValue());
         /*liveOrganizzazioni.addSource(fromLocal,organizzazioni->{
             Log.d(TAG, "getOrganizzazioni: ");
             organizzazioni.forEach(o-> Log.d(TAG, "getOrg: "+o.getId()));
@@ -281,7 +277,7 @@ public class OrganizationsRepository {
         } else throw new NotLogged();
     }
 
-private final Observer<List<Organization>> observer = new Observer<List<Organization>>() {
+    private final Observer<List<Organization>> observer = new Observer<List<Organization>>() {
         @Override
         public void onChanged(List<Organization> organizzazioni) {
             Log.d(TAG, "onChanged: aggiornare org");
@@ -300,7 +296,6 @@ private final Observer<List<Organization>> observer = new Observer<List<Organiza
 
 
         resultFromWebCall.observeForever(observer);
-
 
 
         /*MutableLiveData<Boolean> webQueryExhausted = new MutableLiveData<Boolean>(false);

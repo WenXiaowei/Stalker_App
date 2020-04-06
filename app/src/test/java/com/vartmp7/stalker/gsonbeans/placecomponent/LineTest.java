@@ -204,85 +204,111 @@
 
 package com.vartmp7.stalker.gsonbeans.placecomponent;
 
-import androidx.annotation.NonNull;
 
-import java.util.Objects;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
-@Deprecated
-public class Retta {
+import java.util.Arrays;
+import java.util.Collection;
 
-    private double m;
+import static junit.framework.TestCase.assertEquals;
 
+@RunWith(Parameterized.class)
+public class LineTest {
 
-    public double getM() {
-        return m;
+    private static final Double DELTA = 0.00001d;
+    private Line r;
+    private Line rettaProva;
+    private Coordinate coordinateRes;
+
+    public LineTest(final Line r, final Coordinate c) {
+        this.rettaProva = r;
+        this.coordinateRes = c;
     }
 
-    public double getQ() {
-        return q;
+
+
+
+    @Before
+    public void initialize() {
+        r = new Line(1, 0);
     }
 
-    private double q;
-    private Coordinate a, b;
 
-    public Retta(Coordinate c1, Coordinate c2) {
-        this.m = (c2.getLatitude() - c1.getLatitude()) / (c2.getLongitude() - c1.getLongitude());
-        this.q = (((c2.getLatitude() - c1.getLatitude())*(-1)*c1.getLongitude()) / (c2.getLongitude() - c1.getLongitude())) + c1.getLatitude();
-        a= c1;
-        b = c2;
+    @Test
+    public void testLineOrizzontale() {
+        r = new Line(0, 0);
+
+        assertEquals(r.calcoloLatitude(0), 0, DELTA);
     }
 
-    public Retta(double coeffangolare, double q) {
-        this.m = coeffangolare;
-        this.q = q;
+    @Test
+    public void testLine() {
+        r = new Line(3, 1);
+
+        assertEquals(r.calcoloLatitude(1), 4, DELTA);
     }
 
-    /**
-     * calcola il segno del determinante
-     * @param c la coordinata del punto
-     * @return return un numero >0 se la coordinata c è a destra della retta (a,b)
-     *              un numero = 0 se la coordinata c appartiene alla retta (a,b)
-     *              un numero < 0 se la coordinata c è a sinistra della retta (a,b)
-     */
 
-    public double distanceToCoordinate(Coordinate c){
-        return (b.getLongitude()-c.getLongitude())-(a.getLatitude()-c.getLatitude())/(a.getLatitude()-c.getLatitude());
-    }
-    public double calcoloLatitude(double longitude) {
-        return this.m * longitude + this.q;
+    @Test
+    public void testIntersezione() {
+        r = new Line(3, 1);
+        Line r1 = new Line(-1, 2);
+        Coordinate c = r.intersezione(r1);
+//        assertEquals(0.25,c.getLatitude(),DELTA);
+//        assertEquals(1.75,c.getLongitude(),DELTA);
+
+        assertEquals(c, new Coordinate(1.75f, 0.25f));
     }
 
-    public Coordinate intersezione(Retta r) {
-        //System.out.println("x/:"+(-this.q + r.q));
-        //System.out.println("/x:"+(this.m - r.m));
-        double x = (-this.q + r.q) / (this.m - r.m);
-
-        return new Coordinate(calcoloLatitude(x),x);
+    @Test
+    public void testIntersezioneLineNulla() {
+        r = new Line(3, 1);
+        Line r2 = new Line(0, 1);
+        Coordinate c = r.intersezione(r2);
+//        assertEquals(c, new Coordinata(0,1));
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Retta)) return false;
-        Retta retta = (Retta) o;
-        return Double.compare(retta.getM(), getM()) == 0 &&
-                Double.compare(retta.getQ(), getQ()) == 0 &&
-                Objects.equals(a, retta.a) &&
-                Objects.equals(b, retta.b);
+    @Test
+    public void testIntersezioneRetteNulla() {
+        r = new Line(1, 0);
+        Line r2 = new Line(0, 1);
+        Coordinate c = r.intersezione(r2);
+        assertEquals(c, new Coordinate(1, 1));
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(getM(), getQ(), a, b);
+    // serie di test
+
+    @Parameterized.Parameters
+    public static Collection rette() {
+        return Arrays.asList(new Object[][]{
+                {new Line(1, 0), new Coordinate(1, 1)},
+                {new Line(2, 1), new Coordinate(15, 7)}
+                // todo aggiungere altre rette e punti da calcolare
+        });
     }
 
-    @NonNull
-    @Override
-    public String toString() {
-        if (q<=0){
-            return  "y="+m+"x"+q;
-        }
-        return "y="+m+"x+"+q;
+    @Test
+    public void testConSetRette() {
+        System.out.println("retta: " + rettaProva);
+        assertEquals(rettaProva.calcoloLatitude(coordinateRes.getLongitude()), coordinateRes.getLatitude(), DELTA);
     }
+
+
+    @Test
+    public void coordinateTorre() {
+
+        Line r1 = new Line(new Coordinate(45.411555, 11.887476), new Coordinate(45.411108, 11.887787));
+        Line r2 = new Line(new Coordinate(45.411442, 11.887942), new Coordinate(45.411222, 11.887319));
+        Coordinate intersezione = r1.intersezione(r2);
+        Coordinate c = new Coordinate(45.41133218, 11.88763102); // coordinata di intersezione
+        // calcolata a mano
+        assertEquals(c.getLatitude(), intersezione.getLatitude(), DELTA);
+        assertEquals(c.getLongitude(), intersezione.getLongitude(), DELTA);
+
+    }
+
 
 }

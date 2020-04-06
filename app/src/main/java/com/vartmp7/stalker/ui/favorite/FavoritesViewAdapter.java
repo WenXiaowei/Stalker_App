@@ -222,6 +222,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.vartmp7.stalker.R;
 import com.vartmp7.stalker.gsonbeans.Organization;
+import com.vartmp7.stalker.ui.DetailsDialog;
 
 import java.util.List;
 
@@ -239,25 +240,25 @@ public class FavoritesViewAdapter extends RecyclerView.Adapter<FavoritesViewAdap
         notifyDataSetChanged();
     }
 
-    public FavoritesViewAdapter(Context context, FavoritesViewModel model, List<Organization> organizzazioni) {
-        this.context=context;
-        this.organizzazioni=organizzazioni;
+    FavoritesViewAdapter(Context context, FavoritesViewModel model, List<Organization> organizzazioni) {
+        this.context = context;
+        this.organizzazioni = organizzazioni;
         this.viewModel = model;
     }
-
 
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_preferiti, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_organization_list, parent, false);
         ViewHolder vh = new ViewHolder(view);
         return vh;
 
     }
+
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-       Organization org = organizzazioni.get(position);
+        Organization org = organizzazioni.get(position);
         Glide.with(context)
                 .setDefaultRequestOptions(new RequestOptions().error(R.drawable.icon_stalker))
                 .load(organizzazioni.get(position).getImage_url())
@@ -265,48 +266,42 @@ public class FavoritesViewAdapter extends RecyclerView.Adapter<FavoritesViewAdap
 
         holder.tvNomeOrganizzazione.setText(org.getName());
 
-        holder.btnAddToTracking.setOnClickListener(v->{
-            if (org.isTracking()){
-                Toast.makeText(context,"Organizzazione già presente nell'elenco dei tracking!", Toast.LENGTH_SHORT).show();
-            }else {
+        holder.btnAddToTracking.setOnClickListener(v -> {
+            if (org.isTracking()) {
+                Toast.makeText(context, "Organizzazione già presente nell'elenco dei tracking!", Toast.LENGTH_SHORT).show();
+            } else {
                 org.setTracking(true);
                 viewModel.updateOrganizzazione(org);
                 new NavController(context).navigate(R.id.action_navigation_organizations_to_navigation_tracking);
             }
 
         });
-        holder.ivDetails.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
+        holder.ivDetails.setOnClickListener(v -> new DetailsDialog(context, org).showOrganizationDetails());
 
     }
-    private void showDetailsDialog(Organization organization){
 
-    }
 
     @Override
     public int getItemCount() {
         return organizzazioni.size();
     }
 
-    public Organization getOrganizationAt(int position) {
+    Organization getOrganizationAt(int position) {
         return organizzazioni.get(position);
     }
 
-    static class ViewHolder extends RecyclerView.ViewHolder{
+    static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvNomeOrganizzazione;
         CircleImageView civIconaOrganizzazione;
         Button btnAddToTracking;
-        ImageButton ivDetails;
-        public ViewHolder(@NonNull View itemView) {
+        Button ivDetails;
+
+        ViewHolder(@NonNull View itemView) {
             super(itemView);
+            civIconaOrganizzazione = itemView.findViewById(R.id.ivIconOrganizzazione);
             tvNomeOrganizzazione = itemView.findViewById(R.id.tvNomeOrganizzazione);
-            civIconaOrganizzazione = itemView.findViewById(R.id.civIconOrganizzazionePreferiti);
-            btnAddToTracking = itemView.findViewById(R.id.btnAddToTracking);
-            ivDetails= itemView.findViewById(R.id.ivDetails);
+            btnAddToTracking = itemView.findViewById(R.id.btnTrackMe);
+            ivDetails = itemView.findViewById(R.id.btnShowDetails);
         }
     }
 }

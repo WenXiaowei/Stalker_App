@@ -211,6 +211,7 @@ import com.vartmp7.stalker.gsonbeans.Organization;
 import java.util.List;
 
 public interface Obtainer {
+
     LiveData<List<Organization>> getOrganizations();
 
 }

@@ -265,8 +265,6 @@ import lombok.Getter;
  */
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "com.vartmp7.stalker.MainActivity";
-    //    public static final String URL_SERVER="https://stalker-be.ddns.net/";
-    public static final String URL_SERVER = "http::/localhost:5000";
     public static final String TOKEN_NAME = "Organization-Token";
     public static final String TOKEN_VALUE = "vartmp7";
     public static final String PREFERENCE_FILE = "stalker";
@@ -304,7 +302,7 @@ public class MainActivity extends AppCompatActivity {
         if (FirebaseAuth.getInstance().getCurrentUser() != null || GoogleSignIn.getLastSignedInAccount(this) != null) {
             preferitiRepository = new FirebaseFavoritesSource(getUserId(), FirebaseFirestore.getInstance());
         }
-        Obtainer webSource = new RESTObtainer(Tools.getUnsafeOkHttpClient(), list, "https://asdasd.com");
+        Obtainer webSource = new RESTObtainer(Tools.getUnsafeOkHttpClient(), list);
 
          repository = new OrganizationsRepository(localStorage, webSource, preferitiRepository);
 

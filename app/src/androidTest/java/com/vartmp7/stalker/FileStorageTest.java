@@ -248,15 +248,8 @@ public class FileStorageTest {
     private static boolean triggered;
     private LifecycleOwner lifecycleOwner;
 
-
-
-
-
-
     @Rule
     public TestRule rule = new InstantTaskExecutorRule();
-
-
 
     @SuppressWarnings("unchecked")
     public static Observer<List<Organization>> mockObserver() {

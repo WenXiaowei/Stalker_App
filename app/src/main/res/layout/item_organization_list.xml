@@ -209,13 +209,6 @@
     android:layout_marginBottom="5dp"
     android:orientation="vertical">
 
-    <LinearLayout
-        android:id="@+id/llIconName"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/tracking_item_title_background"
-        android:orientation="vertical">
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -266,18 +259,6 @@
 
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/llHidingInformation"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="5dp"
-            android:visibility="gone">
-
-            <include layout="@layout/organization_details" />
-
-        </LinearLayout>
-    </LinearLayout>
 
 
 </androidx.cardview.widget.CardView>

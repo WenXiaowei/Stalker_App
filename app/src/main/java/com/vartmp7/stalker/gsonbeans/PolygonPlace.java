@@ -204,6 +204,7 @@
 
 package com.vartmp7.stalker.gsonbeans;
 
+import com.vartmp7.stalker.gsonbeans.placecomponent.Edge;
 import com.vartmp7.stalker.gsonbeans.placecomponent.RayCasting;
 
 import androidx.annotation.NonNull;
@@ -253,7 +254,7 @@ public class PolygonPlace extends AbstractPlace {
 
     @Override
     public Coordinate getCenter() {
-        return null;
+        return new Edge(coordinate.get(0),coordinate.get(2)).
     }
 
     @Override

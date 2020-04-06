@@ -213,7 +213,7 @@ import org.junit.runners.Suite;
         EdgeTest.class,
         RayCastingTest.class,
         TrackiHistoryTest.class,
-        RettaTest.class
+        LineTest.class
 
 })
 public class PlaceComponentTestSuite {
