@@ -228,8 +228,9 @@
                 android:layout_height="100dp"
                 android:layout_margin="5dp"
                 android:contentDescription="@string/icon_dell_organizzazione"
+                android:src="@drawable/icon_stalker"
                 app:civ_border_width="2dp" />
-            android:src="@drawable/icon_stalker"
+
 
             <TextView
                 android:id="@+id/tvNomeOrganizzazione"
@@ -245,19 +246,20 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:paddingEnd="10dp">
+
                 <Button
                     android:id="@+id/btnTrackMe"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:layout_weight="1"
-                    android:background="@drawable/ic_add_circle_outline_black_24dp"/>
+                    android:background="@drawable/ic_add_circle_outline_black_24dp" />
 
                 <Button
                     android:id="@+id/btnShowDetails"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:layout_weight="1"
-                    android:background="@drawable/ic_info"
+                    android:background="@drawable/ic_info_black_24dp"
                     android:gravity="center_horizontal" />
 
             </LinearLayout>
