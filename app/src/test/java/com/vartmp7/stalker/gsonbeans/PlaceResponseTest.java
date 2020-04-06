@@ -223,7 +223,7 @@ public class PlaceResponseTest {
         ArrayList<PolygonPlace> l= new ArrayList<>();
         PolygonPlace p= new PolygonPlace();
         l.add(p);
-        placeResponse.setLuoghi(l);
+        placeResponse.setPlaces(l);
 
         assertEquals(placeResponse.getPlacesLength(),1);
 

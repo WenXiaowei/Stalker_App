@@ -216,6 +216,7 @@ import android.view.animation.RotateAnimation;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -290,7 +291,7 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
                     }
                     break;
                 case R.id.btnLoginLDAP:
-                    showLoginDialog((Button) v, holder.sAnonimo, org);
+                    showLDAPLoginDialog((Button) v, holder.sAnonimo, org);
                     break;
                 case R.id.ibtnAddToPreferiti:
                     holder.ibtnPreferito.setImageResource(!org.isFavorite() ? R.drawable.icon_fav_si : R.drawable.icon_fav_no);
@@ -350,7 +351,9 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
         holder.sAnonimo.setOnClickListener(listener);
     }
 
-    public void showLoginDialog(Button v, Switch anonimo, Organization organization) {
+
+
+    private void showLDAPLoginDialog(Button v, Switch anonimo, Organization organization) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.StalkerDialogTheme);
         builder.setTitle(R.string.login);
         builder.setMessage("Fai accesso all'organizzazione che hai scelto");

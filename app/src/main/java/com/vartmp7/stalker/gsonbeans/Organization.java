@@ -204,14 +204,20 @@
 
 package com.vartmp7.stalker.gsonbeans;
 
+import org.jetbrains.annotations.NotNull;
+
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.BufferedInputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 /**
  * @author Xiaowei Wen, Lorenzo Taschin
@@ -250,7 +256,7 @@ public class Organization implements Serializable {
     @Getter @Setter @Accessors(chain = true)
     private String image_url;
     @Getter @Setter @Accessors(chain = true)
-    private List<PolygonPlace> places;
+    private List<PolygonPlace> places= new ArrayList<>();
     @Getter @Setter @Accessors(chain = true)
     private boolean isFavorite = false;
     @Getter @Setter @Accessors(chain = true)
@@ -269,6 +275,7 @@ public class Organization implements Serializable {
 
     public Organization() {}
 
+    @NotNull
     @Override
     public String toString() {
         return "Organization{" +
@@ -316,6 +323,15 @@ public class Organization implements Serializable {
                 Objects.equals(getLuoghi(), that.getLuoghi())*/;
     }
 
+    public String getPlacesInfo(){
+        StringBuilder builder = new StringBuilder();
+
+        getPlaces().forEach(polygonPlace -> builder.append("\nNome Luogo: ")
+                .append(polygonPlace.getName())
+                .append(", Num. persone massimo: ")
+                .append(polygonPlace.getNum_max_people()));
+        return builder.toString();
+    }
     @Override
     public int hashCode() {
         return Objects.hash(address, city, email, id, name, nation, phone_number, postal_code, region, type, ldap_common_name, ldap_domain_component, ldap_port, image_url, places, isFavorite(), isTracking(), isLogged(), isAnonymous(), isTrackingActive());

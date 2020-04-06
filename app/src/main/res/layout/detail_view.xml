@@ -1,4 +1,4 @@
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~                                  Apache License
   ~                            Version 2.0, January 2004
   ~                         http://www.apache.org/licenses/
@@ -202,38 +202,167 @@
   ~    limitations under the License.
   -->
 
-<resources>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp"
+    android:padding="5dp"
+    android:orientation="vertical">
 
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar" >
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/vartmp7bluChiaro</item>
-        <item name="colorPrimaryDark">@color/vartmp7bluChiaro</item>
-        <item name="colorAccent">@color/vartmp7bluChiaro</item>
-    </style>
-    <style name="ImagePreviewerTheme" >
-        <item name="android:windowIsFloating">false</item>
-    </style>
-    <style name="StalkerDialogTheme" parent="@android:style/Theme.Dialog" >
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:minWidth">300dp</item>
-        <item name="android:textColor">@color/white</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:headerDividersEnabled">false</item>
-        <item name="android:typeface">normal</item>
-        <item name="android:windowTitleBackgroundStyle">@color/vartmp7bluChiaro</item>
-        <item name="android:background">@color/vartmp7bluChiaro</item>
-        <item name="buttonStyle">@drawable/refresh_btn_style</item>
-    </style>
-    <style name="StalkerDetaislDialog" parent="@android:style/Theme.Dialog" >
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:minWidth">400dp</item>
-        <item name="android:textColor">@color/white</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:typeface">normal</item>
-        <item name="android:windowTitleBackgroundStyle">@color/vartmp7bluChiaro</item>
-        <item name="android:background">@color/vartmp7bluChiaro</item>
-        <item name="buttonStyle">@drawable/refresh_btn_style</item>
-    </style>
-</resources>
+    <ImageView
+        android:id="@+id/ivIconOrganizzazione"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/icona_dell_organizzazione" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:textSize="18sp"
+            android:fontFamily="serif"
+            android:layout_marginEnd="5dp"
+            android:textColor="@color/white"
+            android:layout_height="wrap_content"
+            android:text="@string/nome_organizzazione" />
+
+        <TextView
+            android:id="@+id/tvName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:textSize="15sp"
+            android:fontFamily="serif"
+            android:textColor="@color/white" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:textSize="18sp"
+            android:fontFamily="serif"
+            android:textColor="@color/white"
+            android:layout_marginEnd="5dp"
+            android:layout_height="wrap_content"
+            android:text="@string/indirizzo" />
+        <TextView
+            android:id="@+id/tvIndirizzo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:fontFamily="serif"
+            android:textColor="@color/white"  />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:textSize="18sp"
+            android:fontFamily="serif"
+            android:textColor="@color/white"
+            android:layout_marginEnd="5dp"
+            android:layout_height="wrap_content"
+            android:text="@string/numero_telefonico" />
+        <TextView
+            android:id="@+id/tvNumeroTelefonico"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:fontFamily="serif"
+            android:textColor="@color/white"  />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:textSize="18sp"
+            android:fontFamily="serif"
+            android:textColor="@color/white"
+            android:layout_marginEnd="5dp"
+            android:layout_height="wrap_content"
+            android:text="@string/email" />
+        <TextView
+            android:id="@+id/tvEmail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:fontFamily="serif"
+            android:textColor="@color/white" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:textSize="18sp"
+            android:fontFamily="serif"
+            android:textColor="@color/white"
+            android:layout_marginEnd="5dp"
+            android:layout_height="wrap_content"
+            android:text="@string/tipo_organizzazione" />
+        <TextView
+            android:id="@+id/tvTipoOrganizzazione"
+            android:layout_width="wrap_content"
+            android:textSize="15sp"
+            android:fontFamily="serif"
+            android:textColor="@color/white"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:textSize="18sp"
+            android:fontFamily="serif"
+            android:textColor="@color/white"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="5dp"
+            android:text="@string/informazione_di_ldap" />
+        <TextView
+            android:id="@+id/tvInfoLDAP"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:fontFamily="serif"
+            android:textColor="@color/white" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="wrap_content"
+            android:textSize="18sp"
+            android:fontFamily="serif"
+            android:layout_marginEnd="5dp"
+            android:textColor="@color/white"
+            android:layout_height="wrap_content"
+            android:text="@string/elenco_luoghi" />
+        <TextView
+            android:id="@+id/tvElencoLuoghi"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:fontFamily="serif"
+            android:textColor="@color/white" />
+    </LinearLayout>
+
+
+
+
+</LinearLayout>

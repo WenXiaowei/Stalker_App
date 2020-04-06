@@ -214,6 +214,7 @@
     <string name="elenco_luoghi">Elenco Luoghi:</string>
     <string name="elenco_dei_luoghi_tracciati_per_l_organizzazione_selezionata">Elenco dei luoghi tracciati per l\'organization selezionata:</string>
     <string name="start_track">Start Track</string>
+    <string name="tracciami">Tracciami</string>
     <string name="agg">Agg.</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
@@ -289,4 +290,10 @@
     <string name="ldap_login_failed_check_credentials">Login fallito, verificare di aver inserito le credenziali corrette e riprovare</string>
     <string name="something_went_wrong">Qualcosa è andato storto, riprovare più tardi!</string>
     <string name="tuo_cn">Tuo CN</string>
+    <string name="nome_organizzazione">Nome organizzazione:</string>
+    <string name="numero_telefonico">Numero telefonico:</string>
+    <string name="informazione_di_ldap">Informazione LDAP</string>
+    <string name="icona_dell_organizzazione">Icona dell\'organizzazione</string>
+    <string name="template_indirizzo">via: "%s , %s, CAP: %s, %s, %s.</string>
+    <string name="template_ldap">url: \"%s\", port: %s, dn: \"%s\", cn: \"%s\".</string>
 </resources>

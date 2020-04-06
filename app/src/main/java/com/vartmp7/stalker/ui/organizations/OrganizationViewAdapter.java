@@ -205,6 +205,7 @@
 package com.vartmp7.stalker.ui.organizations;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -216,6 +217,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.navigation.NavController;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -223,6 +225,9 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.vartmp7.stalker.R;
 import com.vartmp7.stalker.gsonbeans.Organization;
+
+import org.jetbrains.annotations.NotNull;
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -237,14 +242,14 @@ public class OrganizationViewAdapter extends RecyclerView.Adapter<OrganizationVi
     private NavController navController;
     private OrganizationsViewModel viewModel;
 
-    public OrganizationViewAdapter(Context context, OrganizationsViewModel organizationsViewModel,NavController controller) {
+    public OrganizationViewAdapter(Context context, OrganizationsViewModel organizationsViewModel, NavController controller) {
         this.context = context;
-        this.viewModel= organizationsViewModel;
+        this.viewModel = organizationsViewModel;
         this.navController = controller;
-        listaOrganization =new ArrayList<>();
+        listaOrganization = new ArrayList<>();
     }
 
-    public void setOrganizations(List<Organization> newData){
+    public void setOrganizations(List<Organization> newData) {
 //        this.listaOrganizzazione= new ArrayList<>();
         this.listaOrganization = newData;
         this.notifyDataSetChanged();
@@ -261,7 +266,7 @@ public class OrganizationViewAdapter extends RecyclerView.Adapter<OrganizationVi
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Organization org = listaOrganization.get(position);
-        int colorIndex = position % 5;
+//        int colorIndex = position % 5;
         Glide.with(context)
                 .setDefaultRequestOptions(new RequestOptions().error(R.drawable.icon_stalker))
                 .load(listaOrganization.get(position).getImage_url())
@@ -273,48 +278,49 @@ public class OrganizationViewAdapter extends RecyclerView.Adapter<OrganizationVi
         holder.btnTrackMe.setOnClickListener(v -> {
 //                int position = holder.getAdapterPosition();
 //                Organizzazione org = listaOrganizzazione.get(position);
-                org.setTracking(true);
-                viewModel.updateOrganizzazione(org);
-                navController.navigate(R.id.action_navigation_organizations_to_navigation_tracking);
+            org.setTracking(true);
+            viewModel.updateOrganizzazione(org);
+            navController.navigate(R.id.action_navigation_organizations_to_navigation_tracking);
 
         });
 
-        holder.btnShowDetails.setOnClickListener(v->{
-            if (holder.llHidingInfo.getVisibility() == View.GONE) {
-                Animation slideDown = AnimationUtils.loadAnimation(context, R.anim.slide_down_animation);
-                slideDown.setAnimationListener(new Animation.AnimationListener() {
-                    @Override
-                    public void onAnimationStart(Animation animation) {
-                        holder.llHidingInfo.setVisibility(View.VISIBLE);
-//                        ((Button) v).setText(R.string.nascondi);
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animation animation) {
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animation animation) {
-
-                    }
-                });
-                holder.llHidingInfo.startAnimation(slideDown);
-            } else {
-                Animation closing = AnimationUtils.loadAnimation(context, R.anim.closing_animation);
-                closing.setAnimationListener(new Animation.AnimationListener() {
-                    @Override
-                    public void onAnimationStart(Animation animation) {}
-                    @Override
-                    public void onAnimationEnd(Animation animation) {
-                        holder.llHidingInfo.setVisibility(View.GONE);
-//                        ((Button) v).setText(R.string.dettagli);
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animation animation) {}
-                });
-                holder.llHidingInfo.startAnimation(closing);
-            }
+        holder.btnShowDetails.setOnClickListener(v -> {
+            showOrganizationDetails(org);
+//            if (holder.llHidingInfo.getVisibility() == View.GONE) {
+//                Animation slideDown = AnimationUtils.loadAnimation(context, R.anim.slide_down_animation);
+//                slideDown.setAnimationListener(new Animation.AnimationListener() {
+//                    @Override
+//                    public void onAnimationStart(Animation animation) {
+//                        holder.llHidingInfo.setVisibility(View.VISIBLE);
+////                        ((Button) v).setText(R.string.nascondi);
+//                    }
+//
+//                    @Override
+//                    public void onAnimationEnd(Animation animation) {
+//                    }
+//
+//                    @Override
+//                    public void onAnimationRepeat(Animation animation) {
+//
+//                    }
+//                });
+//                holder.llHidingInfo.startAnimation(slideDown);
+//            } else {
+//                Animation closing = AnimationUtils.loadAnimation(context, R.anim.closing_animation);
+//                closing.setAnimationListener(new Animation.AnimationListener() {
+//                    @Override
+//                    public void onAnimationStart(Animation animation) {}
+//                    @Override
+//                    public void onAnimationEnd(Animation animation) {
+//                        holder.llHidingInfo.setVisibility(View.GONE);
+////                        ((Button) v).setText(R.string.dettagli);
+//                    }
+//
+//                    @Override
+//                    public void onAnimationRepeat(Animation animation) {}
+//                });
+//                holder.llHidingInfo.startAnimation(closing);
+//            }
         });
 
         if (holder.llHidingInfo.getVisibility() == View.INVISIBLE) {
@@ -340,6 +346,50 @@ public class OrganizationViewAdapter extends RecyclerView.Adapter<OrganizationVi
 
     }
 
+    private void showOrganizationDetails(@NotNull Organization org) {
+        AlertDialog.Builder detailDialog = new AlertDialog.Builder(context, R.style.StalkerDetaislDialog);
+        detailDialog.setIcon(R.drawable.ic_info_black_24dp);
+        detailDialog.setTitle(org.getName());
+
+        View v = LayoutInflater.from(context).inflate(R.layout.detail_view, null);
+        ImageView iv = v.findViewById(R.id.ivIconOrganizzazione);
+        Glide.with(context).load(org.getImage_url()).into(iv);
+
+        TextView tvName = v.findViewById(R.id.tvName);
+        tvName.setText(org.getName());
+        TextView tvIndirizzo = v.findViewById(R.id.tvIndirizzo);
+        tvIndirizzo.setText(context.getString(
+                R.string.template_indirizzo,
+                org.getAddress(),
+                org.getCity(),
+                org.getPostal_code(),
+                org.getRegion(),
+                org.getNation()));
+        TextView tvNum = v.findViewById(R.id.tvNumeroTelefonico);
+        tvNum.setText(org.getPhone_number());
+        TextView tvTipo = v.findViewById(R.id.tvTipoOrganizzazione);
+        tvTipo.setText(org.getType());
+        TextView tvInfo = v.findViewById(R.id.tvInfoLDAP);
+        tvInfo.setText(context.getString(R.string.template_ldap,
+                org.getLdap_url(),
+                org.getLdap_port(),
+                org.getLdap_domain_component(),
+                org.getLdap_common_name()));
+        TextView tvLuoghi = v.findViewById(R.id.tvElencoLuoghi);
+        tvLuoghi.setText(org.getPlacesInfo());
+        detailDialog.setPositiveButton(R.string.tracciami, (DialogInterface.OnClickListener) (dialog, which) -> {
+            viewModel.updateOrganizzazione(org.setTracking(true));
+            navController.navigate(R.id.action_navigation_organizations_to_navigation_tracking);
+        });
+        detailDialog.setPositiveButtonIcon(context.getDrawable(R.drawable.ic_add_circle_black_24dp));
+
+
+        detailDialog.setView(v);
+        detailDialog.create().show();
+
+    }
+
+
     @Override
     public int getItemCount() {
         return listaOrganization.size();
@@ -349,7 +399,7 @@ public class OrganizationViewAdapter extends RecyclerView.Adapter<OrganizationVi
         TextView nomeOrganizzazione;
         TextView tipoOrganizzazione, tvIndirizzo, tvElencoLuoghi;
         Button btnTrackMe, btnShowDetails;
-        LinearLayout llHidingInfo,llIconName;
+        LinearLayout llHidingInfo, llIconName;
 
         ImageView ivIconOrganizzazione;
 
@@ -362,7 +412,7 @@ public class OrganizationViewAdapter extends RecyclerView.Adapter<OrganizationVi
             tvIndirizzo = itemView.findViewById(R.id.tvIndirizzo);
             llHidingInfo = itemView.findViewById(R.id.llHidingInformation);
             ivIconOrganizzazione = itemView.findViewById(R.id.ivIconOrganizzazione);
-            btnShowDetails= itemView.findViewById(R.id.btnShowDetails);
+            btnShowDetails = itemView.findViewById(R.id.btnShowDetails);
             llIconName = itemView.findViewById(R.id.llIconName);
             tvElencoLuoghi = itemView.findViewById(R.id.tvElencoLuoghi);
 

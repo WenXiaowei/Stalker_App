@@ -220,8 +220,8 @@ public class PlaceResponse {
 
     private static final String TAG="com.vartmp7.stalker.GsonBeans.ResponseLuogo";
     @Getter @Setter @Accessors(chain = true)
-    private List<PolygonPlace> luoghi;
+    private List<PolygonPlace> places;
 
-    public int getPlacesLength(){return luoghi.size();}
+    public int getPlacesLength(){return places.size();}
 
 }

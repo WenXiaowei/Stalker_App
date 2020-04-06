@@ -202,38 +202,8 @@
   ~    limitations under the License.
   -->
 
-<resources>
-
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar" >
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/vartmp7bluChiaro</item>
-        <item name="colorPrimaryDark">@color/vartmp7bluChiaro</item>
-        <item name="colorAccent">@color/vartmp7bluChiaro</item>
-    </style>
-    <style name="ImagePreviewerTheme" >
-        <item name="android:windowIsFloating">false</item>
-    </style>
-    <style name="StalkerDialogTheme" parent="@android:style/Theme.Dialog" >
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:minWidth">300dp</item>
-        <item name="android:textColor">@color/white</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:headerDividersEnabled">false</item>
-        <item name="android:typeface">normal</item>
-        <item name="android:windowTitleBackgroundStyle">@color/vartmp7bluChiaro</item>
-        <item name="android:background">@color/vartmp7bluChiaro</item>
-        <item name="buttonStyle">@drawable/refresh_btn_style</item>
-    </style>
-    <style name="StalkerDetaislDialog" parent="@android:style/Theme.Dialog" >
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:minWidth">400dp</item>
-        <item name="android:textColor">@color/white</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:typeface">normal</item>
-        <item name="android:windowTitleBackgroundStyle">@color/vartmp7bluChiaro</item>
-        <item name="android:background">@color/vartmp7bluChiaro</item>
-        <item name="buttonStyle">@drawable/refresh_btn_style</item>
-    </style>
-</resources>
+<vector android:height="24dp" android:tint="#FFFFFF"
+    android:viewportHeight="24.0" android:viewportWidth="24.0"
+    android:width="24dp" xmlns:android="http://schemas.android.com/apk/res/android">
+    <path android:fillColor="#FF000000" android:pathData="M12,2C6.48,2 2,6.48 2,12s4.48,10 10,10 10,-4.48 10,-10S17.52,2 12,2zM17,13h-4v4h-2v-4L7,13v-2h4L11,7h2v4h4v2z"/>
+</vector>
