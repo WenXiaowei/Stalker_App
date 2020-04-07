@@ -303,7 +303,7 @@ public class OrganizationTest {
         List<PolygonPlace> p = new ArrayList<>();
         p.add((PolygonPlace) new PolygonPlace().setName("Unipd").setNum_max_people(100));
         org.setPlaces(p);
-        assertEquals(org.getPlacesInfo(), "\nNome Luogo: Unipd, Num. persone massimo: 100");
+        assertEquals(org.getPlacesInfo(), "Nome Luogo: Unipd, Num. persone massimo: 100\n");
 
     }
 
