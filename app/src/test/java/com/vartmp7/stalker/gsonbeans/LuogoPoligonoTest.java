@@ -225,12 +225,24 @@ public class LuogoPoligonoTest {
     private PolygonPlace luogo;
     private Coordinate coordinate;
     private boolean inside;
+    private double distance;
 
-    public LuogoPoligonoTest(final PolygonPlace l, final Coordinate c, boolean inside) {
+    public LuogoPoligonoTest(final PolygonPlace l, final Coordinate c, boolean inside, double distance) {
         this.luogo = l;
         this.coordinate = c;
         this.inside = inside;
+        this.distance = distance;
+
     }
+
+
+
+    @Test
+    public void testDistanceTo(){
+        System.out.println(luogo.getCenter()+"calculated"+ luogo.distanceTo(coordinate)+" expected"+distance+ " actual"+luogo.getCenter().getDistanceTo(coordinate));
+        assertEquals(distance,luogo.distanceTo(coordinate),DELTA);
+    }
+
 
     @Test
     public void testProva(){
@@ -294,10 +306,10 @@ public class LuogoPoligonoTest {
         d.setCoordinate(dsea);
 
         return Arrays.asList(new Object[][]{
-                {t, new Coordinate( 45.411332,11.887631), true},
-                {i, new Coordinate(45.411695, 11.887339),true},
-                {i, new Coordinate(45.911695, 11.887339),false},
-                {d, new Coordinate(45.411502, 11.888165), true}
+                {t, new Coordinate( 45.411332,11.887631), true,0.02066094133453709},
+                {i, new Coordinate(45.411695, 11.887339),true,0.011153516755715097},
+                {i, new Coordinate(45.911695, 11.887339),false,55659.73783104104},
+                {d, new Coordinate(45.411502, 11.888165), true,0.11660063237332076}
         });
 
     }
