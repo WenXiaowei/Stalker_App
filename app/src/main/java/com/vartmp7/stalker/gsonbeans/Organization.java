@@ -261,7 +261,7 @@ public class Organization implements Serializable {
     @Getter
     @Setter
     @Accessors(chain = true)
-    private String type;
+    private String type="public";
     @Getter
     @Setter
     @Accessors(chain = true)
@@ -349,10 +349,10 @@ public class Organization implements Serializable {
     public String getPlacesInfo() {
         StringBuilder builder = new StringBuilder();
 
-        getPlaces().forEach(polygonPlace -> builder.append("\nNome Luogo: ")
+        getPlaces().forEach(polygonPlace -> builder.append("Nome Luogo: ")
                 .append(polygonPlace.getName())
                 .append(", Num. persone massimo: ")
-                .append(polygonPlace.getNum_max_people()));
+                .append(polygonPlace.getNum_max_people()).append("\n"));
         return builder.toString();
     }
 

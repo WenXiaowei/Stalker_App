@@ -227,11 +227,11 @@ public class TrackingViewModel extends ViewModel {
     @Setter(AccessLevel.PUBLIC) @Getter(AccessLevel.PUBLIC)
     private OrganizationsRepository repository;
 
-    public LiveData<List<Organization>> getListOrganizzazione() {
+    public LiveData<List<Organization>> getOrganizations() {
         return repository.getOrganizations();
     }
 
-    public void updateOrganizzazione(Organization o) {
+    public void updateOrganization(Organization o) {
         repository.updateOrganization(o);
     }
 
@@ -245,14 +245,14 @@ public class TrackingViewModel extends ViewModel {
         this.repository = repository;
     }
 
-    public void removePreferito(Organization o) throws NotLogged {
+    public void removeFavorite(Organization o) throws NotLogged {
         repository.removeFavorite(o);
     }
     public void updateOrganizations(List<Organization> list){
         repository.updateOrganizations(list);
     }
 
-    public void addPreferito(Organization o) throws NotLogged {
+    public void addFavorite(Organization o) throws NotLogged {
         repository.addFavorite(o);
     }
 

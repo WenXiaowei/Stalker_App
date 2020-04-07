@@ -290,7 +290,7 @@
     <string name="ldap_login_failed_check_credentials">Login fallito, verificare di aver inserito le credenziali corrette e riprovare</string>
     <string name="something_went_wrong">Qualcosa è andato storto, riprovare più tardi!</string>
     <string name="tuo_cn">Tuo CN</string>
-    <string name="nome_organizzazione">Nome organizzazione:</string>
+    <string name="nome_organizzazione">Nome:</string>
     <string name="numero_telefonico">Numero telefonico:</string>
     <string name="informazione_di_ldap">Informazione LDAP</string>
     <string name="icona_dell_organizzazione">Icona dell\'organizzazione</string>

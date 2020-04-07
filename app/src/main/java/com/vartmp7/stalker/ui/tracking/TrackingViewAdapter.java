@@ -216,7 +216,6 @@ import android.view.animation.RotateAnimation;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -280,7 +279,7 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
         View.OnClickListener listener = v -> {
             switch (v.getId()) {
                 case R.id.btnStartTracking:
-                    viewModel.updateOrganizzazione(org.setTrackingActive(!org.isTrackingActive()));
+                    viewModel.updateOrganization(org.setTrackingActive(!org.isTrackingActive()));
                     notifyItemChanged(position);
                     break;
                 case R.id.llTitle:
@@ -303,15 +302,15 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
 
                     try {
                         if (org.isFavorite())
-                            viewModel.removePreferito(org);
-                        else viewModel.addPreferito(org);
+                            viewModel.removeFavorite(org);
+                        else viewModel.addFavorite(org);
                     } catch (NotLogged ex) {
                         Toast.makeText(context, R.string.not_logged_yet, Toast.LENGTH_SHORT).show();
                     }
                     break;
                 case R.id.sAnonymousSwitch:
                     holder.sAnonimo.isActivated();
-                    viewModel.updateOrganizzazione(org.setAnonymous(holder.sAnonimo.isActivated()));
+                    viewModel.updateOrganization(org.setAnonymous(holder.sAnonimo.isActivated()));
                     break;
             }
         };
@@ -374,7 +373,7 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
                             organization.setLogged(true);
                             organization.setPersonalCn(etUsername.getText().toString());
                             organization.setLdapPassword(etPassword.getText().toString());
-                            viewModel.updateOrganizzazione(organization);
+                            viewModel.updateOrganization(organization);
                             anonimo.setEnabled(true);
                             anonimo.setChecked(true);
                             Toast.makeText(context, R.string.logged, Toast.LENGTH_SHORT).show();

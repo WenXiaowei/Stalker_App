@@ -278,13 +278,37 @@ public class RESTObtainer implements Obtainer {
                 t.setCoordinate(torreArchimede);
 
                 List<Organization> orgs = Arrays.asList(
-                        new Organization().setId(count).setName("unipd" + count).setTracking(true).setImage_url("https://cdn.discordapp.com/attachments/690970576415621201/691008560363995208/Schermata_2020-03-21_alle_20.41.13.png")
+                        new Organization().setId(count)
+                                .setName("UniPD Dipartimento di Matematica")
+                                .setTracking(true)
+                                .setAddress("Trieste n. 8")
+                                .setCity("Padova")
+                                .setRegion("Padova")
+                                .setNation("IT")
+                                .setPostal_code("35921")
+                                .setPhone_number("049********")
+                                .setType("public")
+                                .setEmail("info@math.unipd.it")
+//                                .setImage_url("https://upload.wikimedia.org/wikipedia/it/thumb/5/53/Logo_Universit%C3%A0_Padova.svg/1200px-Logo_Universit%C3%A0_Padova.svg.png")
+                                .setImage_url("https://pbs.twimg.com/profile_images/1173976802416582657/LCZXVSqH_400x400.jpg")
                                 .setPlaces(Collections.singletonList(t)),
-                        new Organization().setId(count + 1).setName("unipd" + (count + 1)).setTracking(true).setImage_url("https://cdn.discordapp.com/attachments/690970576415621201/691008560363995208/Schermata_2020-03-21_alle_20.41.13.png")
+                        new Organization()
+                                .setId(count + 1)
+                                .setName("UniPD DEI")
+                                .setTracking(true)
+                                .setImage_url("https://www.dei.unipd.it/sites/dei.unipd.it/files/sublogo_3.png")
                                 .setPlaces(Collections.singletonList(t)),
-                        new Organization().setId(count + 2).setName("unipd" + (count + 2)).setTracking(true).setImage_url("https://cdn.discordapp.com/attachments/690970576415621201/691008560363995208/Schermata_2020-03-21_alle_20.41.13.png")
+                        new Organization()
+                                .setId(count + 2)
+                                .setName("UniPD Psicologia")
+                                .setTracking(false)
+                                .setImage_url("")
                                 .setPlaces(Collections.singletonList(t)),
-                        new Organization().setId(count + 3).setName("unipd" + (count + 3)).setTracking(true).setImage_url("https://cdn.discordapp.com/attachments/690970576415621201/691008560363995208/Schermata_2020-03-21_alle_20.41.13.png")
+                        new Organization()
+                                .setId(count + 3)
+                                .setName("UNIPD DSFARM")
+                                .setTracking(true)
+                                .setImage_url("https://www.dsfarm.unipd.it/sites/dsfarm.unipd.it/files/sublogo_9.png")
                                 .setPlaces(Collections.singletonList(t))
                 );
                 orgs.forEach(o -> Log.d(TAG, "onFailure: " + o.getId()));

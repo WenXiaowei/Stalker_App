@@ -216,6 +216,10 @@ import com.bumptech.glide.Glide;
 import com.vartmp7.stalker.R;
 import com.vartmp7.stalker.gsonbeans.Organization;
 
+import org.w3c.dom.Text;
+
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class DetailsDialog {
     private Context context;
     private Organization org;
@@ -231,8 +235,11 @@ public class DetailsDialog {
         detailDialog.setTitle(org.getName());
 
         View v = LayoutInflater.from(context).inflate(R.layout.detail_view, null);
-        ImageView iv = v.findViewById(R.id.ivIconOrganizzazione);
+        CircleImageView iv = v.findViewById(R.id.ivIconOrganizzazione);
         Glide.with(context).load(org.getImage_url()).into(iv);
+
+        if (org.getType().equals("public"))
+            v.findViewById(R.id.llLDAP).setVisibility(View.GONE);
 
         TextView tvName = v.findViewById(R.id.tvName);
         tvName.setText(org.getName());
@@ -248,6 +255,8 @@ public class DetailsDialog {
         tvNum.setText(org.getPhone_number());
         TextView tvTipo = v.findViewById(R.id.tvTipoOrganizzazione);
         tvTipo.setText(org.getType());
+        TextView tvEmail = v.findViewById(R.id.tvEmail);
+        tvEmail.setText(org.getEmail());
         TextView tvInfo = v.findViewById(R.id.tvInfoLDAP);
         tvInfo.setText(context.getString(R.string.template_ldap,
                 org.getLdap_url(),

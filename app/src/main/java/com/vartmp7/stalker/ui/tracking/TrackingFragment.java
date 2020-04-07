@@ -422,7 +422,7 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
 
         trackingViewModel = new ViewModelProvider(requireActivity()).get(TrackingViewModel.class);
         trackingViewModel.init(MainActivity.repository);
-        organizationToTrack = trackingViewModel.getListOrganizzazione()
+        organizationToTrack = trackingViewModel.getOrganizations()
                 .getValue()
                 .stream()
                 .filter(Organization::isTracking)
@@ -430,7 +430,7 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
                 .collect(Collectors.toList());
 
         mAdapter = new TrackingViewAdapter(getContext(), trackingViewModel);
-        trackingViewModel.getListOrganizzazione().observe(getViewLifecycleOwner(),
+        trackingViewModel.getOrganizations().observe(getViewLifecycleOwner(),
                 list -> {
                     Log.d(TAG, "onCreateView: on Changed ");
                     List<Organization> lis = list.stream().filter(Organization::isTracking).collect(Collectors.toList());
@@ -453,7 +453,7 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
                 Organization o = mAdapter.getOrganizationAt(viewHolder.getAdapterPosition());
                 o.setTracking(false);
                 o.setTrackingActive(false);
-                trackingViewModel.updateOrganizzazione(o);
+                trackingViewModel.updateOrganization(o);
                 mAdapter.notifyItemChanged(viewHolder.getAdapterPosition());
                 Toast.makeText(requireContext(), "Organizzazione eliminata!", Toast.LENGTH_SHORT).show();
             }
@@ -471,8 +471,8 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
                 try {
 
                     if (o.isFavorite())
-                        trackingViewModel.removePreferito(o);
-                    else trackingViewModel.addPreferito(o);
+                        trackingViewModel.removeFavorite(o);
+                    else trackingViewModel.addFavorite(o);
                 } catch (NotLogged ex) {
 
                     Toast.makeText(requireContext(), R.string.not_logged_yet, Toast.LENGTH_SHORT).show();

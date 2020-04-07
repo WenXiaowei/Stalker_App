@@ -269,6 +269,7 @@ public class OrganizationViewAdapter extends RecyclerView.Adapter<OrganizationVi
         Glide.with(context)
                 .setDefaultRequestOptions(new RequestOptions().error(R.drawable.icon_stalker))
                 .load(listaOrganization.get(position).getImage_url())
+
                 .into(holder.ivIconOrganizzazione);
 
         holder.nomeOrganizzazione.setText(org.getName());
