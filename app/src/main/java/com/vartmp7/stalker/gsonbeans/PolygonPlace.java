@@ -258,7 +258,6 @@ public class PolygonPlace extends AbstractPlace {
         return new Line(coordinate.get(0), coordinate.get(2)).intersezione(new Line(coordinate.get(1), coordinate.get(3)));
     }
 
-    @Override
     public double distanceTo(Coordinate c) {
         return getCenter().getDistanceTo(c);
     }

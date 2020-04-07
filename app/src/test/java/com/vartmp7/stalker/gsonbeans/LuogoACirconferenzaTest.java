@@ -207,6 +207,7 @@ package com.vartmp7.stalker.gsonbeans;
 
 import com.vartmp7.stalker.gsonbeans.placecomponent.Coordinate;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -248,7 +249,10 @@ public class LuogoACirconferenzaTest {
         assertEquals(c1, circonferenza);
         assertEquals(c1.hashCode(), circonferenza.hashCode());
     }
-
+    @Test
+    public void testGetCenter(){
+        assertEquals(circonferenza.distanceTo(centro),0.0);
+    }
     @Test
     public void testGetters() {
         assertEquals(circonferenza.getCenter(), CENTRO);
@@ -256,6 +260,7 @@ public class LuogoACirconferenzaTest {
     }
 
 
+    @NotNull
     @Parameterized.Parameters
     public static Collection parametro() {
         CircumferencePlace c1 = new CircumferencePlace(1, "Cerchio");

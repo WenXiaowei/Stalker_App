@@ -205,58 +205,129 @@
 package com.vartmp7.stalker;
 
 
-import android.location.LocationManager;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewParent;
 
-import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.espresso.NoMatchingViewException;
+import androidx.test.espresso.ViewAssertion;
+import androidx.test.espresso.ViewInteraction;
 import androidx.test.filters.LargeTest;
+import androidx.test.rule.ActivityTestRule;
+import androidx.test.rule.GrantPermissionRule;
 
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeMatcher;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 
-import androidx.test.rule.ActivityTestRule;
-import androidx.test.rule.GrantPermissionRule;
-import static androidx.test.espresso.Espresso.onData;
+import static android.graphics.ColorSpace.match;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
-import static androidx.test.espresso.assertion.ViewAssertions.matches;
-import static androidx.test.espresso.matcher.RootMatchers.isDialog;
 import static androidx.test.espresso.matcher.ViewMatchers.isClickable;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static androidx.test.espresso.matcher.ViewMatchers.withClassName;
+import static androidx.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
-import static androidx.test.espresso.matcher.ViewMatchers.withSpinnerText;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
-import static org.hamcrest.Matchers.anything;
-import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.is;
 
-@RunWith(AndroidJUnit4.class)
 @LargeTest
+@RunWith(AndroidJUnit4.class)
 public class MainActivityTest {
 
     @Rule
-    public ActivityTestRule<MainActivity> activityRule =
-            new ActivityTestRule<>(MainActivity.class);
+    public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class);
+
     @Rule
-    public GrantPermissionRule permissionRule = GrantPermissionRule
-            .grant(android.Manifest.permission.ACCESS_FINE_LOCATION);
+    public GrantPermissionRule mGrantPermissionRule =
+            GrantPermissionRule.grant(
+                    "android.permission.ACCESS_FINE_LOCATION",
+                    "android.permission.ACCESS_COARSE_LOCATION");
 
     @Test
-    public void testStartTrackingWithUniPD() throws InterruptedException {
+    public void mainActivityTest() {
+//        ViewInteraction appCompatButton = onView(
+//                allOf(withId(R.id.btnProcediSenzaAuth), withText("Continua senza autenticazione"),
+//                        childAtPosition(
+//                                childAtPosition(
+//                                        withId(R.id.fcvLoginContainer),
+//                                        0),
+//                                2),
+//                        isDisplayed()));
+//        appCompatButton.perform(click());
 
-        onView(withId(R.id.s_scegliOrganizzazione)).perform(click());
-        onData(anything()).atPosition(1).perform(click());
-        onView(withId(R.id.s_scegliOrganizzazione)).check(matches(withSpinnerText(containsString(
-                "UniPD"))));
-        onView(withId(R.id.btnShowLoginDialog)).check(matches(isDisplayed()));
-        onView(withId(R.id.btnShowLoginDialog)).perform(click());
-        onView(withText(R.string.conferma)).inRoot(isDialog()) // <---
-                .check(matches(isDisplayed()))
-                .perform(click());
-        onView(withId(R.id.btnStartTracking)).check(matches(isDisplayed()));
-        onView(withId(R.id.btnStartTracking)).check(matches(isClickable())).perform(click());
-        onView(withId(R.id.tvCurrentStatus)).check(matches(isDisplayed()));
-        onView(withText("UniPD ti sta tracciando!")).inRoot(new ToastMatcher()).check(matches(isDisplayed()));
+        ViewInteraction bottomNavigationItemView = onView(
+                allOf(withId(R.id.navigation_tracking), withContentDescription("Home"),
+                        childAtPosition(
+                                childAtPosition(
+                                        withId(R.id.nav_view),
+                                        0),
+                                1),
+                        isDisplayed()));
+        bottomNavigationItemView.perform(click());
 
+        ViewInteraction appCompatButton2 = onView(
+                allOf(withId(R.id.btnStartAll), withText("Avvia\n tutti"),
+                        childAtPosition(
+                                childAtPosition(
+                                        withClassName(is("android.widget.LinearLayout")),
+                                        1),
+                                0),
+                        isDisplayed()));
+        appCompatButton2.perform(click());
+
+        ViewInteraction appCompatButton3 = onView(
+                allOf(withId(R.id.btnStartAll), withText("Avvia\n tutti"),
+                        childAtPosition(
+                                childAtPosition(
+                                        withClassName(is("android.widget.LinearLayout")),
+                                        1),
+                                0),
+                        isDisplayed()));
+        appCompatButton3.perform(click());
+
+        ViewInteraction appCompatButton4 = onView(
+                allOf(withId(R.id.btnStopAll), withText("Ferma \nTutti"),
+                        childAtPosition(
+                                childAtPosition(
+                                        withClassName(is("android.widget.LinearLayout")),
+                                        1),
+                                1),
+                        isDisplayed()));
+        appCompatButton4.perform(click());
+        onView(withId(R.id.btnStartAll)).check((view, noViewFoundException) -> isClickable());
+        ViewInteraction appCompatButton5 = onView(
+                allOf(withId(R.id.btnStartAll), withText("Avvia\n tutti"),
+                        childAtPosition(
+                                childAtPosition(
+                                        withClassName(is("android.widget.LinearLayout")),
+                                        1),
+                                0),
+                        isDisplayed()));
+        appCompatButton5.perform(click());
     }
 
+    private static Matcher<View> childAtPosition(
+            final Matcher<View> parentMatcher, final int position) {
+
+        return new TypeSafeMatcher<View>() {
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("Child at position " + position + " in parent ");
+                parentMatcher.describeTo(description);
+            }
+
+            @Override
+            public boolean matchesSafely(View view) {
+                ViewParent parent = view.getParent();
+                return parent instanceof ViewGroup && parentMatcher.matches(parent)
+                        && view.equals(((ViewGroup) parent).getChildAt(position));
+            }
+        };
+    }
 }

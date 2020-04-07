@@ -210,21 +210,22 @@ import android.view.ViewGroup;
 import android.view.ViewParent;
 
 import androidx.test.espresso.ViewInteraction;
-import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 import androidx.test.rule.ActivityTestRule;
+import androidx.test.rule.GrantPermissionRule;
+import androidx.test.runner.AndroidJUnit4;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
-import org.hamcrest.core.IsInstanceOf;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
-import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
+import static androidx.test.espresso.action.ViewActions.replaceText;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withClassName;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
@@ -234,75 +235,98 @@ import static org.hamcrest.Matchers.is;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
-public class MainActivityTest3 {
+public class MainActivityTest4 {
 
     @Rule
     public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class);
 
-    @Test
-    public void mainActivityTest3() {
-        ViewInteraction fg = onView(
-                allOf(withText("Sign in"),
-                        childAtPosition(
-                                allOf(withId(R.id.btn_googleSignIn),
-                                        childAtPosition(
-                                                withClassName(is("androidx.constraintlayout.widget.ConstraintLayout")),
-                                                3)),
-                                0),
-                        isDisplayed()));
-        fg.perform(click());
+    @Rule
+    public GrantPermissionRule mGrantPermissionRule =
+            GrantPermissionRule.grant(
+                    "android.permission.ACCESS_FINE_LOCATION",
+                    "android.permission.ACCESS_COARSE_LOCATION");
 
+    @Test
+    public void mainActivityTest4() {
         ViewInteraction appCompatButton = onView(
-                allOf(withId(R.id.btnTrackMe), withText("Scegli"),
+                allOf(withId(R.id.btn_signUp), withText("Accedi"),
                         childAtPosition(
                                 childAtPosition(
-                                        withClassName(is("android.widget.LinearLayout")),
-                                        2),
-                                0),
+                                        withId(R.id.fcvLoginContainer),
+                                        0),
+                                4),
                         isDisplayed()));
         appCompatButton.perform(click());
 
-        ViewInteraction linearLayout = onView(
-                allOf(withId(R.id.llTitle),
+        ViewInteraction appCompatEditText = onView(
+                allOf(withId(R.id.etEmail),
                         childAtPosition(
                                 childAtPosition(
-                                        withId(R.id.llTrackingItem),
+                                        withId(R.id.fcvLoginContainer),
                                         0),
-                                0),
+                                1),
                         isDisplayed()));
-        linearLayout.perform(click());
+        appCompatEditText.perform(replaceText("vartmp7@gmail.com"), closeSoftKeyboard());
+
+        ViewInteraction appCompatEditText2 = onView(
+                allOf(withId(R.id.etEmail), withText("vartmp7@gmail.com"),
+                        childAtPosition(
+                                childAtPosition(
+                                        withId(R.id.fcvLoginContainer),
+                                        0),
+                                1),
+                        isDisplayed()));
+        appCompatEditText2.perform(click());
+
+        ViewInteraction appCompatEditText3 = onView(
+                allOf(withId(R.id.etEmail), withText("vartmp7@gmail.com"),
+                        childAtPosition(
+                                childAtPosition(
+                                        withId(R.id.fcvLoginContainer),
+                                        0),
+                                1),
+                        isDisplayed()));
+        appCompatEditText3.perform(click());
+
+        ViewInteraction appCompatEditText4 = onView(
+                allOf(withId(R.id.etEmail), withText("vartmp7@gmail.com"),
+                        childAtPosition(
+                                childAtPosition(
+                                        withId(R.id.fcvLoginContainer),
+                                        0),
+                                1),
+                        isDisplayed()));
+        appCompatEditText4.perform(click());
+
+        ViewInteraction appCompatEditText5 = onView(
+                allOf(withId(R.id.etEmail), withText("vartmp7@gmail.com"),
+                        childAtPosition(
+                                childAtPosition(
+                                        withId(R.id.fcvLoginContainer),
+                                        0),
+                                1),
+                        isDisplayed()));
+        appCompatEditText5.perform(click());
+
+        ViewInteraction appCompatEditText6 = onView(
+                allOf(withId(R.id.etEmail), withText("vartmp7@gmail.com"),
+                        childAtPosition(
+                                childAtPosition(
+                                        withId(R.id.fcvLoginContainer),
+                                        0),
+                                1),
+                        isDisplayed()));
+        appCompatEditText6.perform(click());
 
         ViewInteraction appCompatButton2 = onView(
-                allOf(withId(R.id.btnStartTracking), withText("Tracciami"),
+                allOf(withId(R.id.btnLogin), withText("Accedi"),
                         childAtPosition(
                                 childAtPosition(
-                                        withId(R.id.llHidingInformation),
-                                        2),
-                                0),
+                                        withClassName(is("android.widget.LinearLayout")),
+                                        4),
+                                1),
                         isDisplayed()));
         appCompatButton2.perform(click());
-
-        ViewInteraction imageButton = onView(
-                allOf(withId(R.id.ibtnTrackingOn),
-                        childAtPosition(
-                                allOf(withId(R.id.llTitle),
-                                        childAtPosition(
-                                                IsInstanceOf.<View>instanceOf(android.widget.LinearLayout.class),
-                                                0)),
-                                2),
-                        isDisplayed()));
-        imageButton.check(matches(isDisplayed()));
-
-        ViewInteraction imageButton2 = onView(
-                allOf(withId(R.id.ibtnTrackingOn),
-                        childAtPosition(
-                                allOf(withId(R.id.llTitle),
-                                        childAtPosition(
-                                                IsInstanceOf.<View>instanceOf(android.widget.LinearLayout.class),
-                                                0)),
-                                2),
-                        isDisplayed()));
-        imageButton2.check(matches(isDisplayed()));
     }
 
     private static Matcher<View> childAtPosition(

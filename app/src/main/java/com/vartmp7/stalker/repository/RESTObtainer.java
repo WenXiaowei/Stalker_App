@@ -230,14 +230,14 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RESTObtainer implements Obtainer {
 
     //    public static final String URL_SERVER="https://stalker-be.ddns.net/";
-    public static final String URL_SERVER = "http::/localhost:5000";
+    private static final String URL_SERVER = "https://localhost:5000";
     private static final String TAG = "com.vartmp7.stalker.repository.RESTOrganizationsRepository";
-    private OkHttpClient httpClient;
-    private Gson gson = new Gson();
+
 
 
     static int count = 0;
@@ -245,8 +245,8 @@ public class RESTObtainer implements Obtainer {
     private MutableLiveData<List<Organization>> mutableLiveDataOrganizzazioni;
 
 
-    public RESTObtainer(OkHttpClient httpClient, MutableLiveData<List<Organization>> list) {
-        this.httpClient = httpClient;
+    public RESTObtainer(MutableLiveData<List<Organization>> list) {
+
         //this.mutableLiveDataOrganizzazioni= list;
         mutableLiveDataOrganizzazioni = new MutableLiveData<>();
     }
@@ -254,7 +254,8 @@ public class RESTObtainer implements Obtainer {
     @Override
     public MutableLiveData<List<Organization>> getOrganizations() {
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(URL_SERVER)
+                .baseUrl("https://localhost:5000/")
+                .addConverterFactory(GsonConverterFactory.create())
                 .build();
         RestApiService service = retrofit.create(RestApiService.class);
         Call<OrganizationResponse> organizations = service.organizations();

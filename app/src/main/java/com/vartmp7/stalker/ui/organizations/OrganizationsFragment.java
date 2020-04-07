@@ -293,6 +293,7 @@ public class OrganizationsFragment extends Fragment implements SwipeRefreshLayou
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(mAdapter);
+        organizzazioneViewModel.refresh();
     }
 
     @Override

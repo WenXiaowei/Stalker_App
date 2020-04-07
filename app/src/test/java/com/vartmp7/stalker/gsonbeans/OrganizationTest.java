@@ -218,66 +218,94 @@ import static org.junit.Assert.assertTrue;
 
 @RunWith(JUnit4.class)
 public class OrganizationTest {
-    private static final  String address="Via trieste";
-    private static final  String city="Padova";
-    private static final  String email="info@stalker.com";
-    private static final  long id=1;
-    private static final  String name="UNIPD";
-    private static final  String nation="IT";
-    private static final  String phone_number="0049xxxxxxx";
-    private static final  String postal_code="35021";
-    private static final  String region="Veneto";
-    private static final  String type="private";
-    private static final  String ldap_common_name="com.unipd";
-    private static final  String ldap_domain_component="cn=wen,cn=xiaowei";
-    private static final  String ldap_port="250";
-    private static final  Boolean isPreferito = false;
-    private static final  List<PolygonPlace> luoghi=new ArrayList<>();
+    private static final String address = "Via trieste";
+    private static final String city = "Padova";
+    private static final String email = "info@stalker.com";
+    private static final long id = 1;
+    private static final String name = "UNIPD";
+    private static final String nation = "IT";
+    private static final String phone_number = "0049xxxxxxx";
+    private static final String postal_code = "35021";
+    private static final String region = "Veneto";
+    private static final String type = "private";
+    private static final String ldap_common_name = "com.unipd";
+    private static final String ldap_domain_component = "cn=wen,cn=xiaowei";
+    private static final String ldap_port = "250";
+    private static final String ldap_url = "ulr";
+    private static final String image_url = "ulr";
+    private static final Boolean isPreferito = false;
+    private static final List<PolygonPlace> luoghi = new ArrayList<>();
     private static final Organization org = new Organization()
-                                                    .setAddress(address)
+            .setAddress(address)
             .setCity(city).setEmail(email).setId(id).setName(name).setNation(nation).setPhone_number(phone_number)
             .setPostal_code(postal_code).setRegion(region).setType(type).setLdap_common_name(ldap_common_name)
-            .setLdap_domain_component(ldap_domain_component).setLdap_port(ldap_port)
-            .setFavorite(isPreferito).setPlaces(luoghi);
+            .setLdap_domain_component(ldap_domain_component).setLdap_port(ldap_port).setLdap_url(ldap_url)
+            .setFavorite(isPreferito).setPlaces(luoghi).setImage_url(image_url)
+            .setFavorite(false)
+            .setTracking(false)
+            .setTrackingActive(false)
+            .setLogged(false)
+            .setAnonymous(false)
+            .setPersonalCn("cn")
+            .setLdapPassword("www");
+
 
     private Organization organization;
+
     @Before
     public void setUp() throws Exception {
-        organization =new Organization()
+        organization = new Organization()
                 .setAddress(address)
                 .setCity(city).setEmail(email).setId(id).setName(name).setNation(nation).setPhone_number(phone_number)
                 .setPostal_code(postal_code).setRegion(region).setType(type).setLdap_common_name(ldap_common_name)
-                .setLdap_domain_component(ldap_domain_component).setLdap_port(ldap_port)
-                .setFavorite(isPreferito).setPlaces(luoghi);
+                .setLdap_domain_component(ldap_domain_component).setLdap_port(ldap_port).setLdap_url(ldap_url)
+                .setFavorite(isPreferito).setPlaces(luoghi).setImage_url(image_url)
+                .setFavorite(false)
+                .setTracking(false)
+                .setTrackingActive(false)
+                .setLogged(false)
+                .setAnonymous(false)
+                .setPersonalCn("cn")
+                .setLdapPassword("www");
     }
 
 
     @Test
-    public void testEqualsHashCode(){
+    public void testEqualsHashCode() {
         assertEquals(org, organization);
-        assertEquals(org.toString(), organization.toString());
-        assertEquals(org.hashCode(), organization.hashCode());
+        assertEquals(org.toString(), org.toString());
+        assertEquals(org.hashCode(), org.hashCode());
 
     }
+
+
 
     @Test
-    public void testGetterSetter(){
+    public void testGetterSetter() {
 
-//        assertEquals(org.getAddress(),organizzazione.getAddress());
-//        assertEquals(org.getCity(),organizzazione.getCity());
-//        assertEquals(org.getEmail(),organizzazione.getEmail());
-//        assertEquals(org.getId(),organizzazione.getId());
-//        assertEquals(org.getName(),organizzazione.getName());
-//        assertEquals(org.getNation(),organizzazione.getNation());
-//        assertEquals(org.getPhone_number(),organizzazione.getPhone_number());
-//        assertEquals(org.getPostal_code(),organizzazione.getPostal_code());
-//        assertEquals(org.getRegion(),organizzazione.getRegion());
-//        assertEquals(org.getType(),organizzazione.getType());
-//        assertEquals(org.getLdap_common_name(),organizzazione.getLdap_common_name());
-//        assertEquals(org.getLdap_domain_component(),organizzazione.getLdap_domain_component());
-//        assertEquals(org.getLdap_port(),organizzazione.getLdap_port());
-//        assertEquals(org.isPreferito(),organizzazione.isPreferito());
-//        assertEquals(org.getLuoghi(),organizzazione.getLuoghi());
-//        assertEquals(org.hashCode(), organizzazione.hashCode());
+        assertEquals(org.getAddress(), organization.getAddress());
+        assertEquals(org.getCity(), organization.getCity());
+        assertEquals(org.getEmail(), organization.getEmail());
+        assertEquals(org.getId(), organization.getId());
+        assertEquals(org.getName(), organization.getName());
+        assertEquals(org.getNation(), organization.getNation());
+        assertEquals(org.getPhone_number(), organization.getPhone_number());
+        assertEquals(org.getPostal_code(), organization.getPostal_code());
+        assertEquals(org.getRegion(), organization.getRegion());
+        assertEquals(org.getType(), organization.getType());
+        assertEquals(org.getLdap_common_name(), organization.getLdap_common_name());
+        assertEquals(org.getLdap_domain_component(), organization.getLdap_domain_component());
+        assertEquals(org.getLdap_port(), organization.getLdap_port());
+        assertEquals(org.isFavorite(), organization.isFavorite());
+        assertEquals(org.hashCode(), org.hashCode());
+        assertEquals(org, org);
+//        assertEquals(org.getPlacesInfo(), "");
+        List<PolygonPlace> p = new ArrayList<>();
+        p.add((PolygonPlace) new PolygonPlace().setName("Unipd").setNum_max_people(100));
+        org.setPlaces(p);
+        assertEquals(org.getPlacesInfo(), "\nNome Luogo: Unipd, Num. persone massimo: 100");
+
     }
+
+
 }

@@ -223,8 +223,6 @@ import com.vartmp7.stalker.ui.login.LoginFragment;
 public class LoginActivity extends AppCompatActivity {
 
     private static final String TAG = "com.vartmp7.stalker.LoginActivitity";
-    private FirebaseAuth mAuth;
-    ;
 
     //    keytool -exportcert -alias YOUR_RELEASE_KEY_ALIAS -keystore YOUR_RELEASE_KEY_PATH | openssl sha1 -binary | openssl base64
     @Override
@@ -232,7 +230,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onStart();
 
         setTheme(R.style.AppThemeNoActionBar);
-        mAuth = FirebaseAuth.getInstance();
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
         if (mAuth.getCurrentUser() != null || GoogleSignIn.getLastSignedInAccount(this) != null ) {
             goToMainActivity();

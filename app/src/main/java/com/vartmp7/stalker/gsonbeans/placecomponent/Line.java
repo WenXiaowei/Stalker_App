@@ -236,17 +236,6 @@ public class Line {
         this.q = q;
     }
 
-    /**
-     * calcola il segno del determinante
-     * @param c la coordinata del punto
-     * @return return un numero >0 se la coordinata c è a destra della retta (a,b)
-     *              un numero = 0 se la coordinata c appartiene alla retta (a,b)
-     *              un numero < 0 se la coordinata c è a sinistra della retta (a,b)
-     */
-
-    public double distanceToCoordinate(Coordinate c){
-        return (b.getLongitude()-c.getLongitude())-(a.getLatitude()-c.getLatitude())/(a.getLatitude()-c.getLatitude());
-    }
     public double calcoloLatitude(double longitude) {
         return this.m * longitude + this.q;
     }

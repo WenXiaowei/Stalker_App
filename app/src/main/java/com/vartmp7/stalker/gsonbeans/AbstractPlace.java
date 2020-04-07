@@ -206,8 +206,6 @@ package com.vartmp7.stalker.gsonbeans;
 
 import com.vartmp7.stalker.gsonbeans.placecomponent.Coordinate;
 
-import org.jetbrains.annotations.Contract;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -230,16 +228,16 @@ public abstract class AbstractPlace {
     @Accessors(chain = true)
     private long num_max_people;
 
-    protected AbstractPlace(long id, String name, long num_max_people) {
+    AbstractPlace(long id, String name, long num_max_people) {
         this(id, name);
         this.num_max_people = num_max_people;
     }
 
-    protected AbstractPlace(long id, String name) {
+    AbstractPlace(long id, String name) {
         this.id = id;
         this.name = name;
     }
-    abstract public Coordinate getCenter();
+    abstract Coordinate getCenter();
     abstract public double distanceTo(Coordinate c);
     abstract public boolean isInside(Coordinate c);
 }

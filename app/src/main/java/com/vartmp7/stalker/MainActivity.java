@@ -302,7 +302,7 @@ public class MainActivity extends AppCompatActivity {
         if (FirebaseAuth.getInstance().getCurrentUser() != null || GoogleSignIn.getLastSignedInAccount(this) != null) {
             preferitiRepository = new FirebaseFavoritesSource(getUserId(), FirebaseFirestore.getInstance());
         }
-        Obtainer webSource = new RESTObtainer(Tools.getUnsafeOkHttpClient(), list);
+        Obtainer webSource = new RESTObtainer(list);
 
          repository = new OrganizationsRepository(localStorage, webSource, preferitiRepository);
 

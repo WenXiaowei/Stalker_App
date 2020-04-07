@@ -205,20 +205,16 @@
 package com.vartmp7.stalker.gsonbeans;
 
 import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-
-import java.io.BufferedInputStream;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.function.Consumer;
 
 /**
  * @author Xiaowei Wen, Lorenzo Taschin
@@ -226,82 +222,107 @@ import java.util.function.Consumer;
 public class Organization implements Serializable {
     public static final String TAG = "com.vartmp7.stalker.gsonbeans.Organizzazione";
 
-    @Getter(AccessLevel.PUBLIC) @Setter(AccessLevel.PUBLIC) @Accessors(chain = true)
+    @Getter(AccessLevel.PUBLIC)
+    @Setter(AccessLevel.PUBLIC)
+    @Accessors(chain = true)
     private String address;
-    @Getter @Setter @Accessors(chain = true)
+    @Getter
+    @Setter
+    @Accessors(chain = true)
     private String city;
-    @Getter @Setter @Accessors(chain = true)
+    @Getter
+    @Setter
+    @Accessors(chain = true)
     private String email;
-    @Getter @Setter @Accessors(chain = true)
+    @Getter
+    @Setter
+    @Accessors(chain = true)
     private long id;
-    @Getter @Setter @Accessors(chain = true)
+    @Getter
+    @Setter
+    @Accessors(chain = true)
     private String name;
-    @Getter @Setter @Accessors(chain = true)
+    @Getter
+    @Setter
+    @Accessors(chain = true)
     private String nation;
-    @Getter @Setter @Accessors(chain = true)
+    @Getter
+    @Setter
+    @Accessors(chain = true)
     private String phone_number;
-    @Getter @Setter @Accessors(chain = true)
+    @Getter
+    @Setter
+    @Accessors(chain = true)
     private String postal_code;
-    @Getter @Setter @Accessors(chain = true)
+    @Getter
+    @Setter
+    @Accessors(chain = true)
     private String region;
-    @Getter @Setter @Accessors(chain = true)
+    @Getter
+    @Setter
+    @Accessors(chain = true)
     private String type;
-    @Getter @Setter @Accessors(chain = true)
+    @Getter
+    @Setter
+    @Accessors(chain = true)
     private String ldap_common_name;
-    @Getter @Setter @Accessors(chain = true)
+    @Getter
+    @Setter
+    @Accessors(chain = true)
     private String ldap_domain_component;
-    @Getter @Setter @Accessors(chain = true)
+    @Getter
+    @Setter
+    @Accessors(chain = true)
     private String ldap_port;
-    @Getter @Setter @Accessors(chain = true)
+    @Getter
+    @Setter
+    @Accessors(chain = true)
     private String ldap_url;
-    @Getter @Setter @Accessors(chain = true)
+    @Getter
+    @Setter
+    @Accessors(chain = true)
     private String image_url;
-    @Getter @Setter @Accessors(chain = true)
-    private List<PolygonPlace> places= new ArrayList<>();
-    @Getter @Setter @Accessors(chain = true)
+    @Getter
+    @Setter
+    @Accessors(chain = true)
+    private List<PolygonPlace> places = new ArrayList<>();
+    @Getter
+    @Setter
+    @Accessors(chain = true)
     private boolean isFavorite = false;
-    @Getter @Setter @Accessors(chain = true)
+    @Getter
+    @Setter
+    @Accessors(chain = true)
     private boolean isTracking = false;
-    @Getter @Setter @Accessors(chain = true)
+    @Getter
+    @Setter
+    @Accessors(chain = true)
     private boolean isLogged = false;
-    @Getter @Setter @Accessors(chain = true)
+    @Getter
+    @Setter
+    @Accessors(chain = true)
     private boolean isAnonymous = false;
-    @Getter @Setter @Accessors(chain = true)
-    private boolean isTrackingActive=false;
-    @Getter @Setter @Accessors(chain = true)
+    @Getter
+    @Setter
+    @Accessors(chain = true)
+    private boolean isTrackingActive = false;
+    @Getter
+    @Setter
+    @Accessors(chain = true)
     private String personalCn;
-    @Getter @Setter @Accessors(chain = true)
+    @Getter
+    @Setter
+    @Accessors(chain = true)
     private String ldapPassword;
 
-
-    public Organization() {}
-
-    @NotNull
     @Override
-    public String toString() {
-        return "Organization{" +
-                "address='" + address + '\'' +
-                ", city='" + city + '\'' +
-                ", email='" + email + '\'' +
-                ", id=" + id +
-                ", name='" + name + '\'' +
-                ", nation='" + nation + '\'' +
-                ", phone_number='" + phone_number + '\'' +
-                ", postal_code='" + postal_code + '\'' +
-                ", region='" + region + '\'' +
-                ", type='" + type + '\'' +
-                ", ldap_common_name='" + ldap_common_name + '\'' +
-                ", ldap_domain_component='" + ldap_domain_component + '\'' +
-                ", ldap_port='" + ldap_port + '\'' +
-                ", image_url='" + image_url + '\'' +
-                ", luoghi=" + places +
-                ", isPreferito=" + isFavorite +
-                ", isTracking=" + isTracking +
-                ", isLogged=" + isLogged +
-                ", isAnonimo=" + isAnonymous +
-                ", isTrackingActive=" + isTrackingActive +
-                '}';
+    public int hashCode() {
+        return Objects.hash(getAddress(), getCity(), getEmail(), getId(), getName(), getNation(), getPhone_number(), getPostal_code(), getRegion(), getType(), getLdap_common_name(), getLdap_domain_component(), getLdap_port(), getLdap_url(), getImage_url(), getPlaces(), isFavorite(), isTracking(), isLogged(), isAnonymous(), isTrackingActive(), getPersonalCn(), getLdapPassword());
     }
+
+    public Organization() {
+    }
+
 
     @Contract(value = "null -> false", pure = true)
     @Override
@@ -325,7 +346,7 @@ public class Organization implements Serializable {
                 Objects.equals(getLuoghi(), that.getLuoghi())*/;
     }
 
-    public String getPlacesInfo(){
+    public String getPlacesInfo() {
         StringBuilder builder = new StringBuilder();
 
         getPlaces().forEach(polygonPlace -> builder.append("\nNome Luogo: ")
@@ -334,8 +355,5 @@ public class Organization implements Serializable {
                 .append(polygonPlace.getNum_max_people()));
         return builder.toString();
     }
-    @Override
-    public int hashCode() {
-        return Objects.hash(address, city, email, id, name, nation, phone_number, postal_code, region, type, ldap_common_name, ldap_domain_component, ldap_port, image_url, places, isFavorite(), isTracking(), isLogged(), isAnonymous(), isTrackingActive());
-    }
+
 }

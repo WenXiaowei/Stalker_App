@@ -293,7 +293,7 @@ public class OrganizationViewAdapter extends RecyclerView.Adapter<OrganizationVi
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView nomeOrganizzazione;
-        TextView tvIndirizzo;
+
         Button btnTrackMe, btnShowDetails;
 
         ImageView ivIconOrganizzazione;
@@ -305,8 +305,6 @@ public class OrganizationViewAdapter extends RecyclerView.Adapter<OrganizationVi
             nomeOrganizzazione = itemView.findViewById(R.id.tvNomeOrganizzazione);
             btnTrackMe = itemView.findViewById(R.id.btnTrackMe);
             btnShowDetails = itemView.findViewById(R.id.btnShowDetails);
-
-
 
         }
     }
