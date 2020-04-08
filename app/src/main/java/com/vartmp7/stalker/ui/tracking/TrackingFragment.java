@@ -467,20 +467,24 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 Organization o = mAdapter.getOrganizationAt(viewHolder.getAdapterPosition());
-                mAdapter.notifyItemChanged(viewHolder.getAdapterPosition());
-                try {
+                int msg;
+                if (o.isLogged())
+                    msg= R.string.prima_devi_fare_accesso;
+               else{
+                   mAdapter.notifyItemChanged(viewHolder.getAdapterPosition());
+                    try {
 
-                    if (o.isFavorite())
-                        trackingViewModel.removeFavorite(o);
-                    else trackingViewModel.addFavorite(o);
-                } catch (NotLogged ex) {
+                        if (o.isFavorite())
+                            trackingViewModel.removeFavorite(o);
+                        else trackingViewModel.addFavorite(o);
+                    } catch (NotLogged ex) {
 
-                    Toast.makeText(requireContext(), R.string.not_logged_yet, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(requireContext(), R.string.not_logged_yet, Toast.LENGTH_SHORT).show();
+                    }
+                    msg =o.isFavorite() ? R.string.organizzazione_added_to_favorite :
+                            R.string.organizzazione_removed_from_favorite;
                 }
-
-                Toast.makeText(requireContext(), o.isFavorite() ? getString(R.string.organizzazione_added_to_favorite) :
-                        getString(R.string.organizzazione_removed_from_favorite), Toast.LENGTH_SHORT).show();
-
+                Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show();
             }
         }).attachToRecyclerView(recyclerView);
 
