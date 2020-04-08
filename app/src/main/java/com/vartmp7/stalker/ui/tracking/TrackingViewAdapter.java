@@ -290,7 +290,14 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
                     }
                     break;
                 case R.id.btnLoginLDAP:
-                    showLDAPLoginDialog((Button) v, holder.sAnonimo, org);
+                    if(!org.isLogged()){
+                        showLDAPLoginDialog((Button) v, holder.sAnonimo, org);
+                    }else{
+                        org.setLogged(false);
+                        ((Button) v).setText(R.string.login_ldap);
+                        holder.sAnonimo.setChecked(false);
+                        holder.sAnonimo.setEnabled(false);
+                    }
                     break;
                 case R.id.ibtnAddToPreferiti:
                     holder.ibtnPreferito.setImageResource(!org.isFavorite() ? R.drawable.icon_fav_si : R.drawable.icon_fav_no);
@@ -299,6 +306,7 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
                     rotate1.setInterpolator(new LinearInterpolator());
                     holder.ibtnPreferito.startAnimation(rotate1);
 //                    org.setPreferito(!org.isPreferito());
+
 
                     try {
                         if (org.isFavorite())
@@ -366,10 +374,10 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
             // todo sostituire il server address con organization.getLdap_url() e getLdap_port()
             StalkerLDAP ldap = new StalkerLDAP("10.0.2.2", 389,
                     etUsername.getText().toString(), etPassword.getText().toString());
-            try {
-                ldap.bind();
-                ldap.search();
-                v.setText(R.string.logged);
+//            try {
+//                ldap.bind();
+//                ldap.search();
+                v.setText(R.string.logout);
                 organization.setLogged(true);
                 organization.setPersonalCn(etUsername.getText().toString());
                 organization.setLdapPassword(etPassword.getText().toString());
@@ -378,23 +386,18 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
                 anonimo.setChecked(true);
                 Toast.makeText(context, R.string.logged, Toast.LENGTH_SHORT).show();
 //                            ((Button)findViewById(R.id.btnShowLoginDialog)).setText("logged");
-            } catch (LDAPException e) {
-                Toast.makeText(context, R.string.connection_to_ldap_failed, Toast.LENGTH_SHORT).show();
-            } catch (ExecutionException e) {
-                Toast.makeText(context, R.string.ldap_login_failed_check_credentials, Toast.LENGTH_SHORT).show();
-            } catch (InterruptedException e) {
-                Toast.makeText(context, context.getString(R.string.something_went_wrong), Toast.LENGTH_SHORT).show();
-            }
+//            } catch (LDAPException e) {
+//                Toast.makeText(context, R.string.connection_to_ldap_failed, Toast.LENGTH_SHORT).show();
+//            } catch (ExecutionException e) {
+//                Toast.makeText(context, R.string.ldap_login_failed_check_credentials, Toast.LENGTH_SHORT).show();
+//            } catch (InterruptedException e) {
+//                Toast.makeText(context, context.getString(R.string.something_went_wrong), Toast.LENGTH_SHORT).show();
+//            }
 
         }
         );
 
-        builder.setNegativeButton(R.string.annulla, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
+        builder.setNegativeButton(R.string.annulla, (dialog, which) -> dialog.dismiss());
         builder.create().show();
 
     }
