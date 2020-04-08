@@ -287,11 +287,8 @@ public class OrganizationViewAdapter extends RecyclerView.Adapter<OrganizationVi
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView nomeOrganizzazione;
-
         Button btnTrackMe, btnShowDetails;
-
         ImageView ivIconOrganizzazione;
-
         ViewHolder(@NonNull View itemView) {
             // dati dell'organizzazione
             super(itemView);

@@ -286,13 +286,10 @@ public class StalkerTrackingService extends Service {
         mServiceHandler = new Handler(handlerThread.getLooper());
         mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
-        // Android O requires a Notification Channel.
         CharSequence name = getString(R.string.app_name);
-        // Create the channel for the notification
         NotificationChannel mChannel =
                 new NotificationChannel(NOTIFICATION_CHANNEL_ID, name, NotificationManager.IMPORTANCE_DEFAULT);
 
-        // Set the Notification Channel for the Notification Manager.
         mNotificationManager.createNotificationChannel(mChannel);
     }
 
@@ -304,12 +301,10 @@ public class StalkerTrackingService extends Service {
         boolean startedFromNotification = intent.getBooleanExtra(EXTRA_STARTED_FROM_NOTIFICATION,
                 false);
 
-        // We got here because the user decided to remove location updates from the notification.
         if (startedFromNotification) {
             removeLocationUpdates();
             stopSelf();
         }
-        // Tells the system to not try to recreate the service after it has been killed.
         return START_NOT_STICKY;
     }
 
@@ -322,9 +317,6 @@ public class StalkerTrackingService extends Service {
 
     @Override
     public void onRebind(Intent intent) {
-        // Called when a client (MainActivity in case of this sample) returns to the foreground
-        // and binds once again with this service. The service should cease to be a foreground
-        // service when that happens.
         Log.i(TAG, "in onRebind()");
         stopForeground(true);
         mChangingConfiguration = false;
@@ -335,15 +327,11 @@ public class StalkerTrackingService extends Service {
     public boolean onUnbind(Intent intent) {
         Log.i(TAG, "Last client unbound from service");
 
-        // Called when the last client (MainActivity in case of this sample) unbinds from this
-        // service. If this method is called due to a configuration change in MainActivity, we
-        // do nothing. Otherwise, we make this service a foreground service.
         if (!mChangingConfiguration && Tools.requestingLocationUpdates(this)) {
-//            Log.i(TAG, "Starting foreground service");
 
             startForeground(NOTIFICATION_ID, getNotification());
         }
-        return true; // Ensures onRebind() is called when a client re-binds.
+        return true;
     }
 
     @Override
@@ -358,7 +346,6 @@ public class StalkerTrackingService extends Service {
     }
 
     public void requestLocationUpdates() {
-//        Log.i(TAG, "Requesting location updates");
         Tools.setRequestingLocationUpdates(this, true);
         startService(new Intent(getApplicationContext(), StalkerTrackingService.class));
         try {
@@ -366,19 +353,16 @@ public class StalkerTrackingService extends Service {
                     mLocationCallback, Looper.myLooper());
         } catch (SecurityException unlikely) {
             Tools.setRequestingLocationUpdates(this, false);
-//            Log.e(TAG, "Lost location permission. Could not request updates. " + unlikely);
         }
     }
 
     public void removeLocationUpdates() {
-//        Log.i(TAG, "Removing location updates");
         try {
             mFusedLocationClient.removeLocationUpdates(mLocationCallback);
             Tools.setRequestingLocationUpdates(this, false);
             stopSelf();
         } catch (SecurityException unlikely) {
             Tools.setRequestingLocationUpdates(this, true);
-//            Log.e(TAG, "Lost location permission. Could not remove updates. " + unlikely);
         }
     }
 
@@ -388,22 +372,9 @@ public class StalkerTrackingService extends Service {
 
         CharSequence text = Tools.getLocationText(mLocation);
 
-        // Extra to help us figure out if we arrived in onStartCommand via the notification or not.
         intent.putExtra(EXTRA_STARTED_FROM_NOTIFICATION, true);
 
-        // The PendingIntent that leads to a call to onStartCommand() in this service.
-//        PendingIntent servicePendingIntent = PendingIntent.getService(this, 0, intent,
-//                PendingIntent.FLAG_UPDATE_CURRENT);
-//
-        // The PendingIntent to launch activity.
-//        PendingIntent activityPendingIntent = PendingIntent.getActivity(this, 0,
-//                new Intent(this, MainActivity.class), 0);
-
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
-//                .addAction(R.drawable.icon, getString(R.string.launch_activity),
-//                        activityPendingIntent)
-//                .addAction(R.drawable.ic_cancel, getString(R.string.remove_location_updates),
-//                        servicePendingIntent)
                 .setContentText(text)
                 .setContentTitle(Tools.getLocationTitle(this))
                 .setOngoing(true)
@@ -412,7 +383,6 @@ public class StalkerTrackingService extends Service {
                 .setTicker(text)
                 .setWhen(System.currentTimeMillis());
 
-        // Set the Channel ID for Android O.
         builder.setChannelId(NOTIFICATION_CHANNEL_ID); // Channel ID
 
         return builder.build();
@@ -425,30 +395,21 @@ public class StalkerTrackingService extends Service {
                         if (task.isSuccessful() && task.getResult() != null) {
                             mLocation = task.getResult();
                             onNewLocation(task.getResult());
-                        } else {
-//                                Log.w(TAG, "Failed to get location.");
-                        }
-                    });
+                        }});
         } catch (SecurityException unlikely) {
-//            Log.e(TAG, "Lost location permission." + unlikely);
         }
     }
 
     private void onNewLocation(Location location) {
-//        Log.i(TAG, "New location: " + location);
 
         mLocation = location;
         if (serviceCallback != null){
-//            Log.d(TAG, "onNewLocation: calling back");
             serviceCallback.onNewLocation(location);
         }
 
-        // Notify anyone listening for broadcasts about the new location.
         Intent intent = new Intent(ACTION_BROADCAST);
         intent.putExtra(EXTRA_LOCATION, location);
         LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
-
-        // Update notification content if running as a foreground service.
         if (serviceIsRunningInForeground(this)) {
             mNotificationManager.notify(NOTIFICATION_ID, getNotification());
         }

@@ -240,8 +240,6 @@ public class RESTObtainer implements Obtainer {
 
 
     public RESTObtainer(MutableLiveData<List<Organization>> list) {
-
-        //this.mutableLiveDataOrganizzazioni= list;
         mutableLiveDataOrganizzazioni = new MutableLiveData<>();
     }
 

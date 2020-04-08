@@ -210,7 +210,6 @@ import java.util.List;
 
 
 public interface FavoritesSource {
-    //void updateOrganizzazioni(List<Long> orgIds);
     void addOrganization(Long orgId);
     void removeOrganization(Long orgId);
     LiveData<List<Long>> getFavoriteOrganizationID();

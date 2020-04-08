@@ -254,8 +254,6 @@ public class FavoritesViewModel extends ViewModel {
                 list.forEach(o-> orgRepo.updateOrganization(o.setFavorite(true)));
                 Log.i(TAG, "onChanged: " + list);
                 organizzazioni.postValue(list);
-//                organizzazioni.removeSource(liveDataOrganizzazioni);
-//                organizzazioni.removeSource(mutableliveDataOrgIds);
                 organizzazioni.removeSource(organizationsQueryExhausted);
                 organizzazioni.removeSource(firebaseQueryExhausted);
 
@@ -281,9 +279,6 @@ public class FavoritesViewModel extends ViewModel {
         this.organizzazioni = new MediatorLiveData<>();
         this.organizzazioni.setValue(orgRepo.getOrganizations().getValue());
         this.orgRepo = orgRepo;
-
-        //this.liveDataOrganizzazioni = orgRepo.getOrganizzazioni();
-        //this.mutableliveDataOrgIds = orgRepo.getPreferiti();
         this.firebaseQueryExhausted = new MutableLiveData<>(false);
         this.organizationsQueryExhausted = new MutableLiveData<>(false);
         refresh();
@@ -292,24 +287,12 @@ public class FavoritesViewModel extends ViewModel {
     public void refresh() {
         Log.e(TAG, "refresh: chiamato");
         int i = 0;
-        //MutableLiveData<List<Organizzazione>> listOrgs= new MutableLiveData<>();
         this.firebaseQueryExhausted.setValue(false);
         this.organizationsQueryExhausted.setValue(false);
-
         this.liveDataOrganizzazioni = orgRepo.getOrganizations();
         this.mutableliveDataOrgIds = orgRepo.getFavorites();
-
         this.organizzazioni.addSource(liveDataOrganizzazioni, storageObserver);
         this.organizzazioni.addSource(mutableliveDataOrgIds,firebaseObserver);
-        //orgRepo.refreshOrganizzazioni();
-
-
-
-
-        //listOrgs.setValue(Arrays.asList(new Organizzazione().setId(1212)));
-
-
-
         this.organizzazioni.addSource(organizationsQueryExhausted, queryExhaustedObserver);
         this.organizzazioni.addSource(firebaseQueryExhausted, queryExhaustedObserver);
     }

@@ -339,8 +339,6 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
 
         holder.tvNomeOrganizzazione.setText(org.getName());
         holder.llTitle.setOnClickListener(listener);
-
-//        holder.tvElencoLuoghi =
         holder.tvIndirizzo.setText(org.getAddress());
 
         holder.ibtnPreferito.setOnClickListener(listener);
@@ -389,12 +387,7 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
         }
         );
 
-        builder.setNegativeButton(R.string.annulla, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
+        builder.setNegativeButton(R.string.annulla, (dialog, which) -> dialog.dismiss());
         builder.create().show();
 
     }

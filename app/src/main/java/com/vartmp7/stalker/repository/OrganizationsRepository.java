@@ -221,7 +221,6 @@ public class OrganizationsRepository {
     private Storage storage;
     private Obtainer obtainer;
     private FavoritesSource organizationFavoritesSource;
-    //private MediatorLiveData<List<Organizzazione>> liveOrganizzazioni;
 
 
     public void updateOrganization(Organization o) {
@@ -236,24 +235,13 @@ public class OrganizationsRepository {
         this.storage = orgsLocalSource;
         this.obtainer = orgsWebSource;
         this.organizationFavoritesSource = fa;
-        //liveOrganizzazioni = new MediatorLiveData<>();
     }
 
     public LiveData<List<Organization>> getOrganizations() {
         LiveData<List<Organization>> fromLocal = storage.getOrganizations();
-//        Log.d(TAG, "getOrganizations() before if");
         if (organizationFavoritesSource != null) {
-//            Log.d(TAG, "getOrganizations() dentro if");
             organizationFavoritesSource.refresh();
         }
-//        Log.d(TAG, "getOrganizzazioni: " + fromLocal.getValue());
-        /*liveOrganizzazioni.addSource(fromLocal,organizzazioni->{
-            Log.d(TAG, "getOrganizzazioni: ");
-            organizzazioni.forEach(o-> Log.d(TAG, "getOrg: "+o.getId()));
-            liveOrganizzazioni.postValue(organizzazioni);
-            liveOrganizzazioni.removeSource(fromLocal);
-        });
-        return liveOrganizzazioni;*/
         return fromLocal;
     }
 
@@ -287,62 +275,7 @@ public class OrganizationsRepository {
 
     public void refreshOrganizations() {
         LiveData<List<Organization>> resultFromWebCall = obtainer.getOrganizations();
-        /*liveOrganizzazioni.addSource(resultFromWebCall,organizzazioni->{
-            Log.d(TAG, "refreshOrganizzazioni: ");
-            organizzazioni.forEach(o-> Log.d(TAG, "refreshOrg: "+o.getId()));
-            organizationsLocalSource.updateOrganizzazioni(organizzazioni);
-            liveOrganizzazioni.removeSource(resultFromWebCall);
-        });*/
-
-
         resultFromWebCall.observeForever(observer);
-
-
-        /*MutableLiveData<Boolean> webQueryExhausted = new MutableLiveData<Boolean>(false);
-        MutableLiveData<Boolean> localQueryExhausted = new MutableLiveData<Boolean>(false);
-        resultFromWebCall.observeForever(organizzazioni->{
-            webQueryExhausted.setValue(true);
-        });
-        LiveData<List<Organizzazione>> resultFromLocalQuery = organizationsLocalSource.getOrganizzazioni();
-        resultFromLocalQuery.observeForever(organizzazioni->{
-           localQueryExhausted.setValue(true);
-        });
-        final Observer<Boolean> queryObserver = new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean aBoolean) {
-                if(webQueryExhausted.getValue() && localQueryExhausted.getValue()){
-                    localQueryExhausted.removeObserver(this);
-                    webQueryExhausted.removeObserver(this);
-                    for (Organizzazione orgFromWeb: resultFromWebCall.getValue()){
-                        for (Organizzazione org: resultFromLocalQuery.getValue()) {
-                            if(org.getId()==orgFromWeb.getId()){
-                                orgFromWeb.setPreferito(org.isPreferito());
-                                orgFromWeb.setTracking(org.isTracking());
-                                orgFromWeb.setTrackingActive(org.isTracking());
-                                rg=orgFromWeb;o
-                            }
-                        }
-                    }
-                    List<Organizzazione> toSave = resultFromLocalQuery.getValue();
-                    Log.d(TAG, "refreshOrganizzazioni: org che verranno salvate");
-                    toSave.forEach(o-> Log.d(TAG, "refreshOrganizzazioni: "+o.getId()+" "+o.getName()+o.isPreferito()));
-                    organizationsLocalSource.saveOrganizzazioni(toSave);
-                }
-            }
-        };
-        localQueryExhausted.observeForever(queryObserver);
-        webQueryExhausted.observeForever(queryObserver);*/
     }
-
-    /*
-    metodi più specifici, se in futuro si rendessero disponibili delle API più specifiche.
-    Potrebbero avere senso per occupare meno banda e alleggerire il carico lato server,
-
-    param: lista degli id delle organizzazioni
-    List<Organizzazione> getOrganizzazioni(List<String> organizationIds);
-
-    param: id di un'organizzazione
-    Organizzazione getOrganizzazione(List<String> organizationId);
-    */
 
 }

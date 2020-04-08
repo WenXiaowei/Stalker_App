@@ -240,19 +240,6 @@ public class OrganizationsViewModel extends ViewModel {
         orgRepo.updateOrganization(o);
     }
 
-   /* public void updateData() {
-        orgRepo.updateOrganizzazioni();
-    }*/
-
-
-//    public void aggiungiOrganizzazione(final Organizzazione org) {
-//        List<Organizzazione> l = organizationList.getValue();
-//        if (l==null)
-//            l= new ArrayList<>();
-//        l.add(org);
-//        organizationList.setValue(l);
-//    }
-
     public void refresh() {
         orgRepo.refreshOrganizations();
     }

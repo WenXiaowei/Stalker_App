@@ -265,10 +265,6 @@ public class OrganizationsFragment extends Fragment implements SwipeRefreshLayou
         organizzazioneViewModel = new ViewModelProvider(requireActivity()).get(OrganizationsViewModel.class);
 
         organizzazioneViewModel.initData(MainActivity.repository);
-
-
-        //organizationsRepository.getPreferiti();
-
         swipeRefreshLayout = root.findViewById(R.id.srfl);
         swipeRefreshLayout.setOnRefreshListener(this);
         swipeRefreshLayout.setColorSchemeColors(Color.BLACK, Color.GREEN, Color.MAGENTA);
@@ -276,7 +272,6 @@ public class OrganizationsFragment extends Fragment implements SwipeRefreshLayou
 
         setUpRecyclerView();
         organizzazioneViewModel.getOrganizationList().observe(getViewLifecycleOwner(), lista -> {
-//            Log.e(TAG, "onCreateView: triggered");
             Log.e(TAG, "stampa organizzazioni fetchate: ");
             lista.forEach(o-> Log.e(TAG, "onCreateView: "+o.getId()+" name "+o.getName()+" isPreferito"+o.isFavorite()));
             mAdapter.setOrganizations(lista);

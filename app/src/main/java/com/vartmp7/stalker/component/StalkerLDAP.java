@@ -259,12 +259,6 @@ public class StalkerLDAP {
         });
         new Thread(searchFutureTask).start();
         this.entry = searchFutureTask.get();
-//        Log.d(TAG, "uid:" + entry.getAttributeValue("uid"));
-//        Log.d(TAG, "uidNumber:" + entry.getAttributeValue("uidNumber"));
-//        Log.d(TAG, "connect: " + entry.getAttributeValue("givenName"));
-//
-//        Log.d(TAG, "connect: "+result.getResultCode().toString());
-
         this.connection.close();
     }
     public boolean isLogged(){

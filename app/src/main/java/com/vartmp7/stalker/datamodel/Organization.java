@@ -330,20 +330,7 @@ public class Organization implements Serializable {
         if (this == o) return true;
         if (!(o instanceof Organization)) return false;
         Organization that = (Organization) o;
-        return getId() == that.getId() /*&&
-                Objects.equals(getAddress(), that.getAddress()) &&
-                Objects.equals(getCity(), that.getCity()) &&
-                Objects.equals(getEmail(), that.getEmail()) &&
-                Objects.equals(getName(), that.getName()) &&
-                Objects.equals(getNation(), that.getNation()) &&
-                Objects.equals(getPhone_number(), that.getPhone_number()) &&
-                Objects.equals(getPostal_code(), that.getPostal_code()) &&
-                Objects.equals(getRegion(), that.getRegion()) &&
-                Objects.equals(getType(), that.getType()) &&
-                Objects.equals(getLdap_common_name(), that.getLdap_common_name()) &&
-                Objects.equals(getLdap_domain_component(), that.getLdap_domain_component()) &&
-                Objects.equals(getLdap_port(), that.getLdap_port()) &&
-                Objects.equals(getLuoghi(), that.getLuoghi())*/;
+        return getId() == that.getId();
     }
 
     public String getPlacesInfo() {

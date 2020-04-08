@@ -266,7 +266,6 @@ public class SignUpWithMail extends Fragment implements View.OnClickListener {
         FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password).addOnCompleteListener(
                 task -> {
                     if (task.isSuccessful()) {
-                        // Sign in success, update UI with the signed-in user's information
                         Log.d(TAG, "createUserWithEmail:success");
 
                         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -286,7 +285,6 @@ public class SignUpWithMail extends Fragment implements View.OnClickListener {
                         }
 
                     } else {
-                        // If sign in fails, display a message to the user.
                         Log.w(TAG, "createUserWithEmail:failure", task.getException());
                         int message =R.string.unknown_error;
                         if (task.getException() instanceof FirebaseAuthUserCollisionException)

@@ -266,9 +266,6 @@ public class FavoritesFragment extends Fragment implements SwipeRefreshLayout.On
         listMutableLiveData = new MutableLiveData<>(new ArrayList<>());
 
         this.favRecyclerView = root.findViewById(R.id.preferitiRecyclerView);
-
-//        OrganizationsRepository orgRepo = OrganizationsRepository.getInstance();
-
         this.favViewModel = new ViewModelProvider(requireActivity()).get(FavoritesViewModel.class);
 
         preferitiSwipeLayout = root.findViewById(R.id.srflPreferiti);
@@ -331,6 +328,5 @@ public class FavoritesFragment extends Fragment implements SwipeRefreshLayout.On
     public void onRefresh() {
 //        preferitiSwipeLayout.setRefreshing(true);
         favViewModel.refresh();
-//        Log.e(TAG, "onRefresh: ");
     }
 }

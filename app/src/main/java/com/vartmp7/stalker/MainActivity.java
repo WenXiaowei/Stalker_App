@@ -283,8 +283,6 @@ public class MainActivity extends AppCompatActivity {
         if (!Tools.isUserLogged(this) && !getSharedPreferences(PREFERENCE_FILE, MODE_PRIVATE).getBoolean(PREFERENCE_NOT_LOGIN, false))
             goToLoginActivity(false);
         BottomNavigationView navView = findViewById(R.id.nav_view);
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.navigation_organizations, R.id.navigation_tracking, R.id.navigation_preferiti, R.id.navigation_cronologia)
                 .build();
@@ -301,43 +299,10 @@ public class MainActivity extends AppCompatActivity {
         Obtainer webSource = new RESTObtainer(list);
 
          repository = new OrganizationsRepository(localStorage, webSource, preferitiRepository);
-
-
-//        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
-
-
-//        //TODO togliere le seguenti  righe che sono solo un test
-//        OkHttpClient httpClient= new OkHttpClient();
-//        String serverUrl="";
-//        OrganizationsRepository orgRepo = new RESTOrganizationsRepository(httpClient,serverUrl);
-//        FavoritesRepository preferitiRepository = new FirebaseFavoritesRepository("1",orgRepo,FirebaseFirestore.getInstance());
-//        //((FirebaseFavoritesRepository)preferitiRepository).initUserStorage("1");
-//        preferitiRepository.addOrganizzazione(new Organizzazione().setId(2));
-//         preferitiRepository.getOrganizzazioni().observe(this, new Observer<List<Organizzazione>>() {
-//            @Override
-//            public void onChanged(List<Organizzazione> organizzaziones) {
-//                Log.d(TAG, "Main activity onChanged: organizzazioni.size() = "+organizzaziones.size());
-//                organizzaziones.forEach(o->Log.d(TAG,""+o.getId()));
-//            }
-//        });
-//        final Observer<List<Organizzazione>> observer = new Observer<List<Organizzazione>>() {
-//
-//            @Override
-//            public void onChanged(List<Organizzazione> organizzazioni) {
-//                Log.d(TAG, "onChanged: organizzazioni.size() = "+organizzazioni.size());
-//                organizzazioni.forEach(o->Log.d(TAG,""+o.getId()));
-//            }
-//        };
-//        liveDataOrganizzazioni.observe(this,observer);
-//        Log.d(TAG,"size:"+liveDataOrganizzazioni.getValue().size());
-
-
-
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
                 .build();
-        // Build a GoogleSignInClient with the options specified by gso.
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
 
@@ -392,7 +357,6 @@ public class MainActivity extends AppCompatActivity {
         if (currentUser == null)
             return;
         AlertDialog.Builder builder = new AlertDialog.Builder(this,R.style.StalkerDialogTheme);
-//        AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.modifica_dati);
         LayoutInflater inflater = this.getLayoutInflater();
         View view = inflater.inflate(R.layout.edit_dati_form, null);

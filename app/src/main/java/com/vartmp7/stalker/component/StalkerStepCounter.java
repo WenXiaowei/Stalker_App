@@ -233,7 +233,6 @@ public class StalkerStepCounter {
 
                 if (sensor.getType() == Sensor.TYPE_STEP_COUNTER) {
                     stepFromLastRead = val;
-//                    Toast.makeText(MainActivity.this,"On sensor changed: "+val, Toast.LENGTH_SHORT).show();
                 }
             }
 

@@ -299,14 +299,10 @@ public class LoginWithMail extends Fragment implements View.OnClickListener {
                                     requireActivity().getApplication().setTheme(R.style.AppTheme);
                                     startActivity(intent);
                                 } else {
-                                    // If sign in fails, display a message to the user.
                                     Log.w(TAG, "signInWithEmail:failure", task.getException());
-
                                     Toast.makeText(requireContext(), "Autenticazione fallita!",
                                             Toast.LENGTH_SHORT).show();
                                 }
-
-                                // ...
                             }
                     );
                 }else{

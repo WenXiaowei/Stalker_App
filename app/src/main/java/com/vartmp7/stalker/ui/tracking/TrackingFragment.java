@@ -286,27 +286,19 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
             Message msg = new Message();
             Bundle b = new Bundle();
             String message;
-//              todo da cambiare cosa far vedere all'utente.
-//            Log.d(TAG, "handling new Location in callback");
-//            organizationToTrack.stream().filter(Organization::isTrackingActive).collect(Collectors.toList());
-
             List<PolygonPlace> places = new ArrayList<>();
             organizationToTrack.forEach(organization -> places.addAll(organization.getPlaces()));
             Coordinate coordinate = new Coordinate(l.getLatitude(), l.getLongitude());
-//            Log.d(TAG, "onNewLocation: ");
             Optional<PolygonPlace> optionalPolygonPlace = places.stream().filter(p -> p.isInside(coordinate)).findAny();
 
             if (optionalPolygonPlace.isPresent()) {
                 PolygonPlace place = optionalPolygonPlace.get();
-//                Log.d(TAG, "onNewLocation: you are in a place, " + place.getName());
-
                 Optional<Organization> any = organizationToTrack.stream()
                         .filter(organization -> organization.getPlaces()
                                 .stream()
                                 .anyMatch(polygonPlace -> place.getId() == polygonPlace.getId()))
                         .findAny();
 
-                //                    Log.d(TAG, "onNewLocation: sending mesg to handler: " + message);
                 message = any.map(organization -> getString(R.string.sei_in_tale_dei_tali, place.getName(), organization.getName())).orElseGet(() -> getString(R.string.non_presente_nei_luoghi_tracciati));
 
             } else {
@@ -352,10 +344,8 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
                 default:
             }
 
-            //gestione degli messaggi non empty, se sono più di un caso, allora può essere convertito in switch
             int code = b.getInt(MSG_CODE, -1);
             if (code == TRACKING_MSG_CODE) {
-//                Log.d(TAG, "handleMessage: " + b.getString(PLACE_MSG));
                 fragment.tvCurrentStatus.setText(b.getString(PLACE_MSG));
             }
         }
@@ -363,20 +353,11 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
 
     private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
 
-    // The BroadcastReceiver used to listen from broadcasts from the service.
     private StalkerReceiver myReceiver;
-
-    // A reference to the service used to get location updates.
     private StalkerTrackingService mService = null;
-
-    // Tracks the bound state of the service.
     private boolean mBound = false;
-
-    // UI elements.
     private Button mRequestLocationUpdatesButton;
     private Button mRemoveLocationUpdatesButton;
-
-    // Monitors the state of the connection to the service.
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
 
         @Override
@@ -404,7 +385,6 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
             mService.removeLocationUpdates();
         }
         organizationToTrack.forEach(organization -> organization.setTrackingActive(isTrackingActive));
-//        trackingViewModel.updateOrganizations(organizationToTrack);
         trackingViewModel.activeAllTrackingOrganization(isTrackingActive);
     }
     private View root;
@@ -494,11 +474,7 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
         mRequestLocationUpdatesButton.setOnClickListener(view1 -> setAllOrganizationTracking(true));
         mRemoveLocationUpdatesButton.setOnClickListener(view12 -> setAllOrganizationTracking(false));
 
-        // Restore the state of the buttons when the activity (re)launches.
         setButtonsState(Tools.requestingLocationUpdates(requireContext()));
-
-        // Bind to the service. If the service is in foreground mode, this signals to the service
-        // that since this activity is in the foreground, the service can exit foreground mode.
         requireContext().bindService(new Intent(requireContext(), StalkerTrackingService.class), mServiceConnection,
                 Context.BIND_AUTO_CREATE);
     }
@@ -528,9 +504,6 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
     @Override
     public void onStop() {
         if (mBound) {
-            // Unbind from the service. This signals to the service that this activity is no longer
-            // in the foreground, and the service can respond by promoting itself to a foreground
-            // service.
             requireContext().unbindService(mServiceConnection);
             mBound = false;
         }
@@ -551,16 +524,12 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
         boolean shouldProvideRationale =
                 ActivityCompat.shouldShowRequestPermissionRationale(requireActivity(),
                         Manifest.permission.ACCESS_FINE_LOCATION);
-
-        // Provide an additional rationale to the user. This would happen if the user denied the
-        // request previously, but didn't check the "Don't ask again" checkbox.
         if (shouldProvideRationale) {
             Log.i(TAG, "Displaying permission rationale to provide additional context.");
             Snackbar.make(root,
                     getString(R.string.app_necessita_di_permessi),
                     Snackbar.LENGTH_INDEFINITE)
                     .setAction(R.string.ok, view -> {
-                        // Request permission
                         ActivityCompat.requestPermissions(requireActivity(),
                                 new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                                 REQUEST_PERMISSIONS_REQUEST_CODE);
@@ -568,9 +537,6 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
                     .show();
         } else {
             Log.i(TAG, "Requesting permission");
-            // Request permission. It's possible this can be auto answered if device policy
-            // sets the permission in a given state or the user denied the permission
-            // previously and checked "Never ask again".
             ActivityCompat.requestPermissions(requireActivity(),
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     REQUEST_PERMISSIONS_REQUEST_CODE);
@@ -584,14 +550,10 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
         Log.i(TAG, "onRequestPermissionResult");
         if (requestCode == REQUEST_PERMISSIONS_REQUEST_CODE) {
             if (grantResults.length <= 0) {
-                // If user interaction was interrupted, the permission request is cancelled and you
-                // receive empty arrays.
                 Log.i(TAG, "User interaction was cancelled.");
             } else if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permission was granted.
                 mService.requestLocationUpdates();
             } else {
-                // Permission denied.
                 setButtonsState(false);
                 Snackbar.make(
                         root,
@@ -616,7 +578,6 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, @NotNull String s) {
-        // Update the buttons state depending on whether location updates are being requested.
         if (s.equals(Tools.KEY_REQUESTING_LOCATION_UPDATES)) {
             setButtonsState(sharedPreferences.getBoolean(Tools.KEY_REQUESTING_LOCATION_UPDATES,
                     false));

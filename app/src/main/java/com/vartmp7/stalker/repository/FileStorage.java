@@ -237,7 +237,6 @@ public class FileStorage implements Storage {
     private String fileName;
     private Context context;
     private Gson gson;
-    //    List<Organizzazione> organizzazioni;
     @Getter(AccessLevel.PUBLIC)
     private MutableLiveData<List<Organization>> mLiveOrgs;
 
@@ -269,7 +268,6 @@ public class FileStorage implements Storage {
         for (int i = 0; i < l.size() && pos == -1; i++)
             if (o.getId() == l.get(i).getId())
                 pos = i;
-//        int pos = l.indexOf(o);
         if (pos != -1) {
             l.remove(pos);
             l.add(pos, o);
@@ -294,12 +292,10 @@ public class FileStorage implements Storage {
                     orgToUpdate.setTracking(currentOrg.isTracking());
                     orgToUpdate.setFavorite(currentOrg.isFavorite());
                     toSave.add(orgToUpdate);
-                    //currentOrgs.remove(currentOrg);
                 }
             }
             if (!contained) {
                 toSave.add(orgToUpdate);
-//                Log.e(TAG, "updateOrganizzazioni: chel cannnn");
             }
         }
         Log.d(TAG, "updateOrganizzazioni: futureOrgs");
@@ -310,17 +306,12 @@ public class FileStorage implements Storage {
 
     @Override
     public LiveData<List<Organization>> getOrganizations() {
-        //MutableLiveData<List<Organizzazione>> mLiveOrgs = new MutableLiveData<>();
-        //this.mLiveOrgs.setValue(organizzazioni);
-//        Log.d("TEST","arrivo qua1");
         new Thread() {
             @Override
             public void run() {
                 super.run();
                 FileInputStream fis = null;
-//                Log.d("TEST","arrivo qua 2");
                 try {
-//                    Log.d(TAG, "run: lettura dal file");
                     // fixme sonarqube segna come bug
                     fis = context.openFileInput(fileName);
                     // fixme sonarqube segna come bug
@@ -334,7 +325,6 @@ public class FileStorage implements Storage {
                         }
                     } catch (IOException e) {
                         Log.e(TAG, "run: Errore");
-                        // Error occurred when opening raw file for reading.
                     } finally {
                         String contents = stringBuilder.toString();
                         OrganizationResponse responseOrganizzazioni = gson.fromJson(contents, OrganizationResponse.class);
@@ -342,15 +332,8 @@ public class FileStorage implements Storage {
 
                             //fixme ogni tanto sputa un null pointer
                             List<Organization> organizzazioni = responseOrganizzazioni.getOrganizations();//mLiveOrgs.getValue();
-//                    List<Organizzazione> orgs = mLiveOrgs.getValue();
-                            //                            Log.d(TAG, "run: lista non vuota");
-//                          organizzazioni.addAll(responseOrganizzazioni.getOrganizations().stream().distinct().collect(Collectors.toList()));
                             mLiveOrgs.postValue(organizzazioni);
-                            //organizzazioni.clear();
-                            //organizzazioni.addAll(responseOrganizzazioni.getOrganizations());
                             Log.d("TEST", "arrivo qua 3");
-//                        mLiveOrgs.postValue(organizzazioni.stream().distinct().collect(Collectors.toList()));
-//                        Log.d(TAG, "run: dati letti dal file");
                         } else {
                             Log.e(TAG, "run: ResponseOrganizzazioni null");
                         }
@@ -379,7 +362,6 @@ public class FileStorage implements Storage {
         }
     }
 
-    //@SuppressLint("StaticFieldLeak")
     @Override
     public synchronized void saveOrganizations(List<Organization> orgs) {
         ExecutorService executorService = Executors.newSingleThreadExecutor();

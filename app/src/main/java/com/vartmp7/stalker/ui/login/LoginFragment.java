@@ -271,16 +271,12 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
         Button signInButton1 = v.findViewById(R.id.btn_signIn);
         signInButton1.setOnClickListener(this);
 
-// Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
         callbackManager = CallbackManager.Factory.create();
 
         LoginButton loginButton = v.findViewById(R.id.login_button);
         loginButton.setPermissions("email");
 
-        // If using in a fragment
-//        loginButton.setFragment(this);
-        // Callback registration
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
@@ -291,8 +287,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
                 Log.d(TAG, "onSuccess: " + accessToken.getUserId());
                 boolean isLoggedIn = accessToken != null && !accessToken.isExpired();
 
-//                Successivamente, esegui l'accesso vero e proprio, come nell'OnClickListener di un pulsante personalizzato:
-//                LoginManager.getInstance().logInWithReadPermissions(LoginActivitity.this, Collections.singletonList("public_profile"));
                 handleFacebookAccessToken(accessToken);
             }
 
@@ -354,15 +348,9 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
             goToMainActivity();
             Log.d(TAG, "handleSignInResult: " + account.getDisplayName());
-            // Signed in successfully, show authenticated UI.
-
-//            updateUI(account);
         } catch (ApiException e) {
-
-            // Please refer to the GoogleSignInStatusCodes class reference for more information.
             Log.w(TAG, "signInResult:failed code=" + e.getStatusCode());
             Toast.makeText(requireContext(),"Accesso fallito, riprovare più tardi!", Toast.LENGTH_SHORT).show();
-//            updateUI(null);
         }
     }
 
@@ -406,11 +394,9 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
             case R.id.btn_signUp:
                 Log.e(TAG, "cliccato btn signUp");
                 changeMethod(new LoginWithMail(),"login_with_mail");
-//                showSignUpDialog();
                 break;
             case R.id.btn_signIn:
                 changeMethod(new SignUpWithMail(),"register_with_mail");
-//                showSignInDialog();
                 break;
         }
     }

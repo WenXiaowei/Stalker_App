@@ -219,53 +219,11 @@ public class RayCasting {
         this.coordinate = latLngs;
         this.punto = latLng;
     }
-//    public  boolean isLatLngInside() {
-//        return normalizeLatLngsAndProceed();
-//    }
 
     public  boolean isPointInside() {
         return isPointInsideEdges(getEdgesFromPoints(coordinate), punto);
     }
 
-//    private  boolean normalizeLatLngsAndProceed() {
-//        if(coordinate.size() < 3) throw new RuntimeException("At least 3 latlngs are required");
-//
-//        double smallestLongitude = Double.MAX_VALUE, highestLongitude = Double.MIN_VALUE;
-//
-//        for(Coordinata latLng : coordinate) {
-//            if(latLng.getLongitude() < smallestLongitude) {
-//                smallestLongitude = latLng.getLongitude();
-//            } else if(latLng.getLongitude() > highestLongitude) {
-//                highestLongitude = latLng.getLongitude();
-//            }
-//        }
-//
-//        if(punto.getLongitude() < smallestLongitude) {
-//            smallestLongitude = punto.getLongitude();
-//        } else if(punto.getLongitude() > highestLongitude) {
-//            highestLongitude = punto.getLongitude();
-//        }
-//
-//        if((highestLongitude - smallestLongitude) > 180) {
-//            List<Coordinata> normalizedLatlngs = new ArrayList<>();
-//            for(Coordinata latLng: coordinate) {
-//                normalizedLatlngs.add(new Coordinata(latLng.getLatitude(), latLng.getLongitude() < 0 ? latLng.getLongitude() + 180 : latLng.getLongitude()));
-//            }
-//            punto = new Coordinata(punto.getLatitude(), punto.getLongitude() < 0 ? punto.getLongitude() + 180 : punto.getLongitude());
-//            return isPointInsideEdges(getEdgesFromLatLngs(normalizedLatlngs), new Coordinata(punto));
-//        } else {
-//            return isPointInsideEdges(getEdgesFromLatLngs(coordinate), new Coordinata(punto));
-//        }
-//    }
-//
-//    private  ArrayList<Lato> getEdgesFromLatLngs(List<Coordinata> latLngs) {
-//        ArrayList<Lato> edges = new ArrayList<>();
-//        for(int i = 0; i < latLngs.size(); i++) {
-//            edges.add(new Lato(latLngs.get(i), i < latLngs.size()-1 ? latLngs.get(i+1) : latLngs.get(0)));
-//        }
-//
-//        return edges;
-//    }
 
     @NotNull
     private  ArrayList<Edge> getEdgesFromPoints(@NotNull List<Coordinate> points) {

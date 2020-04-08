@@ -244,15 +244,12 @@ public class RESTObtainerMocked implements Obtainer {
     public RESTObtainerMocked(OkHttpClient httpClient, MutableLiveData<List<Organization>> list, String serverUrl) {
         this.httpClient = httpClient;
         this.serverUrl = serverUrl;
-        //this.mutableLiveDataOrganizzazioni= list;
         mutableLiveDataOrganizzazioni = new MutableLiveData<>();
     }
 
     @Override
     public MutableLiveData<List<Organization>> getOrganizations() {
         count++;
-//        Log.e(TAG, count + "");
-
         //TODO togliere hardcoded-mock e decommentare codice per chiamata alle REST API
         final Request request = new Request.Builder()
                 .url(serverUrl)
@@ -262,26 +259,6 @@ public class RESTObtainerMocked implements Obtainer {
         call.enqueue(new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                /*List<Organizzazione> orgs = mutableLiveDataOrganizzazioni.getValue();
-
-                LuogoPoligono l = new LuogoPoligono()
-                        .setCoordinate(Arrays.asList(new Coordinata(45.411660, 11.887027),new Coordinata(45.411846, 11.887572),
-                                new Coordinata(45.411730, 11.887650), new Coordinata(45.411544, 11.887106)))
-                        .setOrganizationName("UNIPD").setId(2);
-
-                orgs.add(new Organizzazione().setName("unipd " + count).setId(count)
-                        .setTracking(true)
-                        .setTrackingActive(true)
-                    .setImage_url("https://cdn.discordapp.com/attachments/690970576415621201/691008560363995208/Schermata_2020-03-21_alle_20.41.13.png")
-                .setLuoghi(
-                        Arrays.asList(l, l.setId(1))));
-                /*
-                mutableLiveOrgs.postValue(Arrays.asList(
-                    new Organizzazione().setId(++count),
-                    new Organizzazione().setId(++count),
-                    new Organizzazione().setId(++count),
-                    new Organizzazione().setId(++count)
-                ));*/
                 ArrayList<Coordinate> torreArchimede = new ArrayList<>();
                 torreArchimede.add(new Coordinate(45.411555, 11.887476));
                 torreArchimede.add(new Coordinate(45.411442, 11.887942));
@@ -303,9 +280,6 @@ public class RESTObtainerMocked implements Obtainer {
                         );
                 orgs.forEach(o -> Log.d(TAG, "onFailure: " + o.getId()));
                 mutableLiveDataOrganizzazioni.postValue(orgs);
-
-
-//                mutableLiveDataOrganizzazioni.postValue(orgs.stream().distinct().collect(Collectors.toList()));
             }
 
             @Override
@@ -314,8 +288,6 @@ public class RESTObtainerMocked implements Obtainer {
                 // todo filtrare le organizzazioni.
                 List<Organization> list = organizationResponse.getOrganizations();
                 list.stream().distinct().map(Organization::getId).collect(Collectors.toList());
-
-//                mutableLiveDataOrganizzazioni.setValue(responseOrganizzazione.getOrganizations());
 
             }
         });

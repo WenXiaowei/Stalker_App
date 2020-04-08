@@ -278,8 +278,6 @@ public class TrackSignal {
         return this;
     }
     public String getUrlToPost(){
-//        return MainActivity.SERVER + "organizations/" + idOrganization
-//                + "/places/" + idPlace+ "/tracks";
         return "Ciao";
     }
 
