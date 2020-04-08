@@ -202,9 +202,9 @@
  *    limitations under the License.
  */
 
-package com.vartmp7.stalker.gsonbeans;
+package com.vartmp7.stalker.datamodel;
 
-import com.vartmp7.stalker.gsonbeans.placecomponent.Coordinate;
+import com.vartmp7.stalker.datamodel.placecomponent.Coordinate;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
