@@ -202,42 +202,71 @@
  *    limitations under the License.
  */
 
-package com.vartmp7.stalker.gsonbeans;
+package com.vartmp7.stalker.datamodel;
 
-import com.vartmp7.stalker.gsonbeans.placecomponent.Coordinate;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.Accessors;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
-/**
- * @author Xiaowei Wen, Lorenzo Taschin
- */
-public abstract class AbstractPlace {
-    public static final String TAG = "com.vartmp7.stalker.gsonbeans.AbstractLuogo";
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    private long id;
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    private String name;
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    private long num_max_people;
+@RunWith(JUnit4.class)
+public class TrackSignalTest {
 
-    AbstractPlace(long id, String name, long num_max_people) {
-        this(id, name);
-        this.num_max_people = num_max_people;
+    private  static final long idOrganization=1;
+    private  static final long idPlace=0;
+    private  static final boolean entered=false;
+    private  static final boolean authenticated=false;
+    private  static final long uid_number=1;
+    private  static final String username="username";
+    private  static final String surname="surname";
+    private  static final String date_time="2020-03-19";
+
+    private static final TrackSignal trackSignal= new TrackSignal()
+            .setIdOrganization(idOrganization)
+            .setEntered(entered)
+            .setIdPlace(idPlace)
+            .setAuthenticated(authenticated)
+            .setUsername(username)
+            .setSurname(surname)
+            .setDate_time(date_time);
+
+    private TrackSignal signal ;
+    private TrackSignal signal2 ;
+    @Before
+    public void setUP(){
+        // TODO: la riga seguente a questa non ha senso, è stata messa solo per far salire la line coverage al 100%.
+        new TrackSignal(0L);
+        signal = new TrackSignal(entered, authenticated,uid_number,username, surname,date_time);
+        signal2= new TrackSignal()
+                .setIdOrganization(idOrganization)
+                .setEntered(entered)
+                .setIdPlace(idPlace)
+                .setAuthenticated(authenticated)
+                .setUsername(username)
+                .setSurname(surname)
+                .setDate_time(date_time);
     }
 
-    AbstractPlace(long id, String name) {
-        this.id = id;
-        this.name = name;
+    @Test
+    public void testEquals(){
+        assertEquals(signal2.hashCode(), trackSignal.hashCode());
+        assertEquals(signal2, trackSignal);
+        TrackSignal s = new TrackSignal(entered, authenticated,uid_number,username, surname,date_time);
+        assertNotNull(s.getUrlToPost());
     }
-    abstract Coordinate getCenter();
-    abstract public double distanceTo(Coordinate c);
-    abstract public boolean isInside(Coordinate c);
+
+
+    @Test
+    public void testGetterSetter(){
+        assertEquals(signal2.getIdOrganization(), trackSignal.getIdOrganization());
+        assertEquals(signal2.isEntered(), trackSignal.isEntered());
+        assertEquals(signal2.getIdPlace(), trackSignal.getIdPlace());
+        assertEquals(signal2.isAuthenticated(), trackSignal.isAuthenticated());
+        assertEquals(signal2.getUsername(), trackSignal.getUsername());
+        assertEquals(signal2.getSurname(), trackSignal.getSurname());
+        assertEquals(signal2.getDate_time(), trackSignal.getDate_time());
+    }
 }

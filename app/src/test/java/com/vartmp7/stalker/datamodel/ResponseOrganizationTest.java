@@ -202,8 +202,59 @@
  *    limitations under the License.
  */
 
-package com.vartmp7.stalker.gsonbeans;
+package com.vartmp7.stalker.datamodel;
 
-public class TrackHistory {
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
+
+import java.util.ArrayList;
+
+import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertNotSame;
+
+@RunWith(JUnit4.class)
+public class ResponseOrganizationTest {
+
+    private OrganizationResponse response;
+    ArrayList<Organization> l;
+
+    @Before
+    public void setUp(){
+        response = new OrganizationResponse();
+         l = new ArrayList<>();
+        l.add(new Organization().setName("UNIPD"));
+
+        response.setOrganizations(l);
+    }
+
+    @Test
+    public void testResponse(){
+        assertEquals(l,l);
+        assertEquals(l.hashCode(),l.hashCode());
+        assertEquals(l, response.getOrganizations());
+
+        OrganizationResponse re = new OrganizationResponse();
+        re.setOrganizations(l);
+
+        assertEquals(response, re);
+
+
+        assertEquals(response.hashCode(), response.hashCode());
+
+
+        assertEquals(response.getOrganizzationsLength(),1);
+//        l.add(new Organizzazione().setName("boh"));
+
+        assertEquals(l, response.getOrganizations());
+
+        ArrayList<String> data = new ArrayList<>();
+        data.add("Scegli un'organizzazione");
+        data.add("UNIPD");
+
+        assertEquals(response.getDataForSpinner()[0],data.toArray(new String[0])[0]);
+        assertEquals(response.getDataForSpinner()[1],data.toArray(new String[0])[1]);
+    }
 
 }

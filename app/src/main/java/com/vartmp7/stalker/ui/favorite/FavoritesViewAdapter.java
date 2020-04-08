@@ -204,13 +204,11 @@
 
 package com.vartmp7.stalker.ui.favorite;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -221,7 +219,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.vartmp7.stalker.R;
-import com.vartmp7.stalker.gsonbeans.Organization;
+import com.vartmp7.stalker.datamodel.Organization;
 import com.vartmp7.stalker.ui.DetailsDialog;
 
 import java.util.List;

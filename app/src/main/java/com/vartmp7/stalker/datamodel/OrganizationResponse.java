@@ -202,14 +202,12 @@
  *    limitations under the License.
  */
 
-package com.vartmp7.stalker.gsonbeans;
-
-
-import com.vartmp7.stalker.gsonbeans.placecomponent.Coordinate;
+package com.vartmp7.stalker.datamodel;
 
 import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import lombok.Getter;
@@ -218,66 +216,41 @@ import lombok.experimental.Accessors;
 
 /**
  * @author Xiaowei Wen, Lorenzo Taschin
- * @version 1.0
- * <p>
- * Usato per rappresentare dei luoghi con una forma di circonferenza.
  */
-public class CircumferencePlace extends AbstractPlace {
-    public static final String TAG = "com.vartmp7.stalker.gsonbeans.LuogoACirconferenza";
-
-    @Setter
-    @Accessors(chain = true)
-    private Coordinate center;
+public class OrganizationResponse {
+    public static final String TAG ="com.vartmp7.stalker.gsonbeans.ResponseOrganizzazione";
     @Getter
     @Setter
     @Accessors(chain = true)
-    private Double raggio;
+    private List<Organization> organizations;
+
+    @Deprecated
+    public String[] getDataForSpinner() {
+        ArrayList<String> toRet = new ArrayList<>();
+        toRet.add("Scegli un'organizzazione");
+
+        for (Organization org : organizations) {
+            toRet.add(org.getName());
+        }
+
+        return toRet.toArray(new String[0]);
+    }
+
+    public int getOrganizzationsLength() {
+        return organizations.size();
+    }
 
     @Contract(value = "null -> false", pure = true)
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof CircumferencePlace)) return false;
-        CircumferencePlace that = (CircumferencePlace) o;
-        return getCenter().equals(that.getCenter()) &&
-                getRaggio().equals(that.getRaggio());
+        if (!(o instanceof OrganizationResponse)) return false;
+        OrganizationResponse that = (OrganizationResponse) o;
+        return getOrganizations().equals(that.getOrganizations());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getCenter(), getRaggio());
+        return Objects.hash(getOrganizations());
     }
-
-    public CircumferencePlace(long id, String name) {
-        super(id, name);
-    }
-
-    @Override
-    public Coordinate getCenter() {
-        return center;
-    }
-
-    @Override
-    public double distanceTo(@NotNull Coordinate c) {
-        return c.getDistanceTo(center);
-    }
-
-    CircumferencePlace(long id, String name, Coordinate center, double raggio) {
-        super(id, name);
-        this.center = center;
-        this.raggio = raggio;
-    }
-
-    CircumferencePlace(long id, String name, Coordinate center, double raggio, long num_max_people) {
-        super(id, name, num_max_people);
-        this.center = center;
-        this.raggio = raggio;
-    }
-
-    @Override
-    public boolean isInside(Coordinate c) {
-        double distanza = center.getDistanceTo(c);
-        return distanza <= raggio;
-    }
-
 }

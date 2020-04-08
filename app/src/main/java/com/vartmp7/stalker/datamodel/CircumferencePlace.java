@@ -202,26 +202,82 @@
  *    limitations under the License.
  */
 
-package com.vartmp7.stalker.gsonbeans;
+package com.vartmp7.stalker.datamodel;
 
-import java.util.List;
+
+import com.vartmp7.stalker.datamodel.placecomponent.Coordinate;
+
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
 
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
 /**
- *
  * @author Xiaowei Wen, Lorenzo Taschin
- * per fare il parsing della gerarchia dei luoghi, guardare la guida.
- * https://www.javadoc.io/doc/org.danilopianini/gson-extras/0.2.1/com/google/gson/typeadapters/RuntimeTypeAdapterFactory.html
+ * @version 1.0
+ * <p>
+ * Usato per rappresentare dei luoghi con una forma di circonferenza.
  */
-public class PlaceResponse {
+public class CircumferencePlace extends AbstractPlace {
+    public static final String TAG = "com.vartmp7.stalker.gsonbeans.LuogoACirconferenza";
 
-    private static final String TAG="com.vartmp7.stalker.GsonBeans.ResponseLuogo";
-    @Getter @Setter @Accessors(chain = true)
-    private List<PolygonPlace> places;
+    @Setter
+    @Accessors(chain = true)
+    private Coordinate center;
+    @Getter
+    @Setter
+    @Accessors(chain = true)
+    private Double raggio;
 
-    public int getPlacesLength(){return places.size();}
+    @Contract(value = "null -> false", pure = true)
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof CircumferencePlace)) return false;
+        CircumferencePlace that = (CircumferencePlace) o;
+        return getCenter().equals(that.getCenter()) &&
+                getRaggio().equals(that.getRaggio());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getCenter(), getRaggio());
+    }
+
+    public CircumferencePlace(long id, String name) {
+        super(id, name);
+    }
+
+    @Override
+    public Coordinate getCenter() {
+        return center;
+    }
+
+    @Override
+    public double distanceTo(@NotNull Coordinate c) {
+        return c.getDistanceTo(center);
+    }
+
+    CircumferencePlace(long id, String name, Coordinate center, double raggio) {
+        super(id, name);
+        this.center = center;
+        this.raggio = raggio;
+    }
+
+    CircumferencePlace(long id, String name, Coordinate center, double raggio, long num_max_people) {
+        super(id, name, num_max_people);
+        this.center = center;
+        this.raggio = raggio;
+    }
+
+    @Override
+    public boolean isInside(Coordinate c) {
+        double distanza = center.getDistanceTo(c);
+        return distanza <= raggio;
+    }
 
 }

@@ -216,8 +216,8 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.google.gson.Gson;
-import com.vartmp7.stalker.gsonbeans.Organization;
-import com.vartmp7.stalker.gsonbeans.OrganizationResponse;
+import com.vartmp7.stalker.datamodel.Organization;
+import com.vartmp7.stalker.datamodel.OrganizationResponse;
 import com.vartmp7.stalker.repository.FileStorage;
 
 import org.junit.Before;

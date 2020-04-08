@@ -211,7 +211,7 @@ import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LifecycleRegistry;
 
-import com.vartmp7.stalker.gsonbeans.Organization;
+import com.vartmp7.stalker.datamodel.Organization;
 
 import java.util.ArrayList;
 import java.util.List;

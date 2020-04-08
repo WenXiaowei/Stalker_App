@@ -204,11 +204,11 @@
 
 package com.vartmp7.stalker.repository;
 
-import com.vartmp7.stalker.gsonbeans.Organization;
-import com.vartmp7.stalker.gsonbeans.PlaceResponse;
-import com.vartmp7.stalker.gsonbeans.OrganizationResponse;
-import com.vartmp7.stalker.gsonbeans.TrackHistory;
-import com.vartmp7.stalker.gsonbeans.TrackSignal;
+import com.vartmp7.stalker.datamodel.Organization;
+import com.vartmp7.stalker.datamodel.PlaceResponse;
+import com.vartmp7.stalker.datamodel.OrganizationResponse;
+import com.vartmp7.stalker.datamodel.TrackHistory;
+import com.vartmp7.stalker.datamodel.TrackSignal;
 
 import java.util.List;
 

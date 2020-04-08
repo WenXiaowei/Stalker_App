@@ -202,59 +202,26 @@
  *    limitations under the License.
  */
 
-package com.vartmp7.stalker.gsonbeans;
+package com.vartmp7.stalker.datamodel;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import java.util.List;
 
-import java.util.ArrayList;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
-import static junit.framework.TestCase.assertEquals;
-import static junit.framework.TestCase.assertNotSame;
+/**
+ *
+ * @author Xiaowei Wen, Lorenzo Taschin
+ * per fare il parsing della gerarchia dei luoghi, guardare la guida.
+ * https://www.javadoc.io/doc/org.danilopianini/gson-extras/0.2.1/com/google/gson/typeadapters/RuntimeTypeAdapterFactory.html
+ */
+public class PlaceResponse {
 
-@RunWith(JUnit4.class)
-public class ResponseOrganizationTest {
+    private static final String TAG="com.vartmp7.stalker.GsonBeans.ResponseLuogo";
+    @Getter @Setter @Accessors(chain = true)
+    private List<PolygonPlace> places;
 
-    private OrganizationResponse response;
-    ArrayList<Organization> l;
-
-    @Before
-    public void setUp(){
-        response = new OrganizationResponse();
-         l = new ArrayList<>();
-        l.add(new Organization().setName("UNIPD"));
-
-        response.setOrganizations(l);
-    }
-
-    @Test
-    public void testResponse(){
-        assertEquals(l,l);
-        assertEquals(l.hashCode(),l.hashCode());
-        assertEquals(l, response.getOrganizations());
-
-        OrganizationResponse re = new OrganizationResponse();
-        re.setOrganizations(l);
-
-        assertEquals(response, re);
-
-
-        assertEquals(response.hashCode(), response.hashCode());
-
-
-        assertEquals(response.getOrganizzationsLength(),1);
-//        l.add(new Organizzazione().setName("boh"));
-
-        assertEquals(l, response.getOrganizations());
-
-        ArrayList<String> data = new ArrayList<>();
-        data.add("Scegli un'organizzazione");
-        data.add("UNIPD");
-
-        assertEquals(response.getDataForSpinner()[0],data.toArray(new String[0])[0]);
-        assertEquals(response.getDataForSpinner()[1],data.toArray(new String[0])[1]);
-    }
+    public int getPlacesLength(){return places.size();}
 
 }

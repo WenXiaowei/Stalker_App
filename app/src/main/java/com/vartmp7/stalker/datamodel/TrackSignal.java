@@ -202,158 +202,149 @@
  *    limitations under the License.
  */
 
-package com.vartmp7.stalker.gsonbeans;
+package com.vartmp7.stalker.datamodel;
+
+import com.google.gson.annotations.Expose;
 
 import org.jetbrains.annotations.Contract;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
-
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.Accessors;
 
 /**
  * @author Xiaowei Wen, Lorenzo Taschin
  */
-public class Organization implements Serializable {
-    public static final String TAG = "com.vartmp7.stalker.gsonbeans.Organizzazione";
+public class TrackSignal {
 
-    @Getter(AccessLevel.PUBLIC)
-    @Setter(AccessLevel.PUBLIC)
-    @Accessors(chain = true)
-    private String address;
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    private String city;
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    private String email;
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    private long id;
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    private String name;
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    private String nation;
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    private String phone_number;
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    private String postal_code;
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    private String region;
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    private String type="public";
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    private String ldap_common_name;
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    private String ldap_domain_component;
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    private String ldap_port;
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    private String ldap_url;
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    private String image_url;
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    private List<PolygonPlace> places = new ArrayList<>();
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    private boolean isFavorite = false;
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    private boolean isTracking = false;
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    private boolean isLogged = false;
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    private boolean isAnonymous = false;
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    private boolean isTrackingActive = false;
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    private String personalCn;
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    private String ldapPassword;
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(getAddress(), getCity(), getEmail(), getId(), getName(), getNation(), getPhone_number(), getPostal_code(), getRegion(), getType(), getLdap_common_name(), getLdap_domain_component(), getLdap_port(), getLdap_url(), getImage_url(), getPlaces(), isFavorite(), isTracking(), isLogged(), isAnonymous(), isTrackingActive(), getPersonalCn(), getLdapPassword());
+    private static final String TAG="com.vartmp7.stalker.GsonBeans.TrackSignal";
+    // Annotazione expose usato indicare quale campo devo venir serializzato
+    private long idOrganization;
+    private long idPlace=0;
+
+    public static final String LDAP_V3="ldpav3";
+    public static final String GOOGLE="GOOGLE";
+    public static final String FACEBOOK="FACEBOOK";
+
+    @Expose
+    private String auth_type;
+
+    public TrackSignal(long idOrganization) {
+        this.idOrganization = idOrganization;
     }
 
-    public Organization() {
-    }
-
+    @Expose
+    private boolean entered=false;
+    @Expose
+    private boolean authenticated=false;
+    @Expose
+    private String username;
+    @Expose
+    private String password;
+    @Expose
+    private String surname;
+    @Expose
+    private String date_time;
 
     @Contract(value = "null -> false", pure = true)
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Organization)) return false;
-        Organization that = (Organization) o;
-        return getId() == that.getId() /*&&
-                Objects.equals(getAddress(), that.getAddress()) &&
-                Objects.equals(getCity(), that.getCity()) &&
-                Objects.equals(getEmail(), that.getEmail()) &&
-                Objects.equals(getName(), that.getName()) &&
-                Objects.equals(getNation(), that.getNation()) &&
-                Objects.equals(getPhone_number(), that.getPhone_number()) &&
-                Objects.equals(getPostal_code(), that.getPostal_code()) &&
-                Objects.equals(getRegion(), that.getRegion()) &&
-                Objects.equals(getType(), that.getType()) &&
-                Objects.equals(getLdap_common_name(), that.getLdap_common_name()) &&
-                Objects.equals(getLdap_domain_component(), that.getLdap_domain_component()) &&
-                Objects.equals(getLdap_port(), that.getLdap_port()) &&
-                Objects.equals(getLuoghi(), that.getLuoghi())*/;
+        if (!(o instanceof TrackSignal)) return false;
+        TrackSignal that = (TrackSignal) o;
+        return getIdOrganization() == that.getIdOrganization() &&
+                getIdPlace() == that.getIdPlace() &&
+                isEntered() == that.isEntered() &&
+                isAuthenticated() == that.isAuthenticated() &&
+
+                Objects.equals(getUsername(), that.getUsername()) &&
+                Objects.equals(getSurname(), that.getSurname()) &&
+                Objects.equals(getDate_time(), that.getDate_time());
     }
 
-    public String getPlacesInfo() {
-        StringBuilder builder = new StringBuilder();
+    @Override
+    public int hashCode() {
+        return Objects.hash(getIdOrganization(), getIdPlace(), isEntered(), isAuthenticated(), getUsername(), getSurname(), getDate_time());
+    }
 
-        getPlaces().forEach(polygonPlace -> builder.append("Nome Luogo: ")
-                .append(polygonPlace.getName())
-                .append(", Num. persone massimo: ")
-                .append(polygonPlace.getNum_max_people()).append("\n"));
-        return builder.toString();
+    public TrackSignal(boolean en, boolean au, long uid, String user, String sur, String date) {
+        entered = en;
+        authenticated = au;
+        username = user;
+        surname = sur;
+        date_time = date;
+    }
+    public TrackSignal setIdPlace(long idPlace) {
+        this.idPlace = idPlace;
+        return this;
+    }
+    public String getUrlToPost(){
+//        return MainActivity.SERVER + "organizations/" + idOrganization
+//                + "/places/" + idPlace+ "/tracks";
+        return "Ciao";
+    }
+
+
+    public long getIdOrganization() {
+        return idOrganization;
+    }
+
+    public TrackSignal setIdOrganization(long idOrganization) {
+        this.idOrganization = idOrganization;
+        return this;
+    }
+
+    public boolean isEntered() {
+        return entered;
+    }
+
+    public TrackSignal setEntered(boolean entered) {
+        this.entered = entered;
+        return this;
+    }
+
+    public boolean isAuthenticated() {
+        return authenticated;
+    }
+
+    public TrackSignal setAuthenticated(boolean authenticated) {
+        this.authenticated = authenticated;
+        return this;
+    }
+
+
+    public String getUsername() {
+        return username;
+    }
+
+    public TrackSignal setUsername(String username) {
+        this.username = username;
+        return this;
+    }
+
+    public String getSurname() {
+        return surname;
+    }
+
+    public TrackSignal setSurname(String surname) {
+        this.surname = surname;
+        return this;
+    }
+
+    public String getDate_time() {
+        return date_time;
+    }
+    public TrackSignal setDate_time(String date_time) {
+        this.date_time = date_time;
+        return this;
+    }
+
+    public TrackSignal() {
+    }
+
+
+
+    public long getIdPlace() {
+        return idPlace;
     }
 
 }

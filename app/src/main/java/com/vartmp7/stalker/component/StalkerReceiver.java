@@ -211,7 +211,7 @@ import android.location.Location;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.vartmp7.stalker.gsonbeans.Organization;
+import com.vartmp7.stalker.datamodel.Organization;
 
 import org.jetbrains.annotations.NotNull;
 

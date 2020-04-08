@@ -213,7 +213,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
-import com.vartmp7.stalker.gsonbeans.Organization;
+import com.vartmp7.stalker.datamodel.Organization;
 import com.vartmp7.stalker.repository.FavoritesSource;
 import com.vartmp7.stalker.repository.Storage;
 import com.vartmp7.stalker.repository.OrganizationsRepository;

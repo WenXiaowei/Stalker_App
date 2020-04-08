@@ -205,7 +205,7 @@
 package com.vartmp7.stalker.repository;
 
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.vartmp7.stalker.gsonbeans.Organization;
+import com.vartmp7.stalker.datamodel.Organization;
 
 import org.junit.Rule;
 import org.mockito.Mock;

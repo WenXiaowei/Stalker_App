@@ -202,12 +202,68 @@
  *    limitations under the License.
  */
 
-package com.vartmp7.stalker.gsonbeans;
+package com.vartmp7.stalker.datamodel;
 
-import android.util.Log;
+import com.vartmp7.stalker.datamodel.placecomponent.Line;
+import com.vartmp7.stalker.datamodel.placecomponent.RayCasting;
+
+import androidx.annotation.NonNull;
+
+import com.vartmp7.stalker.datamodel.placecomponent.Coordinate;
+
+import java.util.List;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
 /**
  * @author Xiaowei Wen, Lorenzo Taschin
  */
-public class WrongNumberOfCoordinates extends IllegalArgumentException{
+public class PolygonPlace extends AbstractPlace {
+    @Getter
+    @Setter
+    @Accessors(chain = true)
+    private List<Coordinate> coordinate;
+
+    public PolygonPlace() {
+        super(0, null);
+    }
+
+    PolygonPlace(long id, String name, List<Coordinate> coordinate) {
+        super(id, name);
+        this.coordinate = coordinate;
+
+    }
+
+    PolygonPlace(long id, String name, long num_max_people, List<Coordinate> coordinate) {
+        super(id, name, num_max_people);
+        this.coordinate = coordinate;
+    }
+
+
+    @NonNull
+    @Override
+    public String toString() {
+        return "\nid: " + getId() +
+                "\nNome: " + getName() +
+                "\nNum. Max Persone " + getNum_max_people() +
+                "\nCoordinate: " + getCoordinate().toString();
+    }
+
+
+    @Override
+    public Coordinate getCenter() {
+        return new Line(coordinate.get(0), coordinate.get(2)).intersezione(new Line(coordinate.get(1), coordinate.get(3)));
+    }
+
+    public double distanceTo(Coordinate c) {
+        return getCenter().getDistanceTo(c);
+    }
+
+    @Override
+    public boolean isInside(Coordinate c) {
+        return new RayCasting(getCoordinate(), c).isPointInside();
+    }
+
 }

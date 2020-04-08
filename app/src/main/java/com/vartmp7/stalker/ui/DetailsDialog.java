@@ -207,16 +207,13 @@ package com.vartmp7.stalker.ui;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 
 import com.bumptech.glide.Glide;
 import com.vartmp7.stalker.R;
-import com.vartmp7.stalker.gsonbeans.Organization;
-
-import org.w3c.dom.Text;
+import com.vartmp7.stalker.datamodel.Organization;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 

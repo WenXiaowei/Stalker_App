@@ -211,8 +211,8 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.gson.Gson;
-import com.vartmp7.stalker.gsonbeans.Organization;
-import com.vartmp7.stalker.gsonbeans.OrganizationResponse;
+import com.vartmp7.stalker.datamodel.Organization;
+import com.vartmp7.stalker.datamodel.OrganizationResponse;
 
 import org.jetbrains.annotations.NotNull;
 

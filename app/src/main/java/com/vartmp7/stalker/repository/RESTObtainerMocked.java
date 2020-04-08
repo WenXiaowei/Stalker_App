@@ -209,10 +209,10 @@ import android.util.Log;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.gson.Gson;
-import com.vartmp7.stalker.gsonbeans.Organization;
-import com.vartmp7.stalker.gsonbeans.OrganizationResponse;
-import com.vartmp7.stalker.gsonbeans.PolygonPlace;
-import com.vartmp7.stalker.gsonbeans.placecomponent.Coordinate;
+import com.vartmp7.stalker.datamodel.Organization;
+import com.vartmp7.stalker.datamodel.OrganizationResponse;
+import com.vartmp7.stalker.datamodel.PolygonPlace;
+import com.vartmp7.stalker.datamodel.placecomponent.Coordinate;
 
 import org.jetbrains.annotations.NotNull;
 

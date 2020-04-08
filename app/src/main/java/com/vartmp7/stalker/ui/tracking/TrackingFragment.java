@@ -247,9 +247,9 @@ import com.vartmp7.stalker.Tools;
 import com.vartmp7.stalker.component.NotLogged;
 import com.vartmp7.stalker.component.StalkerReceiver;
 import com.vartmp7.stalker.component.StalkerServiceCallback;
-import com.vartmp7.stalker.gsonbeans.Organization;
-import com.vartmp7.stalker.gsonbeans.PolygonPlace;
-import com.vartmp7.stalker.gsonbeans.placecomponent.Coordinate;
+import com.vartmp7.stalker.datamodel.Organization;
+import com.vartmp7.stalker.datamodel.PolygonPlace;
+import com.vartmp7.stalker.datamodel.placecomponent.Coordinate;
 
 import org.jetbrains.annotations.NotNull;
 

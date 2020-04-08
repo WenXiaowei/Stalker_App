@@ -202,13 +202,9 @@
  *    limitations under the License.
  */
 
-package com.vartmp7.stalker.gsonbeans;
+package com.vartmp7.stalker.datamodel;
 
-import org.jetbrains.annotations.Contract;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import com.vartmp7.stalker.datamodel.placecomponent.Coordinate;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -217,40 +213,31 @@ import lombok.experimental.Accessors;
 /**
  * @author Xiaowei Wen, Lorenzo Taschin
  */
-public class OrganizationResponse {
-    public static final String TAG ="com.vartmp7.stalker.gsonbeans.ResponseOrganizzazione";
+public abstract class AbstractPlace {
+    public static final String TAG = "com.vartmp7.stalker.gsonbeans.AbstractLuogo";
     @Getter
     @Setter
     @Accessors(chain = true)
-    private List<Organization> organizations;
+    private long id;
+    @Getter
+    @Setter
+    @Accessors(chain = true)
+    private String name;
+    @Getter
+    @Setter
+    @Accessors(chain = true)
+    private long num_max_people;
 
-    @Deprecated
-    public String[] getDataForSpinner() {
-        ArrayList<String> toRet = new ArrayList<>();
-        toRet.add("Scegli un'organizzazione");
-
-        for (Organization org : organizations) {
-            toRet.add(org.getName());
-        }
-
-        return toRet.toArray(new String[0]);
+    AbstractPlace(long id, String name, long num_max_people) {
+        this(id, name);
+        this.num_max_people = num_max_people;
     }
 
-    public int getOrganizzationsLength() {
-        return organizations.size();
+    AbstractPlace(long id, String name) {
+        this.id = id;
+        this.name = name;
     }
-
-    @Contract(value = "null -> false", pure = true)
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof OrganizationResponse)) return false;
-        OrganizationResponse that = (OrganizationResponse) o;
-        return getOrganizations().equals(that.getOrganizations());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getOrganizations());
-    }
+    abstract Coordinate getCenter();
+    abstract public double distanceTo(Coordinate c);
+    abstract public boolean isInside(Coordinate c);
 }
