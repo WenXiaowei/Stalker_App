@@ -222,5 +222,4 @@ import org.junit.runners.Suite;
         TrackSignalTest.class,
         WrongNumberOfCoordinatesTest.class
 })
-public class GsonBeansTestSuite {
-}
+public class GsonBeansTestSuite {}

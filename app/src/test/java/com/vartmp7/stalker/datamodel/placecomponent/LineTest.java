@@ -205,6 +205,8 @@
 package com.vartmp7.stalker.datamodel.placecomponent;
 
 
+import junit.framework.TestCase;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -214,6 +216,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertFalse;
 
 @RunWith(Parameterized.class)
 public class LineTest {
@@ -240,14 +243,12 @@ public class LineTest {
     @Test
     public void testLineOrizzontale() {
         r = new Line(0, 0);
-
         assertEquals(r.calcoloLatitude(0), 0, DELTA);
     }
 
     @Test
     public void testLine() {
         r = new Line(3, 1);
-
         assertEquals(r.calcoloLatitude(1), 4, DELTA);
     }
 
@@ -265,10 +266,11 @@ public class LineTest {
 
     @Test
     public void testIntersezioneLineNulla() {
-        r = new Line(3, 1);
+        r = new Line(3.0, 1.0);
         Line r2 = new Line(0, 1);
-        Coordinate c = r.intersezione(r2);
 //        assertEquals(c, new Coordinata(0,1));
+        assertEquals(r.getM(),3d);
+        assertEquals(r.getQ(),1d);
     }
 
     @Test
@@ -294,6 +296,17 @@ public class LineTest {
     public void testConSetRette() {
         System.out.println("retta: " + rettaProva);
         assertEquals(rettaProva.calcoloLatitude(coordinateRes.getLongitude()), coordinateRes.getLatitude(), DELTA);
+    }
+    @Test
+    public void testEquals(){
+        Line l1 = new Line(new Coordinate(1,1), new Coordinate(2,2));
+        Line l2 = new Line(new Coordinate(1,1), new Coordinate(2,2));
+        assertEquals(l1,l1);
+        assertEquals(l1.hashCode(),l2.hashCode());
+        assertEquals(l1,l2);
+        l2 = new Line(new Coordinate(1,1), new Coordinate(2,3));
+        assertFalse(l1.equals(l2));
+
     }
 
 
