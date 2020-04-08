@@ -378,7 +378,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
 
 
 
-    public void goToMainActivity() {
+    private void goToMainActivity() {
         Intent intent = new Intent(requireContext(), MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         requireActivity().getApplication().setTheme(R.style.AppTheme);
@@ -414,7 +414,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
                 break;
         }
     }
-    public void requestPermissions(String permission, int code){
+    private void requestPermissions(String permission, int code){
         if ((requireContext().checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED)){
             requestPermissions(new String[]{permission},code);
         }

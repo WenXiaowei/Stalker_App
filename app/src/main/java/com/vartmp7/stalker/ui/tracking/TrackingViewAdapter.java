@@ -355,39 +355,38 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
     private void showLDAPLoginDialog(Button v, Switch anonimo, Organization organization) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.StalkerDialogTheme);
         builder.setTitle(R.string.login);
-        builder.setMessage("Fai accesso all'organizzazione che hai scelto");
+        builder.setMessage(R.string.inserisci_le_credenziali_ldap);
         builder.setView(LayoutInflater.from(context).inflate(R.layout.form_login_with_ldap, null));
-        builder.setPositiveButton(context.getString(R.string.conferma), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Dialog d = (Dialog) dialog;
-                        EditText etUsername = d.findViewById(R.id.etUsername);
-                        EditText etPassword = d.findViewById(R.id.etPassword);
-                        // todo sostituire il server address con organization.getLdap_url() e getLdap_port()
-                        StalkerLDAP ldap = new StalkerLDAP("10.0.2.2", 389,
-                                etUsername.getText().toString(), etPassword.getText().toString());
-                        try {
-                            ldap.bind();
-                            ldap.search();
-                            v.setText(R.string.logged);
-                            organization.setLogged(true);
-                            organization.setPersonalCn(etUsername.getText().toString());
-                            organization.setLdapPassword(etPassword.getText().toString());
-                            viewModel.updateOrganization(organization);
-                            anonimo.setEnabled(true);
-                            anonimo.setChecked(true);
-                            Toast.makeText(context, R.string.logged, Toast.LENGTH_SHORT).show();
+        builder.setPositiveButton(context.getString(R.string.conferma), (dialog, which) -> {
+            Dialog d = (Dialog) dialog;
+            EditText etUsername = d.findViewById(R.id.etCN);
+            EditText etPassword = d.findViewById(R.id.etPassword);
+            etUsername.setText(organization.getPersonalCn());
+            etPassword.setText(organization.getLdapPassword());
+            // todo sostituire il server address con organization.getLdap_url() e getLdap_port()
+            StalkerLDAP ldap = new StalkerLDAP("10.0.2.2", 389,
+                    etUsername.getText().toString(), etPassword.getText().toString());
+            try {
+                ldap.bind();
+                ldap.search();
+                v.setText(R.string.logged);
+                organization.setLogged(true);
+                organization.setPersonalCn(etUsername.getText().toString());
+                organization.setLdapPassword(etPassword.getText().toString());
+                viewModel.updateOrganization(organization);
+                anonimo.setEnabled(true);
+                anonimo.setChecked(true);
+                Toast.makeText(context, R.string.logged, Toast.LENGTH_SHORT).show();
 //                            ((Button)findViewById(R.id.btnShowLoginDialog)).setText("logged");
-                        } catch (LDAPException e) {
-                            Toast.makeText(context, R.string.connection_to_ldap_failed, Toast.LENGTH_SHORT).show();
-                        } catch (ExecutionException e) {
-                            Toast.makeText(context, R.string.ldap_login_failed_check_credentials, Toast.LENGTH_SHORT).show();
-                        } catch (InterruptedException e) {
-                            Toast.makeText(context, context.getString(R.string.something_went_wrong), Toast.LENGTH_SHORT).show();
-                        }
+            } catch (LDAPException e) {
+                Toast.makeText(context, R.string.connection_to_ldap_failed, Toast.LENGTH_SHORT).show();
+            } catch (ExecutionException e) {
+                Toast.makeText(context, R.string.ldap_login_failed_check_credentials, Toast.LENGTH_SHORT).show();
+            } catch (InterruptedException e) {
+                Toast.makeText(context, context.getString(R.string.something_went_wrong), Toast.LENGTH_SHORT).show();
+            }
 
-                    }
-                }
+        }
         );
 
         builder.setNegativeButton(R.string.annulla, new DialogInterface.OnClickListener() {

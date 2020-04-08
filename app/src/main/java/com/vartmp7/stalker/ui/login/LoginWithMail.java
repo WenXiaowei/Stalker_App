@@ -248,8 +248,8 @@ public class LoginWithMail extends Fragment implements View.OnClickListener {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         LayoutInflater inflater = getLayoutInflater();
         builder.setView(inflater.inflate(R.layout.password_recover_form, null));
-        builder.setTitle(R.string.sign_in);
-        builder.setMessage("Inserisci la mail con la quale ti sei registrato/a all'applicazione!");
+        builder.setTitle(R.string.recupero_password);
+        builder.setMessage(R.string.ask_mail_for_recupero_password);
         builder.setPositiveButton(getString(R.string.conferma), (dialog, which) -> {
             Dialog d = (Dialog) dialog;
             EditText et =d.findViewById(R.id.etEmailToRecover);

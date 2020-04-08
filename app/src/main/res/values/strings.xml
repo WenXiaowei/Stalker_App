@@ -298,4 +298,7 @@
     <string name="template_ldap" formatted="false">url: \"%s\", port: %s, dn: \"%s\", cn: \"%s\".</string>
     <string name="chiudi">Chiudi</string>
     <string name="elenco_delle_organizzazioni_disponibili">Elenco delle organizzazioni disponibili:</string>
+    <string name="recupero_password">Recupero password</string>
+    <string name="ask_mail_for_recupero_password">Inserisci la mail con la quale ti sei registrato/a all\'applicazione!</string>
+    <string name="inserisci_le_credenziali_ldap">Inserisci le tue credenziali LDAP</string>
 </resources>
