@@ -306,7 +306,6 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
                                 .anyMatch(polygonPlace -> place.getId() == polygonPlace.getId()))
                         .findAny();
 
-                //                    Log.d(TAG, "onNewLocation: sending mesg to handler: " + message);
                 message = any.map(organization -> getString(R.string.sei_in_tale_dei_tali, place.getName(), organization.getName())).orElseGet(() -> getString(R.string.non_presente_nei_luoghi_tracciati));
 
             } else {
