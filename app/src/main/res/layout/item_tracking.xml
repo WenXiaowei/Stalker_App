@@ -209,6 +209,7 @@
     android:id="@+id/llTrackingItem"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:paddingBottom="5dp"
     android:layout_marginBottom="5dp"
     android:orientation="vertical">
 
@@ -310,12 +311,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/white"
+                    android:layout_weight="2"
                     android:text="@string/track_me" />
 
                 <Button
                     android:id="@+id/btnLoginLDAP"
                     android:background="@drawable/refresh_btn_style"
                     android:layout_width="wrap_content"
+                    android:layout_weight="2"
                     android:textColor="@color/white"
                     android:layout_height="wrap_content"
                     android:text="@string/login_ldap" />
@@ -326,7 +329,7 @@
                     android:enabled="false"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="5dp"
-                    android:layout_weight="1"
+                    android:layout_weight="8"
                     android:text="@string/anonimo_question"
                     android:textSize="20sp" />
 
