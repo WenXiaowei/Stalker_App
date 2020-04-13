@@ -246,6 +246,7 @@ import com.vartmp7.stalker.datamodel.Organization;
 import com.vartmp7.stalker.repository.FavoritesSource;
 import com.vartmp7.stalker.repository.FileStorage;
 import com.vartmp7.stalker.repository.FirebaseFavoritesSource;
+import com.vartmp7.stalker.repository.RestApiService;
 import com.vartmp7.stalker.repository.Storage;
 import com.vartmp7.stalker.repository.OrganizationsRepository;
 import com.vartmp7.stalker.repository.Obtainer;
@@ -255,6 +256,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * @author Xiaowei Wen, Lorenzo Taschin
@@ -298,7 +302,11 @@ public class MainActivity extends AppCompatActivity {
         if (FirebaseAuth.getInstance().getCurrentUser() != null || GoogleSignIn.getLastSignedInAccount(this) != null) {
             preferitiRepository = new FirebaseFavoritesSource(getUserId(), FirebaseFirestore.getInstance());
         }
-        Obtainer webSource = new RESTObtainer(list);
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("https://localhost:5000/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        Obtainer webSource = new RESTObtainer(list, retrofit.create(RestApiService.class));
 
          repository = new OrganizationsRepository(localStorage, webSource, preferitiRepository);
 
