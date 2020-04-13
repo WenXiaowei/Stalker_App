@@ -269,6 +269,9 @@ public class MainActivity extends AppCompatActivity {
     public static final String TOKEN_VALUE = "vartmp7";
     public static final String PREFERENCE_FILE = "stalker";
     public static final String PREFERENCE_NOT_LOGIN = "not_login";
+    //    public static final String URL_SERVER="https://stalker-be.ddns.net/";
+    private static final String URL_SERVER = "https://localhost:5000";
+
     private GoogleSignInClient mGoogleSignInClient;
 
     public static OrganizationsRepository repository;
@@ -303,7 +306,7 @@ public class MainActivity extends AppCompatActivity {
             preferitiRepository = new FirebaseFavoritesSource(getUserId(), FirebaseFirestore.getInstance());
         }
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://localhost:5000/")
+                .baseUrl(URL_SERVER)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         Obtainer webSource = new RESTObtainer(list, retrofit.create(RestApiService.class));

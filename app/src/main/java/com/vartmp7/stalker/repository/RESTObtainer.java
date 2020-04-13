@@ -228,8 +228,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RESTObtainer implements Obtainer {
 
-    //    public static final String URL_SERVER="https://stalker-be.ddns.net/";
-    private static final String URL_SERVER = "https://localhost:5000";
+
     private static final String TAG = "com.vartmp7.stalker.repository.RESTOrganizationsRepository";
     private RestApiService service =null;
 
