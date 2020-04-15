@@ -294,17 +294,17 @@ public class RESTObtainer implements Obtainer {
 //                                .setImage_url("https://upload.wikimedia.org/wikipedia/it/thumb/5/53/Logo_Universit%C3%A0_Padova.svg/1200px-Logo_Universit%C3%A0_Padova.svg.png")
                                 .setImage_url("https://pbs.twimg.com/profile_images/1173976802416582657/LCZXVSqH_400x400.jpg")
                                 .setPlaces(Collections.singletonList(t)),
-                        new Organization()
-                                .setId(count + 1)
-                                .setName("UniPD DEI")
-                                .setTracking(true)
-                                .setImage_url("https://www.dei.unipd.it/sites/dei.unipd.it/files/sublogo_3.png")
-                                .setPlaces(Collections.singletonList(t)),
+//                        new Organization()
+//                                .setId(count + 1)
+//                                .setName("UniPD DEI")
+//                                .setTracking(true)
+//                                .setImage_url("https://www.dei.unipd.it/sites/dei.unipd.it/files/sublogo_3.png")
+//                                .setPlaces(Collections.singletonList(t)),
                         new Organization()
                                 .setId(count + 2)
                                 .setName("UNIPD dSeA")
                                 .setTracking(false)
-                                .setImage_url("https://www.economia.unipd.it/sites/economia.unipd.it/files/styles/img_lancio_news_2017/public/img_hp-log_-trentennale.png?itok=lEz-jGpw")
+                                .setImage_url("https://www.economia.unipd.it/sites/economia.unipd.it/files/img-logo-trentennale-dsea-big.png")
                                 .setPlaces(Collections.singletonList(d)),
                         new Organization()
                                 .setId(count + 3)
