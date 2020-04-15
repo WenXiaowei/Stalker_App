@@ -263,8 +263,18 @@ public class RESTObtainer implements Obtainer {
                 torreArchimede.add(new Coordinate(45.411108, 11.887787));
                 torreArchimede.add(new Coordinate(45.411222, 11.887319));
                 PolygonPlace t = new PolygonPlace();
-                t.setId(1).setName("org").setNum_max_people(10);
+                t.setId(1).setName("Torre Archimede").setNum_max_people(10);
                 t.setCoordinate(torreArchimede);
+
+                ArrayList<Coordinate> dsea = new ArrayList<>();
+                dsea.add(new Coordinate(45.411660, 11.887957));
+                dsea.add(new Coordinate(45.411702, 11.888113));
+                dsea.add(new Coordinate(45.411341, 11.888381));
+                dsea.add(new Coordinate(45.411284, 11.888224));
+                PolygonPlace d= new PolygonPlace();
+                d.setId(1).setName("TORRE 3C").setNum_max_people(10);
+                d.setCoordinate(dsea);
+
 
                 List<Organization> orgs = Arrays.asList(
                         new Organization().setId(count)
@@ -292,10 +302,10 @@ public class RESTObtainer implements Obtainer {
                                 .setPlaces(Collections.singletonList(t)),
                         new Organization()
                                 .setId(count + 2)
-                                .setName("UniPD Psicologia")
+                                .setName("UNIPD dSeA")
                                 .setTracking(false)
-                                .setImage_url("")
-                                .setPlaces(Collections.singletonList(t)),
+                                .setImage_url("https://www.economia.unipd.it/sites/economia.unipd.it/files/styles/img_lancio_news_2017/public/img_hp-log_-trentennale.png?itok=lEz-jGpw")
+                                .setPlaces(Collections.singletonList(d)),
                         new Organization()
                                 .setId(count + 3)
                                 .setName("UNIPD DSFARM")

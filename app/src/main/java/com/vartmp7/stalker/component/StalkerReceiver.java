@@ -234,9 +234,9 @@ public class StalkerReceiver extends BroadcastReceiver {
         Location location = intent.getParcelableExtra(StalkerTrackingService.EXTRA_LOCATION);
 
         if (location != null) {
-            Log.d(TAG, "onReceive: ");
-            Toast.makeText(context, location.toString(),
-                    Toast.LENGTH_SHORT).show();
+//            Log.d(TAG, "onReceive: ");
+//            Toast.makeText(context, location.toString(),
+//                    Toast.LENGTH_SHORT).show();
         }
     }
 }
