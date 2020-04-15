@@ -273,7 +273,7 @@ public class Organization implements Serializable {
     @Getter
     @Setter
     @Accessors(chain = true)
-    private String ldap_port;
+    private int ldap_port=389;
     @Getter
     @Setter
     @Accessors(chain = true)

@@ -230,7 +230,7 @@ public class OrganizationTest {
     private static final String type = "private";
     private static final String ldap_common_name = "com.unipd";
     private static final String ldap_domain_component = "cn=wen,cn=xiaowei";
-    private static final String ldap_port = "250";
+    private static final int ldap_port = 250;
     private static final String ldap_url = "ulr";
     private static final String image_url = "ulr";
     private static final Boolean isPreferito = false;

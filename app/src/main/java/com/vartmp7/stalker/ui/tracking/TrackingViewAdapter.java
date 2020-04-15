@@ -207,6 +207,7 @@ package com.vartmp7.stalker.ui.tracking;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -290,9 +291,9 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
                     }
                     break;
                 case R.id.btnLoginLDAP:
-                    if(!org.isLogged()){
+                    if (!org.isLogged()) {
                         showLDAPLoginDialog((Button) v, holder.sAnonimo, org);
-                    }else{
+                    } else {
                         org.setLogged(false);
                         ((Button) v).setText(R.string.login_ldap);
                         holder.sAnonimo.setChecked(false);
@@ -359,42 +360,49 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
     }
 
 
-
     private void showLDAPLoginDialog(Button v, Switch anonimo, Organization organization) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.StalkerDialogTheme);
         builder.setTitle(R.string.login);
         builder.setMessage(R.string.inserisci_le_credenziali_ldap);
         builder.setView(LayoutInflater.from(context).inflate(R.layout.form_login_with_ldap, null));
         builder.setPositiveButton(context.getString(R.string.conferma), (dialog, which) -> {
-            Dialog d = (Dialog) dialog;
-            EditText etUsername = d.findViewById(R.id.etCN);
-            EditText etPassword = d.findViewById(R.id.etPassword);
-            etUsername.setText(organization.getPersonalCn());
-            etPassword.setText(organization.getLdapPassword());
-            // todo sostituire il server address con organization.getLdap_url() e getLdap_port()
-            StalkerLDAP ldap = new StalkerLDAP("10.0.2.2", 389,
-                    etUsername.getText().toString(), etPassword.getText().toString());
-//            try {
-//                ldap.bind();
-//                ldap.search();
-                v.setText(R.string.logout);
-                organization.setLogged(true);
-                organization.setPersonalCn(etUsername.getText().toString());
-                organization.setLdapPassword(etPassword.getText().toString());
-                viewModel.updateOrganization(organization);
-                anonimo.setEnabled(true);
-                anonimo.setChecked(true);
-                Toast.makeText(context, R.string.logged, Toast.LENGTH_SHORT).show();
-//                            ((Button)findViewById(R.id.btnShowLoginDialog)).setText("logged");
-//            } catch (LDAPException e) {
-//                Toast.makeText(context, R.string.connection_to_ldap_failed, Toast.LENGTH_SHORT).show();
-//            } catch (ExecutionException e) {
-//                Toast.makeText(context, R.string.ldap_login_failed_check_credentials, Toast.LENGTH_SHORT).show();
-//            } catch (InterruptedException e) {
-//                Toast.makeText(context, context.getString(R.string.something_went_wrong), Toast.LENGTH_SHORT).show();
-//            }
+                    Dialog d = (Dialog) dialog;
+                    EditText etUsername = d.findViewById(R.id.etCN);
+                    EditText etPassword = d.findViewById(R.id.etPassword);
+                    String url = "cn=" + etUsername.getText().toString();
+                    if (organization.getLdap_common_name() != null && !organization.getLdap_common_name().equals("")) {
+                        url += "," + organization.getLdap_common_name();
+                    }
+                    if (organization.getLdap_domain_component() != null && !organization.getLdap_domain_component().equals(""))
+                        url += "," + organization.getLdap_domain_component();
 
-        }
+
+                    // todo sostituire il server address con organization.getLdap_url() e getLdap_port()
+//            StalkerLDAP ldap = new StalkerLDAP(organization.getLdap_url(),organization.getLdap_port(),
+//                    url,etPassword.getText().toString());
+
+                    StalkerLDAP ldap = new StalkerLDAP("10.0.2.2", organization.getLdap_port(),
+                            url, etPassword.getText().toString());
+                    try {
+                        ldap.bind();
+                        ldap.search();
+                        v.setText(R.string.logout);
+                        organization.setLogged(true);
+                        organization.setPersonalCn(etUsername.getText().toString());
+                        organization.setLdapPassword(etPassword.getText().toString());
+                        viewModel.updateOrganization(organization);
+                        anonimo.setEnabled(true);
+                        anonimo.setChecked(false);
+                        Toast.makeText(context, R.string.logged, Toast.LENGTH_SHORT).show();
+                    } catch (LDAPException e) {
+                        Toast.makeText(context, R.string.connection_to_ldap_failed, Toast.LENGTH_SHORT).show();
+                    } catch (ExecutionException e) {
+                        Toast.makeText(context, R.string.ldap_login_failed_check_credentials, Toast.LENGTH_SHORT).show();
+                    } catch (InterruptedException e) {
+                        Toast.makeText(context, context.getString(R.string.something_went_wrong), Toast.LENGTH_SHORT).show();
+                    }
+
+                }
         );
 
         builder.setNegativeButton(R.string.annulla, (dialog, which) -> dialog.dismiss());
