@@ -283,9 +283,43 @@ public class Organization implements Serializable {
     @Accessors(chain = true)
     private String image_url;
     @Getter
-    @Setter
     @Accessors(chain = true)
     private List<PolygonPlace> places = new ArrayList<>();
+
+    public Organization setPlaces(List<PolygonPlace> places){
+        this.places = places;
+        this.places.forEach(p-> p.setOrgId(id));
+        return this;
+    }
+    @Override
+    public String toString() {
+        return "Organization{" +
+                "address='" + address + '\'' +
+                ", city='" + city + '\'' +
+                ", email='" + email + '\'' +
+                ", id=" + id +
+                ", name='" + name + '\'' +
+                ", nation='" + nation + '\'' +
+                ", phone_number='" + phone_number + '\'' +
+                ", postal_code='" + postal_code + '\'' +
+                ", region='" + region + '\'' +
+                ", type='" + type + '\'' +
+                ", ldap_common_name='" + ldap_common_name + '\'' +
+                ", ldap_domain_component='" + ldap_domain_component + '\'' +
+                ", ldap_port=" + ldap_port +
+                ", ldap_url='" + ldap_url + '\'' +
+                ", image_url='" + image_url + '\'' +
+                ", places=" + places +
+                ", isFavorite=" + isFavorite +
+                ", isTracking=" + isTracking +
+                ", isLogged=" + isLogged +
+                ", isAnonymous=" + isAnonymous +
+                ", isTrackingActive=" + isTrackingActive +
+                ", personalCn='" + personalCn + '\'' +
+                ", ldapPassword='" + ldapPassword + '\'' +
+                '}';
+    }
+
     @Getter
     @Setter
     @Accessors(chain = true)
@@ -330,20 +364,7 @@ public class Organization implements Serializable {
         if (this == o) return true;
         if (!(o instanceof Organization)) return false;
         Organization that = (Organization) o;
-        return getId() == that.getId() /*&&
-                Objects.equals(getAddress(), that.getAddress()) &&
-                Objects.equals(getCity(), that.getCity()) &&
-                Objects.equals(getEmail(), that.getEmail()) &&
-                Objects.equals(getName(), that.getName()) &&
-                Objects.equals(getNation(), that.getNation()) &&
-                Objects.equals(getPhone_number(), that.getPhone_number()) &&
-                Objects.equals(getPostal_code(), that.getPostal_code()) &&
-                Objects.equals(getRegion(), that.getRegion()) &&
-                Objects.equals(getType(), that.getType()) &&
-                Objects.equals(getLdap_common_name(), that.getLdap_common_name()) &&
-                Objects.equals(getLdap_domain_component(), that.getLdap_domain_component()) &&
-                Objects.equals(getLdap_port(), that.getLdap_port()) &&
-                Objects.equals(getLuoghi(), that.getLuoghi())*/;
+        return getId() == that.getId();
     }
 
     public String getPlacesInfo() {

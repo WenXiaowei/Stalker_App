@@ -220,16 +220,15 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import lombok.SneakyThrows;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RESTObtainer implements Obtainer {
 
 
-    private static final String TAG = "com.vartmp7.stalker.repository.RESTOrganizationsRepository";
+    private static final String TAG = "com.vartmp7.stalker.repository.RESTObtainer";
     private RestApiService service = null;
 
 
@@ -249,9 +248,11 @@ public class RESTObtainer implements Obtainer {
 
         Call<OrganizationResponse> organizations = service.organizations();
         organizations.enqueue(new Callback<OrganizationResponse>() {
+            @SneakyThrows
             @Override
             public void onResponse(@NotNull Call<OrganizationResponse> call, @NotNull Response<OrganizationResponse> response) {
-                mutableLiveDataOrganizzazioni.postValue(response.body().getOrganizations());
+                List<Organization> organizations1 = response.body().getOrganizations();
+                mutableLiveDataOrganizzazioni.postValue(organizations1);
             }
 
             @Override
@@ -264,7 +265,7 @@ public class RESTObtainer implements Obtainer {
                 torreArchimede.add(new Coordinate(45.411222, 11.887319));
                 PolygonPlace t = new PolygonPlace();
                 t.setId(1).setName("Torre Archimede").setNum_max_people(10);
-                t.setCoordinate(torreArchimede);
+                t.setCoordinates(torreArchimede).setOrgId(1);
 
                 ArrayList<Coordinate> dsea = new ArrayList<>();
                 dsea.add(new Coordinate(45.411660, 11.887957));
@@ -273,11 +274,12 @@ public class RESTObtainer implements Obtainer {
                 dsea.add(new Coordinate(45.411284, 11.888224));
                 PolygonPlace d = new PolygonPlace();
                 d.setId(1).setName("TORRE 3C").setNum_max_people(10);
-                d.setCoordinate(dsea);
+                d.setCoordinates(dsea).setOrgId(2);
+
 
 
                 List<Organization> orgs = Arrays.asList(
-                        new Organization().setId(count)
+                        new Organization().setId(1)
                                 .setName("UniPD Dipartimento di Matematica")
                                 .setTracking(true)
                                 .setAddress("Trieste n. 8")
@@ -301,7 +303,7 @@ public class RESTObtainer implements Obtainer {
 //                                .setImage_url("https://www.dei.unipd.it/sites/dei.unipd.it/files/sublogo_3.png")
 //                                .setPlaces(Collections.singletonList(t)),
                         new Organization()
-                                .setId(count + 2)
+                                .setId(2)
                                 .setName("UNIPD dSeA")
                                 .setTracking(false)
                                 .setImage_url("https://www.economia.unipd.it/sites/economia.unipd.it/files/img-logo-trentennale-dsea-big.png")

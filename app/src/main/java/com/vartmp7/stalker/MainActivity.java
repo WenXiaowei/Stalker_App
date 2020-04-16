@@ -270,7 +270,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String PREFERENCE_FILE = "stalker";
     public static final String PREFERENCE_NOT_LOGIN = "not_login";
     //    public static final String URL_SERVER="https://stalker-be.ddns.net/";
-    private static final String URL_SERVER = "https://localhost:5000";
+    public static final String URL_SERVER = "https://192.168.43.13/";
 
     private GoogleSignInClient mGoogleSignInClient;
 
@@ -306,6 +306,7 @@ public class MainActivity extends AppCompatActivity {
         }
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(URL_SERVER)
+                .client(Tools.getUnsafeOkHttpClient())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         Obtainer webSource = new RESTObtainer(list, retrofit.create(RestApiService.class));
@@ -315,33 +316,6 @@ public class MainActivity extends AppCompatActivity {
 
 //        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
-
-
-//        //TODO togliere le seguenti  righe che sono solo un test
-//        OkHttpClient httpClient= new OkHttpClient();
-//        String serverUrl="";
-//        OrganizationsRepository orgRepo = new RESTOrganizationsRepository(httpClient,serverUrl);
-//        FavoritesRepository preferitiRepository = new FirebaseFavoritesRepository("1",orgRepo,FirebaseFirestore.getInstance());
-//        //((FirebaseFavoritesRepository)preferitiRepository).initUserStorage("1");
-//        preferitiRepository.addOrganizzazione(new Organizzazione().setId(2));
-//         preferitiRepository.getOrganizzazioni().observe(this, new Observer<List<Organizzazione>>() {
-//            @Override
-//            public void onChanged(List<Organizzazione> organizzaziones) {
-//                Log.d(TAG, "Main activity onChanged: organizzazioni.size() = "+organizzaziones.size());
-//                organizzaziones.forEach(o->Log.d(TAG,""+o.getId()));
-//            }
-//        });
-//        final Observer<List<Organizzazione>> observer = new Observer<List<Organizzazione>>() {
-//
-//            @Override
-//            public void onChanged(List<Organizzazione> organizzazioni) {
-//                Log.d(TAG, "onChanged: organizzazioni.size() = "+organizzazioni.size());
-//                organizzazioni.forEach(o->Log.d(TAG,""+o.getId()));
-//            }
-//        };
-//        liveDataOrganizzazioni.observe(this,observer);
-//        Log.d(TAG,"size:"+liveDataOrganizzazioni.getValue().size());
-
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()

@@ -207,22 +207,46 @@ package com.vartmp7.stalker.component;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.icu.text.SimpleDateFormat;
+import android.icu.util.Calendar;
 import android.location.Location;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.vartmp7.stalker.datamodel.Organization;
+import com.vartmp7.stalker.datamodel.PlaceResponse;
+import com.vartmp7.stalker.datamodel.PolygonPlace;
+import com.vartmp7.stalker.datamodel.TrackSignal;
+import com.vartmp7.stalker.datamodel.placecomponent.Coordinate;
+import com.vartmp7.stalker.repository.RestApiService;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class StalkerReceiver extends BroadcastReceiver {
     private static final String TAG = "BroadcastReceiver";
-    List<Organization> organizations;
+    private List<Organization> organizations;
+    private TrackSignal trackSignal;
+    private PolygonPlace current = null, previousPlace = null;
+    private RestApiService service;
+    private Organization organization = null;
 
-    public StalkerReceiver(List<Organization> orgs) {
+    public StalkerReceiver(List<Organization> orgs, RestApiService service) {
         this.organizations = orgs;
+        this.service = service;
+        trackSignal = new TrackSignal();
     }
 
     public void setOrganizations(List<Organization> organizations) {
@@ -232,11 +256,74 @@ public class StalkerReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, @NotNull Intent intent) {
         Location location = intent.getParcelableExtra(StalkerTrackingService.EXTRA_LOCATION);
-
         if (location != null) {
-//            Log.d(TAG, "onReceive: ");
-//            Toast.makeText(context, location.toString(),
-//                    Toast.LENGTH_SHORT).show();
+            onLocationsChanged(location);
+            Toast.makeText(context,"new Location", Toast.LENGTH_SHORT).show();
         }
+    }
+    private String getFormattedTime(){
+        SimpleDateFormat format = new SimpleDateFormat("Y-M-d hh:mm:ss");
+        Date date = Calendar.getInstance(Locale.getDefault()).getTime();
+        String formattedDate = format.format(date);
+        return formattedDate.replace(" ", "T");
+    }
+    private void onLocationsChanged(@NotNull Location l) {
+        Coordinate currentCoordinate = new Coordinate(l.getLatitude(), l.getLongitude());
+        List<PolygonPlace> places = new ArrayList<>();
+        organizations.forEach(organization -> places.addAll(organization.getPlaces()));
+        Optional<PolygonPlace> opti = places.stream().filter(polygonPlace -> polygonPlace.isInside(currentCoordinate)).findFirst();
+
+
+        trackSignal.date_time(getFormattedTime());
+
+
+        if (opti.isPresent()) {
+            PolygonPlace place = opti.get();
+            Optional<Organization> optionalOrganization = organizations.stream().filter(organization -> organization.getId() == place.getOrgId()).findFirst();
+
+            optionalOrganization.ifPresent(value -> organization = value);
+            if (organization==null)return;
+            if (previousPlace == null) {
+                previousPlace = place;
+                trackSignal.setIdPlace(previousPlace.getId())
+                        .entered(true)
+                        .authenticated(organization.isLogged())
+                        .username(organization.getPersonalCn())
+                        .password(organization.getLdapPassword());
+                trackSignal.idOrganization();
+                sendSignal(trackSignal);
+            } else if (previousPlace != place) {
+                trackSignal.entered(false)
+                        .setIdPlace(previousPlace.getId());
+                sendSignal(trackSignal);
+
+                trackSignal.entered(true)
+                        .setIdPlace(place.getId())
+                        .username(organization.getPersonalCn())
+                        .password(organization.getLdapPassword());
+                sendSignal(trackSignal);
+                previousPlace = place;
+            }
+        } else {
+            trackSignal.entered(false);
+            sendSignal(trackSignal);
+            previousPlace = null;
+        }
+
+    }
+
+    private void sendSignal(TrackSignal signal) {
+        Log.d(TAG, "sendSignal() called with: signal = [" + signal + "]");
+        service.tracking(signal.idOrganization(), signal.idPlace(), signal).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(@NotNull Call<Void> call, @NotNull Response<Void> response) {
+
+            }
+
+            @Override
+            public void onFailure(@NotNull Call<Void> call, @NotNull Throwable t) {
+
+            }
+        });
     }
 }

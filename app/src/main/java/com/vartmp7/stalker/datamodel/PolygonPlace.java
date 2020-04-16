@@ -224,21 +224,21 @@ public class PolygonPlace extends AbstractPlace {
     @Getter
     @Setter
     @Accessors(chain = true)
-    private List<Coordinate> coordinate;
+    private List<Coordinate> coordinates;
 
     public PolygonPlace() {
         super(0, null);
     }
 
-    PolygonPlace(long id, String name, List<Coordinate> coordinate) {
+    PolygonPlace(long id, String name, List<Coordinate> coordinates) {
         super(id, name);
-        this.coordinate = coordinate;
+        this.coordinates = coordinates;
 
     }
 
-    PolygonPlace(long id, String name, long num_max_people, List<Coordinate> coordinate) {
+    PolygonPlace(long id, String name, long num_max_people, List<Coordinate> coordinates) {
         super(id, name, num_max_people);
-        this.coordinate = coordinate;
+        this.coordinates = coordinates;
     }
 
 
@@ -246,15 +246,16 @@ public class PolygonPlace extends AbstractPlace {
     @Override
     public String toString() {
         return "\nid: " + getId() +
+                "\nOrgId: " + getOrgId() +
                 "\nNome: " + getName() +
                 "\nNum. Max Persone " + getNum_max_people() +
-                "\nCoordinate: " + getCoordinate().toString();
+                "\nCoordinate: " + getCoordinates().toString();
     }
 
 
     @Override
     public Coordinate getCenter() {
-        return new Line(coordinate.get(0), coordinate.get(2)).intersezione(new Line(coordinate.get(1), coordinate.get(3)));
+        return new Line(coordinates.get(0), coordinates.get(2)).intersezione(new Line(coordinates.get(1), coordinates.get(3)));
     }
 
     public double distanceTo(Coordinate c) {
@@ -263,7 +264,7 @@ public class PolygonPlace extends AbstractPlace {
 
     @Override
     public boolean isInside(Coordinate c) {
-        return new RayCasting(getCoordinate(), c).isPointInside();
+        return new RayCasting(getCoordinates(), c).isPointInside();
     }
 
 }

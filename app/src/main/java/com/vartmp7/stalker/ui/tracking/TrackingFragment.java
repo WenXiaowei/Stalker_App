@@ -250,6 +250,7 @@ import com.vartmp7.stalker.component.StalkerServiceCallback;
 import com.vartmp7.stalker.datamodel.Organization;
 import com.vartmp7.stalker.datamodel.PolygonPlace;
 import com.vartmp7.stalker.datamodel.placecomponent.Coordinate;
+import com.vartmp7.stalker.repository.RestApiService;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -258,6 +259,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 
 /**
@@ -290,13 +294,11 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
             List<PolygonPlace> places = new ArrayList<>();
             organizationToTrack.forEach(organization -> places.addAll(organization.getPlaces()));
             Coordinate coordinate = new Coordinate(l.getLatitude(), l.getLongitude());
-//            Log.d(TAG, "onNewLocation: ");
+
             Optional<PolygonPlace> optionalPolygonPlace = places.stream().filter(p -> p.isInside(coordinate)).findAny();
 
             if (optionalPolygonPlace.isPresent()) {
                 PolygonPlace place = optionalPolygonPlace.get();
-//                Log.d(TAG, "onNewLocation: you are in a place, " + place.getName());
-
                 Optional<Organization> any = organizationToTrack.stream()
                         .filter(organization -> organization.getPlaces()
                                 .stream()
@@ -315,13 +317,7 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
 
         }
 
-        @Override
-        public void onTrackingTerminated() {
-        }
 
-        @Override
-        public void onInitializingTracking() {
-        }
     };
 
     public static class StalkerHandler extends Handler {
@@ -416,8 +412,12 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
 
         mRequestLocationUpdatesButton = root.findViewById(R.id.btnStartAll);
         mRemoveLocationUpdatesButton = root.findViewById(R.id.btnStopAll);
-
-        myReceiver = new StalkerReceiver(new ArrayList<>());
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(MainActivity.URL_SERVER)
+                .client(Tools.getUnsafeOkHttpClient())
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        myReceiver = new StalkerReceiver(new ArrayList<>(),retrofit.create(RestApiService.class));
 
         RecyclerView recyclerView = root.findViewById(R.id.trackingRecycleView);
 

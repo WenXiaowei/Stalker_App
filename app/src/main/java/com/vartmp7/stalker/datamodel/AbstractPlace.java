@@ -227,6 +227,10 @@ public abstract class AbstractPlace {
     @Setter
     @Accessors(chain = true)
     private long num_max_people;
+    @Getter
+    @Setter
+    @Accessors(chain = true)
+    private long orgId;
 
     AbstractPlace(long id, String name, long num_max_people) {
         this(id, name);

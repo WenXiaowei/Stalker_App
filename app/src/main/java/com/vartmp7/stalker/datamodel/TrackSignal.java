@@ -210,6 +210,10 @@ import org.jetbrains.annotations.Contract;
 
 import java.util.Objects;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
+
 /**
  * @author Xiaowei Wen, Lorenzo Taschin
  */
@@ -218,32 +222,72 @@ public class TrackSignal {
 
     private static final String TAG="com.vartmp7.stalker.GsonBeans.TrackSignal";
     // Annotazione expose usato indicare quale campo devo venir serializzato
+    @Setter
+    @Getter
+    @Accessors(fluent = true)
     private long idOrganization;
+    @Setter
+    @Getter
+    @Accessors(fluent = true)
     private long idPlace=0;
 
     public static final String LDAP_V3="ldpav3";
     public static final String GOOGLE="GOOGLE";
     public static final String FACEBOOK="FACEBOOK";
 
+    @Setter
+    @Accessors(fluent = true)
     @Expose
-    private String auth_type;
+    private String auth_type=LDAP_V3;
+
+
+
+
+    @Accessors(fluent = true)
+    @Expose@Setter
+    private boolean entered=false;
+
+    @Setter
+    @Accessors(fluent = true)
+    @Expose
+    private boolean authenticated=false;
+
+    @Setter
+    @Accessors(fluent = true)
+    @Expose
+    private String date_time;
+
+    @Setter
+    @Accessors(fluent = true)
+    @Expose
+    private String username;
+
+    @Setter
+    @Accessors(fluent = true)
+    @Expose
+    private String password;
 
     public TrackSignal(long idOrganization) {
         this.idOrganization = idOrganization;
     }
 
-    @Expose
-    private boolean entered=false;
-    @Expose
-    private boolean authenticated=false;
-    @Expose
-    private String username;
-    @Expose
-    private String password;
-    @Expose
-    private String surname;
-    @Expose
-    private String date_time;
+    public TrackSignal() {
+
+    }
+
+    @Override
+    public String toString() {
+        return "TrackSignal{" +
+                "idOrganization=" + idOrganization +
+                ", idPlace=" + idPlace +
+                ", auth_type='" + auth_type + '\'' +
+                ", entered=" + entered +
+                ", authenticated=" + authenticated +
+                ", date_time='" + date_time + '\'' +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                '}';
+    }
 
     @Contract(value = "null -> false", pure = true)
     @Override
@@ -251,100 +295,32 @@ public class TrackSignal {
         if (this == o) return true;
         if (!(o instanceof TrackSignal)) return false;
         TrackSignal that = (TrackSignal) o;
-        return getIdOrganization() == that.getIdOrganization() &&
-                getIdPlace() == that.getIdPlace() &&
-                isEntered() == that.isEntered() &&
-                isAuthenticated() == that.isAuthenticated() &&
-
-                Objects.equals(getUsername(), that.getUsername()) &&
-                Objects.equals(getSurname(), that.getSurname()) &&
-                Objects.equals(getDate_time(), that.getDate_time());
+        return idOrganization == that.idOrganization &&
+                idPlace == that.idPlace &&
+                entered == that.entered &&
+                authenticated == that.authenticated &&
+                Objects.equals(auth_type, that.auth_type) &&
+                Objects.equals(date_time, that.date_time) &&
+                Objects.equals(username, that.username) &&
+                Objects.equals(password, that.password);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getIdOrganization(), getIdPlace(), isEntered(), isAuthenticated(), getUsername(), getSurname(), getDate_time());
+        return Objects.hash(idOrganization, idPlace, auth_type, entered, authenticated, date_time, username, password);
     }
 
-    public TrackSignal(boolean en, boolean au, long uid, String user, String sur, String date) {
+    public TrackSignal(boolean en, boolean au, long uid, String user, String date) {
         entered = en;
         authenticated = au;
         username = user;
-        surname = sur;
         date_time = date;
     }
     public TrackSignal setIdPlace(long idPlace) {
         this.idPlace = idPlace;
         return this;
     }
-    public String getUrlToPost(){
-//        return MainActivity.SERVER + "organizations/" + idOrganization
-//                + "/places/" + idPlace+ "/tracks";
-        return "Ciao";
-    }
 
 
-    public long getIdOrganization() {
-        return idOrganization;
-    }
-
-    public TrackSignal setIdOrganization(long idOrganization) {
-        this.idOrganization = idOrganization;
-        return this;
-    }
-
-    public boolean isEntered() {
-        return entered;
-    }
-
-    public TrackSignal setEntered(boolean entered) {
-        this.entered = entered;
-        return this;
-    }
-
-    public boolean isAuthenticated() {
-        return authenticated;
-    }
-
-    public TrackSignal setAuthenticated(boolean authenticated) {
-        this.authenticated = authenticated;
-        return this;
-    }
-
-
-    public String getUsername() {
-        return username;
-    }
-
-    public TrackSignal setUsername(String username) {
-        this.username = username;
-        return this;
-    }
-
-    public String getSurname() {
-        return surname;
-    }
-
-    public TrackSignal setSurname(String surname) {
-        this.surname = surname;
-        return this;
-    }
-
-    public String getDate_time() {
-        return date_time;
-    }
-    public TrackSignal setDate_time(String date_time) {
-        this.date_time = date_time;
-        return this;
-    }
-
-    public TrackSignal() {
-    }
-
-
-
-    public long getIdPlace() {
-        return idPlace;
-    }
 
 }

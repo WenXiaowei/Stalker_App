@@ -208,6 +208,4 @@ import android.location.Location;
 
 public interface CallBack {
     void onNewLocation(Location l);
-    void onTrackingTerminated();
-    void onInitializingTracking();
 }

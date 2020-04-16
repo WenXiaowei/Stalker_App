@@ -289,7 +289,7 @@ public class RESTObtainerMocked implements Obtainer {
                 torreArchimede.add(new Coordinate(45.411222, 11.887319));
                 PolygonPlace t = new PolygonPlace();
                 t.setId(1).setName("org").setNum_max_people(10);
-                t.setCoordinate(torreArchimede);
+                t.setCoordinates(torreArchimede);
 
                 List<Organization> orgs = Arrays.asList(
                         new Organization().setId(count).setName("unipd" + count).setTracking(true).setImage_url("https://cdn.discordapp.com/attachments/690970576415621201/691008560363995208/Schermata_2020-03-21_alle_20.41.13.png")

@@ -238,7 +238,7 @@ public interface RestApiService {
 
     @Headers("Organization-Token: vartmp7")
     @POST("organizations/{organization_id}/places/{place_id}/tracks")
-    Call<PlaceResponse> tracking(@Path("organization_id") long id, @Path("place_id") long placeId, @Body TrackSignal signal);
+    Call<Void> tracking(@Path("organization_id") long orgId, @Path("place_id") long placeId, @Body TrackSignal signal);
 
     @Headers("Organization-Token: vartmp7")
     @POST("organizations/{id_orgs}/user/tracks")

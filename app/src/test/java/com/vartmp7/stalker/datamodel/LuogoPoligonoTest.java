@@ -250,20 +250,20 @@ public class LuogoPoligonoTest {
     }
     @Test
     public void testConstructor4params(){
-        PolygonPlace l = new PolygonPlace(luogo.getId(),luogo.getName(),luogo.getNum_max_people(),luogo.getCoordinate());
+        PolygonPlace l = new PolygonPlace(luogo.getId(),luogo.getName(),luogo.getNum_max_people(),luogo.getCoordinates());
 
         assertEquals(l.getId(),luogo.getId() );
         assertEquals(l.getName(), luogo.getName());
-        assertEquals(l.getCoordinate(), luogo.getCoordinate());
+        assertEquals(l.getCoordinates(), luogo.getCoordinates());
         assertEquals(l.getNum_max_people(), luogo.getNum_max_people());
     }
     @Test
     public void testConstructor3params(){
-        PolygonPlace l = new PolygonPlace(luogo.getId(),luogo.getName(),  luogo.getCoordinate());
+        PolygonPlace l = new PolygonPlace(luogo.getId(),luogo.getName(),  luogo.getCoordinates());
 
         assertEquals(l.getId(),luogo.getId() );
         assertEquals(l.getName(), luogo.getName());
-        assertEquals(l.getCoordinate(), luogo.getCoordinate());
+        assertEquals(l.getCoordinates(), luogo.getCoordinates());
     }
 
     @Test
@@ -283,7 +283,7 @@ public class LuogoPoligonoTest {
         torreArchimede.add(new Coordinate(45.411222, 11.887319));
         PolygonPlace t = new PolygonPlace();
         t.setId(1).setName("org").setNum_max_people(10);
-        t.setCoordinate(torreArchimede);
+        t.setCoordinates(torreArchimede);
 
 
         ArrayList<Coordinate> inail = new ArrayList<>();
@@ -293,7 +293,7 @@ public class LuogoPoligonoTest {
         inail.add(new Coordinate(45.411544, 11.887106));
         PolygonPlace i = new PolygonPlace();
         i.setId(1).setName("org").setNum_max_people(10);
-        i.setCoordinate(inail);
+        i.setCoordinates(inail);
 
 
         ArrayList<Coordinate> dsea = new ArrayList<>();
@@ -303,7 +303,7 @@ public class LuogoPoligonoTest {
         dsea.add(new Coordinate(45.411284, 11.888224));
         PolygonPlace d= new PolygonPlace();
         d.setId(1).setName("org").setNum_max_people(10);
-        d.setCoordinate(dsea);
+        d.setCoordinates(dsea);
 
         return Arrays.asList(new Object[][]{
                 {t, new Coordinate( 45.411332,11.887631), true,0.02066094133453709},
