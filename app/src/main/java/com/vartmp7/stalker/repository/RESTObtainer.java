@@ -230,7 +230,7 @@ public class RESTObtainer implements Obtainer {
 
 
     private static final String TAG = "com.vartmp7.stalker.repository.RESTOrganizationsRepository";
-    private RestApiService service =null;
+    private RestApiService service = null;
 
 
     static int count = 0;
@@ -271,7 +271,7 @@ public class RESTObtainer implements Obtainer {
                 dsea.add(new Coordinate(45.411702, 11.888113));
                 dsea.add(new Coordinate(45.411341, 11.888381));
                 dsea.add(new Coordinate(45.411284, 11.888224));
-                PolygonPlace d= new PolygonPlace();
+                PolygonPlace d = new PolygonPlace();
                 d.setId(1).setName("TORRE 3C").setNum_max_people(10);
                 d.setCoordinate(dsea);
 

@@ -298,7 +298,6 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
 
 
-
         MutableLiveData<List<Organization>> list = new MutableLiveData<>(new ArrayList<>());
         Storage localStorage = new FileStorage("orgs.json", this, list);
         FavoritesSource preferitiRepository = null;
@@ -311,7 +310,7 @@ public class MainActivity extends AppCompatActivity {
                 .build();
         Obtainer webSource = new RESTObtainer(list, retrofit.create(RestApiService.class));
 
-         repository = new OrganizationsRepository(localStorage, webSource, preferitiRepository);
+        repository = new OrganizationsRepository(localStorage, webSource, preferitiRepository);
 
 
 //        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
@@ -342,7 +341,6 @@ public class MainActivity extends AppCompatActivity {
 //        };
 //        liveDataOrganizzazioni.observe(this,observer);
 //        Log.d(TAG,"size:"+liveDataOrganizzazioni.getValue().size());
-
 
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -402,7 +400,7 @@ public class MainActivity extends AppCompatActivity {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null)
             return;
-        AlertDialog.Builder builder = new AlertDialog.Builder(this,R.style.StalkerDialogTheme);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.StalkerDialogTheme);
 //        AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.modifica_dati);
         LayoutInflater inflater = this.getLayoutInflater();
@@ -460,12 +458,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void googleSignOut() {
         mGoogleSignInClient.signOut()
-                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        Toast.makeText(MainActivity.this, "Successufully logout", Toast.LENGTH_SHORT).show();
-                    }
-                });
+                .addOnCompleteListener(this, task ->
+                        Toast.makeText(MainActivity.this, R.string.successfully_logout, Toast.LENGTH_SHORT).show());
     }
 
     public void goToLoginActivity(boolean backButton) {

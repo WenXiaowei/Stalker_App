@@ -278,7 +278,7 @@
     <string name="elimina_account">Elimina account</string>
     <string name="luogo_cambiato">Luogo cambiato: %1$s</string>
     <string name="sei_in_tale_dei_tali">Sei in %s di \"%s\"!</string>
-    <string name="ok">Ok</string>
+    <string name="ok">OK</string>
     <string name="app_necessita_di_permessi">Ho bisogno dei permessi per funzionare!</string>
     <string name="permission_denied_explanation">Applicazione ha bisogno dei permessi!</string>
     <string name="settings">Impostazione</string>
@@ -302,4 +302,5 @@
     <string name="ask_mail_for_recupero_password">Inserisci la mail con la quale ti sei registrato/a all\'applicazione!</string>
     <string name="inserisci_le_credenziali_ldap">Inserisci le tue credenziali LDAP</string>
     <string name="prima_devi_fare_accesso">Devi prima fare accesso!</string>
+    <string name="successfully_logout">Successufully logout</string>
 </resources>
