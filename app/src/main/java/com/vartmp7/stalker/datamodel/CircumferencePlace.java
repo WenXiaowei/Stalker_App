@@ -239,8 +239,7 @@ public class CircumferencePlace extends AbstractPlace {
         if (this == o) return true;
         if (!(o instanceof CircumferencePlace)) return false;
         CircumferencePlace that = (CircumferencePlace) o;
-        return getCenter().equals(that.getCenter()) &&
-                getRaggio().equals(that.getRaggio());
+        return super.equals(o);
     }
 
     @Override

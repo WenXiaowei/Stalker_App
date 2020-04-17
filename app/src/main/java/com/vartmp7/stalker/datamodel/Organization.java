@@ -286,40 +286,6 @@ public class Organization implements Serializable {
     @Accessors(chain = true)
     private List<PolygonPlace> places = new ArrayList<>();
 
-    public Organization setPlaces(List<PolygonPlace> places){
-        this.places = places;
-        this.places.forEach(p-> p.setOrgId(id));
-        return this;
-    }
-    @Override
-    public String toString() {
-        return "Organization{" +
-                "address='" + address + '\'' +
-                ", city='" + city + '\'' +
-                ", email='" + email + '\'' +
-                ", id=" + id +
-                ", name='" + name + '\'' +
-                ", nation='" + nation + '\'' +
-                ", phone_number='" + phone_number + '\'' +
-                ", postal_code='" + postal_code + '\'' +
-                ", region='" + region + '\'' +
-                ", type='" + type + '\'' +
-                ", ldap_common_name='" + ldap_common_name + '\'' +
-                ", ldap_domain_component='" + ldap_domain_component + '\'' +
-                ", ldap_port=" + ldap_port +
-                ", ldap_url='" + ldap_url + '\'' +
-                ", image_url='" + image_url + '\'' +
-                ", places=" + places +
-                ", isFavorite=" + isFavorite +
-                ", isTracking=" + isTracking +
-                ", isLogged=" + isLogged +
-                ", isAnonymous=" + isAnonymous +
-                ", isTrackingActive=" + isTrackingActive +
-                ", personalCn='" + personalCn + '\'' +
-                ", ldapPassword='" + ldapPassword + '\'' +
-                '}';
-    }
-
     @Getter
     @Setter
     @Accessors(chain = true)
@@ -348,6 +314,42 @@ public class Organization implements Serializable {
     @Setter
     @Accessors(chain = true)
     private String ldapPassword;
+
+
+
+    public Organization setPlaces(List<PolygonPlace> places){
+        this.places = places;
+        this.places.forEach(p-> p.setOrgId(id));
+        return this;
+    }
+    @Override
+    public String toString() {
+        return "Organization{" +
+                "address='" + address + '\'' +
+                ", city='" + city + '\'' +
+                ", email='" + email + '\'' +
+                ", id=" + id +
+                ", name='" + name + '\'' +
+                ", nation='" + nation + '\'' +
+                ", phone_number='" + phone_number + '\'' +
+                ", postal_code='" + postal_code + '\'' +
+                ", region='" + region + '\'' +
+                ", type='" + type + '\'' +
+                ", ldap_common_name='" + ldap_common_name + '\'' +
+                ", ldap_domain_component='" + ldap_domain_component + '\'' +
+                ", ldap_port=" + ldap_port +
+                ", ldap_url='" + ldap_url + '\'' +
+                ", image_url='" + image_url + '\'' +
+                ", places=" + places +
+                ", isFavorite=" + isFavorite +
+                ", isTracking=" + isTracking +
+                ", isTrackingActive=" + isTrackingActive +
+                ", isLogged=" + isLogged +
+                ", isAnonymous=" + isAnonymous +
+                ", personalCn='" + personalCn + '\'' +
+                ", ldapPassword='" + ldapPassword + '\'' +
+                '}';
+    }
 
     @Override
     public int hashCode() {
