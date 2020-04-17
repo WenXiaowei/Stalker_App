@@ -370,7 +370,6 @@ public class Organization implements Serializable {
 
     public Organization setPlaces(List<PolygonPlace> places){
         this.places = places;
-        this.places.forEach(p-> p.setOrgId(id));
         return this;
     }
 

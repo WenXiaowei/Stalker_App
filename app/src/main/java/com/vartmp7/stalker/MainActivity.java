@@ -242,6 +242,8 @@ import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.vartmp7.stalker.datamodel.Organization;
 import com.vartmp7.stalker.repository.FavoritesSource;
 import com.vartmp7.stalker.repository.FileStorage;
@@ -270,7 +272,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String PREFERENCE_FILE = "stalker";
     public static final String PREFERENCE_NOT_LOGIN = "not_login";
     //    public static final String URL_SERVER="https://stalker-be.ddns.net/";
-    public static final String URL_SERVER = "https://192.168.43.13/";
+    public static final String URL_SERVER = "https://10.0.2.2/";
 
     private GoogleSignInClient mGoogleSignInClient;
 
@@ -304,6 +306,10 @@ public class MainActivity extends AppCompatActivity {
         if (FirebaseAuth.getInstance().getCurrentUser() != null || GoogleSignIn.getLastSignedInAccount(this) != null) {
             preferitiRepository = new FirebaseFavoritesSource(getUserId(), FirebaseFirestore.getInstance());
         }
+
+        GsonBuilder builder = new GsonBuilder().excludeFieldsWithoutExposeAnnotation();
+
+        Gson gson = builder.create();
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(URL_SERVER)
                 .client(Tools.getUnsafeOkHttpClient())

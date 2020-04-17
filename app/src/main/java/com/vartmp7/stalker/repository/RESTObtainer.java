@@ -251,13 +251,14 @@ public class RESTObtainer implements Obtainer {
             @SneakyThrows
             @Override
             public void onResponse(@NotNull Call<OrganizationResponse> call, @NotNull Response<OrganizationResponse> response) {
+                Log.d(TAG, "onResponse: "+response.body().getOrganizations());
                 List<Organization> organizations1 = response.body().getOrganizations();
                 mutableLiveDataOrganizzazioni.postValue(organizations1);
             }
 
             @Override
             public void onFailure(@NotNull Call<OrganizationResponse> call, @NotNull Throwable throwable) {
-
+                Log.d(TAG, "onFailure: "+throwable.getMessage());
                 ArrayList<Coordinate> torreArchimede = new ArrayList<>();
                 torreArchimede.add(new Coordinate(45.411555, 11.887476));
                 torreArchimede.add(new Coordinate(45.411442, 11.887942));
