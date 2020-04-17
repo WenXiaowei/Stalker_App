@@ -205,6 +205,7 @@
 package com.vartmp7.stalker.datamodel;
 
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -315,36 +316,9 @@ public class Organization implements Serializable {
     @Accessors(chain = true)
     private String ldapPassword;
 
-
-
-    public Organization setPlaces(List<PolygonPlace> places){
-        this.places = places;
-        this.places.forEach(p-> p.setOrgId(id));
-        return this;
-    }
+    @NotNull
     @Override
     public String toString() {
-        Objects.nonNull(address);
-        Objects.nonNull(city);
-        Objects.nonNull(email);
-        Objects.nonNull(id);
-        Objects.nonNull(nation);
-        Objects.nonNull(phone_number);
-        Objects.nonNull(postal_code);
-        Objects.nonNull(region);
-        Objects.nonNull(type);
-        Objects.nonNull(ldap_common_name);
-        Objects.nonNull(ldap_domain_component);
-        Objects.nonNull(ldap_port);
-        Objects.nonNull(ldap_url);
-        Objects.nonNull(image_url);
-        Objects.nonNull(places);
-        Objects.nonNull(isTracking);
-        Objects.nonNull(isTrackingActive);
-        Objects.nonNull(isLogged);
-        Objects.nonNull(isAnonymous);
-        Objects.nonNull(personalCn);
-        Objects.nonNull(ldapPassword);
         return "Organization{" +
                 "address='" + address + '\'' +
                 ", city='" + city + '\'' +
@@ -364,24 +338,14 @@ public class Organization implements Serializable {
                 ", places=" + places +
                 ", isFavorite=" + isFavorite +
                 ", isTracking=" + isTracking +
-                ", isTrackingActive=" + isTrackingActive +
                 ", isLogged=" + isLogged +
                 ", isAnonymous=" + isAnonymous +
+                ", isTrackingActive=" + isTrackingActive +
                 ", personalCn='" + personalCn + '\'' +
                 ", ldapPassword='" + ldapPassword + '\'' +
                 '}';
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(getAddress(), getCity(), getEmail(), getId(), getName(), getNation(), getPhone_number(), getPostal_code(), getRegion(), getType(), getLdap_common_name(), getLdap_domain_component(), getLdap_port(), getLdap_url(), getImage_url(), getPlaces(), isFavorite(), isTracking(), isLogged(), isAnonymous(), isTrackingActive(), getPersonalCn(), getLdapPassword());
-    }
-
-    public Organization() {
-    }
-
-
-    @Contract(value = "null -> false", pure = true)
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -389,6 +353,21 @@ public class Organization implements Serializable {
         Organization that = (Organization) o;
         return getId() == that.getId();
     }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId());
+    }
+
+    public Organization setPlaces(List<PolygonPlace> places){
+        this.places = places;
+        this.places.forEach(p-> p.setOrgId(id));
+        return this;
+    }
+
+    public Organization() {
+    }
+
 
     public String getPlacesInfo() {
         StringBuilder builder = new StringBuilder();
