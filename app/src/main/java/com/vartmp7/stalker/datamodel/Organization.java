@@ -324,6 +324,27 @@ public class Organization implements Serializable {
     }
     @Override
     public String toString() {
+        Objects.nonNull(address);
+        Objects.nonNull(city);
+        Objects.nonNull(email);
+        Objects.nonNull(id);
+        Objects.nonNull(nation);
+        Objects.nonNull(phone_number);
+        Objects.nonNull(postal_code);
+        Objects.nonNull(region);
+        Objects.nonNull(type);
+        Objects.nonNull(ldap_common_name);
+        Objects.nonNull(ldap_domain_component);
+        Objects.nonNull(ldap_port);
+        Objects.nonNull(ldap_url);
+        Objects.nonNull(image_url);
+        Objects.nonNull(places);
+        Objects.nonNull(isTracking);
+        Objects.nonNull(isTrackingActive);
+        Objects.nonNull(isLogged);
+        Objects.nonNull(isAnonymous);
+        Objects.nonNull(personalCn);
+        Objects.nonNull(ldapPassword);
         return "Organization{" +
                 "address='" + address + '\'' +
                 ", city='" + city + '\'' +
