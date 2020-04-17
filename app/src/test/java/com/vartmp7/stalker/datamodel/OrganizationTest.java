@@ -294,8 +294,8 @@ public class OrganizationTest {
     @Test
     public void testEqualsHashCode() {
         assertEquals(org, organization);
-        assertEquals(org.toString(), org.toString());
-        assertEquals(org.hashCode(), org.hashCode());
+        assertEquals(organization.toString(), organization.toString());
+        assertEquals(organization.hashCode(), organization.hashCode());
 
     }
 
