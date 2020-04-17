@@ -219,9 +219,7 @@ public class TrackSignalTest {
     private  static final long idPlace=0;
     private  static final boolean entered=false;
     private  static final boolean authenticated=false;
-    private  static final long uid_number=1;
     private  static final String username="username";
-    private  static final String surname="surname";
     private  static final String date_time="2020-03-19";
 
     private static final TrackSignal trackSignal= new TrackSignal()
@@ -230,7 +228,7 @@ public class TrackSignalTest {
             .setIdPlace(idPlace)
             .authenticated(authenticated)
             .username(username)
-            .date_time(date_time);
+            .dateTime(date_time);
 
     private TrackSignal signal ;
     private TrackSignal signal2 ;
@@ -244,14 +242,14 @@ public class TrackSignalTest {
                 .setIdPlace(idPlace)
                 .authenticated(authenticated)
                 .username(username)
-                .date_time(date_time);
+                .dateTime(date_time);
         signal2= new TrackSignal()
                 .idOrganization(idOrganization)
                 .entered(entered)
                 .setIdPlace(idPlace)
                 .authenticated(authenticated)
                 .username(username)
-                .date_time(date_time);
+                .dateTime(date_time);
     }
 
     @Test
@@ -264,7 +262,7 @@ public class TrackSignalTest {
                 .setIdPlace(idPlace)
                 .authenticated(authenticated)
                 .username(username)
-                .date_time(date_time);
+                .dateTime(date_time);
     }
 
 

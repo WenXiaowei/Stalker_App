@@ -264,7 +264,7 @@ public class RESTObtainer implements Obtainer {
                 torreArchimede.add(new Coordinate(45.411108, 11.887787));
                 torreArchimede.add(new Coordinate(45.411222, 11.887319));
                 PolygonPlace t = new PolygonPlace();
-                t.setId(1).setName("Torre Archimede").setNum_max_people(10);
+                t.setId(1).setName("Torre Archimede").setNumMaxPeople(10);
                 t.setCoordinates(torreArchimede).setOrgId(1);
 
                 ArrayList<Coordinate> dsea = new ArrayList<>();
@@ -273,7 +273,7 @@ public class RESTObtainer implements Obtainer {
                 dsea.add(new Coordinate(45.411341, 11.888381));
                 dsea.add(new Coordinate(45.411284, 11.888224));
                 PolygonPlace d = new PolygonPlace();
-                d.setId(1).setName("TORRE 3C").setNum_max_people(10);
+                d.setId(1).setName("TORRE 3C").setNumMaxPeople(10);
                 d.setCoordinates(dsea).setOrgId(2);
 
 
@@ -286,15 +286,15 @@ public class RESTObtainer implements Obtainer {
                                 .setCity("Padova")
                                 .setRegion("Padova")
                                 .setNation("IT")
-                                .setPostal_code("35921")
-                                .setPhone_number("049********")
-                                .setLdap_domain_component("dc=daf,dc=test,dc=it")
-                                .setLdap_common_name("")
-                                .setLdap_port(389)
+                                .setPostalCode("35921")
+                                .setPhoneNumber("049********")
+                                .setLdapDomainComponent("dc=daf,dc=test,dc=it")
+                                .setLdapCommonName("")
+                                .setLdapPort(389)
                                 .setType("public")
                                 .setEmail("info@math.unipd.it")
 //                                .setImage_url("https://upload.wikimedia.org/wikipedia/it/thumb/5/53/Logo_Universit%C3%A0_Padova.svg/1200px-Logo_Universit%C3%A0_Padova.svg.png")
-                                .setImage_url("https://pbs.twimg.com/profile_images/1173976802416582657/LCZXVSqH_400x400.jpg")
+                                .setImageUrl("https://pbs.twimg.com/profile_images/1173976802416582657/LCZXVSqH_400x400.jpg")
                                 .setPlaces(Collections.singletonList(t)),
 //                        new Organization()
 //                                .setId(count + 1)
@@ -306,13 +306,13 @@ public class RESTObtainer implements Obtainer {
                                 .setId(2)
                                 .setName("UNIPD dSeA")
                                 .setTracking(false)
-                                .setImage_url("https://www.economia.unipd.it/sites/economia.unipd.it/files/img-logo-trentennale-dsea-big.png")
+                                .setImageUrl("https://www.economia.unipd.it/sites/economia.unipd.it/files/img-logo-trentennale-dsea-big.png")
                                 .setPlaces(Collections.singletonList(d)),
                         new Organization()
                                 .setId(count + 3)
                                 .setName("UNIPD DSFARM")
                                 .setTracking(true)
-                                .setImage_url("https://www.dsfarm.unipd.it/sites/dsfarm.unipd.it/files/sublogo_9.png")
+                                .setImageUrl("https://www.dsfarm.unipd.it/sites/dsfarm.unipd.it/files/sublogo_9.png")
                                 .setPlaces(Collections.singletonList(t))
                 );
                 orgs.forEach(o -> Log.d(TAG, "onFailure: " + o.getId()));

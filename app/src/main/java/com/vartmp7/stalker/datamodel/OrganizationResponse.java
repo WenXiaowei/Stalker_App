@@ -204,6 +204,8 @@
 
 package com.vartmp7.stalker.datamodel;
 
+import com.google.gson.annotations.SerializedName;
+
 import org.jetbrains.annotations.Contract;
 
 import java.util.ArrayList;

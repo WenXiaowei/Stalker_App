@@ -204,6 +204,8 @@
 
 package com.vartmp7.stalker.datamodel;
 
+import com.google.gson.annotations.SerializedName;
+
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -250,11 +252,13 @@ public class Organization implements Serializable {
     @Getter
     @Setter
     @Accessors(chain = true)
-    private String phone_number;
+    @SerializedName(value = "phone_number")
+    private String phoneNumber;
     @Getter
     @Setter
     @Accessors(chain = true)
-    private String postal_code;
+    @SerializedName(value = "postal_code")
+    private String postalCode;
     @Getter
     @Setter
     @Accessors(chain = true)
@@ -266,23 +270,28 @@ public class Organization implements Serializable {
     @Getter
     @Setter
     @Accessors(chain = true)
-    private String ldap_common_name;
+    @SerializedName(value = "ldap_common_name")
+    private String ldapCommonName;
     @Getter
     @Setter
     @Accessors(chain = true)
-    private String ldap_domain_component;
+    @SerializedName(value = "ldap_domain_component")
+    private String ldapDomainComponent;
     @Getter
     @Setter
     @Accessors(chain = true)
-    private int ldap_port=389;
+    @SerializedName(value = "ldap_port")
+    private int ldapPort=389;
     @Getter
     @Setter
     @Accessors(chain = true)
-    private String ldap_url;
+    @SerializedName(value = "ldap_url")
+    private String ldapUrl;
     @Getter
     @Setter
     @Accessors(chain = true)
-    private String image_url;
+    @SerializedName(value = "image_url")
+    private String imageUrl;
     @Getter
     @Accessors(chain = true)
     private List<PolygonPlace> places = new ArrayList<>();
@@ -326,15 +335,15 @@ public class Organization implements Serializable {
                 ", id=" + id +
                 ", name='" + name + '\'' +
                 ", nation='" + nation + '\'' +
-                ", phone_number='" + phone_number + '\'' +
-                ", postal_code='" + postal_code + '\'' +
+                ", phone_number='" + phoneNumber + '\'' +
+                ", postal_code='" + postalCode + '\'' +
                 ", region='" + region + '\'' +
                 ", type='" + type + '\'' +
-                ", ldap_common_name='" + ldap_common_name + '\'' +
-                ", ldap_domain_component='" + ldap_domain_component + '\'' +
-                ", ldap_port=" + ldap_port +
-                ", ldap_url='" + ldap_url + '\'' +
-                ", image_url='" + image_url + '\'' +
+                ", ldap_common_name='" + ldapCommonName + '\'' +
+                ", ldap_domain_component='" + ldapDomainComponent + '\'' +
+                ", ldap_port=" + ldapPort +
+                ", ldap_url='" + ldapUrl + '\'' +
+                ", image_url='" + imageUrl + '\'' +
                 ", places=" + places +
                 ", isFavorite=" + isFavorite +
                 ", isTracking=" + isTracking +
@@ -375,7 +384,7 @@ public class Organization implements Serializable {
         getPlaces().forEach(polygonPlace -> builder.append("Nome Luogo: ")
                 .append(polygonPlace.getName())
                 .append(", Num. persone massimo: ")
-                .append(polygonPlace.getNum_max_people()).append("\n"));
+                .append(polygonPlace.getNumMaxPeople()).append("\n"));
         return builder.toString();
     }
 

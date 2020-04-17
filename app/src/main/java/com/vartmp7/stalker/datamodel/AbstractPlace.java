@@ -204,6 +204,7 @@
 
 package com.vartmp7.stalker.datamodel;
 
+import com.google.gson.annotations.SerializedName;
 import com.vartmp7.stalker.datamodel.placecomponent.Coordinate;
 
 import lombok.Getter;
@@ -226,7 +227,8 @@ public abstract class AbstractPlace {
     @Getter
     @Setter
     @Accessors(chain = true)
-    private long num_max_people;
+    @SerializedName(value = "num_max_people")
+    private long numMaxPeople;
     @Getter
     @Setter
     @Accessors(chain = true)
@@ -234,7 +236,7 @@ public abstract class AbstractPlace {
 
     AbstractPlace(long id, String name, long num_max_people) {
         this(id, name);
-        this.num_max_people = num_max_people;
+        this.numMaxPeople = num_max_people;
     }
 
     AbstractPlace(long id, String name) {

@@ -326,7 +326,7 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
 
 
         Glide.with(context)
-                .load(org.getImage_url())
+                .load(org.getImageUrl())
                 .fitCenter()
                 .into(holder.civIconOrganizzazione);
 
@@ -370,18 +370,18 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
                     EditText etUsername = d.findViewById(R.id.etCN);
                     EditText etPassword = d.findViewById(R.id.etPassword);
                     String url = "cn=" + etUsername.getText().toString();
-                    if (organization.getLdap_common_name() != null && !organization.getLdap_common_name().equals("")) {
-                        url += "," + organization.getLdap_common_name();
+                    if (organization.getLdapCommonName() != null && !organization.getLdapCommonName().equals("")) {
+                        url += "," + organization.getLdapCommonName();
                     }
-                    if (organization.getLdap_domain_component() != null && !organization.getLdap_domain_component().equals(""))
-                        url += "," + organization.getLdap_domain_component();
+                    if (organization.getLdapDomainComponent() != null && !organization.getLdapDomainComponent().equals(""))
+                        url += "," + organization.getLdapDomainComponent();
 
 
                     // todo sostituire il server address con organization.getLdap_url() e getLdap_port()
 //            StalkerLDAP ldap = new StalkerLDAP(organization.getLdap_url(),organization.getLdap_port(),
 //                    url,etPassword.getText().toString());
 
-                    StalkerLDAP ldap = new StalkerLDAP("10.0.2.2", organization.getLdap_port(),
+                    StalkerLDAP ldap = new StalkerLDAP("10.0.2.2", organization.getLdapPort(),
                             url, etPassword.getText().toString());
                     try {
                         ldap.bind();

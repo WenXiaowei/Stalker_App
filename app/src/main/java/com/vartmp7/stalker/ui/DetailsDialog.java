@@ -233,7 +233,7 @@ public class DetailsDialog {
 
         View v = LayoutInflater.from(context).inflate(R.layout.detail_view, null);
         CircleImageView iv = v.findViewById(R.id.ivIconOrganizzazione);
-        Glide.with(context).load(org.getImage_url()).into(iv);
+        Glide.with(context).load(org.getImageUrl()).into(iv);
 
         if (org.getType().equals("public"))
             v.findViewById(R.id.llLDAP).setVisibility(View.GONE);
@@ -245,21 +245,21 @@ public class DetailsDialog {
                 R.string.template_indirizzo,
                 org.getAddress(),
                 org.getCity(),
-                org.getPostal_code(),
+                org.getPostalCode(),
                 org.getRegion(),
                 org.getNation()));
         TextView tvNum = v.findViewById(R.id.tvNumeroTelefonico);
-        tvNum.setText(org.getPhone_number());
+        tvNum.setText(org.getPhoneNumber());
         TextView tvTipo = v.findViewById(R.id.tvTipoOrganizzazione);
         tvTipo.setText(org.getType());
         TextView tvEmail = v.findViewById(R.id.tvEmail);
         tvEmail.setText(org.getEmail());
         TextView tvInfo = v.findViewById(R.id.tvInfoLDAP);
         tvInfo.setText(context.getString(R.string.template_ldap,
-                org.getLdap_url(),
-                org.getLdap_port(),
-                org.getLdap_domain_component(),
-                org.getLdap_common_name()));
+                org.getLdapUrl(),
+                org.getLdapPort(),
+                org.getLdapDomainComponent(),
+                org.getLdapCommonName()));
         TextView tvLuoghi = v.findViewById(R.id.tvElencoLuoghi);
         tvLuoghi.setText(org.getPlacesInfo());
 //        detailDialog.setPositiveButton(R.string.tracciami, (dialog, which) -> {

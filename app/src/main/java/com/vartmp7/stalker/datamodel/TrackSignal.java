@@ -205,6 +205,7 @@
 package com.vartmp7.stalker.datamodel;
 
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 import org.jetbrains.annotations.Contract;
 
@@ -238,7 +239,8 @@ public class TrackSignal {
     @Setter
     @Accessors(fluent = true)
     @Expose
-    private String auth_type=LDAP_V3;
+    @SerializedName(value = "auth_type")
+    private String authType=LDAP_V3;
 
 
 
@@ -255,7 +257,8 @@ public class TrackSignal {
     @Setter
     @Accessors(fluent = true)
     @Expose
-    private String date_time;
+    @SerializedName(value = "date_time")
+    private String dateTime;
 
     @Setter
     @Accessors(fluent = true)
@@ -280,10 +283,10 @@ public class TrackSignal {
         return "TrackSignal{" +
                 "idOrganization=" + idOrganization +
                 ", idPlace=" + idPlace +
-                ", auth_type='" + auth_type + '\'' +
+                ", auth_type='" + authType + '\'' +
                 ", entered=" + entered +
                 ", authenticated=" + authenticated +
-                ", date_time='" + date_time + '\'' +
+                ", date_time='" + dateTime + '\'' +
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 '}';
@@ -299,22 +302,22 @@ public class TrackSignal {
                 idPlace == that.idPlace &&
                 entered == that.entered &&
                 authenticated == that.authenticated &&
-                Objects.equals(auth_type, that.auth_type) &&
-                Objects.equals(date_time, that.date_time) &&
+                Objects.equals(authType, that.authType) &&
+                Objects.equals(dateTime, that.dateTime) &&
                 Objects.equals(username, that.username) &&
                 Objects.equals(password, that.password);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(idOrganization, idPlace, auth_type, entered, authenticated, date_time, username, password);
+        return Objects.hash(idOrganization, idPlace, authType, entered, authenticated, dateTime, username, password);
     }
 
     public TrackSignal(boolean en, boolean au, long uid, String user, String date) {
         entered = en;
         authenticated = au;
         username = user;
-        date_time = date;
+        dateTime = date;
     }
     public TrackSignal setIdPlace(long idPlace) {
         this.idPlace = idPlace;

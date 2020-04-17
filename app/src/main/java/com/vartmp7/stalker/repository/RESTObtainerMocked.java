@@ -288,17 +288,17 @@ public class RESTObtainerMocked implements Obtainer {
                 torreArchimede.add(new Coordinate(45.411108, 11.887787));
                 torreArchimede.add(new Coordinate(45.411222, 11.887319));
                 PolygonPlace t = new PolygonPlace();
-                t.setId(1).setName("org").setNum_max_people(10);
+                t.setId(1).setName("org").setNumMaxPeople(10);
                 t.setCoordinates(torreArchimede);
 
                 List<Organization> orgs = Arrays.asList(
-                        new Organization().setId(count).setName("unipd" + count).setTracking(true).setImage_url("https://cdn.discordapp.com/attachments/690970576415621201/691008560363995208/Schermata_2020-03-21_alle_20.41.13.png")
+                        new Organization().setId(count).setName("unipd" + count).setTracking(true).setImageUrl("https://cdn.discordapp.com/attachments/690970576415621201/691008560363995208/Schermata_2020-03-21_alle_20.41.13.png")
                                 .setPlaces(Collections.singletonList(t)),
-                        new Organization().setId(count + 1).setName("unipd" + (count + 1)).setTracking(true).setImage_url("https://cdn.discordapp.com/attachments/690970576415621201/691008560363995208/Schermata_2020-03-21_alle_20.41.13.png")
+                        new Organization().setId(count + 1).setName("unipd" + (count + 1)).setTracking(true).setImageUrl("https://cdn.discordapp.com/attachments/690970576415621201/691008560363995208/Schermata_2020-03-21_alle_20.41.13.png")
                                 .setPlaces(Collections.singletonList(t)),
-                        new Organization().setId(count + 2).setName("unipd" + (count + 2)).setTracking(true).setImage_url("https://cdn.discordapp.com/attachments/690970576415621201/691008560363995208/Schermata_2020-03-21_alle_20.41.13.png")
+                        new Organization().setId(count + 2).setName("unipd" + (count + 2)).setTracking(true).setImageUrl("https://cdn.discordapp.com/attachments/690970576415621201/691008560363995208/Schermata_2020-03-21_alle_20.41.13.png")
                                 .setPlaces(Collections.singletonList(t)),
-                        new Organization().setId(count + 3).setName("unipd" + (count + 3)).setTracking(true).setImage_url("https://cdn.discordapp.com/attachments/690970576415621201/691008560363995208/Schermata_2020-03-21_alle_20.41.13.png")
+                        new Organization().setId(count + 3).setName("unipd" + (count + 3)).setTracking(true).setImageUrl("https://cdn.discordapp.com/attachments/690970576415621201/691008560363995208/Schermata_2020-03-21_alle_20.41.13.png")
                                 .setPlaces(Collections.singletonList(t))
                         );
                 orgs.forEach(o -> Log.d(TAG, "onFailure: " + o.getId()));

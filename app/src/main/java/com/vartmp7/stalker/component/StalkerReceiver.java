@@ -243,13 +243,13 @@ public class StalkerReceiver extends BroadcastReceiver {
     private RestApiService service;
     private Organization organization = null;
 
-    public StalkerReceiver(List<Organization> orgs, RestApiService service) {
+    public StalkerReceiver(@NotNull List<Organization> orgs, @NotNull RestApiService service) {
         this.organizations = orgs;
         this.service = service;
         trackSignal = new TrackSignal();
     }
 
-    public void setOrganizations(List<Organization> organizations) {
+    public void setOrganizations(@NotNull List<Organization> organizations) {
         this.organizations = organizations;
     }
 
@@ -261,6 +261,7 @@ public class StalkerReceiver extends BroadcastReceiver {
             Toast.makeText(context,"new Location", Toast.LENGTH_SHORT).show();
         }
     }
+    @NotNull
     private String getFormattedTime(){
         SimpleDateFormat format = new SimpleDateFormat("Y-M-d hh:mm:ss");
         Date date = Calendar.getInstance(Locale.getDefault()).getTime();
@@ -274,7 +275,7 @@ public class StalkerReceiver extends BroadcastReceiver {
         Optional<PolygonPlace> opti = places.stream().filter(polygonPlace -> polygonPlace.isInside(currentCoordinate)).findFirst();
 
 
-        trackSignal.date_time(getFormattedTime());
+        trackSignal.dateTime(getFormattedTime());
 
 
         if (opti.isPresent()) {

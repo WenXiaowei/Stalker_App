@@ -248,7 +248,7 @@ public class PolygonPlace extends AbstractPlace {
         return "\nid: " + getId() +
                 "\nOrgId: " + getOrgId() +
                 "\nNome: " + getName() +
-                "\nNum. Max Persone " + getNum_max_people() +
+                "\nNum. Max Persone " + getNumMaxPeople() +
                 "\nCoordinate: " + getCoordinates().toString();
     }
 

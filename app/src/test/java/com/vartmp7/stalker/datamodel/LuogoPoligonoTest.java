@@ -250,12 +250,12 @@ public class LuogoPoligonoTest {
     }
     @Test
     public void testConstructor4params(){
-        PolygonPlace l = new PolygonPlace(luogo.getId(),luogo.getName(),luogo.getNum_max_people(),luogo.getCoordinates());
+        PolygonPlace l = new PolygonPlace(luogo.getId(),luogo.getName(),luogo.getNumMaxPeople(),luogo.getCoordinates());
 
         assertEquals(l.getId(),luogo.getId() );
         assertEquals(l.getName(), luogo.getName());
         assertEquals(l.getCoordinates(), luogo.getCoordinates());
-        assertEquals(l.getNum_max_people(), luogo.getNum_max_people());
+        assertEquals(l.getNumMaxPeople(), luogo.getNumMaxPeople());
     }
     @Test
     public void testConstructor3params(){
@@ -282,7 +282,7 @@ public class LuogoPoligonoTest {
         torreArchimede.add(new Coordinate(45.411108, 11.887787));
         torreArchimede.add(new Coordinate(45.411222, 11.887319));
         PolygonPlace t = new PolygonPlace();
-        t.setId(1).setName("org").setNum_max_people(10);
+        t.setId(1).setName("org").setNumMaxPeople(10);
         t.setCoordinates(torreArchimede);
 
 
@@ -292,7 +292,7 @@ public class LuogoPoligonoTest {
         inail.add(new Coordinate(45.411730, 11.887650));
         inail.add(new Coordinate(45.411544, 11.887106));
         PolygonPlace i = new PolygonPlace();
-        i.setId(1).setName("org").setNum_max_people(10);
+        i.setId(1).setName("org").setNumMaxPeople(10);
         i.setCoordinates(inail);
 
 
@@ -302,7 +302,7 @@ public class LuogoPoligonoTest {
         dsea.add(new Coordinate(45.411341, 11.888381));
         dsea.add(new Coordinate(45.411284, 11.888224));
         PolygonPlace d= new PolygonPlace();
-        d.setId(1).setName("org").setNum_max_people(10);
+        d.setId(1).setName("org").setNumMaxPeople(10);
         d.setCoordinates(dsea);
 
         return Arrays.asList(new Object[][]{

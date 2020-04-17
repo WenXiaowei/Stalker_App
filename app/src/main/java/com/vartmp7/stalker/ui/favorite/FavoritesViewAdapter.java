@@ -259,7 +259,7 @@ public class FavoritesViewAdapter extends RecyclerView.Adapter<FavoritesViewAdap
         Organization org = organizzazioni.get(position);
         Glide.with(context)
                 .setDefaultRequestOptions(new RequestOptions().error(R.drawable.icon_stalker))
-                .load(organizzazioni.get(position).getImage_url())
+                .load(organizzazioni.get(position).getImageUrl())
                 .into(holder.civIconaOrganizzazione);
 
         holder.tvNomeOrganizzazione.setText(org.getName());
