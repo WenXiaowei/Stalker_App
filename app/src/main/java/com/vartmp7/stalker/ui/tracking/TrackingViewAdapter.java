@@ -229,6 +229,7 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.unboundid.ldap.sdk.LDAPException;
 import com.vartmp7.stalker.R;
 import com.vartmp7.stalker.component.NotLogged;
@@ -291,13 +292,15 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
                     }
                     break;
                 case R.id.btnLoginLDAP:
+
                     if (!org.isLogged()) {
                         showLDAPLoginDialog((Button) v, holder.sAnonimo, org);
                     } else {
                         org.setLogged(false);
                         ((Button) v).setText(R.string.login_ldap);
-                        holder.sAnonimo.setChecked(false);
+
                         holder.sAnonimo.setEnabled(false);
+                        holder.sAnonimo.setChecked(false);
                     }
                     break;
                 case R.id.ibtnAddToPreferiti:
@@ -326,11 +329,22 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
 
 
         Glide.with(context)
+                .setDefaultRequestOptions(new RequestOptions().error(R.drawable.logo_unipd))
                 .load(org.getImageUrl())
                 .fitCenter()
-                .into(holder.civIconOrganizzazione);
+               .into(holder.civIconOrganizzazione);
 
         holder.btnTracciami.setOnClickListener(listener);
+
+        if (org.getType().equalsIgnoreCase("public")){
+            holder.sAnonimo.setVisibility(View.GONE);
+            holder.btnLoginLDAP.setVisibility(View.GONE);
+        }else{
+            holder.sAnonimo.setVisibility(View.VISIBLE);
+            holder.btnLoginLDAP.setVisibility(View.VISIBLE);
+        }
+
+
 
         if (org.isTrackingActive()) {
             holder.ibtnTrackingStatus.setImageResource(R.drawable.ic_tracking_on);

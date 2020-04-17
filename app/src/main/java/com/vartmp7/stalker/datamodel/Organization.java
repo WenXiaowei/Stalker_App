@@ -291,7 +291,7 @@ public class Organization implements Serializable {
     @Setter
     @Accessors(chain = true)
     @SerializedName(value = "image_url")
-    private String imageUrl;
+    private String imageUrl="https://res.cloudinary.com/dyz86jubl/image/upload/v1587155106/iu_uvy5az.jpg";
     @Getter
     @Accessors(chain = true)
     private List<PolygonPlace> places = new ArrayList<>();

@@ -254,7 +254,7 @@ public class StalkerReceiver extends BroadcastReceiver {
         Location location = intent.getParcelableExtra(StalkerTrackingService.EXTRA_LOCATION);
         if (location != null) {
             onLocationsChanged(location);
-            Toast.makeText(context, "new Location", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(context, "new Location", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -284,7 +284,7 @@ public class StalkerReceiver extends BroadcastReceiver {
             optionalOrganization.ifPresent(value -> organization = value);
 
             if (previousPlace == null) {
-                Log.d(TAG, "onLocationsChanged: prevPlace ==null");
+//                Log.d(TAG, "onLocationsChanged: prevPlace ==null");
                 previousPlace = place;
                 trackSignal.setIdPlace(previousPlace.getId())
                         .entered(true)
@@ -294,7 +294,7 @@ public class StalkerReceiver extends BroadcastReceiver {
                         .idOrganization(place.getOrgId());
                 sendSignal(trackSignal);
             } else if (previousPlace != place) {
-                Log.d(TAG, "onLocationsChanged: prevPlace !=null");
+//                Log.d(TAG, "onLocationsChanged: prevPlace !=null");
                 trackSignal.entered(false)
                         .setIdPlace(previousPlace.getId());
                 sendSignal(trackSignal);
@@ -306,18 +306,20 @@ public class StalkerReceiver extends BroadcastReceiver {
                         .idOrganization(place.getOrgId());
                 sendSignal(trackSignal);
                 previousPlace = place;
-            } else {
-                Log.d(TAG, "onLocationsChanged: No conditions");
             }
+//            else {
+//                Log.d(TAG, "onLocationsChanged: No conditions");
+//            }
         } else {
             if (previousPlace!=null){
                 Log.d(TAG, "onLocationsChanged: opti.isPresent = false");
                 trackSignal.entered(false);
                 sendSignal(trackSignal);
                 previousPlace = null;
-            }else{
-                Log.d(TAG, "onLocationsChanged() called with: ");
             }
+//            else{
+//                Log.d(TAG, "onLocationsChanged() called with: ");
+//            }
         }
 
     }
