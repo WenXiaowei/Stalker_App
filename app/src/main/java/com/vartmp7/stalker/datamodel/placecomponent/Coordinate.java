@@ -289,5 +289,4 @@ public class Coordinate {
         return R * c1; // returns the distance in meter
     }
 
-    ;
 }

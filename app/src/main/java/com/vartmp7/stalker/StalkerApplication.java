@@ -206,7 +206,6 @@ package com.vartmp7.stalker;
 
 import android.app.Application;
 
-import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 import com.onesignal.OneSignal;
 

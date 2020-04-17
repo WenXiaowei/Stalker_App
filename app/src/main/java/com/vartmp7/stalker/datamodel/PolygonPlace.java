@@ -236,8 +236,8 @@ public class PolygonPlace extends AbstractPlace {
 
     }
 
-    PolygonPlace(long id, String name, long num_max_people, List<Coordinate> coordinates) {
-        super(id, name, num_max_people);
+    PolygonPlace(long id, String name, long num, List<Coordinate> coordinates) {
+        super(id, name, num);
         this.coordinates = coordinates;
     }
 

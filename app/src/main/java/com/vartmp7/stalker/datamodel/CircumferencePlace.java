@@ -268,8 +268,8 @@ public class CircumferencePlace extends AbstractPlace {
         this.raggio = raggio;
     }
 
-    CircumferencePlace(long id, String name, Coordinate center, double raggio, long num_max_people) {
-        super(id, name, num_max_people);
+    CircumferencePlace(long id, String name, Coordinate center, double raggio, long num) {
+        super(id, name, num);
         this.center = center;
         this.raggio = raggio;
     }

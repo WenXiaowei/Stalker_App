@@ -222,7 +222,8 @@ public class Line {
     }
 
     private double q;
-    private Coordinate a, b;
+    private Coordinate a;
+    private Coordinate b;
 
     public Line(Coordinate c1, Coordinate c2) {
         this.m = (c2.getLatitude() - c1.getLatitude()) / (c2.getLongitude() - c1.getLongitude());

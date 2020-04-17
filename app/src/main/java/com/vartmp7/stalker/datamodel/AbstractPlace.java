@@ -201,7 +201,6 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-
 package com.vartmp7.stalker.datamodel;
 
 import com.google.gson.annotations.SerializedName;
@@ -234,9 +233,9 @@ public abstract class AbstractPlace {
     @Accessors(chain = true)
     private long orgId;
 
-    AbstractPlace(long id, String name, long num_max_people) {
+    AbstractPlace(long id, String name, long num) {
         this(id, name);
-        this.numMaxPeople = num_max_people;
+        this.numMaxPeople = num;
     }
 
     AbstractPlace(long id, String name) {
@@ -244,6 +243,6 @@ public abstract class AbstractPlace {
         this.name = name;
     }
     abstract Coordinate getCenter();
-    abstract public double distanceTo(Coordinate c);
-    abstract public boolean isInside(Coordinate c);
+    abstract  double distanceTo(Coordinate c);
+    abstract  boolean isInside(Coordinate c);
 }
