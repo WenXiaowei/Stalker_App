@@ -321,8 +321,7 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
                     }
                     break;
                 case R.id.sAnonymousSwitch:
-                    holder.sAnonimo.isActivated();
-                    viewModel.updateOrganization(org.setAnonymous(holder.sAnonimo.isActivated()));
+                    viewModel.updateOrganization(org.setAnonymous(holder.sAnonimo.isChecked()));
                     break;
             }
         };

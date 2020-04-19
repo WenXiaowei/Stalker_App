@@ -269,9 +269,9 @@ public class StalkerReceiver extends BroadcastReceiver {
     private void onLocationsChanged(@NotNull Location l) {
         Coordinate currentCoordinate = new Coordinate(l.getLatitude(), l.getLongitude());
         List<PolygonPlace> places = new ArrayList<>();
-        organizations.forEach(organization ->{
-            List<PolygonPlace> orgPlaces = organization.getPlaces();
-            orgPlaces.forEach(e-> e.setOrgId(organization.getId()));
+        organizations.forEach(elOrganizations ->{
+            List<PolygonPlace> orgPlaces = elOrganizations.getPlaces();
+            orgPlaces.forEach(e-> e.setOrgId(elOrganizations.getId()));
             places.addAll(orgPlaces);
         } );
         Optional<PolygonPlace> opti = places.stream().filter(polygonPlace -> polygonPlace.isInside(currentCoordinate)).findFirst();
@@ -280,6 +280,7 @@ public class StalkerReceiver extends BroadcastReceiver {
 
         if (opti.isPresent()) {
             PolygonPlace place = opti.get();
+
             Optional<Organization> optionalOrganization = organizations.stream().filter(organization -> organization.getId() == place.getOrgId()).findFirst();
             optionalOrganization.ifPresent(value -> organization = value);
 
@@ -288,7 +289,7 @@ public class StalkerReceiver extends BroadcastReceiver {
                 previousPlace = place;
                 trackSignal.setIdPlace(previousPlace.getId())
                         .entered(true)
-                        .authenticated(organization.isLogged())
+                        .authenticated(organization.isLogged() && !organization.isAnonymous())
                         .username(organization.getPersonalCn())
                         .password(organization.getLdapPassword())
                         .idOrganization(place.getOrgId());
@@ -301,6 +302,7 @@ public class StalkerReceiver extends BroadcastReceiver {
 
                 trackSignal.entered(true)
                         .setIdPlace(place.getId())
+                        .authenticated(!organization.isAnonymous() && organization.isLogged())
                         .username(organization.getPersonalCn())
                         .password(organization.getLdapPassword())
                         .idOrganization(place.getOrgId());
