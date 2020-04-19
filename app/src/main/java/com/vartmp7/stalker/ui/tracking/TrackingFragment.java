@@ -291,7 +291,9 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
             String message;
 //              todo da cambiare cosa far vedere all'utente.
 
+
             List<PolygonPlace> places = new ArrayList<>();
+            if (organizationToTrack.stream().noneMatch(Organization::isTrackingActive)) return;// se non ci sono organizzazioni che stanno tracciando, non devo fare nessun controllo.
             organizationToTrack.forEach(organization -> places.addAll(organization.getPlaces()));
             Coordinate coordinate = new Coordinate(l.getLatitude(), l.getLongitude());
 
@@ -300,9 +302,7 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
             if (optionalPolygonPlace.isPresent()) {
                 PolygonPlace place = optionalPolygonPlace.get();
                 Optional<Organization> any = organizationToTrack.stream()
-                        .filter(organization -> organization.getPlaces()
-                                .stream()
-                                .anyMatch(polygonPlace -> place.getId() == polygonPlace.getId()))
+                        .filter(organization -> place.getOrgId() == organization.getId())
                         .findAny();
 
                 message = any.map(organization -> getString(R.string.sei_in_tale_dei_tali, place.getName(), organization.getName())).orElseGet(() -> getString(R.string.non_presente_nei_luoghi_tracciati));

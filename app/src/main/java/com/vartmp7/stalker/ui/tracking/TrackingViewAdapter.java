@@ -322,7 +322,7 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
                     break;
                 case R.id.sAnonymousSwitch:
                     holder.sAnonimo.isActivated();
-                    viewModel.updateOrganization(org.setAnonymous(holder.sAnonimo.isActivated()));
+                    viewModel.updateOrganization(org.setAnonymous(holder.sAnonimo.isChecked()));
                     break;
             }
         };
@@ -369,8 +369,12 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
         holder.ibtnPreferito.setOnClickListener(listener);
 
         holder.btnLoginLDAP.setOnClickListener(listener);
+        holder.btnLoginLDAP.setActivated(org.isLogged());
+        holder.btnLoginLDAP.setText(org.isLogged()? R.string.logout: R.string.login_ldap);
 
         holder.sAnonimo.setOnClickListener(listener);
+        holder.sAnonimo.setChecked(org.isAnonymous());
+
     }
 
 
