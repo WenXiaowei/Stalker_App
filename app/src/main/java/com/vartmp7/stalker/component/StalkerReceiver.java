@@ -269,9 +269,9 @@ public class StalkerReceiver extends BroadcastReceiver {
     private void onLocationsChanged(@NotNull Location l) {
         Coordinate currentCoordinate = new Coordinate(l.getLatitude(), l.getLongitude());
         List<PolygonPlace> places = new ArrayList<>();
-        organizations.forEach(orga ->{
-            List<PolygonPlace> orgPlaces = orga.getPlaces();
-            orgPlaces.forEach(e-> e.setOrgId(orga.getId()));
+        organizations.forEach(elOrganizations ->{
+            List<PolygonPlace> orgPlaces = elOrganizations.getPlaces();
+            orgPlaces.forEach(e-> e.setOrgId(elOrganizations.getId()));
             places.addAll(orgPlaces);
         } );
         Optional<PolygonPlace> opti = places.stream().filter(polygonPlace -> polygonPlace.isInside(currentCoordinate)).findFirst();
@@ -280,7 +280,8 @@ public class StalkerReceiver extends BroadcastReceiver {
 
         if (opti.isPresent()) {
             PolygonPlace place = opti.get();
-            Optional<Organization> optionalOrganization = organizations.stream().filter(organi -> organi.getId() == place.getOrgId()).findFirst();
+
+            Optional<Organization> optionalOrganization = organizations.stream().filter(organization -> organization.getId() == place.getOrgId()).findFirst();
             optionalOrganization.ifPresent(value -> organization = value);
 
             if (previousPlace == null) {
@@ -288,7 +289,7 @@ public class StalkerReceiver extends BroadcastReceiver {
                 previousPlace = place;
                 trackSignal.setIdPlace(previousPlace.getId())
                         .entered(true)
-                        .authenticated(!organization.isAnonymous() && organization.isLogged())
+                        .authenticated(organization.isLogged() && !organization.isAnonymous())
                         .username(organization.getPersonalCn())
                         .password(organization.getLdapPassword())
                         .idOrganization(place.getOrgId());
