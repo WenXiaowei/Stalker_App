@@ -343,7 +343,6 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
                     fragment.tvCurrentStatus.setText(R.string.non_presente_nei_luoghi_tracciati);
                 default:
             }
-
             //gestione degli messaggi non empty, se sono più di un caso, allora può essere convertito in switch
             int code = b.getInt(MSG_CODE, -1);
             if (code == TRACKING_MSG_CODE) {

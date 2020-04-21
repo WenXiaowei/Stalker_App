@@ -187,7 +187,7 @@
  *       same "printed page" as the copyright notice for easier
  *       identification within third-party archives.
  *
- *    Copyright [2020] [VartTmp7]
+ *    Copyright 2020 - VartTmp7
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -202,45 +202,26 @@
  *    limitations under the License.
  */
 
-package com.vartmp7.stalker.repository;
+package com.vartmp7.stalker.datamodel;
 
-import com.vartmp7.stalker.datamodel.Organization;
-import com.vartmp7.stalker.datamodel.PlaceResponse;
-import com.vartmp7.stalker.datamodel.OrganizationResponse;
-import com.vartmp7.stalker.datamodel.TrackHistory;
-import com.vartmp7.stalker.datamodel.TrackSignal;
+import com.google.gson.annotations.SerializedName;
 
-import java.util.List;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
-import retrofit2.Call;
-import retrofit2.http.Body;
-import retrofit2.http.GET;
-import retrofit2.http.Headers;
-import retrofit2.http.POST;
-import retrofit2.http.Path;
-
-public interface RestApiService {
-    @Headers("Organization-Token: vartmp7")
-    @GET("organizations")
-    Call<OrganizationResponse> organizations();
-
-    @Headers("Organization-Token: vartmp7")
-    @GET("organizations/{organization_id}")
-    Call<Organization> organization(@Path("organization_id") long id);
-
-    @Headers("Organization-Token: vartmp7")
-    @GET("organizations/{organization_id}/places")
-    Call<PlaceResponse> organizationsPlaces(@Path("organization_id") long id);
-
-    @Headers("Organization-Token: vartmp7")
-    @GET("organizations/{organization_id}/places/{place_id}")
-    Call<PlaceResponse> organizationsPlaceWithID(@Path("organization_id") long id, @Path("place_id") long placeId);
-
-    @Headers("Organization-Token: vartmp7")
-    @POST("organizations/{organization_id}/places/{place_id}/tracks")
-    Call<Void> tracking(@Path("organization_id") long orgId, @Path("place_id") long placeId, @Body TrackSignal signal);
-
-    @Headers("Organization-Token: vartmp7")
-    @POST("organizations/{id_orgs}/user/tracks")
-    Call<TrackHistory> getTracks(@Path("id_orgs") long id, @Body TrackSignal signal);
+class UserTrackInfo {
+    @Setter
+    @Getter
+    @Accessors(fluent = true)
+    private String name;
+    @Setter
+    @Getter
+    @Accessors(fluent = true)
+    private String surname;
+    @Setter
+    @Getter
+    @Accessors(fluent = true)
+    @SerializedName("uid_number")
+    private String uidNumber;
 }
