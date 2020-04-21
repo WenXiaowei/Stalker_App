@@ -204,6 +204,23 @@
 
 package com.vartmp7.stalker.datamodel;
 
-public class TrackHistory {
+import com.google.gson.annotations.SerializedName;
 
+import java.util.List;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
+
+public class TrackHistory {
+    @Setter
+    @Getter
+    @Accessors(fluent = true)
+    @SerializedName("user_info")
+    private UserTrackInfo userInfo;
+
+    @Setter
+    @Getter
+    @Accessors(fluent = true)
+    private List<TrackRecord> tracks;
 }
