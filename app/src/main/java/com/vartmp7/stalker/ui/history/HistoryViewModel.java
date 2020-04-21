@@ -209,6 +209,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.vartmp7.stalker.datamodel.TrackHistory;
+import com.vartmp7.stalker.datamodel.TrackRecord;
 import com.vartmp7.stalker.repository.OrganizationsRepository;
 
 import java.util.List;
@@ -230,16 +231,16 @@ public class HistoryViewModel extends ViewModel {
         mText.setValue("This is cronologia fragment");
     }
 
-    public LiveData<List<TrackHistory>> getTrackHistories(){
+    public LiveData<List<TrackRecord>> getTrackHistory(){
         //TODO pescare trackHistory da orgRepo
-        return orgRepo.getTrackHistories();
+        return orgRepo.getTrackHistory();
     }
 
     public LiveData<String> getText() {
         return mText;
     }
 
-    public void updateOrganizations() {
-        orgRepo.updateTrackHistories();
+    public void updateTrackHistory() {
+        orgRepo.updateTrackHistory();
     }
 }

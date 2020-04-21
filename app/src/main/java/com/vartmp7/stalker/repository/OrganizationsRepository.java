@@ -231,7 +231,7 @@ public class OrganizationsRepository {
         trackHistoryObtainer.updateTrackingHistory(/*lista di organizzazioni*/);
     }
 
-    public LiveData<List<TrackRecord>> getTrackHistories(){
+    public LiveData<List<TrackRecord>> getTrackHistory(){
         return trackHistoryObtainer.getTrackHistory();
     }
 
