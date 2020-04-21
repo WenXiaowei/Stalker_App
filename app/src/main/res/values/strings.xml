@@ -303,4 +303,5 @@
     <string name="inserisci_le_credenziali_ldap">Inserisci le tue credenziali LDAP</string>
     <string name="prima_devi_fare_accesso">Devi prima fare accesso!</string>
     <string name="successfully_logout">Successufully logout</string>
+    <string name="icona_che_rappresenta_ingresso_o_uscita">Icona che rappresenta ingresso o uscita</string>
 </resources>

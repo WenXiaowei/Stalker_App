@@ -213,32 +213,47 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.vartmp7.stalker.MainActivity;
 import com.vartmp7.stalker.R;
+import com.vartmp7.stalker.datamodel.TrackRecord;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
  * @author Xiaowei Wen, Lorenzo Taschin
  */
-public class HistoryFragment extends Fragment {
+public class HistoryFragment extends Fragment  implements SwipeRefreshLayout.OnRefreshListener {
     public static final String TAG = "com.vartmp7.stalker.ui.cronologia.CronologiaFragment";
 
     private HistoryViewModel historyViewModel;
+    private HistoryAdapter adapter;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_cronologia, container, false);
-        historyViewModel.refreshOrganizations();
-        historyViewModel.getTrackHistories().observe(getViewLifecycleOwner(), trackHistories->{
-            Log.d(TAG, "onCreateView: track history:");
-            trackHistories.forEach(trackHistory -> trackHistory.tracks().forEach(trackRecord->{
-                Log.d(TAG, ""+trackRecord);
-            }));
+        historyViewModel = new ViewModelProvider(requireActivity()).get(HistoryViewModel.class);
+        historyViewModel.init(MainActivity.repository);
+
+        historyViewModel.getTrackRecords().observe(getViewLifecycleOwner(), records -> {
+            adapter.updateTrackRecords(records);
         });
 
         return v;
     }
 
+    private void initTrackRecords() {
 
+    }
+
+
+    @Override
+    public void onRefresh() {
+
+    }
 }

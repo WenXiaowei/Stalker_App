@@ -253,9 +253,9 @@ public class OrganizationsFragment extends Fragment implements SwipeRefreshLayou
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        int actionId = OrganizationsFragmentDirections.actionNavigationOrganizationsToNavigationTracking().getActionId();
+//        int actionId = OrganizationsFragmentDirections.actionNavigationOrganizationsToNavigationTracking().getActionId();
 
-        NavDirections navDirections = OrganizationsFragmentDirections.actionNavigationOrganizationsToNavigationTracking();
+//        NavDirections navDirections = OrganizationsFragmentDirections.actionNavigationOrganizationsToNavigationTracking();
 
 
     }
