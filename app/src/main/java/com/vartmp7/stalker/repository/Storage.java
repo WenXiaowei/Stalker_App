@@ -204,19 +204,19 @@
 
 package com.vartmp7.stalker.repository;
 
+import androidx.lifecycle.LiveData;
+
 import com.vartmp7.stalker.datamodel.Organization;
 
 import java.util.List;
 
-public interface Storage extends Obtainer {
+public interface Storage  {
 
     void updateOrganizationInfo(List<Organization> orgsToUpdate);
 
-    void saveOrganization(Organization org);
+    LiveData<List<Organization>> getLocalOrganizations();
 
     void saveOrganizations(List<Organization> orgs);
-
-    void removeOrganization(Organization org);
 
     void updateOrganization(Organization org);
 

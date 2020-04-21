@@ -280,7 +280,7 @@ public class FileStorageTest {
         }
         source = new FileStorage("prova.json",context,new MutableLiveData<>(firsts));
         observer = new TestObserver();
-        source.getOrganizations().observe(lifecycleOwner, observer);
+        source.getLocalOrganizations().observe(lifecycleOwner, observer);
     }
 
     @Test

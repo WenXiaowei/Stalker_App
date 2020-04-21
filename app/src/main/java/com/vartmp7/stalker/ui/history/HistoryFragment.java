@@ -214,6 +214,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.vartmp7.stalker.MainActivity;
@@ -227,35 +229,45 @@ import java.util.List;
 /**
  * @author Xiaowei Wen, Lorenzo Taschin
  */
-public class HistoryFragment extends Fragment  implements SwipeRefreshLayout.OnRefreshListener {
+public class HistoryFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
     public static final String TAG = "com.vartmp7.stalker.ui.cronologia.CronologiaFragment";
 
     private HistoryViewModel historyViewModel;
     private HistoryAdapter adapter;
+    private RecyclerView trackRecordsRecycleView;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_cronologia, container, false);
         historyViewModel = new ViewModelProvider(requireActivity()).get(HistoryViewModel.class);
+        swipeRefreshLayout = v.findViewById(R.id.swipeToRefresh);
         historyViewModel.init(MainActivity.repository);
-
+        trackRecordsRecycleView = v.findViewById(R.id.rvTrackRecords);
         historyViewModel.getTrackRecords().observe(getViewLifecycleOwner(), records -> {
+            adapter.updateTrackRecords(records);
+            swipeRefreshLayout.setRefreshing(false);
             Log.d(TAG, "onCreateView: trackRecords");
             records.forEach(record-> Log.d(TAG, "onCreateView: "+record.placeId()));
             //adapter.updateTrackRecords(records);
         });
-
+        initTrackRecords();
         return v;
     }
 
     private void initTrackRecords() {
-
+        adapter = new HistoryAdapter(new ArrayList<>());
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
+        trackRecordsRecycleView.setLayoutManager(layoutManager);
+        trackRecordsRecycleView.setAdapter(adapter);
+        onRefresh();
     }
 
 
     @Override
     public void onRefresh() {
-
+        historyViewModel.getTrackRecords();
+        swipeRefreshLayout.setRefreshing(true);
     }
 }

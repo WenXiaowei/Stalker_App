@@ -212,7 +212,6 @@ import androidx.lifecycle.Observer;
 
 import com.vartmp7.stalker.component.NotLogged;
 import com.vartmp7.stalker.datamodel.Organization;
-import com.vartmp7.stalker.datamodel.TrackHistory;
 import com.vartmp7.stalker.datamodel.TrackRecord;
 
 import java.util.List;
@@ -225,9 +224,6 @@ public class OrganizationsRepository {
     private Storage storage;
     private Obtainer obtainer;
     private FavoritesSource organizationFavoritesSource;
-    //private MediatorLiveData<List<Organizzazione>> liveOrganizzazioni;
-
-
 
 
     public LiveData<List<TrackRecord>> getTrackHistory(){
@@ -262,7 +258,7 @@ public class OrganizationsRepository {
     }
 
     public LiveData<List<Organization>> getOrganizations() {
-        LiveData<List<Organization>> fromLocal = storage.getOrganizations();
+        LiveData<List<Organization>> fromLocal = storage.getLocalOrganizations();
 //        Log.d(TAG, "getOrganizations() before if");
         if (organizationFavoritesSource != null) {
 //            Log.d(TAG, "getOrganizations() dentro if");

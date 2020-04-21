@@ -310,7 +310,7 @@ public class FileStorage implements Storage {
 
 
     @Override
-    public LiveData<List<Organization>> getOrganizations() {
+    public LiveData<List<Organization>> getLocalOrganizations() {
         //MutableLiveData<List<Organizzazione>> mLiveOrgs = new MutableLiveData<>();
         //this.mLiveOrgs.setValue(organizzazioni);
 //        Log.d("TEST","arrivo qua1");
@@ -367,25 +367,7 @@ public class FileStorage implements Storage {
         return mLiveOrgs;
     }
 
-    @Override
-    public LiveData<List<TrackRecord>> getTrackRecords(List<Organization> organizations) {
-        return null;
-    }
 
-    @Override
-    public void saveOrganization(Organization org) {
-
-        LiveData<List<Organization>> liveOrgs = getOrganizations();
-        if (liveOrgs != null) {
-            List<Organization> orgs = liveOrgs.getValue();
-            if (orgs != null) {
-                orgs.add(org);
-                saveOrganizations(orgs);
-            }
-        }
-    }
-
-    //@SuppressLint("StaticFieldLeak")
     @Override
     public synchronized void saveOrganizations(List<Organization> orgs) {
         ExecutorService executorService = Executors.newSingleThreadExecutor();
@@ -426,17 +408,6 @@ public class FileStorage implements Storage {
 //        saveOrganizzazioni(orgs);
     }
 
-
-    @Override
-    public void removeOrganization(Organization org) {
-        LiveData<List<Organization>> liveOrgs = getOrganizations();
-        if (liveOrgs != null) {
-            List<Organization> orgs = liveOrgs.getValue();
-            orgs.remove(org);
-            saveOrganizations(orgs);
-        }
-
-    }
 
 
 }

@@ -204,6 +204,7 @@
 
 package com.vartmp7.stalker.ui.history;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -222,7 +223,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
 
     private List<TrackRecord> trackHistories;
 
-    public HistoryAdapter(List<TrackRecord> trackHistories) {
+    HistoryAdapter(List<TrackRecord> trackHistories) {
         this.trackHistories = trackHistories;
     }
 
@@ -237,13 +238,14 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
     @Override
     public void onBindViewHolder(@NonNull HistoryViewHolder holder, int position) {
         TrackRecord record = trackHistories.get(position);
+
         if (record.entered()) holder.ivEnterExit.setImageResource(R.drawable.ic_enter);
         else holder.ivEnterExit.setImageResource(R.drawable.ic_exit);
-        holder.tvOrganization.setText(record.getOrgName());
+        holder.tvOrganization.setText(String.format("%s\n%s", record.orgName(), record.placeName()));
         holder.tvDateTime.setText(record.dateTime());
     }
 
-    public void updateTrackRecords(List<TrackRecord> records){
+    void updateTrackRecords(List<TrackRecord> records){
         trackHistories = records;
         notifyDataSetChanged();
     }

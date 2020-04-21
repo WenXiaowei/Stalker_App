@@ -204,6 +204,7 @@
 <androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:id="@+id/swipeToRefresh"
     android:layout_height="match_parent">
 
     <LinearLayout
@@ -215,6 +216,7 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
+            android:id="@+id/rvTrackRecords"
             android:layout_height="match_parent"
             tools:listitem="@layout/item_tracking_history" />
     </LinearLayout>

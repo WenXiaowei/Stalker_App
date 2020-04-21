@@ -257,7 +257,7 @@ public class RESTObtainer implements Obtainer {
             @SneakyThrows
             @Override
             public void onResponse(@NotNull Call<OrganizationResponse> call, @NotNull Response<OrganizationResponse> response) {
-                Log.d(TAG, "onResponse: "+response.body().getOrganizations());
+//                Log.d(TAG, "onResponse: "+response.body().getOrganizations());
                 List<Organization> organizations1 = response.body().getOrganizations();
                 mutableLiveDataOrganizzazioni.postValue(organizations1);
             }
@@ -333,9 +333,9 @@ public class RESTObtainer implements Obtainer {
 
     @Override
     public LiveData<List<TrackRecord>> getTrackRecords(List<Organization> organizations) {
-        ArrayList<TrackRecord> mockedTrackRecords = new ArrayList<TrackRecord>();
-        mockedTrackRecords.add(new TrackRecord().entered(true).placeId(1).dateTime("2020-01-01T13:14:15"));
-        mockedTrackRecords.add(new TrackRecord().entered(false).placeId(1).dateTime("2020-01-01T13:15:15"));
+        ArrayList<TrackRecord> mockedTrackRecords = new ArrayList<>();
+        mockedTrackRecords.add(new TrackRecord().placeName("Torre Archimede").setOrgName("UNIPD").entered(true).placeId(1).dateTime("2020-01-01T13:14:15"));
+        mockedTrackRecords.add(new TrackRecord().placeName("Torre Archimede").setOrgName("UNIPD").entered(true).placeId(1).dateTime("2020-01-01T13:14:15"));
         this.trackRecords.postValue(mockedTrackRecords);
         return trackRecords;
     }

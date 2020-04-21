@@ -213,24 +213,26 @@ import lombok.experimental.Accessors;
 public class TrackRecord {
 
 
-    @Setter
-    @Getter
+
+    @Getter @Setter()
+    @Accessors(chain = true)
     private String orgName;
-    @Setter
     @Getter
+    @Setter
+    @Accessors(fluent = true)
     private String placeName;
-    @Setter
-    @Getter
+
+    @Getter @Setter
     @Accessors(fluent = true)
     @SerializedName("place_id")
     private long placeId;
-    @Setter
-    @Getter
+
+    @Getter @Setter
     @Accessors(fluent = true)
     @SerializedName("date_time")
     private String dateTime;
-    @Setter
-    @Getter
+
+    @Getter @Setter
     @Accessors(fluent = true)
     private boolean entered;
 

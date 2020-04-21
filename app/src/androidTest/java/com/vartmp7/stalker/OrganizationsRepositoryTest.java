@@ -279,7 +279,7 @@ public class OrganizationsRepositoryTest {
     @Test
     public void testGet(){
         expected=firsts;
-        when(localSource.getOrganizations()).then((Answer<LiveData<List<Organization>>>) invocation -> {
+        when(localSource.getLocalOrganizations()).then((Answer<LiveData<List<Organization>>>) invocation -> {
             MutableLiveData<List<Organization>> liveData = new MutableLiveData<>();
             liveData.postValue(firsts);
             return  liveData;

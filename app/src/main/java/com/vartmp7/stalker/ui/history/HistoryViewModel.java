@@ -217,28 +217,23 @@ import java.util.List;
  * @author Xiaowei Wen, Lorenzo Taschin
  */
 public class HistoryViewModel extends ViewModel {
-    public static final String TAG ="com.vartmp7.stalker.ui.cronologia.CronologiaViewModel";
+    public static final String TAG = "com.vartmp7.stalker.ui.cronologia.CronologiaViewModel";
 
 
     private OrganizationsRepository orgRepo;
-    private MutableLiveData<List<TrackRecord>> trackRecords;
 
     private MutableLiveData<String> mText;
 
     public HistoryViewModel() {
-        trackRecords = new MutableLiveData<>();
         mText = new MutableLiveData<>();
         mText.setValue("This is cronologia fragment");
     }
 
 
-    public LiveData<List<TrackRecord>> getTrackRecords(){
-        return trackRecords;
+    public LiveData<List<TrackRecord>> getTrackRecords() {
+        return orgRepo.getTrackHistory();
     }
 
-    public void updateTrackRecords(){
-//        orgRepo
-    }
 
     public LiveData<String> getText() {
         return mText;
