@@ -206,11 +206,14 @@ package com.vartmp7.stalker.repository;
 
 import android.util.Log;
 
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.vartmp7.stalker.datamodel.Organization;
 import com.vartmp7.stalker.datamodel.OrganizationResponse;
 import com.vartmp7.stalker.datamodel.PolygonPlace;
+import com.vartmp7.stalker.datamodel.TrackHistory;
+import com.vartmp7.stalker.datamodel.TrackRecord;
 import com.vartmp7.stalker.datamodel.placecomponent.Coordinate;
 
 import org.jetbrains.annotations.NotNull;
@@ -235,16 +238,19 @@ public class RESTObtainer implements Obtainer {
     static int count = 0;
 
     private MutableLiveData<List<Organization>> mutableLiveDataOrganizzazioni;
+    private MutableLiveData<List<TrackRecord>> trackRecords;
 
 
     public RESTObtainer(MutableLiveData<List<Organization>> list, RestApiService service) {
         this.service = service;
         //this.mutableLiveDataOrganizzazioni= list;
         mutableLiveDataOrganizzazioni = new MutableLiveData<>();
+       trackRecords = new MutableLiveData<>();
     }
 
+
     @Override
-    public MutableLiveData<List<Organization>> getOrganizations() {
+    public LiveData<List<Organization>> getOrganizations() {
 
         Call<OrganizationResponse> organizations = service.organizations();
         organizations.enqueue(new Callback<OrganizationResponse>() {
@@ -323,6 +329,15 @@ public class RESTObtainer implements Obtainer {
 
         });
         return mutableLiveDataOrganizzazioni;
+    }
+
+    @Override
+    public LiveData<List<TrackRecord>> getTrackRecords(List<Organization> organizations) {
+        ArrayList<TrackRecord> mockedTrackRecords = new ArrayList<TrackRecord>();
+        mockedTrackRecords.add(new TrackRecord().entered(true).placeId(1).dateTime("2020-01-01T13:14:15"));
+        mockedTrackRecords.add(new TrackRecord().entered(false).placeId(1).dateTime("2020-01-01T13:15:15"));
+        this.trackRecords.postValue(mockedTrackRecords);
+        return trackRecords;
     }
 
 

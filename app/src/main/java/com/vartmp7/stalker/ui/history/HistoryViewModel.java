@@ -236,7 +236,7 @@ public class HistoryViewModel extends ViewModel {
         return trackRecords;
     }
 
-    public void updateTrackHistories(){
+    public void updateTrackRecords(){
 //        orgRepo
     }
 
@@ -245,8 +245,7 @@ public class HistoryViewModel extends ViewModel {
     }
 
     void init(OrganizationsRepository repository) {
-        this.orgRepo= repository;
-    public void updateTrackHistory() {
-        orgRepo.updateTrackHistory();
+        this.orgRepo = repository;
     }
+
 }

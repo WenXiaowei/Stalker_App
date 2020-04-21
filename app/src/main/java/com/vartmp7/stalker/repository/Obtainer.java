@@ -207,11 +207,13 @@ package com.vartmp7.stalker.repository;
 import androidx.lifecycle.LiveData;
 
 import com.vartmp7.stalker.datamodel.Organization;
+import com.vartmp7.stalker.datamodel.TrackRecord;
 
 import java.util.List;
 
 public interface Obtainer {
 
     LiveData<List<Organization>> getOrganizations();
+    LiveData<List<TrackRecord>> getTrackRecords(List<Organization> organizations);
 
 }

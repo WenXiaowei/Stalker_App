@@ -319,8 +319,7 @@ public class MainActivity extends AppCompatActivity {
                 .build();
         Obtainer webSource = new RESTObtainer(list, retrofit.create(RestApiService.class));
 
-        TrackHistoryObtainer trackHistorySource = new RESTTrackHistoryObtainer();
-        repository = new OrganizationsRepository(localStorage, webSource, trackHistorySource, preferitiRepository);
+        repository = new OrganizationsRepository(localStorage, webSource, preferitiRepository);
 
 
 //        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);

@@ -223,16 +223,13 @@ public class OrganizationsRepository {
     private Storage storage;
     private Obtainer obtainer;
     private FavoritesSource organizationFavoritesSource;
-    private TrackHistoryObtainer trackHistoryObtainer;
     //private MediatorLiveData<List<Organizzazione>> liveOrganizzazioni;
 
 
-    public void updateTrackHistory(){
-        trackHistoryObtainer.updateTrackingHistory(/*lista di organizzazioni*/);
-    }
+
 
     public LiveData<List<TrackRecord>> getTrackHistory(){
-        return trackHistoryObtainer.getTrackHistory();
+        return obtainer.getTrackRecords(/*lista di organizzazioni*/);
     }
 
 
@@ -245,11 +242,10 @@ public class OrganizationsRepository {
         storage.updateOrganizations(l);
     }
 
-    public OrganizationsRepository(Storage orgsLocalSource, Obtainer orgsWebSource,TrackHistoryObtainer trackHistoryObtainer, FavoritesSource fa) {
+    public OrganizationsRepository(Storage orgsLocalSource, Obtainer orgsWebSource, FavoritesSource fa) {
         this.storage = orgsLocalSource;
         this.obtainer = orgsWebSource;
         this.organizationFavoritesSource = fa;
-        this.trackHistoryObtainer = trackHistoryObtainer;
         //liveOrganizzazioni = new MediatorLiveData<>();
     }
 
