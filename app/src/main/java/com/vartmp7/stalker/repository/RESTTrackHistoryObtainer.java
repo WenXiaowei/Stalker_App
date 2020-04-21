@@ -187,7 +187,7 @@
  *       same "printed page" as the copyright notice for easier
  *       identification within third-party archives.
  *
- *    Copyright [2020] [VartTmp7]
+ *    Copyright [yyyy] [name of copyright owner]
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -200,44 +200,44 @@
  *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
+ *
  */
 
-package com.vartmp7.stalker.ui.history;
+package com.vartmp7.stalker.repository;
 
-import android.os.Bundle;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
+import com.vartmp7.stalker.datamodel.TrackHistory;
+import com.vartmp7.stalker.datamodel.TrackRecord;
+import com.vartmp7.stalker.datamodel.UserTrackInfo;
 
-import com.vartmp7.stalker.R;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
+public class RESTTrackHistoryObtainer implements TrackHistoryObtainer {
+    private MutableLiveData<List<TrackHistory>> trackHistory;
 
-/**
- * @author Xiaowei Wen, Lorenzo Taschin
- */
-public class HistoryFragment extends Fragment {
-    public static final String TAG = "com.vartmp7.stalker.ui.cronologia.CronologiaFragment";
-
-    private HistoryViewModel historyViewModel;
-
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_cronologia, container, false);
-        historyViewModel.getTrackHistories().observe(getViewLifecycleOwner(), trackHistories->{
-            Log.d(TAG, "onCreateView: track history:");
-            trackHistories.forEach(trackHistory -> trackHistory.tracks().forEach(trackRecord->{
-                Log.d(TAG, ""+trackRecord);
-            }));
-        });
-
-        return v;
+    public RESTTrackHistoryObtainer() {
+        this.trackHistory = new MutableLiveData<>();
     }
 
+    @Override
+    public void updateTrackingHistory() {
+        ArrayList<TrackHistory> mockedTrackHistories = new ArrayList<>();
+        ArrayList<TrackRecord> trackRecords = new ArrayList<TrackRecord>();
+        trackRecords.add(new TrackRecord().entered(true).placeId(1).dateTime("2020-01-01T13:14:15"));
+        trackRecords.add(new TrackRecord().entered(false).placeId(1).dateTime("2020-01-01T13:15:15"));
+        TrackHistory history = new TrackHistory()
+                .userInfo(new UserTrackInfo().name("Ciccio").surname("Pasticcio").uidNumber("1"))
+                .tracks(trackRecords);
+        mockedTrackHistories.add(history);
+        this.trackHistory.postValue(mockedTrackHistories);
+    }
 
+    @Override
+    public LiveData<List<TrackHistory>> getTrackHistories() {
+        return trackHistory;
+    }
 }

@@ -248,11 +248,13 @@ import com.vartmp7.stalker.datamodel.Organization;
 import com.vartmp7.stalker.repository.FavoritesSource;
 import com.vartmp7.stalker.repository.FileStorage;
 import com.vartmp7.stalker.repository.FirebaseFavoritesSource;
+import com.vartmp7.stalker.repository.RESTTrackHistoryObtainer;
 import com.vartmp7.stalker.repository.RestApiService;
 import com.vartmp7.stalker.repository.Storage;
 import com.vartmp7.stalker.repository.OrganizationsRepository;
 import com.vartmp7.stalker.repository.Obtainer;
 import com.vartmp7.stalker.repository.RESTObtainer;
+import com.vartmp7.stalker.repository.TrackHistoryObtainer;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -317,7 +319,8 @@ public class MainActivity extends AppCompatActivity {
                 .build();
         Obtainer webSource = new RESTObtainer(list, retrofit.create(RestApiService.class));
 
-        repository = new OrganizationsRepository(localStorage, webSource, preferitiRepository);
+        TrackHistoryObtainer trackHistorySource = new RESTTrackHistoryObtainer();
+        repository = new OrganizationsRepository(localStorage, webSource, trackHistorySource, preferitiRepository);
 
 
 //        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);

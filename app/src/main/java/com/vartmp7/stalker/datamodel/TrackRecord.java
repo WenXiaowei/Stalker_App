@@ -210,7 +210,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
-class TrackRecord {
+public class TrackRecord {
     @Setter
     @Getter
     @Accessors(fluent = true)

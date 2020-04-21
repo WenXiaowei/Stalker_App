@@ -214,6 +214,5 @@ import java.util.List;
 
 public interface TrackHistoryObtainer {
     void updateTrackingHistory();
-
     LiveData<List<TrackHistory>> getTrackHistories();
 }

@@ -221,20 +221,18 @@ public class HistoryViewModel extends ViewModel {
 
 
     private OrganizationsRepository orgRepo;
-    private MutableLiveData<List<TrackHistory>> trackHistories;
+    //private MutableLiveData<List<TrackHistory>> trackHistories;
 
     private MutableLiveData<String> mText;
 
     public HistoryViewModel() {
-        trackHistory = new MutableLiveData<>();
         mText = new MutableLiveData<>();
         mText.setValue("This is cronologia fragment");
     }
 
-
     public LiveData<List<TrackHistory>> getTrackHistories(){
         //TODO pescare trackHistory da orgRepo
-        return trackHistories;
+        return orgRepo.getTrackHistories();
     }
 
     public LiveData<String> getText() {
