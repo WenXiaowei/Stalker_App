@@ -187,7 +187,7 @@
   ~       same "printed page" as the copyright notice for easier
   ~       identification within third-party archives.
   ~
-  ~    Copyright [2020] [VartTmp7]
+  ~    Copyright 2020 - VartTmp7
   ~
   ~    Licensed under the Apache License, Version 2.0 (the "License");
   ~    you may not use this file except in compliance with the License.
@@ -201,21 +201,30 @@
   ~    See the License for the specific language governing permissions and
   ~    limitations under the License.
   -->
-<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="5dp"
-        android:orientation="vertical"
-        tools:context="com.vartmp7.stalker.ui.organizations.OrganizationsFragment">
+    <TextView
+        android:id="@+id/tvOrganizationInfo"
+        android:layout_weight="1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:listitem="@layout/item_tracking_history" />
-    </LinearLayout>
-</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+    <TextView
+        android:id="@+id/tvTime"
+        android:layout_weight="1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <ImageView
+        android:id="@+id/ivInOut"
+        android:layout_weight="1"
+        android:src="@drawable/ic_exit"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:contentDescription="@string/icona_che_rappresenta_ingresso_o_uscita" />
+</LinearLayout>

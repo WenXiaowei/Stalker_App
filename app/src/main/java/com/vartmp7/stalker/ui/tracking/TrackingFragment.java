@@ -505,7 +505,7 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
         setButtonsState(Tools.requestingLocationUpdates(requireContext()));
 
         // Bind to the service. If the service is in foreground mode, this signals to the service
-        // that since this activity is in the foreground, the service can exit foreground mode.
+        // that since this activity is in the foreground, the service can ic_exit foreground mode.
         requireContext().bindService(new Intent(requireContext(), StalkerTrackingService.class), mServiceConnection,
                 Context.BIND_AUTO_CREATE);
     }
