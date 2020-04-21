@@ -213,6 +213,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.google.gson.Gson;
 import com.vartmp7.stalker.datamodel.Organization;
 import com.vartmp7.stalker.datamodel.OrganizationResponse;
+import com.vartmp7.stalker.datamodel.TrackRecord;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -364,6 +365,11 @@ public class FileStorage implements Storage {
             }
         }.start();
         return mLiveOrgs;
+    }
+
+    @Override
+    public LiveData<List<TrackRecord>> getTrackRecords(List<Organization> organizations) {
+        return null;
     }
 
     @Override

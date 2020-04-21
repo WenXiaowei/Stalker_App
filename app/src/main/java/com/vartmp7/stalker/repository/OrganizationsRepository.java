@@ -207,6 +207,7 @@ package com.vartmp7.stalker.repository;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 
 import com.vartmp7.stalker.component.NotLogged;
@@ -215,6 +216,7 @@ import com.vartmp7.stalker.datamodel.TrackHistory;
 import com.vartmp7.stalker.datamodel.TrackRecord;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class OrganizationsRepository {
 
@@ -229,7 +231,17 @@ public class OrganizationsRepository {
 
 
     public LiveData<List<TrackRecord>> getTrackHistory(){
-        return obtainer.getTrackRecords(/*lista di organizzazioni*/);
+        LiveData<List<Organization>> resultFromLocal = storage.getOrganizations();
+
+        MutableLiveData<List<TrackRecord>> trackHistory = new MutableLiveData<>();
+
+       resultFromLocal.observeForever(organizations -> {
+               obtainer.getTrackRecords(organizations.stream()
+                       .filter(Organization::isLogged)
+                       .collect(Collectors.toList()))
+                       .observeForever(trackHistory::postValue);
+       });
+        return trackHistory;
     }
 
 

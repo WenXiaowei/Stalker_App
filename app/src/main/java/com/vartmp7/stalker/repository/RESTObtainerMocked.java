@@ -206,12 +206,14 @@ package com.vartmp7.stalker.repository;
 
 import android.util.Log;
 
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.gson.Gson;
 import com.vartmp7.stalker.datamodel.Organization;
 import com.vartmp7.stalker.datamodel.OrganizationResponse;
 import com.vartmp7.stalker.datamodel.PolygonPlace;
+import com.vartmp7.stalker.datamodel.TrackRecord;
 import com.vartmp7.stalker.datamodel.placecomponent.Coordinate;
 
 import org.jetbrains.annotations.NotNull;
@@ -321,6 +323,11 @@ public class RESTObtainerMocked implements Obtainer {
         });
 
         return mutableLiveDataOrganizzazioni;
+    }
+
+    @Override
+    public LiveData<List<TrackRecord>> getTrackRecords(List<Organization> organizations) {
+        return null;
     }
 
 

@@ -241,7 +241,9 @@ public class HistoryFragment extends Fragment  implements SwipeRefreshLayout.OnR
         historyViewModel.init(MainActivity.repository);
 
         historyViewModel.getTrackRecords().observe(getViewLifecycleOwner(), records -> {
-            adapter.updateTrackRecords(records);
+            Log.d(TAG, "onCreateView: trackRecords");
+            records.forEach(record-> Log.d(TAG, "onCreateView: "+record.placeId()));
+            //adapter.updateTrackRecords(records);
         });
 
         return v;
