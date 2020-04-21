@@ -231,7 +231,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
     @NonNull
     @Override
     public HistoryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_tracking, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_tracking_history, parent, false);
         return new HistoryViewHolder(view);
     }
 
@@ -239,10 +239,10 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
     public void onBindViewHolder(@NonNull HistoryViewHolder holder, int position) {
         TrackRecord record = trackHistories.get(position);
 
-        if (record.entered()) holder.ivEnterExit.setImageResource(R.drawable.ic_enter);
+        if (record.isEntered()) holder.ivEnterExit.setImageResource(R.drawable.ic_enter);
         else holder.ivEnterExit.setImageResource(R.drawable.ic_exit);
-        holder.tvOrganization.setText(String.format("%s\n%s", record.orgName(), record.placeName()));
-        holder.tvDateTime.setText(record.dateTime());
+        holder.tvOrganization.setText(String.format("%s\n%s", record.getOrgName(), record.getPlaceName()));
+        holder.tvDateTime.setText(record.getDateTime());
     }
 
     void updateTrackRecords(List<TrackRecord> records){

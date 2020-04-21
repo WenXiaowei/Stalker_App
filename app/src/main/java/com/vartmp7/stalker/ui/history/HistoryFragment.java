@@ -249,7 +249,7 @@ public class HistoryFragment extends Fragment implements SwipeRefreshLayout.OnRe
             adapter.updateTrackRecords(records);
             swipeRefreshLayout.setRefreshing(false);
             Log.d(TAG, "onCreateView: trackRecords");
-            records.forEach(record-> Log.d(TAG, "onCreateView: "+record.placeId()));
+            records.forEach(record-> Log.d(TAG, "onCreateView: "+record.getPlaceId()));
             //adapter.updateTrackRecords(records);
         });
         initTrackRecords();

@@ -219,21 +219,21 @@ public class TrackRecord {
     private String orgName;
     @Getter
     @Setter
-    @Accessors(fluent = true)
+    @Accessors(chain = true)
     private String placeName;
 
     @Getter @Setter
-    @Accessors(fluent = true)
+    @Accessors(chain = true)
     @SerializedName("place_id")
     private long placeId;
 
     @Getter @Setter
-    @Accessors(fluent = true)
+    @Accessors(chain = true)
     @SerializedName("date_time")
     private String dateTime;
 
     @Getter @Setter
-    @Accessors(fluent = true)
+    @Accessors(chain = true)
     private boolean entered;
 
 

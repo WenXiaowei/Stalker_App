@@ -215,12 +215,12 @@ import lombok.experimental.Accessors;
 public class TrackHistory {
     @Setter
     @Getter
-    @Accessors(fluent = true)
+    @Accessors(chain = true)
     @SerializedName("user_info")
     private UserTrackInfo userInfo;
 
     @Setter
     @Getter
-    @Accessors(fluent = true)
+    @Accessors(chain = true)
     private List<TrackRecord> tracks;
 }

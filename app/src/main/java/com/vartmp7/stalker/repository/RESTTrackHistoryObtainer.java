@@ -228,8 +228,8 @@ public class RESTTrackHistoryObtainer implements TrackHistoryObtainer {
     public void updateTrackHistory(List<Organization> organizations) {
 
         ArrayList<TrackRecord> mockedTrackRecords = new ArrayList<TrackRecord>();
-        mockedTrackRecords.add(new TrackRecord().entered(true).placeId(1).dateTime("2020-01-01T13:14:15"));
-        mockedTrackRecords.add(new TrackRecord().entered(false).placeId(1).dateTime("2020-01-01T13:15:15"));
+        mockedTrackRecords.add(new TrackRecord().setEntered(true).setPlaceId(1).setDateTime("2020-01-01T13:14:15"));
+        mockedTrackRecords.add(new TrackRecord().setEntered(true).setPlaceId(1).setDateTime("2020-01-01T13:14:15"));
         this.trackHistory.postValue(mockedTrackRecords);
     }
 

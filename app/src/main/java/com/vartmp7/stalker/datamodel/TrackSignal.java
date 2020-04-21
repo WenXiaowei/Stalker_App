@@ -225,11 +225,11 @@ public class TrackSignal {
     // Annotazione expose usato indicare quale campo devo venir serializzato
     @Setter
     @Getter
-    @Accessors(fluent = true)
+    @Accessors(chain = true)
     private long idOrganization;
     @Setter
     @Getter
-    @Accessors(fluent = true)
+    @Accessors(chain = true)
     private long idPlace=0;
 
     public static final String LDAP_V3="ldapv3";
@@ -237,33 +237,34 @@ public class TrackSignal {
     public static final String FACEBOOK="FACEBOOK";
 
     @Setter
-    @Accessors(fluent = true)
+    @Accessors(chain = true)
     @Expose
     @SerializedName(value = "auth_type")
     private String authType=LDAP_V3;
 
-    @Accessors(fluent = true)
+    @Accessors(chain = true)
     @Expose @Setter
     private boolean entered=false;
 
     @Setter
-    @Accessors(fluent = true)
+    @Accessors(chain = true)
     @Expose
     private boolean authenticated=false;
 
     @Setter
-    @Accessors(fluent = true)
+    @Accessors(chain = true)
     @Expose
     @SerializedName(value = "date_time")
     private String dateTime;
 
     @Setter
-    @Accessors(fluent = true)
+    @Accessors(chain = true)
     @Expose
     private String username;
 
     @Setter
-    @Accessors(fluent = true)
+
+    @Accessors(chain = true)
     @Expose
     private String password;
 
@@ -316,10 +317,7 @@ public class TrackSignal {
         username = user;
         dateTime = date;
     }
-    public TrackSignal setIdPlace(long idPlace) {
-        this.idPlace = idPlace;
-        return this;
-    }
+
 
 
 

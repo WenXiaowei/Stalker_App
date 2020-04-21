@@ -334,8 +334,8 @@ public class RESTObtainer implements Obtainer {
     @Override
     public LiveData<List<TrackRecord>> getTrackRecords(List<Organization> organizations) {
         ArrayList<TrackRecord> mockedTrackRecords = new ArrayList<>();
-        mockedTrackRecords.add(new TrackRecord().placeName("Torre Archimede").setOrgName("UNIPD").entered(true).placeId(1).dateTime("2020-01-01T13:14:15"));
-        mockedTrackRecords.add(new TrackRecord().placeName("Torre Archimede").setOrgName("UNIPD").entered(true).placeId(1).dateTime("2020-01-01T13:14:15"));
+        mockedTrackRecords.add(new TrackRecord().setPlaceName("Torre Archimede").setOrgName("UNIPD").setEntered(true).setPlaceId(1).setDateTime("2020-01-01T13:14:15"));
+        mockedTrackRecords.add(new TrackRecord().setPlaceName("Torre Archimede").setOrgName("UNIPD").setEntered(true).setPlaceId(1).setDateTime("2020-01-01T13:14:15"));
         this.trackRecords.postValue(mockedTrackRecords);
         return trackRecords;
     }

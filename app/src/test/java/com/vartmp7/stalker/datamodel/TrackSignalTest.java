@@ -223,12 +223,12 @@ public class TrackSignalTest {
     private  static final String date_time="2020-03-19";
 
     private static final TrackSignal trackSignal= new TrackSignal()
-            .idOrganization(idOrganization)
-            .entered(entered)
+            .setIdOrganization(idOrganization)
+            .setEntered(entered)
             .setIdPlace(idPlace)
-            .authenticated(authenticated)
-            .username(username)
-            .dateTime(date_time);
+            .setAuthenticated(authenticated)
+            .setUsername(username)
+            .setDateTime(date_time);
 
     private TrackSignal signal ;
     private TrackSignal signal2 ;
@@ -237,19 +237,19 @@ public class TrackSignalTest {
         // TODO: la riga seguente a questa non ha senso, è stata messa solo per far salire la line coverage al 100%.
         new TrackSignal(0L);
         signal =new TrackSignal()
-                .idOrganization(idOrganization)
-                .entered(entered)
+                .setIdOrganization(idOrganization)
+                .setEntered(entered)
                 .setIdPlace(idPlace)
-                .authenticated(authenticated)
-                .username(username)
-                .dateTime(date_time);
+                .setAuthenticated(authenticated)
+                .setUsername(username)
+                .setDateTime(date_time);
         signal2= new TrackSignal()
-                .idOrganization(idOrganization)
-                .entered(entered)
+                .setIdOrganization(idOrganization)
+                .setEntered(entered)
                 .setIdPlace(idPlace)
-                .authenticated(authenticated)
-                .username(username)
-                .dateTime(date_time);
+                .setAuthenticated(authenticated)
+                .setUsername(username)
+                .setDateTime(date_time);
     }
 
     @Test
@@ -257,12 +257,12 @@ public class TrackSignalTest {
         assertEquals(signal2.hashCode(), trackSignal.hashCode());
         assertEquals(signal2, trackSignal);
         TrackSignal s = new TrackSignal()
-                .idOrganization(idOrganization)
-                .entered(entered)
+                .setIdOrganization(idOrganization)
+                .setEntered(entered)
                 .setIdPlace(idPlace)
-                .authenticated(authenticated)
-                .username(username)
-                .dateTime(date_time);
+                .setAuthenticated(authenticated)
+                .setUsername(username)
+                .setDateTime(date_time);
     }
 
 

@@ -227,7 +227,7 @@ public class OrganizationsRepository {
 
 
     public LiveData<List<TrackRecord>> getTrackHistory(){
-        LiveData<List<Organization>> resultFromLocal = storage.getOrganizations();
+        LiveData<List<Organization>> resultFromLocal = storage.getLocalOrganizations();
 
         MutableLiveData<List<TrackRecord>> trackHistory = new MutableLiveData<>();
 

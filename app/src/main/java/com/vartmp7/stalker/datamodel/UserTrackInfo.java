@@ -213,15 +213,15 @@ import lombok.experimental.Accessors;
 public class UserTrackInfo {
     @Setter
     @Getter
-    @Accessors(fluent = true)
+    @Accessors(chain = true)
     private String name;
     @Setter
     @Getter
-    @Accessors(fluent = true)
+    @Accessors(chain = true)
     private String surname;
     @Setter
     @Getter
-    @Accessors(fluent = true)
+    @Accessors(chain = true)
     @SerializedName("uid_number")
     private String uidNumber;
 }

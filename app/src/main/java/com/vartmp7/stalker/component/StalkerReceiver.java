@@ -275,7 +275,7 @@ public class StalkerReceiver extends BroadcastReceiver {
             places.addAll(orgPlaces);
         } );
         Optional<PolygonPlace> opti = places.stream().filter(polygonPlace -> polygonPlace.isInside(currentCoordinate)).findFirst();
-        trackSignal.dateTime(getFormattedTime());
+        trackSignal.setDateTime(getFormattedTime());
 
 
         if (opti.isPresent()) {
@@ -288,25 +288,25 @@ public class StalkerReceiver extends BroadcastReceiver {
 //                Log.d(TAG, "onLocationsChanged: prevPlace ==null");
                 previousPlace = place;
                 trackSignal.setIdPlace(previousPlace.getId())
-                        .entered(true)
-                        .authenticated(organization.isLogged() && !organization.isAnonymous())
-                        .username(organization.getPersonalCn())
-                        .password(organization.getLdapPassword())
-                        .idOrganization(place.getOrgId());
+                        .setEntered(true)
+                        .setAuthenticated(organization.isLogged() && !organization.isAnonymous())
+                        .setUsername(organization.getPersonalCn())
+                        .setPassword(organization.getLdapPassword())
+                        .setIdOrganization(place.getOrgId());
 
                 sendSignal(trackSignal);
             } else if (previousPlace != place) {
 //                Log.d(TAG, "onLocationsChanged: prevPlace !=null");
-                trackSignal.entered(false)
+                trackSignal.setEntered(false)
                         .setIdPlace(previousPlace.getId());
                 sendSignal(trackSignal);
 
-                trackSignal.entered(true)
+                trackSignal.setEntered(true)
                         .setIdPlace(place.getId())
-                        .authenticated(!organization.isAnonymous() && organization.isLogged())
-                        .username(organization.getPersonalCn())
-                        .password(organization.getLdapPassword())
-                        .idOrganization(place.getOrgId());
+                        .setAuthenticated(!organization.isAnonymous() && organization.isLogged())
+                        .setUsername(organization.getPersonalCn())
+                        .setPassword(organization.getLdapPassword())
+                        .setIdOrganization(place.getOrgId());
                 sendSignal(trackSignal);
                 previousPlace = place;
             }
@@ -316,7 +316,7 @@ public class StalkerReceiver extends BroadcastReceiver {
         } else {
             if (previousPlace!=null){
                 Log.d(TAG, "onLocationsChanged: opti.isPresent = false");
-                trackSignal.entered(false);
+                trackSignal.setEntered(false);
                 sendSignal(trackSignal);
                 previousPlace = null;
             }
@@ -329,7 +329,7 @@ public class StalkerReceiver extends BroadcastReceiver {
 
     private void sendSignal(TrackSignal signal) {
         Log.d(TAG, "sendSignal() called with: signal = [" + signal + "]");
-        service.tracking(signal.idOrganization(), signal.idPlace(), signal).enqueue(new Callback<Void>() {
+        service.tracking(signal.getIdOrganization(), signal.getIdPlace(), signal).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(@NotNull Call<Void> call, @NotNull Response<Void> response) {
                 Log.d(TAG, "onResponse: "+response.toString());
