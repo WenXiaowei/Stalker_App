@@ -213,8 +213,7 @@ import com.vartmp7.stalker.datamodel.TrackHistory;
 import java.util.List;
 
 public interface TrackHistoryObtainer {
+    void updateTrackingHistory();
 
-    public abstract LiveData<List<TrackHistory>> getTrackHistories(List<Organization> organizations);
-
-    public abstract LiveData<TrackHistory> getTrackHistory(Organization organization);
+    LiveData<List<TrackHistory>> getTrackHistories();
 }

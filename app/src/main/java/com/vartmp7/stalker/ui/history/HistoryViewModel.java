@@ -208,7 +208,6 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.vartmp7.stalker.datamodel.Organization;
 import com.vartmp7.stalker.datamodel.TrackHistory;
 import com.vartmp7.stalker.repository.OrganizationsRepository;
 
@@ -233,7 +232,8 @@ public class HistoryViewModel extends ViewModel {
     }
 
 
-    public LiveData<TrackHistory> getTrackHistories(){
+    public LiveData<List<TrackHistory>> getTrackHistories(){
+        //TODO pescare trackHistory da orgRepo
         return trackHistories;
     }
 
