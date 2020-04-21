@@ -208,6 +208,7 @@ package com.vartmp7.stalker.repository;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.vartmp7.stalker.datamodel.Organization;
 import com.vartmp7.stalker.datamodel.TrackHistory;
 import com.vartmp7.stalker.datamodel.TrackRecord;
 import com.vartmp7.stalker.datamodel.UserTrackInfo;
@@ -217,27 +218,23 @@ import java.util.Arrays;
 import java.util.List;
 
 public class RESTTrackHistoryObtainer implements TrackHistoryObtainer {
-    private MutableLiveData<List<TrackHistory>> trackHistory;
+    private MutableLiveData<List<TrackRecord>> trackHistory;
 
     public RESTTrackHistoryObtainer() {
         this.trackHistory = new MutableLiveData<>();
     }
 
     @Override
-    public void updateTrackingHistory() {
-        ArrayList<TrackHistory> mockedTrackHistories = new ArrayList<>();
-        ArrayList<TrackRecord> trackRecords = new ArrayList<TrackRecord>();
-        trackRecords.add(new TrackRecord().entered(true).placeId(1).dateTime("2020-01-01T13:14:15"));
-        trackRecords.add(new TrackRecord().entered(false).placeId(1).dateTime("2020-01-01T13:15:15"));
-        TrackHistory history = new TrackHistory()
-                .userInfo(new UserTrackInfo().name("Ciccio").surname("Pasticcio").uidNumber("1"))
-                .tracks(trackRecords);
-        mockedTrackHistories.add(history);
-        this.trackHistory.postValue(mockedTrackHistories);
+    public void updateTrackHistory(List<Organization> organizations) {
+
+        ArrayList<TrackRecord> mockedTrackRecords = new ArrayList<TrackRecord>();
+        mockedTrackRecords.add(new TrackRecord().entered(true).placeId(1).dateTime("2020-01-01T13:14:15"));
+        mockedTrackRecords.add(new TrackRecord().entered(false).placeId(1).dateTime("2020-01-01T13:15:15"));
+        this.trackHistory.postValue(mockedTrackRecords);
     }
 
     @Override
-    public LiveData<List<TrackHistory>> getTrackHistories() {
+    public LiveData<List<TrackRecord>> getTrackHistory() {
         return trackHistory;
     }
 }

@@ -229,6 +229,7 @@ public class HistoryFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_cronologia, container, false);
+        historyViewModel.refreshOrganizations();
         historyViewModel.getTrackHistories().observe(getViewLifecycleOwner(), trackHistories->{
             Log.d(TAG, "onCreateView: track history:");
             trackHistories.forEach(trackHistory -> trackHistory.tracks().forEach(trackRecord->{

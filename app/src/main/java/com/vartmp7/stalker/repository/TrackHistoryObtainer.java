@@ -209,10 +209,11 @@ import androidx.lifecycle.LiveData;
 
 import com.vartmp7.stalker.datamodel.Organization;
 import com.vartmp7.stalker.datamodel.TrackHistory;
+import com.vartmp7.stalker.datamodel.TrackRecord;
 
 import java.util.List;
 
 public interface TrackHistoryObtainer {
-    void updateTrackingHistory();
-    LiveData<List<TrackHistory>> getTrackHistories();
+    void updateTrackHistory(List<Organization> organizations);
+    LiveData<List<TrackRecord>> getTrackHistory();
 }

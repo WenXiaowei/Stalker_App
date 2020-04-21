@@ -212,6 +212,7 @@ import androidx.lifecycle.Observer;
 import com.vartmp7.stalker.component.NotLogged;
 import com.vartmp7.stalker.datamodel.Organization;
 import com.vartmp7.stalker.datamodel.TrackHistory;
+import com.vartmp7.stalker.datamodel.TrackRecord;
 
 import java.util.List;
 
@@ -226,11 +227,12 @@ public class OrganizationsRepository {
     //private MediatorLiveData<List<Organizzazione>> liveOrganizzazioni;
 
 
-    public void updateTrackHistories(){
-        trackHistoryObtainer.updateTrackingHistory();
+    public void updateTrackHistory(){
+        trackHistoryObtainer.updateTrackingHistory(/*lista di organizzazioni*/);
     }
-    public LiveData<List<TrackHistory>> getTrackHistories(){
-        return trackHistoryObtainer.getTrackHistories();
+
+    public LiveData<List<TrackRecord>> getTrackHistories(){
+        return trackHistoryObtainer.getTrackHistory();
     }
 
 
