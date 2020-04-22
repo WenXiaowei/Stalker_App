@@ -214,6 +214,7 @@ import com.vartmp7.stalker.datamodel.OrganizationResponse;
 import com.vartmp7.stalker.datamodel.PolygonPlace;
 import com.vartmp7.stalker.datamodel.TrackHistory;
 import com.vartmp7.stalker.datamodel.TrackRecord;
+import com.vartmp7.stalker.datamodel.TrackSignal;
 import com.vartmp7.stalker.datamodel.placecomponent.Coordinate;
 
 import org.jetbrains.annotations.NotNull;
@@ -235,7 +236,7 @@ public class RESTObtainer implements Obtainer {
     private RestApiService service = null;
 
 
-    static int count = 0;
+    private static int count = 0;
 
     private MutableLiveData<List<Organization>> mutableLiveDataOrganizzazioni;
     private MutableLiveData<List<TrackRecord>> trackRecords;
@@ -245,7 +246,7 @@ public class RESTObtainer implements Obtainer {
         this.service = service;
         //this.mutableLiveDataOrganizzazioni= list;
         mutableLiveDataOrganizzazioni = new MutableLiveData<>();
-       trackRecords = new MutableLiveData<>();
+        trackRecords = new MutableLiveData<>();
     }
 
 
@@ -264,7 +265,7 @@ public class RESTObtainer implements Obtainer {
 
             @Override
             public void onFailure(@NotNull Call<OrganizationResponse> call, @NotNull Throwable throwable) {
-                Log.d(TAG, "onFailure: "+throwable.getMessage());
+                Log.d(TAG, "onFailure: " + throwable.getMessage());
                 ArrayList<Coordinate> torreArchimede = new ArrayList<>();
                 torreArchimede.add(new Coordinate(45.411555, 11.887476));
                 torreArchimede.add(new Coordinate(45.411442, 11.887942));
@@ -282,7 +283,6 @@ public class RESTObtainer implements Obtainer {
                 PolygonPlace d = new PolygonPlace();
                 d.setId(1).setName("TORRE 3C").setNumMaxPeople(10);
                 d.setCoordinates(dsea).setOrgId(2);
-
 
 
                 List<Organization> orgs = Arrays.asList(
@@ -331,11 +331,31 @@ public class RESTObtainer implements Obtainer {
         return mutableLiveDataOrganizzazioni;
     }
 
+
     @Override
-    public LiveData<List<TrackRecord>> getTrackRecords(List<Organization> organizations) {
+    public LiveData<List<TrackRecord>> getTrackRecords(@NotNull Organization org) {
+        if (org==null) return new MutableLiveData<>();
+
         ArrayList<TrackRecord> mockedTrackRecords = new ArrayList<>();
-        mockedTrackRecords.add(new TrackRecord().setPlaceName("Torre Archimede").setOrgName("UNIPD").setEntered(true).setPlaceId(1).setDateTime("2020-01-01T13:14:15"));
-        mockedTrackRecords.add(new TrackRecord().setPlaceName("Torre Archimede").setOrgName("UNIPD").setEntered(true).setPlaceId(1).setDateTime("2020-01-01T13:14:15"));
+        TrackSignal trackSignal = new TrackSignal();
+        trackSignal.setUsername(org.getPersonalCn());
+        trackSignal.setPassword(org.getLdapPassword());
+        Call<TrackHistory> tracks = service.getTracks(org.getId(), trackSignal);
+        tracks.enqueue(new Callback<TrackHistory>() {
+            @Override
+            public void onResponse(@NotNull Call<TrackHistory> call, @NotNull Response<TrackHistory> response) {
+                if (response.body() != null)
+                    mockedTrackRecords.addAll(response.body().getTracks());
+            }
+
+            @Override
+            public void onFailure(@NotNull Call<TrackHistory> call, @NotNull Throwable t) {
+                mockedTrackRecords.add(new TrackRecord().setPlaceName("Torre Archimede").setOrgName("UNIPD").setEntered(false).setPlaceId(1).setDateTime("2020-01-01T13:14:15"));
+                mockedTrackRecords.add(new TrackRecord().setPlaceName("Torre Archimede").setOrgName("UNIPD").setEntered(true).setPlaceId(1).setDateTime("2020-01-01T13:14:15"));
+            }
+        });
+
+
         this.trackRecords.postValue(mockedTrackRecords);
         return trackRecords;
     }
