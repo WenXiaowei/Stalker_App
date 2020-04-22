@@ -223,9 +223,11 @@ public class OrganizationsRepository {
     private Obtainer obtainer;
     private FavoritesSource organizationFavoritesSource;
 
-
-    public LiveData<List<TrackRecord>> getTrackHistory(Organization org){
-        return obtainer.getTrackRecords(org);
+    public LiveData<List<TrackRecord>> getTrackHistory(){
+          return obtainer.getTrackRecords();
+    }
+    public void updateTrackRecords(Organization org){
+        obtainer.updateTrackRecords(org);
     }
 
 

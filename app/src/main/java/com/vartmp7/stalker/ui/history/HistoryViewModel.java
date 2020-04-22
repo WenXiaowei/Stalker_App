@@ -228,8 +228,12 @@ public class HistoryViewModel extends ViewModel {
         return orgRepo.getOrganizations();
     }
 
-    LiveData<List<TrackRecord>> getTrackRecords(Organization org) {
-        return orgRepo.getTrackHistory(org);
+    LiveData<List<TrackRecord>> getTrackRecords() {
+        return orgRepo.getTrackHistory();
+    }
+
+    void updateTrackHistories(Organization org) {
+        orgRepo.updateTrackRecords(org);
     }
 
 

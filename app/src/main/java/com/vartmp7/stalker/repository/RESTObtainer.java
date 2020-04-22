@@ -334,8 +334,13 @@ public class RESTObtainer implements Obtainer {
     }
 
     @Override
-    public LiveData<List<TrackRecord>> getTrackRecords(Organization org) {
-        if (org == null) return new MutableLiveData<>(new ArrayList<>());
+    public LiveData<List<TrackRecord>> getTrackRecords() {
+        return trackRecords;
+
+    }
+
+    @Override
+    public void updateTrackRecords(Organization org) {
         ArrayList<TrackRecord> mockedTrackRecords = new ArrayList<>();
         TrackSignal trackSignal = new TrackSignal();
         trackSignal.setUsername(org.getPersonalCn());
@@ -380,7 +385,7 @@ public class RESTObtainer implements Obtainer {
             }
         });
 
-        return trackRecords;
+
     }
 
 

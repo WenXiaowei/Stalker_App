@@ -234,22 +234,26 @@ public class HistoryOraganizationAdapter extends RecyclerView.Adapter<HistoryOra
 
     private final HistoryViewModel viewModel;
     private List<Organization> organizations;
-    private Context context;
-    private LifecycleOwner lifecycleOwner;
     private ProgressBar progressBar;
 
     public HistoryOraganizationAdapter(Context context, LifecycleOwner owner, HistoryViewModel viewModel, ProgressBar progressBar) {
         this.organizations = viewModel.getOrganizations().getValue().stream().filter(Organization::isLogged).collect(Collectors.toList());
-        this.context = context;
         this.viewModel = viewModel;
-        this.lifecycleOwner = owner;
         this.progressBar = progressBar;
+        LiveData<List<TrackRecord>> trackRecords = viewModel.getTrackRecords();
+        trackRecords.observe(owner, records -> {
+
+            progressBar.setVisibility(View.GONE);
+            new HistoryRecordsDialog(context).show(records);
+
+        });
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_simple_organization, parent, false);
+
         return new ViewHolder(view);
 
     }
@@ -259,13 +263,8 @@ public class HistoryOraganizationAdapter extends RecyclerView.Adapter<HistoryOra
         Organization org = organizations.get(position);
         holder.tvOrganization.setText(org.getName());
         holder.tvOrganization.setOnClickListener(v -> {
-            LiveData<List<TrackRecord>> trackRecords = viewModel.getTrackRecords(org);
             progressBar.setVisibility(View.VISIBLE);
-            trackRecords.observe(lifecycleOwner, records -> {
-                progressBar.setVisibility(View.GONE);
-                new HistoryRecordsDialog(context).show(records);
-            });
-
+            viewModel.updateTrackHistories(org);
         });
     }
 
