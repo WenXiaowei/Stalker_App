@@ -244,7 +244,7 @@ public class HistoryOraganizationAdapter extends RecyclerView.Adapter<HistoryOra
         trackRecords.observe(owner, records -> {
 
             progressBar.setVisibility(View.GONE);
-            new HistoryRecordsDialog(context).show(records);
+//            new HistoryRecordsDialog(context).show(records);
 
         });
     }
@@ -264,7 +264,7 @@ public class HistoryOraganizationAdapter extends RecyclerView.Adapter<HistoryOra
         holder.tvOrganization.setText(org.getName());
         holder.tvOrganization.setOnClickListener(v -> {
             progressBar.setVisibility(View.VISIBLE);
-            viewModel.updateTrackHistories(org);
+//            viewModel.updateTrackHistories(org);
         });
     }
 

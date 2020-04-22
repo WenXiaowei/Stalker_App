@@ -222,8 +222,13 @@ public class TrackRecordAdapter extends RecyclerView.Adapter<TrackRecordAdapter.
 
     private List<TrackRecord> records;
 
-    public TrackRecordAdapter(List<TrackRecord> records) {
+    TrackRecordAdapter(List<TrackRecord> records) {
         this.records = records;
+    }
+
+    void updateTracks(List<TrackRecord> records){
+        this.records = records;
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -231,7 +236,6 @@ public class TrackRecordAdapter extends RecyclerView.Adapter<TrackRecordAdapter.
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_track_record, parent, false);
         return new TrackRecordAdapter.ViewHolder(view);
-
     }
 
     @Override

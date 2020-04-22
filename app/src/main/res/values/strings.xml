@@ -305,4 +305,6 @@
     <string name="successfully_logout">Successufully logout</string>
     <string name="icona_che_rappresenta_ingresso_o_uscita">Icona che rappresenta ingresso o uscita</string>
     <string name="storico_tracciamenti">Storico degli tracciamenti:</string>
+    <string name="devi_loggare_con_ldap">Devi prima effetturare login LDAP in un\'organizzazione!</string>
+    <string name="non_ci_sono_tracciamenti">Non ci sono tracciamenti per le organizzazioni in cui hai effettuato login LDAP</string>
 </resources>

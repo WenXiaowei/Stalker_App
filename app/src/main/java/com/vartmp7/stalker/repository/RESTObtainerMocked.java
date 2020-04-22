@@ -331,7 +331,7 @@ public class RESTObtainerMocked implements Obtainer {
     }
 
     @Override
-    public void updateTrackRecords(Organization org) {
+    public void updateTrackRecords(List<Organization> org) {
 
     }
 

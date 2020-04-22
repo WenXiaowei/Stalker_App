@@ -215,6 +215,6 @@ public interface Obtainer {
 
     LiveData<List<Organization>> getOrganizations();
     LiveData<List<TrackRecord>>  getTrackRecords();
-    void updateTrackRecords(Organization org);
+    void updateTrackRecords(List<Organization> org);
 
 }
