@@ -226,6 +226,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.MutableLiveData;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -256,6 +257,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -436,6 +438,25 @@ public class MainActivity extends AppCompatActivity {
 
     public void logout() {
         FirebaseAuth.getInstance().signOut();
+        cleanUserData();
+    }
+
+    private void cleanUserData() {
+        List<Organization> organizations = repository.getOrganizations().getValue();
+        if(organizations!=null){
+            organizations = new ArrayList<>(organizations);
+            organizations.stream().sequential().forEach(o->
+                    o.setLogged(false)
+                    .setTracking(false)
+                    .setTrackingActive(false)
+                    .setAnonymous(false)
+                    .setFavorite(false)
+                    .setPersonalCn("")
+                    .setLdapPassword("")
+            );
+            repository.updateOrganizations(organizations);
+        }
+
     }
 
     private void googleSignOut() {
