@@ -205,67 +205,75 @@
 package com.vartmp7.stalker.ui.history;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.ViewModel;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.vartmp7.stalker.R;
+import com.vartmp7.stalker.datamodel.Organization;
+import com.vartmp7.stalker.datamodel.TrackHistory;
 import com.vartmp7.stalker.datamodel.TrackRecord;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
-public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryViewHolder> {
+public class HistoryOraganizationAdapter extends RecyclerView.Adapter<HistoryOraganizationAdapter.ViewHolder> {
 
-    private List<TrackRecord> trackHistories;
+    private final HistoryViewModel viewModel;
+    private List<Organization> organizations;
+    private Context context;
+    private FragmentManager manager;
 
-    HistoryAdapter(List<TrackRecord> trackHistories) {
-        this.trackHistories = trackHistories;
+    public HistoryOraganizationAdapter(Context context, FragmentManager manager, HistoryViewModel viewModel) {
+        this.organizations = viewModel.getOrganizations().getValue().stream().filter(Organization::isLogged).collect(Collectors.toList());
+        this.context = context;
+        this.manager = manager;
+        this.viewModel = viewModel;
     }
-
 
     @NonNull
     @Override
-    public HistoryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_tracking_history, parent, false);
-        return new HistoryViewHolder(view);
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_simple_organization, parent, false);
+        return new ViewHolder(view);
+
     }
 
     @Override
-    public void onBindViewHolder(@NonNull HistoryViewHolder holder, int position) {
-        TrackRecord record = trackHistories.get(position);
-
-        if (record.isEntered()) holder.ivEnterExit.setImageResource(R.drawable.ic_enter);
-        else holder.ivEnterExit.setImageResource(R.drawable.ic_exit);
-        holder.tvOrganization.setText(String.format("%s\n%s", record.getOrgName(), record.getPlaceName()));
-        holder.tvDateTime.setText(record.getDateTime());
-    }
-
-    void updateTrackRecords(List<TrackRecord> records){
-        trackHistories = records;
-        notifyDataSetChanged();
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        Organization org = organizations.get(position);
+        holder.tvOrganization.setText(org.getName());
+        holder.tvOrganization.setOnClickListener(v -> {
+            LiveData<List<TrackRecord>> trackRecords = viewModel.getTrackRecords(org);
+            new HistoryRecordsDialog(context,trackRecords).show();
+        });
     }
 
     @Override
     public int getItemCount() {
-        return trackHistories.size();
+        return organizations.size();
     }
 
+    public void updateOrganizations(List<Organization> organizations) {
+        this.organizations = organizations;
+        notifyDataSetChanged();
+    }
 
-    static class HistoryViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvDateTime;
+    static class ViewHolder extends RecyclerView.ViewHolder {
         private TextView tvOrganization;
-        private ImageView ivEnterExit;
 
-        HistoryViewHolder(@NonNull View itemView) {
+        public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvDateTime = itemView.findViewById(R.id.tvTime);
-            tvOrganization = itemView.findViewById(R.id.tvOrganizationInfo);
-            ivEnterExit = itemView.findViewById(R.id.ivInOut);
+            tvOrganization = itemView.findViewById(R.id.tvNomeOrganizzazione);
         }
     }
 }

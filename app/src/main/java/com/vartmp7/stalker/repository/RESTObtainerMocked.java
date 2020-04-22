@@ -326,9 +326,10 @@ public class RESTObtainerMocked implements Obtainer {
     }
 
     @Override
-    public LiveData<List<TrackRecord>> getTrackRecords(List<Organization> organizations) {
+    public LiveData<List<TrackRecord>> getTrackRecords(Organization organizations) {
         return null;
     }
+
 
 
 }

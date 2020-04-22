@@ -246,7 +246,7 @@ public class RESTObtainer implements Obtainer {
         this.service = service;
         //this.mutableLiveDataOrganizzazioni= list;
         mutableLiveDataOrganizzazioni = new MutableLiveData<>();
-        trackRecords = new MutableLiveData<>();
+        trackRecords = new MutableLiveData<>(new ArrayList<>());
     }
 
 
@@ -298,7 +298,7 @@ public class RESTObtainer implements Obtainer {
                                 .setLdapDomainComponent("dc=daf,dc=test,dc=it")
                                 .setLdapCommonName("")
                                 .setLdapPort(389)
-                                .setType("public")
+                                .setType("both")
                                 .setEmail("info@math.unipd.it")
 //                                .setImage_url("https://upload.wikimedia.org/wikipedia/it/thumb/5/53/Logo_Universit%C3%A0_Padova.svg/1200px-Logo_Universit%C3%A0_Padova.svg.png")
                                 .setImageUrl("https://pbs.twimg.com/profile_images/1173976802416582657/LCZXVSqH_400x400.jpg")
@@ -312,12 +312,14 @@ public class RESTObtainer implements Obtainer {
                         new Organization()
                                 .setId(2)
                                 .setName("UNIPD dSeA")
+                                .setType("both")
                                 .setTracking(false)
                                 .setImageUrl("https://www.economia.unipd.it/sites/economia.unipd.it/files/img-logo-trentennale-dsea-big.png")
                                 .setPlaces(Collections.singletonList(d)),
                         new Organization()
                                 .setId(count + 3)
                                 .setName("UNIPD DSFARM")
+                                .setType("both")
                                 .setTracking(true)
                                 .setImageUrl("https://www.dsfarm.unipd.it/sites/dsfarm.unipd.it/files/sublogo_9.png")
                                 .setPlaces(Collections.singletonList(t))
@@ -331,11 +333,9 @@ public class RESTObtainer implements Obtainer {
         return mutableLiveDataOrganizzazioni;
     }
 
-
     @Override
-    public LiveData<List<TrackRecord>> getTrackRecords(@NotNull Organization org) {
-        if (org==null) return new MutableLiveData<>();
-
+    public LiveData<List<TrackRecord>> getTrackRecords(Organization org) {
+        if (org==null) return new MutableLiveData<>(new ArrayList<>());
         ArrayList<TrackRecord> mockedTrackRecords = new ArrayList<>();
         TrackSignal trackSignal = new TrackSignal();
         trackSignal.setUsername(org.getPersonalCn());
@@ -354,8 +354,6 @@ public class RESTObtainer implements Obtainer {
                 mockedTrackRecords.add(new TrackRecord().setPlaceName("Torre Archimede").setOrgName("UNIPD").setEntered(true).setPlaceId(1).setDateTime("2020-01-01T13:14:15"));
             }
         });
-
-
         this.trackRecords.postValue(mockedTrackRecords);
         return trackRecords;
     }

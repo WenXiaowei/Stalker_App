@@ -213,6 +213,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -220,54 +221,51 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.vartmp7.stalker.MainActivity;
 import com.vartmp7.stalker.R;
+import com.vartmp7.stalker.datamodel.Organization;
 import com.vartmp7.stalker.datamodel.TrackRecord;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 /**
  * @author Xiaowei Wen, Lorenzo Taschin
  */
-public class HistoryFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
+public class HistoryFragment extends Fragment {
     public static final String TAG = "com.vartmp7.stalker.ui.cronologia.CronologiaFragment";
 
     private HistoryViewModel historyViewModel;
-    private HistoryAdapter adapter;
-    private RecyclerView trackRecordsRecycleView;
-    private SwipeRefreshLayout swipeRefreshLayout;
+    private RecyclerView organizationRecyclerView;
+    private HistoryOraganizationAdapter historyOraganizationAdapter;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_cronologia, container, false);
         historyViewModel = new ViewModelProvider(requireActivity()).get(HistoryViewModel.class);
-        swipeRefreshLayout = v.findViewById(R.id.swipeToRefresh);
         historyViewModel.init(MainActivity.repository);
-        trackRecordsRecycleView = v.findViewById(R.id.rvTrackRecords);
-        historyViewModel.getTrackRecords().observe(getViewLifecycleOwner(), records -> {
-            adapter.updateTrackRecords(records);
-            swipeRefreshLayout.setRefreshing(false);
-            Log.d(TAG, "onCreateView: trackRecords");
-            records.forEach(record-> Log.d(TAG, "onCreateView: "+record.getPlaceId()));
-            //adapter.updateTrackRecords(records);
+        organizationRecyclerView = v.findViewById(R.id.rvListaOrganizzazioni);
+
+        historyViewModel.getOrganizations().observe(getViewLifecycleOwner(), organizations -> {
+            historyOraganizationAdapter.updateOrganizations(organizations.stream()
+                            .filter(Organization::isLogged)
+                            .collect(Collectors.toList()));
+//            organizations.forEach(o-> Log.d(TAG, "onCreateView: "+o));
         });
-        initTrackRecords();
+
+
+        initOraganizationList();
         return v;
     }
 
-    private void initTrackRecords() {
-        adapter = new HistoryAdapter(new ArrayList<>());
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
-        trackRecordsRecycleView.setLayoutManager(layoutManager);
-        trackRecordsRecycleView.setAdapter(adapter);
-        onRefresh();
+    private void initOraganizationList() {
+        historyOraganizationAdapter = new HistoryOraganizationAdapter(requireContext(), getParentFragmentManager(), historyViewModel);
+        RecyclerView.LayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        organizationRecyclerView.setLayoutManager(linearLayoutManager);
+        organizationRecyclerView.setAdapter(historyOraganizationAdapter);
+
     }
 
 
-    @Override
-    public void onRefresh() {
-        historyViewModel.getTrackRecords();
-        swipeRefreshLayout.setRefreshing(true);
-    }
 }

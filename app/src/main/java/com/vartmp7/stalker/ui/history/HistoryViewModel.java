@@ -206,6 +206,7 @@ package com.vartmp7.stalker.ui.history;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 
 import com.vartmp7.stalker.datamodel.Organization;
@@ -213,6 +214,7 @@ import com.vartmp7.stalker.datamodel.TrackRecord;
 import com.vartmp7.stalker.repository.OrganizationsRepository;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Xiaowei Wen, Lorenzo Taschin
@@ -220,22 +222,15 @@ import java.util.List;
 public class HistoryViewModel extends ViewModel {
     public static final String TAG = "com.vartmp7.stalker.ui.cronologia.CronologiaViewModel";
 
-
     private OrganizationsRepository orgRepo;
 
-
-    public HistoryViewModel() {
-
-    }
-
-    public LiveData<List<TrackRecord>> getTrackRecords(Organization org) {
-        return orgRepo.getTrackHistory(org);
-    }
-
-    LiveData<List<Organization>> getOrganizations(){
+    public LiveData<List<Organization>> getOrganizations() {
         return orgRepo.getOrganizations();
     }
 
+    LiveData<List<TrackRecord>> getTrackRecords(Organization org) {
+        return orgRepo.getTrackHistory(org);
+    }
 
 
     void init(OrganizationsRepository repository) {

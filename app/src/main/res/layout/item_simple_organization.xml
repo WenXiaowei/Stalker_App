@@ -187,7 +187,7 @@
   ~       same "printed page" as the copyright notice for easier
   ~       identification within third-party archives.
   ~
-  ~    Copyright [2020] [VartTmp7]
+  ~    Copyright 2020 - VartTmp7
   ~
   ~    Licensed under the Apache License, Version 2.0 (the "License");
   ~    you may not use this file except in compliance with the License.
@@ -201,23 +201,17 @@
   ~    See the License for the specific language governing permissions and
   ~    limitations under the License.
   -->
-<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:id="@+id/swipeToRefresh"
-    android:layout_height="match_parent">
-
-    <LinearLayout
+    android:layout_marginTop="5dp"
+    android:layout_marginLeft="5dp"
+    android:layout_marginRight="5dp"
+    android:layout_height="wrap_content">
+    <TextView
+        android:id="@+id/tvNomeOrganizzazione"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="5dp"
-        android:orientation="vertical"
-        tools:context="com.vartmp7.stalker.ui.organizations.OrganizationsFragment">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:layout_width="match_parent"
-            android:id="@+id/rvListaOrganizzazioni"
-            android:layout_height="match_parent"
-            tools:listitem="@layout/item_simple_organization" />
-    </LinearLayout>
-</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+        android:textAlignment="center"
+        android:textSize="24sp"
+        android:layout_height="wrap_content" />
+</LinearLayout>
