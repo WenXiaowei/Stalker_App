@@ -215,6 +215,7 @@ package com.vartmp7.stalker;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -337,12 +338,16 @@ public class MainActivity extends AppCompatActivity {
             inflater.inflate(R.menu.setting_menu, menu);
             //todo capire come disattivare la scelta per cambiare password!
             if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-                if (!(FirebaseAuth.getInstance().getCurrentUser().getProviderData().size() >= 2 &&
+                if ((FirebaseAuth.getInstance().getCurrentUser().getProviderData().size() >= 2 &&
                         FirebaseAuth.getInstance().getCurrentUser().getProviderData().get(1).getProviderId()
                                 .equals(EmailAuthProvider.EMAIL_PASSWORD_SIGN_IN_METHOD))) {
                     menu.removeItem(R.id.menuModificaDati);
+                }else{
+                    Log.d(TAG, "onCreateOptionsMenu: if dentro");
                 }
 
+            }else{
+                Log.d(TAG, "onCreateOptionsMenu: if fuori");
             }
         } else {
             inflater.inflate(R.menu.setting_menu_no_log, menu);

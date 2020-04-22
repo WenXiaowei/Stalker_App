@@ -265,6 +265,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.form_login,container,false);
+        Log.d(TAG, "onCreateView: LoginFragment");
         Button signUpButton = v.findViewById(R.id.btn_signUp);
         signUpButton.setOnClickListener(this);
 
@@ -279,8 +280,9 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
         loginButton.setPermissions("email");
 
         // If using in a fragment
-//        loginButton.setFragment(this);
+        loginButton.setFragment(this);
         // Callback registration
+
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
@@ -299,6 +301,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
             @Override
             public void onCancel() {
                 // App code
+                Log.d(TAG, "onCancel: ");
             }
 
             @Override
