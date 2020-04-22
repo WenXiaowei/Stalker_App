@@ -206,12 +206,15 @@ package com.vartmp7.stalker.ui.history;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 
+import com.vartmp7.stalker.datamodel.Organization;
 import com.vartmp7.stalker.datamodel.TrackRecord;
 import com.vartmp7.stalker.repository.OrganizationsRepository;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Xiaowei Wen, Lorenzo Taschin
@@ -219,25 +222,20 @@ import java.util.List;
 public class HistoryViewModel extends ViewModel {
     public static final String TAG = "com.vartmp7.stalker.ui.cronologia.CronologiaViewModel";
 
-
     private OrganizationsRepository orgRepo;
 
-    private MutableLiveData<String> mText;
-
-    public HistoryViewModel() {
-        mText = new MutableLiveData<>();
-        mText.setValue("This is cronologia fragment");
+    public LiveData<List<Organization>> getOrganizations() {
+        return orgRepo.getOrganizations();
     }
 
-
-    public LiveData<List<TrackRecord>> getTrackRecords() {
+    LiveData<List<TrackRecord>> getTrackRecords() {
         return orgRepo.getTrackHistory();
     }
 
-
-    public LiveData<String> getText() {
-        return mText;
+    void updateTrackHistories(Organization org) {
+        orgRepo.updateTrackRecords(org);
     }
+
 
     void init(OrganizationsRepository repository) {
         this.orgRepo = repository;

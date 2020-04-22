@@ -204,14 +204,14 @@
 
 package com.vartmp7.stalker.ui.history;
 
-import android.content.Context;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.vartmp7.stalker.R;
@@ -219,53 +219,26 @@ import com.vartmp7.stalker.datamodel.TrackRecord;
 
 import java.util.List;
 
-public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryViewHolder> {
+public class HistoryDetailFragment extends Fragment {
 
-    private List<TrackRecord> trackHistories;
+    private List<TrackRecord> histories;
+    private RecyclerView rctrackRecords;
 
-    HistoryAdapter(List<TrackRecord> trackHistories) {
-        this.trackHistories = trackHistories;
+    public HistoryDetailFragment(List<TrackRecord> histories) {
+        this.histories = histories;
     }
 
-
-    @NonNull
+    @Nullable
     @Override
-    public HistoryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_tracking_history, parent, false);
-        return new HistoryViewHolder(view);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View v = inflater.inflate(R.layout.fragment_tracking, container, false);
+        rctrackRecords = v.findViewById(R.id.rvRecords);
+        initRecords();
+        return v;
     }
 
-    @Override
-    public void onBindViewHolder(@NonNull HistoryViewHolder holder, int position) {
-        TrackRecord record = trackHistories.get(position);
-
-        if (record.isEntered()) holder.ivEnterExit.setImageResource(R.drawable.ic_enter);
-        else holder.ivEnterExit.setImageResource(R.drawable.ic_exit);
-        holder.tvOrganization.setText(String.format("%s\n%s", record.getOrgName(), record.getPlaceName()));
-        holder.tvDateTime.setText(record.getDateTime());
-    }
-
-    void updateTrackRecords(List<TrackRecord> records){
-        trackHistories = records;
-        notifyDataSetChanged();
-    }
-
-    @Override
-    public int getItemCount() {
-        return trackHistories.size();
-    }
-
-
-    static class HistoryViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvDateTime;
-        private TextView tvOrganization;
-        private ImageView ivEnterExit;
-
-        HistoryViewHolder(@NonNull View itemView) {
-            super(itemView);
-            tvDateTime = itemView.findViewById(R.id.tvTime);
-            tvOrganization = itemView.findViewById(R.id.tvOrganizationInfo);
-            ivEnterExit = itemView.findViewById(R.id.ivInOut);
-        }
+    private void initRecords(){
+        TrackRecordAdapter adapter = new TrackRecordAdapter(histories);
+        rctrackRecords.setAdapter(adapter);
     }
 }

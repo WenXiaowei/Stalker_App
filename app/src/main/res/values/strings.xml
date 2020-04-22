@@ -304,4 +304,5 @@
     <string name="prima_devi_fare_accesso">Devi prima fare accesso!</string>
     <string name="successfully_logout">Successufully logout</string>
     <string name="icona_che_rappresenta_ingresso_o_uscita">Icona che rappresenta ingresso o uscita</string>
+    <string name="storico_tracciamenti">Storico degli tracciamenti:</string>
 </resources>

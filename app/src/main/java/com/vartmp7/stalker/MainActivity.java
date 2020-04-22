@@ -223,7 +223,6 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.MutableLiveData;
@@ -235,8 +234,6 @@ import androidx.navigation.ui.NavigationUI;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
@@ -248,13 +245,11 @@ import com.vartmp7.stalker.datamodel.Organization;
 import com.vartmp7.stalker.repository.FavoritesSource;
 import com.vartmp7.stalker.repository.FileStorage;
 import com.vartmp7.stalker.repository.FirebaseFavoritesSource;
-import com.vartmp7.stalker.repository.RESTTrackHistoryObtainer;
+import com.vartmp7.stalker.repository.Obtainer;
+import com.vartmp7.stalker.repository.OrganizationsRepository;
+import com.vartmp7.stalker.repository.RESTObtainer;
 import com.vartmp7.stalker.repository.RestApiService;
 import com.vartmp7.stalker.repository.Storage;
-import com.vartmp7.stalker.repository.OrganizationsRepository;
-import com.vartmp7.stalker.repository.Obtainer;
-import com.vartmp7.stalker.repository.RESTObtainer;
-import com.vartmp7.stalker.repository.TrackHistoryObtainer;
 
 import org.jetbrains.annotations.NotNull;
 

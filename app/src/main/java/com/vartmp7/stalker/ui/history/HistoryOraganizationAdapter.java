@@ -187,7 +187,7 @@
  *       same "printed page" as the copyright notice for easier
  *       identification within third-party archives.
  *
- *    Copyright [yyyy] [name of copyright owner]
+ *    Copyright 2020 - VartTmp7
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -200,20 +200,90 @@
  *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
- *
  */
 
-package com.vartmp7.stalker.repository;
+package com.vartmp7.stalker.ui.history;
 
+import android.content.Context;
+import android.graphics.Color;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModel;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.vartmp7.stalker.R;
 import com.vartmp7.stalker.datamodel.Organization;
 import com.vartmp7.stalker.datamodel.TrackHistory;
 import com.vartmp7.stalker.datamodel.TrackRecord;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
-public interface TrackHistoryObtainer {
-    void updateTrackHistory(List<Organization> organizations);
-    LiveData<List<TrackRecord>> getTrackHistory();
+public class HistoryOraganizationAdapter extends RecyclerView.Adapter<HistoryOraganizationAdapter.ViewHolder> {
+
+    private final HistoryViewModel viewModel;
+    private List<Organization> organizations;
+    private ProgressBar progressBar;
+
+    public HistoryOraganizationAdapter(Context context, LifecycleOwner owner, HistoryViewModel viewModel, ProgressBar progressBar) {
+        this.organizations = viewModel.getOrganizations().getValue().stream().filter(Organization::isLogged).collect(Collectors.toList());
+        this.viewModel = viewModel;
+        this.progressBar = progressBar;
+        LiveData<List<TrackRecord>> trackRecords = viewModel.getTrackRecords();
+        trackRecords.observe(owner, records -> {
+
+            progressBar.setVisibility(View.GONE);
+            new HistoryRecordsDialog(context).show(records);
+
+        });
+    }
+
+    @NonNull
+    @Override
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_simple_organization, parent, false);
+
+        return new ViewHolder(view);
+
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        Organization org = organizations.get(position);
+        holder.tvOrganization.setText(org.getName());
+        holder.tvOrganization.setOnClickListener(v -> {
+            progressBar.setVisibility(View.VISIBLE);
+            viewModel.updateTrackHistories(org);
+        });
+    }
+
+    @Override
+    public int getItemCount() {
+        return organizations.size();
+    }
+
+    public void updateOrganizations(List<Organization> organizations) {
+        this.organizations = organizations;
+        notifyDataSetChanged();
+    }
+
+    static class ViewHolder extends RecyclerView.ViewHolder {
+        private TextView tvOrganization;
+
+        public ViewHolder(@NonNull View itemView) {
+            super(itemView);
+            tvOrganization = itemView.findViewById(R.id.tvNomeOrganizzazione);
+        }
+    }
 }

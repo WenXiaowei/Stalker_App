@@ -214,6 +214,7 @@ import java.util.List;
 public interface Obtainer {
 
     LiveData<List<Organization>> getOrganizations();
-    LiveData<List<TrackRecord>> getTrackRecords(List<Organization> organizations);
+    LiveData<List<TrackRecord>>  getTrackRecords();
+    void updateTrackRecords(Organization org);
 
 }

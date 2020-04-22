@@ -243,5 +243,15 @@
         android:id="@+id/navigation_cronologia"
         android:name="com.vartmp7.stalker.ui.history.HistoryFragment"
         android:label="@string/cronologia"
-        tools:layout="@layout/fragment_cronologia" />
+        tools:layout="@layout/fragment_cronologia" >
+        <action
+            android:id="@+id/action_navigation_cronologia_to_historyDetailFragment"
+            app:destination="@id/historyDetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/historyDetailFragment"
+        android:name="com.vartmp7.stalker.ui.history.HistoryDetailFragment"
+        android:label="HistoryDetailFragment" >
+        <argument android:name="track_records" />
+    </fragment>
 </navigation>

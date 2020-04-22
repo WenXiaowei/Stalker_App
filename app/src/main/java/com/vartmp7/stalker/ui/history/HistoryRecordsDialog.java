@@ -187,7 +187,7 @@
  *       same "printed page" as the copyright notice for easier
  *       identification within third-party archives.
  *
- *    Copyright [yyyy] [name of copyright owner]
+ *    Copyright 2020 - VartTmp7
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -200,41 +200,52 @@
  *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
- *
  */
 
-package com.vartmp7.stalker.repository;
+package com.vartmp7.stalker.ui.history;
+
+import android.app.AlertDialog;
+import android.content.Context;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.TextView;
 
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-import com.vartmp7.stalker.datamodel.Organization;
-import com.vartmp7.stalker.datamodel.TrackHistory;
+import com.bumptech.glide.Glide;
+import com.vartmp7.stalker.R;
 import com.vartmp7.stalker.datamodel.TrackRecord;
-import com.vartmp7.stalker.datamodel.UserTrackInfo;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-public class RESTTrackHistoryObtainer implements TrackHistoryObtainer {
-    private MutableLiveData<List<TrackRecord>> trackHistory;
+import de.hdodenhof.circleimageview.CircleImageView;
 
-    public RESTTrackHistoryObtainer() {
-        this.trackHistory = new MutableLiveData<>();
+public class HistoryRecordsDialog {
+
+    private Context context;
+    public HistoryRecordsDialog(Context context) {
+        this.context = context;
     }
 
-    @Override
-    public void updateTrackHistory(List<Organization> organizations) {
+    public  void show(List<TrackRecord> records){
+        AlertDialog.Builder detailDialog = new AlertDialog.Builder(context);
 
-        ArrayList<TrackRecord> mockedTrackRecords = new ArrayList<TrackRecord>();
-        mockedTrackRecords.add(new TrackRecord().setEntered(true).setPlaceId(1).setDateTime("2020-01-01T13:14:15"));
-        mockedTrackRecords.add(new TrackRecord().setEntered(true).setPlaceId(1).setDateTime("2020-01-01T13:14:15"));
-        this.trackHistory.postValue(mockedTrackRecords);
-    }
+        detailDialog.setIcon(R.drawable.ic_info_black_24dp);
+        detailDialog.setTitle(R.string.storico_tracciamenti);
 
-    @Override
-    public LiveData<List<TrackRecord>> getTrackHistory() {
-        return trackHistory;
+        View v = LayoutInflater.from(context).inflate(R.layout.fragment_track_records, null);
+        RecyclerView recyclerView=v.findViewById(R.id.rvRecords);
+        TrackRecordAdapter adapter = new TrackRecordAdapter(records);
+        RecyclerView.LayoutManager l = new LinearLayoutManager(context);
+        recyclerView.setLayoutManager(l);
+        recyclerView.setAdapter(adapter);
+
+        detailDialog.setNegativeButton(context.getString(R.string.chiudi), (dialog, which) -> dialog.dismiss());
+
+        detailDialog.setView(v);
+        detailDialog.create().show();
+
     }
 }

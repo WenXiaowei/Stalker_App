@@ -187,7 +187,7 @@
  *       same "printed page" as the copyright notice for easier
  *       identification within third-party archives.
  *
- *    Copyright [2020] [VartTmp7]
+ *    Copyright 2020 - VartTmp7
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -204,70 +204,64 @@
 
 package com.vartmp7.stalker.ui.history;
 
-import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.vartmp7.stalker.MainActivity;
 import com.vartmp7.stalker.R;
-import com.vartmp7.stalker.datamodel.Organization;
 import com.vartmp7.stalker.datamodel.TrackRecord;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
+public class TrackRecordAdapter extends RecyclerView.Adapter<TrackRecordAdapter.ViewHolder> {
 
-/**
- * @author Xiaowei Wen, Lorenzo Taschin
- */
-public class HistoryFragment extends Fragment {
-    public static final String TAG = "com.vartmp7.stalker.ui.cronologia.CronologiaFragment";
+    private List<TrackRecord> records;
 
-    private HistoryViewModel historyViewModel;
-    private RecyclerView organizationRecyclerView;
-    private HistoryOraganizationAdapter historyOraganizationAdapter;
-    private ProgressBar progressBar;
+    public TrackRecordAdapter(List<TrackRecord> records) {
+        this.records = records;
+    }
 
-    @Nullable
+    @NonNull
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_cronologia, container, false);
-        historyViewModel = new ViewModelProvider(requireActivity()).get(HistoryViewModel.class);
-        historyViewModel.init(MainActivity.repository);
-        organizationRecyclerView = v.findViewById(R.id.rvListaOrganizzazioni);
-        progressBar = v.findViewById(R.id.pbLoadingHistory);
-        historyViewModel.getOrganizations().observe(getViewLifecycleOwner(), organizations -> {
-            historyOraganizationAdapter.updateOrganizations(organizations.stream()
-                            .filter(Organization::isLogged)
-                            .collect(Collectors.toList()));
-//            organizations.forEach(o-> Log.d(TAG, "onCreateView: "+o));
-        });
-
-
-        initOraganizationList();
-        return v;
-    }
-
-    private void initOraganizationList() {
-        historyOraganizationAdapter = new HistoryOraganizationAdapter(requireContext(), getViewLifecycleOwner(), historyViewModel, progressBar);
-        RecyclerView.LayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
-        organizationRecyclerView.setLayoutManager(linearLayoutManager);
-        organizationRecyclerView.setAdapter(historyOraganizationAdapter);
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_track_record, parent, false);
+        return new TrackRecordAdapter.ViewHolder(view);
 
     }
 
+    @Override
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        TrackRecord record = records.get(position);
+        holder.tvData.setText(record.getDateTime());
+        holder.tvNomeLuogo.setText(record.getPlaceName());
 
+        if (record.isEntered()) {
+            holder.ivIcon.setImageResource(R.drawable.ic_enter);
+        } else {
+            holder.ivIcon.setImageResource(R.drawable.ic_exit);
+        }
+    }
+
+    @Override
+    public int getItemCount() {
+        return records.size();
+    }
+
+    static class  ViewHolder extends RecyclerView.ViewHolder{
+        private TextView tvNomeLuogo;
+        private TextView tvData;
+        private ImageView ivIcon;
+
+        ViewHolder(@NonNull View itemView) {
+            super(itemView);
+            tvNomeLuogo = itemView.findViewById(R.id.tvOrganizationInfo);
+            tvData = itemView.findViewById(R.id.tvTime);
+            ivIcon = itemView.findViewById(R.id.ivInOut);
+        }
+    }
 }
