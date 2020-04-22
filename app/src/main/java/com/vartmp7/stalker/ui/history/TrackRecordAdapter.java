@@ -232,13 +232,9 @@ public class TrackRecordAdapter extends RecyclerView.Adapter<TrackRecordAdapter.
 
     void updateTracks(List<TrackRecord> records){
         records.forEach(trackRecord -> trackRecord.setDateTime(trackRecord.getDateTime().replace("T"," ")));
-        this.records=records.stream().sorted(new Comparator<TrackRecord>() {
-            @Override
-            public int compare(TrackRecord o1, TrackRecord o2) {
-                return Comparator.comparing(TrackRecord::getDateTime).compare(o1,o2)*-1;
-            }
-        }).collect(Collectors.toList());
-
+        this.records=records.stream().sorted(
+                (o1, o2) -> Comparator.comparing(TrackRecord::getDateTime).compare(o1,o2)*-1)
+                .collect(Collectors.toList());
         notifyDataSetChanged();
     }
 
