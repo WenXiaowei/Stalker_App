@@ -435,6 +435,14 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
                     mAdapter.setList(lis);
                     organizationToTrack = lis.stream().filter(Organization::isTrackingActive).collect(Collectors.toList());
                     myReceiver.setOrganizations(organizationToTrack);
+
+                    if (organizationToTrack.stream().anyMatch(Organization::isTrackingActive)){
+                        mRemoveLocationUpdatesButton.setEnabled(true);
+                    }
+
+                    if (organizationToTrack.stream().noneMatch(Organization::isTrackingActive)){
+                        mRemoveLocationUpdatesButton.setEnabled(false);
+                    }
                 });
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);

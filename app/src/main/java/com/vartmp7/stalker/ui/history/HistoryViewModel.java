@@ -232,8 +232,8 @@ public class HistoryViewModel extends ViewModel {
         return orgRepo.getTrackHistory();
     }
 
-    void updateTrackHistories(Organization org) {
-        orgRepo.updateTrackRecords(org);
+    void updateTrackHistories() {
+        orgRepo.updateTrackRecords(orgRepo.getOrganizations().getValue().stream().filter(Organization::isLogged).collect(Collectors.toList()));
     }
 
 

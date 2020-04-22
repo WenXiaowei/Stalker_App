@@ -226,7 +226,7 @@ public class OrganizationsRepository {
     public LiveData<List<TrackRecord>> getTrackHistory(){
           return obtainer.getTrackRecords();
     }
-    public void updateTrackRecords(Organization org){
+    public void updateTrackRecords(List<Organization> org){
         obtainer.updateTrackRecords(org);
     }
 

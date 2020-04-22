@@ -206,25 +206,28 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
+
     android:orientation="horizontal">
 
     <TextView
         android:id="@+id/tvOrganizationInfo"
-        android:layout_weight="1"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textSize="16sp" />
 
     <TextView
         android:id="@+id/tvTime"
-        android:layout_weight="1"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textSize="16sp" />
 
     <ImageView
         android:id="@+id/ivInOut"
-        android:layout_weight="1"
-        android:src="@drawable/ic_exit"
         android:layout_width="32dp"
         android:layout_height="32dp"
-        android:contentDescription="@string/icona_che_rappresenta_ingresso_o_uscita" />
+        android:layout_weight="1"
+        android:contentDescription="@string/icona_che_rappresenta_ingresso_o_uscita"
+        android:src="@drawable/ic_exit" />
 </LinearLayout>

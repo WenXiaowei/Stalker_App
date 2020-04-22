@@ -210,6 +210,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -233,13 +234,16 @@ import java.util.stream.Collectors;
 /**
  * @author Xiaowei Wen, Lorenzo Taschin
  */
-public class HistoryFragment extends Fragment {
+public class HistoryFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
     public static final String TAG = "com.vartmp7.stalker.ui.cronologia.CronologiaFragment";
 
     private HistoryViewModel historyViewModel;
     private RecyclerView organizationRecyclerView;
+    private SwipeRefreshLayout refreshLayout;
     private HistoryOraganizationAdapter historyOraganizationAdapter;
+    private TrackRecordAdapter adapter;
     private ProgressBar progressBar;
+    private TextView tvMessageBox;
 
     @Nullable
     @Override
@@ -248,26 +252,45 @@ public class HistoryFragment extends Fragment {
         historyViewModel = new ViewModelProvider(requireActivity()).get(HistoryViewModel.class);
         historyViewModel.init(MainActivity.repository);
         organizationRecyclerView = v.findViewById(R.id.rvListaOrganizzazioni);
-        progressBar = v.findViewById(R.id.pbLoadingHistory);
-        historyViewModel.getOrganizations().observe(getViewLifecycleOwner(), organizations -> {
-            historyOraganizationAdapter.updateOrganizations(organizations.stream()
-                            .filter(Organization::isLogged)
-                            .collect(Collectors.toList()));
-//            organizations.forEach(o-> Log.d(TAG, "onCreateView: "+o));
-        });
+        refreshLayout = v.findViewById(R.id.swipeToRefresh);
+        tvMessageBox = v.findViewById(R.id.tvMessageBox);
 
+
+        historyViewModel.getTrackRecords().observe(getViewLifecycleOwner(), records ->{
+            if (historyViewModel.getOrganizations().getValue().stream().noneMatch(Organization::isLogged)){
+                tvMessageBox.setText(R.string.devi_loggare_con_ldap);
+            }else if (historyViewModel.getTrackRecords().getValue().size()==0){
+                tvMessageBox.setText(R.string.non_ci_sono_tracciamenti);
+            }else{
+                tvMessageBox.setText(R.string.storico_tracciamenti);
+                adapter.updateTracks(records);
+            }
+
+            refreshLayout.setRefreshing(false);
+            records.forEach(o-> Log.d(TAG, "onCreateView: "+o));
+        } );
 
         initOraganizationList();
+
         return v;
     }
 
-    private void initOraganizationList() {
-        historyOraganizationAdapter = new HistoryOraganizationAdapter(requireContext(), getViewLifecycleOwner(), historyViewModel, progressBar);
-        RecyclerView.LayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
-        organizationRecyclerView.setLayoutManager(linearLayoutManager);
-        organizationRecyclerView.setAdapter(historyOraganizationAdapter);
+    @Override
+    public void onResume() {
+        super.onResume();
+        onRefresh();
+    }
 
+    private void initOraganizationList() {
+        adapter = new TrackRecordAdapter(new ArrayList<>());
+        organizationRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        organizationRecyclerView.setAdapter(adapter);
     }
 
 
+    @Override
+    public void onRefresh() {
+        refreshLayout.setRefreshing(true);
+        historyViewModel.updateTrackHistories();
+    }
 }

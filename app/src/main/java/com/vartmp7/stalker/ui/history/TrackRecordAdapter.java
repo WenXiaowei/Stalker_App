@@ -213,17 +213,33 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.common.collect.Comparators;
 import com.vartmp7.stalker.R;
 import com.vartmp7.stalker.datamodel.TrackRecord;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 public class TrackRecordAdapter extends RecyclerView.Adapter<TrackRecordAdapter.ViewHolder> {
 
     private List<TrackRecord> records;
 
-    public TrackRecordAdapter(List<TrackRecord> records) {
+    TrackRecordAdapter(List<TrackRecord> records) {
         this.records = records;
+    }
+
+    void updateTracks(List<TrackRecord> records){
+        records.forEach(trackRecord -> trackRecord.setDateTime(trackRecord.getDateTime().replace("T"," ")));
+        this.records=records.stream().sorted(new Comparator<TrackRecord>() {
+            @Override
+            public int compare(TrackRecord o1, TrackRecord o2) {
+                return Comparator.comparing(TrackRecord::getDateTime).compare(o1,o2)*-1;
+            }
+        }).collect(Collectors.toList());
+
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -231,7 +247,6 @@ public class TrackRecordAdapter extends RecyclerView.Adapter<TrackRecordAdapter.
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_track_record, parent, false);
         return new TrackRecordAdapter.ViewHolder(view);
-
     }
 
     @Override

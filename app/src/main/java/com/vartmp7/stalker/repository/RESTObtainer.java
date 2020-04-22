@@ -340,50 +340,37 @@ public class RESTObtainer implements Obtainer {
     }
 
     @Override
-    public void updateTrackRecords(Organization org) {
+    public void updateTrackRecords(List<Organization> orgs) {
         ArrayList<TrackRecord> mockedTrackRecords = new ArrayList<>();
-        TrackSignal trackSignal = new TrackSignal();
-        trackSignal.setUsername(org.getPersonalCn());
-        trackSignal.setPassword(org.getLdapPassword());
-        Call<TrackHistory> tracks = service.getTracks(org.getId(), trackSignal);
-        tracks.enqueue(new Callback<TrackHistory>() {
-            @Override
-            public void onResponse(@NotNull Call<TrackHistory> call, @NotNull Response<TrackHistory> response) {
-                if (response.body() != null) {
-                    mockedTrackRecords.addAll(response.body().getTracks());
+        if (orgs.size()==0){
+            trackRecords.postValue(mockedTrackRecords);
+            return;
+        }
+        orgs.forEach(org -> {
+            TrackSignal trackSignal = new TrackSignal();
+            trackSignal.setUsername(org.getPersonalCn());
+            trackSignal.setPassword(org.getLdapPassword());
+            Call<TrackHistory> tracks = service.getTracks(org.getId(), trackSignal);
+            tracks.enqueue(new Callback<TrackHistory>() {
+                @Override
+                public void onResponse(@NotNull Call<TrackHistory> call, @NotNull Response<TrackHistory> response) {
+                    if (response.body() != null) {
+                        mockedTrackRecords.addAll(response.body().getTracks());
+                        trackRecords.postValue(mockedTrackRecords);
+                    }
+                }
+
+                @Override
+                public void onFailure(@NotNull Call<TrackHistory> call, @NotNull Throwable t) {
+                    mockedTrackRecords.add(new TrackRecord().setPlaceName("Torre Archimede").setOrgName("UNIPD").setEntered(false).setPlaceId(1).setDateTime("2020-01-01T13:14:15"));
+                    mockedTrackRecords.add(new TrackRecord().setPlaceName("Torre Archimede").setOrgName("UNIPD").setEntered(false).setPlaceId(1).setDateTime("2020-01-01T13:14:12"));
+                    mockedTrackRecords.add(new TrackRecord().setPlaceName("Torre Archimede").setOrgName("UNIPD").setEntered(false).setPlaceId(1).setDateTime("2020-01-01T13:14:13"));
+                    mockedTrackRecords.add(new TrackRecord().setPlaceName("Torre Archimede").setOrgName("UNIPD").setEntered(false).setPlaceId(1).setDateTime("2020-01-01T13:14:15"));
                     trackRecords.postValue(mockedTrackRecords);
                 }
-            }
-
-            @Override
-            public void onFailure(@NotNull Call<TrackHistory> call, @NotNull Throwable t) {
-                mockedTrackRecords.add(new TrackRecord().setPlaceName("Torre Archimede").setOrgName("UNIPD").setEntered(false).setPlaceId(1).setDateTime("2020-01-01T13:14:15"));
-                mockedTrackRecords.add(new TrackRecord().setPlaceName("Torre Archimede").setOrgName("UNIPD").setEntered(true).setPlaceId(1).setDateTime("2020-01-01T13:14:15"));
-                mockedTrackRecords.add(new TrackRecord().setPlaceName("Torre Archimede").setOrgName("UNIPD").setEntered(false).setPlaceId(1).setDateTime("2020-01-01T13:14:15"));
-                mockedTrackRecords.add(new TrackRecord().setPlaceName("Torre Archimede").setOrgName("UNIPD").setEntered(true).setPlaceId(1).setDateTime("2020-01-01T13:14:15"));
-                mockedTrackRecords.add(new TrackRecord().setPlaceName("Torre Archimede").setOrgName("UNIPD").setEntered(false).setPlaceId(1).setDateTime("2020-01-01T13:14:15"));
-                mockedTrackRecords.add(new TrackRecord().setPlaceName("Torre Archimede").setOrgName("UNIPD").setEntered(true).setPlaceId(1).setDateTime("2020-01-01T13:14:15"));
-                mockedTrackRecords.add(new TrackRecord().setPlaceName("Torre Archimede").setOrgName("UNIPD").setEntered(false).setPlaceId(1).setDateTime("2020-01-01T13:14:15"));
-                mockedTrackRecords.add(new TrackRecord().setPlaceName("Torre Archimede").setOrgName("UNIPD").setEntered(true).setPlaceId(1).setDateTime("2020-01-01T13:14:15"));
-                mockedTrackRecords.add(new TrackRecord().setPlaceName("Torre Archimede").setOrgName("UNIPD").setEntered(false).setPlaceId(1).setDateTime("2020-01-01T13:14:15"));
-                mockedTrackRecords.add(new TrackRecord().setPlaceName("Torre Archimede").setOrgName("UNIPD").setEntered(true).setPlaceId(1).setDateTime("2020-01-01T13:14:15"));
-                mockedTrackRecords.add(new TrackRecord().setPlaceName("Torre Archimede").setOrgName("UNIPD").setEntered(false).setPlaceId(1).setDateTime("2020-01-01T13:14:15"));
-                mockedTrackRecords.add(new TrackRecord().setPlaceName("Torre Archimede").setOrgName("UNIPD").setEntered(true).setPlaceId(1).setDateTime("2020-01-01T13:14:15"));
-                mockedTrackRecords.add(new TrackRecord().setPlaceName("Torre Archimede").setOrgName("UNIPD").setEntered(false).setPlaceId(1).setDateTime("2020-01-01T13:14:15"));
-                mockedTrackRecords.add(new TrackRecord().setPlaceName("Torre Archimede").setOrgName("UNIPD").setEntered(true).setPlaceId(1).setDateTime("2020-01-01T13:14:15"));
-                mockedTrackRecords.add(new TrackRecord().setPlaceName("Torre Archimede").setOrgName("UNIPD").setEntered(false).setPlaceId(1).setDateTime("2020-01-01T13:14:15"));
-                mockedTrackRecords.add(new TrackRecord().setPlaceName("Torre Archimede").setOrgName("UNIPD").setEntered(true).setPlaceId(1).setDateTime("2020-01-01T13:14:15"));
-                mockedTrackRecords.add(new TrackRecord().setPlaceName("Torre Archimede").setOrgName("UNIPD").setEntered(false).setPlaceId(1).setDateTime("2020-01-01T13:14:15"));
-                mockedTrackRecords.add(new TrackRecord().setPlaceName("Torre Archimede").setOrgName("UNIPD").setEntered(true).setPlaceId(1).setDateTime("2020-01-01T13:14:15"));
-                mockedTrackRecords.add(new TrackRecord().setPlaceName("Torre Archimede").setOrgName("UNIPD").setEntered(false).setPlaceId(1).setDateTime("2020-01-01T13:14:15"));
-                mockedTrackRecords.add(new TrackRecord().setPlaceName("Torre Archimede").setOrgName("UNIPD").setEntered(true).setPlaceId(1).setDateTime("2020-01-01T13:14:15"));
-                mockedTrackRecords.add(new TrackRecord().setPlaceName("Torre Archimede").setOrgName("UNIPD").setEntered(false).setPlaceId(1).setDateTime("2020-01-01T13:14:15"));
-                mockedTrackRecords.add(new TrackRecord().setPlaceName("Torre Archimede").setOrgName("UNIPD").setEntered(true).setPlaceId(1).setDateTime("2020-01-01T13:14:15"));
-                mockedTrackRecords.add(new TrackRecord().setPlaceName("Torre Archimede").setOrgName("UNIPD").setEntered(false).setPlaceId(1).setDateTime("2020-01-01T13:14:15"));
-                mockedTrackRecords.add(new TrackRecord().setPlaceName("Torre Archimede").setOrgName("UNIPD").setEntered(true).setPlaceId(1).setDateTime("2020-01-01T13:14:15"));
-                trackRecords.postValue(mockedTrackRecords);
-            }
+            });
         });
+
 
 
     }
