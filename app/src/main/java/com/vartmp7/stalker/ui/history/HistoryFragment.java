@@ -209,13 +209,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -224,11 +222,8 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.vartmp7.stalker.MainActivity;
 import com.vartmp7.stalker.R;
 import com.vartmp7.stalker.datamodel.Organization;
-import com.vartmp7.stalker.datamodel.TrackRecord;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 
 /**
@@ -240,9 +235,7 @@ public class HistoryFragment extends Fragment implements SwipeRefreshLayout.OnRe
     private HistoryViewModel historyViewModel;
     private RecyclerView organizationRecyclerView;
     private SwipeRefreshLayout refreshLayout;
-    private HistoryOraganizationAdapter historyOraganizationAdapter;
     private TrackRecordAdapter adapter;
-    private ProgressBar progressBar;
     private TextView tvMessageBox;
 
     @Nullable
