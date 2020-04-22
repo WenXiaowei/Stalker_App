@@ -312,7 +312,7 @@ public class FileStorageTest {
     }
 
     @Test
-    public void testUpdateOrganizzazione(){
+    public void testUpdateOrganization(){
         List<Organization> toUpdate = new ArrayList<>();
         for (Organization org: firsts){
             toUpdate.add(new Organization().setId(org.getId()).setName((org.getName())));
@@ -320,21 +320,50 @@ public class FileStorageTest {
         Organization o = toUpdate.get(0).setId(firsts.get(0).getId()).setName("updated");
         //toUpdate.sort(Comparator.comparing(Organizzazione::getId));
         expected = toUpdate;
-        observer.setTester(organizzazioni->{
+        observer.setTester(organizations->{
             Log.d(TAG, "testUpdateOrganizzazione: observer triggered");
-            if(!organizzazioni.equals(firsts)){
+            if(!organizations.equals(firsts)){
                 //organizzazioni.sort(Comparator.comparing(Organizzazione::getId));
-                organizzazioni.forEach(organizzazione -> Log.d(TAG,"testUpdateOrganizzazione: id: "+organizzazione.getId()+", name: "+organizzazione.getName()));
-                assertEquals(organizzazioni,expected);
+                organizations.forEach(organization -> Log.d(TAG,"testUpdateOrganizzazione: id: "+organization.getId()+", name: "+organization.getName()));
+                assertEquals(expected,organizations);
             }else{
                 Log.d(TAG, "testUpdateOrganizzazione: pescate organizzazioni iniziali");
             }
         });
         source.updateOrganization(o);
+
+    }
+
+
+    @Test
+    public void testUpdateOrganizations(){
+        List<Organization> toUpdate = new ArrayList<>();
+        for (Organization org: firsts){
+            toUpdate.add(new Organization().setId(org.getId()).setName((org.getName())));
+        }
+        toUpdate.get(0).setTrackingActive(true).setName("updated0");
+        toUpdate.get(1).setAnonymous(true).setTracking(true).setName("updated1");
+        toUpdate.forEach(o-> Log.d(TAG, "updateOrganizations: "+o.getId()));
+        //toUpdate.sort(Comparator.comparing(Organizzazione::getId));
+        expected = toUpdate;
+        source.updateOrganizations(toUpdate);
+        source.getLocalOrganizations().observe(lifecycleOwner,organizations->{
+            Log.d(TAG, "testUpdateOrganizzazione: observer triggered");
+            organizations.forEach(o-> Log.d(TAG, "updateOrganizations: "+o.getId()));
+            if(!organizations.equals(firsts)){
+                //organizzazioni.sort(Comparator.comparing(Organizzazione::getId));
+                organizations.forEach(organization -> Log.d(TAG,"testUpdateOrganizzazione: id: "+organization.getId()+", name: "+organization.getName()));
+                assertEquals(expected,organizations);
+            }else{
+                Log.d(TAG, "testUpdateOrganizzazione: pescate organizzazioni iniziali");
+                firsts.forEach(o-> Log.d(TAG, "testUpdateOrganizations: "+o.getId()));
+            }
+        });
+        source.updateOrganizations(toUpdate);
     }
 
     @Test
-    public void testUpdateOrganizzazioni(){
+    public void testUpdateOrganizationsInfo(){
         List<Organization> updater = new ArrayList<>(Arrays.asList(
                 new Organization().setId(firsts.get(0).getId()).setName("updated1"),
                 new Organization().setId(firsts.get(1).getId()).setName("updated2").setTracking(true),
@@ -360,17 +389,17 @@ public class FileStorageTest {
         expected.forEach(o-> Log.d(TAG, "testUpdateOrganizzazioni: EXPECTED:"+o.getId()+"name "+o.getName()));
 
         observer.setTester(organizzazioni->{
-            Log.d(TAG, "testUpdateOrganizzazioni: observer triggered");
+            Log.d(TAG, "testUpdateOrganizzazioni: observer triggered size:"+organizzazioni.size());
             if(!organizzazioni.equals(firsts)){
-                //organizzazioni.sort(Comparator.comparing(Organizzazione::getId));
+                Log.d(TAG, "testUpdateOrganizationsInfo: ");
                 organizzazioni.forEach(organizzazione -> Log.d(TAG,"testUpdateOrganizzazioni: ACTUAL: "+organizzazione.getId()+", name: "+organizzazione.getName()));
-                assertEquals(organizzazioni,expected);
+                assertEquals(expected,organizzazioni);
             }else{
                 Log.d(TAG, "testUpdateOrganizzazioni: pescate organizzazioni iniziali");
             }
         });
-        source.updateOrganizations(updater);
-        source.updateOrganizations(updater);
+        source.updateOrganizationInfo(updater);
+        source.updateOrganizationInfo(updater);
         source.updateOrganizations(updater);
     }
 
