@@ -227,13 +227,18 @@ import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(AndroidJUnit4.class)
@@ -241,10 +246,13 @@ public class OrganizationsRepositoryTest {
     private final String TAG="com.vartmp7.stalker.OrganizationsRepositoryTest";
     private OrganizationsRepository orgRepo;
     private LifecycleOwner lifecycleOwner;
-    private TestObserver observer;
+    //private TestObserver observer;
     private List<Organization> firsts;
+    private List<Organization> fromWeb;
     private List<Organization> expected;
-    private Storage localSource;
+    private Storage storage;
+    FavoritesSource favoritesSource;
+    Obtainer obtainer;
 
 
     @Rule
@@ -258,19 +266,22 @@ public class OrganizationsRepositoryTest {
                 new Organization().setId(3).setName("lll").setTracking(false)
         );
         final MutableLiveData<List<Organization>> localLiveData = new MutableLiveData<>();
-        localSource = Mockito.mock(Storage.class);
-        Obtainer webSource = Mockito.mock(Obtainer.class);
-        when(webSource.getOrganizations()).then((Answer<LiveData<List<Organization>>>) invocation -> {
+        storage = Mockito.mock(Storage.class);
+
+        Obtainer obtainer = Mockito.mock(Obtainer.class);
+        fromWeb = Arrays.asList(
+                new Organization().setId(1).setName("changed").setTracking(false),
+                new Organization().setId(2).setName("lol").setTracking(true),
+                new Organization().setId(37).setName("new org").setTracking(false)
+        );
+
+        when(obtainer.getOrganizations()).then((Answer<LiveData<List<Organization>>>) invocation -> {
             MutableLiveData<List<Organization>> liveData = new MutableLiveData<>();
-            liveData.postValue(Arrays.asList(
-                    new Organization().setId(1).setName("changed").setTracking(false),
-                    new Organization().setId(2).setName("lol").setTracking(true),
-                    new Organization().setId(37).setName("new org").setTracking(false))
-            );
+            liveData.postValue(fromWeb);
             return  liveData;
         });
-        FavoritesSource favoritesSource = Mockito.mock(FavoritesSource.class);
-        orgRepo = new OrganizationsRepository(localSource,webSource,favoritesSource);
+        favoritesSource = Mockito.mock(FavoritesSource.class);
+        orgRepo = new OrganizationsRepository(storage,obtainer,favoritesSource);
         lifecycleOwner = TestUtil.mockLifecycleOwner();
         //observer = new TestObserver();
         //orgRepo.getOrganizzazioni().observe(lifecycleOwner,observer);
@@ -279,7 +290,7 @@ public class OrganizationsRepositoryTest {
     @Test
     public void testGet(){
         expected=firsts;
-        when(localSource.getLocalOrganizations()).then((Answer<LiveData<List<Organization>>>) invocation -> {
+        when(storage.getLocalOrganizations()).then((Answer<LiveData<List<Organization>>>) invocation -> {
             MutableLiveData<List<Organization>> liveData = new MutableLiveData<>();
             liveData.postValue(firsts);
             return  liveData;
@@ -291,42 +302,44 @@ public class OrganizationsRepositoryTest {
         });
     }
 
-
-
+    @Test
+    public void testUpdateOrganization(){
+        doNothing().when(storage).updateOrganization(any(Organization.class));
+        orgRepo.updateOrganization(new Organization());
+        verify(storage).updateOrganization(any(Organization.class));
+    }
 
     @Test
-    public void testUpdateOrganizzazioni(){
-        /*doAnswer(new Answer<Void>() {
-            @Override
-            public Void answer(InvocationOnMock invocation) throws Throwable {
-                return null;
-            }
-        }).doReturn(null).when(localSource.updateOrganizzazioni(anyList()));*/
+    public void testUpdateOrganizations(){
+        doNothing().when(storage).updateOrganizations(anyList());
+        orgRepo.updateOrganizations(new ArrayList<Organization>());
+        verify(storage).updateOrganizations(anyList());
     }
+
+    @Test
+    public void testFavorites(){
+        List<Long> favorites =Arrays.asList(1L,2L,3L,45L,1L);
+        when(favoritesSource.getFavoriteOrganizationID()).then((Answer<LiveData<List<Long>>>) invocation -> {
+            MutableLiveData<List<Long>> liveData = new MutableLiveData<>();
+            liveData.postValue(favorites);
+            return  liveData;
+        });
+        orgRepo.getFavorites().observe(lifecycleOwner,fav->assertEquals(fav, favorites));
+    }
+
 
 
 
     @Test
     public void testRefresh(){
-        List<Organization> fromWeb = new ArrayList<>(Arrays.asList(
-                new Organization().setId(1).setName("changed").setTracking(false),
-                new Organization().setId(2).setName("lol").setTracking(true),
-                new Organization().setId(37).setName("new org").setTracking(false))
-        );
-        List<Organization> refreshed = new ArrayList<>(firsts);
 
-        TestUtil.updateOrganizationsFromOrganizationsLists(refreshed,fromWeb);
-        observer.setTester(organizzazioni -> {
-            Log.d(TAG, "testRefresh: triggered");
-            if(!organizzazioni.equals(firsts)){
-                organizzazioni.forEach(o-> Log.d(TAG, "testRefresh: org"+o.getId()));
-                assertEquals(expected,organizzazioni);
-            }else{
-                Log.d(TAG, "testRefresh: pescate organizzaizoni iniziali");
-            }
-        });
+//        List<Organization> refreshed = new ArrayList<>(firsts);
+//
+//        TestUtil.updateOrganizationsFromOrganizationsLists(refreshed,fromWeb);
         orgRepo.refreshOrganizations();
-        //orgRepo.refreshOrganizzazioni();
+        doNothing().when(storage).updateOrganizationInfo(anyList());
+        verify(storage).updateOrganizationInfo(fromWeb);
+
     }
 }
 
