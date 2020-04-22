@@ -225,22 +225,19 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class HistoryRecordsDialog {
 
     private Context context;
-    private LiveData<List<TrackRecord>> records;
-
-    public HistoryRecordsDialog(Context context, LiveData<List<TrackRecord>> records) {
+    public HistoryRecordsDialog(Context context) {
         this.context = context;
-        this.records = records;
     }
 
-    public  void show(){
+    public  void show(List<TrackRecord> records){
         AlertDialog.Builder detailDialog = new AlertDialog.Builder(context);
 
         detailDialog.setIcon(R.drawable.ic_info_black_24dp);
-        detailDialog.setTitle("Storico degli tracciamenti:");
+        detailDialog.setTitle(R.string.storico_tracciamenti);
 
         View v = LayoutInflater.from(context).inflate(R.layout.fragment_track_records, null);
         RecyclerView recyclerView=v.findViewById(R.id.rvRecords);
-        TrackRecordAdapter adapter = new TrackRecordAdapter(records.getValue());
+        TrackRecordAdapter adapter = new TrackRecordAdapter(records);
         RecyclerView.LayoutManager l = new LinearLayoutManager(context);
         recyclerView.setLayoutManager(l);
         recyclerView.setAdapter(adapter);

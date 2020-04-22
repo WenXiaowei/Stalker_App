@@ -205,16 +205,20 @@
 package com.vartmp7.stalker.ui.history;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -231,13 +235,15 @@ public class HistoryOraganizationAdapter extends RecyclerView.Adapter<HistoryOra
     private final HistoryViewModel viewModel;
     private List<Organization> organizations;
     private Context context;
-    private FragmentManager manager;
+    private LifecycleOwner lifecycleOwner;
+    private ProgressBar progressBar;
 
-    public HistoryOraganizationAdapter(Context context, FragmentManager manager, HistoryViewModel viewModel) {
+    public HistoryOraganizationAdapter(Context context, LifecycleOwner owner, HistoryViewModel viewModel, ProgressBar progressBar) {
         this.organizations = viewModel.getOrganizations().getValue().stream().filter(Organization::isLogged).collect(Collectors.toList());
         this.context = context;
-        this.manager = manager;
         this.viewModel = viewModel;
+        this.lifecycleOwner = owner;
+        this.progressBar = progressBar;
     }
 
     @NonNull
@@ -254,7 +260,12 @@ public class HistoryOraganizationAdapter extends RecyclerView.Adapter<HistoryOra
         holder.tvOrganization.setText(org.getName());
         holder.tvOrganization.setOnClickListener(v -> {
             LiveData<List<TrackRecord>> trackRecords = viewModel.getTrackRecords(org);
-            new HistoryRecordsDialog(context,trackRecords).show();
+            progressBar.setVisibility(View.VISIBLE);
+            trackRecords.observe(lifecycleOwner, records -> {
+                progressBar.setVisibility(View.GONE);
+                new HistoryRecordsDialog(context).show(records);
+            });
+
         });
     }
 

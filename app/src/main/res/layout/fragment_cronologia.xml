@@ -202,22 +202,44 @@
   ~    limitations under the License.
   -->
 <androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:id="@+id/swipeToRefresh"
     android:layout_height="match_parent">
-
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="5dp"
-        android:orientation="vertical"
-        tools:context="com.vartmp7.stalker.ui.organizations.OrganizationsFragment">
+        android:layout_height="match_parent">
 
-        <androidx.recyclerview.widget.RecyclerView
+        <ProgressBar
+            android:id="@+id/pbLoadingHistory"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="50dp"
+            android:visibility="gone"
+            android:progressBackgroundTint="@color/borderGrey"
+            android:layout_height="50dp"
+            app:layout_constraintBottom_toBottomOf="@+id/linearLayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/linearLayout" />
+
+        <LinearLayout
+            android:id="@+id/linearLayout"
             android:layout_width="match_parent"
-            android:id="@+id/rvListaOrganizzazioni"
             android:layout_height="match_parent"
-            tools:listitem="@layout/item_simple_organization" />
-    </LinearLayout>
+            android:layout_margin="5dp"
+            android:orientation="vertical"
+            tools:context="com.vartmp7.stalker.ui.organizations.OrganizationsFragment"
+            tools:layout_editor_absoluteX="5dp"
+            tools:layout_editor_absoluteY="5dp">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvListaOrganizzazioni"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:listitem="@layout/item_simple_organization" />
+
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

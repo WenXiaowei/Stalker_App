@@ -209,6 +209,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -238,6 +239,7 @@ public class HistoryFragment extends Fragment {
     private HistoryViewModel historyViewModel;
     private RecyclerView organizationRecyclerView;
     private HistoryOraganizationAdapter historyOraganizationAdapter;
+    private ProgressBar progressBar;
 
     @Nullable
     @Override
@@ -246,7 +248,7 @@ public class HistoryFragment extends Fragment {
         historyViewModel = new ViewModelProvider(requireActivity()).get(HistoryViewModel.class);
         historyViewModel.init(MainActivity.repository);
         organizationRecyclerView = v.findViewById(R.id.rvListaOrganizzazioni);
-
+        progressBar = v.findViewById(R.id.pbLoadingHistory);
         historyViewModel.getOrganizations().observe(getViewLifecycleOwner(), organizations -> {
             historyOraganizationAdapter.updateOrganizations(organizations.stream()
                             .filter(Organization::isLogged)
@@ -260,7 +262,7 @@ public class HistoryFragment extends Fragment {
     }
 
     private void initOraganizationList() {
-        historyOraganizationAdapter = new HistoryOraganizationAdapter(requireContext(), getParentFragmentManager(), historyViewModel);
+        historyOraganizationAdapter = new HistoryOraganizationAdapter(requireContext(), getViewLifecycleOwner(), historyViewModel, progressBar);
         RecyclerView.LayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         organizationRecyclerView.setLayoutManager(linearLayoutManager);
         organizationRecyclerView.setAdapter(historyOraganizationAdapter);
