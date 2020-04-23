@@ -420,29 +420,24 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
 
         trackingViewModel = new ViewModelProvider(requireActivity()).get(TrackingViewModel.class);
         trackingViewModel.init(MainActivity.repository);
-        organizationToTrack = trackingViewModel.getOrganizations()
-                .getValue()
-                .stream()
-                .filter(Organization::isTracking)
-                .filter(Organization::isTrackingActive)
-                .collect(Collectors.toList());
+//        organizationToTrack = trackingViewModel.getOrganizations()
+//                .getValue()
+//                .stream()
+//                .filter(Organization::isTracking)
+//                .filter(Organization::isTrackingActive)
+//                .collect(Collectors.toList());
 
         mAdapter = new TrackingViewAdapter(getContext(), trackingViewModel);
         trackingViewModel.getOrganizations().observe(getViewLifecycleOwner(),
                 list -> {
                     Log.d(TAG, "onCreateView: on Changed ");
-                    List<Organization> lis = list.stream().filter(Organization::isTracking).collect(Collectors.toList());
-                    mAdapter.setList(lis);
-                    organizationToTrack = lis.stream().filter(Organization::isTrackingActive).collect(Collectors.toList());
+                    List<Organization> organizationsReadyToTrack = list.stream().filter(Organization::isTracking).collect(Collectors.toList());
+                    mAdapter.setList(organizationsReadyToTrack);
+                    organizationToTrack = organizationsReadyToTrack.stream().filter(Organization::isTrackingActive).collect(Collectors.toList());
                     myReceiver.setOrganizations(organizationToTrack);
 
-                    if (organizationToTrack.stream().anyMatch(Organization::isTrackingActive)){
-                        mRemoveLocationUpdatesButton.setEnabled(true);
-                    }
-
-                    if (organizationToTrack.stream().noneMatch(Organization::isTrackingActive)){
-                        mRemoveLocationUpdatesButton.setEnabled(false);
-                    }
+                    mRemoveLocationUpdatesButton.setEnabled(organizationToTrack.stream().count()>0);
+                    mRequestLocationUpdatesButton.setEnabled(organizationsReadyToTrack.stream().anyMatch(o->!o.isTrackingActive()));
                 });
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
