@@ -307,4 +307,5 @@
     <string name="storico_tracciamenti">Storico degli tracciamenti:</string>
     <string name="devi_loggare_con_ldap">Devi prima effetturare login LDAP in un\'organizzazione!</string>
     <string name="non_ci_sono_tracciamenti">Non ci sono tracciamenti per le organizzazioni in cui hai effettuato login LDAP</string>
+    <string name="apri_app">Apri applicazione</string>
 </resources>
