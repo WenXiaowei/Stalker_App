@@ -218,12 +218,14 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.os.SystemClock;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Chronometer;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -281,6 +283,7 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
     private List<Organization> organizationToTrack;
     private TrackingViewAdapter mAdapter;
     private TextView tvCurrentStatus;
+    private Chronometer chronometer;
     private Handler handler = new StalkerHandler(this);
     private StalkerServiceCallback callback = new StalkerServiceCallback(handler) {
 
@@ -301,6 +304,8 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
             if (optionalPolygonPlace.isPresent()) {
                 PolygonPlace place = optionalPolygonPlace.get();
                 Optional<Organization> any = organizationToTrack.stream().filter(organization -> place.getOrgId() == organization.getId()).findAny();
+
+
 
 
                 message = any.map(organization -> getString(R.string.sei_in_tale_dei_tali, place.getName(), organization.getName())).orElseGet(() -> getString(R.string.non_presente_nei_luoghi_tracciati));
@@ -406,6 +411,7 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
         root = inflater.inflate(R.layout.fragment_tracking, container, false);
 
         tvCurrentStatus = root.findViewById(R.id.tvCurrentStatus);
+        chronometer = root.findViewById(R.id.chronometer);
 
         mRequestLocationUpdatesButton = root.findViewById(R.id.btnStartAll);
         mRemoveLocationUpdatesButton = root.findViewById(R.id.btnStopAll);
@@ -513,6 +519,17 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
                 Context.BIND_AUTO_CREATE);
     }
 
+
+    private void stopChronometer(){
+        chronometer.stop();
+        chronometer.setVisibility(View.GONE);
+    }
+    private void restartChronometer(){
+        chronometer.setVisibility(View.VISIBLE);
+        chronometer.setBase(SystemClock.elapsedRealtime());
+        chronometer.start();
+
+    }
 
     @Override
     public void onStart() {

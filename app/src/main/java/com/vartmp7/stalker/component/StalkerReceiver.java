@@ -226,6 +226,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -238,6 +239,9 @@ public class StalkerReceiver extends BroadcastReceiver {
     private PolygonPlace current = null, previousPlace = null;
     private RestApiService service;
     private Organization organization = null;
+
+    static AtomicInteger count = new AtomicInteger(0);
+
 
     public StalkerReceiver(@NotNull List<Organization> orgs, @NotNull RestApiService service) {
         this.organizations = orgs;
@@ -254,6 +258,7 @@ public class StalkerReceiver extends BroadcastReceiver {
         Location location = intent.getParcelableExtra(StalkerTrackingService.EXTRA_LOCATION);
         if (location != null) {
             onLocationsChanged(location);
+
 //            Toast.makeText(context, "new Location", Toast.LENGTH_SHORT).show();
         }
     }
@@ -267,6 +272,7 @@ public class StalkerReceiver extends BroadcastReceiver {
     }
 
     private void onLocationsChanged(@NotNull Location l) {
+        count.incrementAndGet();
         Coordinate currentCoordinate = new Coordinate(l.getLatitude(), l.getLongitude());
         List<PolygonPlace> places = new ArrayList<>();
         organizations.forEach(elOrganizations ->{
@@ -293,6 +299,7 @@ public class StalkerReceiver extends BroadcastReceiver {
                         .setUsername(organization.getPersonalCn())
                         .setPassword(organization.getLdapPassword())
                         .setIdOrganization(place.getOrgId());
+                Log.d(TAG, "onLocationsChanged: sei entrato in un luogo"+count.get());
 
                 sendSignal(trackSignal);
             } else if (previousPlace != place) {
@@ -309,16 +316,18 @@ public class StalkerReceiver extends BroadcastReceiver {
                         .setIdOrganization(place.getOrgId());
                 sendSignal(trackSignal);
                 previousPlace = place;
+                Log.d(TAG, "onLocationsChanged: sei uscito da un luogo e entrato in un altro"+count.get());
             }
 //            else {
 //                Log.d(TAG, "onLocationsChanged: No conditions");
 //            }
         } else {
             if (previousPlace!=null){
-                Log.d(TAG, "onLocationsChanged: opti.isPresent = false");
+                Log.d(TAG, "onLocationsChanged: opti.isPresent = false"+count.get());
                 trackSignal.setEntered(false);
                 sendSignal(trackSignal);
                 previousPlace = null;
+                Log.d(TAG, "onLocationsChanged: sei uscito da un luogo"+count.get());
             }
 //            else{
 //                Log.d(TAG, "onLocationsChanged() called with: ");
