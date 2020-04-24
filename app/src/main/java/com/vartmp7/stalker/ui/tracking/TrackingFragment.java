@@ -218,12 +218,14 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.os.SystemClock;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Chronometer;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -281,6 +283,7 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
     private List<Organization> organizationToTrack;
     private TrackingViewAdapter mAdapter;
     private TextView tvCurrentStatus;
+    private Chronometer chronometer;
     private Handler handler = new StalkerHandler(this);
     private StalkerServiceCallback callback = new StalkerServiceCallback(handler) {
 
@@ -301,6 +304,8 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
             if (optionalPolygonPlace.isPresent()) {
                 PolygonPlace place = optionalPolygonPlace.get();
                 Optional<Organization> any = organizationToTrack.stream().filter(organization -> place.getOrgId() == organization.getId()).findAny();
+
+
 
 
                 message = any.map(organization -> getString(R.string.sei_in_tale_dei_tali, place.getName(), organization.getName())).orElseGet(() -> getString(R.string.non_presente_nei_luoghi_tracciati));
@@ -406,6 +411,7 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
         root = inflater.inflate(R.layout.fragment_tracking, container, false);
 
         tvCurrentStatus = root.findViewById(R.id.tvCurrentStatus);
+        chronometer = root.findViewById(R.id.chronometer);
 
         mRequestLocationUpdatesButton = root.findViewById(R.id.btnStartAll);
         mRemoveLocationUpdatesButton = root.findViewById(R.id.btnStopAll);
@@ -420,29 +426,24 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
 
         trackingViewModel = new ViewModelProvider(requireActivity()).get(TrackingViewModel.class);
         trackingViewModel.init(MainActivity.repository);
-        organizationToTrack = trackingViewModel.getOrganizations()
-                .getValue()
-                .stream()
-                .filter(Organization::isTracking)
-                .filter(Organization::isTrackingActive)
-                .collect(Collectors.toList());
+//        organizationToTrack = trackingViewModel.getOrganizations()
+//                .getValue()
+//                .stream()
+//                .filter(Organization::isTracking)
+//                .filter(Organization::isTrackingActive)
+//                .collect(Collectors.toList());
 
         mAdapter = new TrackingViewAdapter(getContext(), trackingViewModel);
         trackingViewModel.getOrganizations().observe(getViewLifecycleOwner(),
                 list -> {
                     Log.d(TAG, "onCreateView: on Changed ");
-                    List<Organization> lis = list.stream().filter(Organization::isTracking).collect(Collectors.toList());
-                    mAdapter.setList(lis);
-                    organizationToTrack = lis.stream().filter(Organization::isTrackingActive).collect(Collectors.toList());
+                    List<Organization> organizationsReadyToTrack = list.stream().filter(Organization::isTracking).collect(Collectors.toList());
+                    mAdapter.setList(organizationsReadyToTrack);
+                    organizationToTrack = organizationsReadyToTrack.stream().filter(Organization::isTrackingActive).collect(Collectors.toList());
                     myReceiver.setOrganizations(organizationToTrack);
 
-                    if (organizationToTrack.stream().anyMatch(Organization::isTrackingActive)){
-                        mRemoveLocationUpdatesButton.setEnabled(true);
-                    }
-
-                    if (organizationToTrack.stream().noneMatch(Organization::isTrackingActive)){
-                        mRemoveLocationUpdatesButton.setEnabled(false);
-                    }
+                    mRemoveLocationUpdatesButton.setEnabled(organizationToTrack.stream().count()>0);
+                    mRequestLocationUpdatesButton.setEnabled(organizationsReadyToTrack.stream().anyMatch(o->!o.isTrackingActive()));
                 });
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
@@ -518,6 +519,17 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
                 Context.BIND_AUTO_CREATE);
     }
 
+
+    private void stopChronometer(){
+        chronometer.stop();
+        chronometer.setVisibility(View.GONE);
+    }
+    private void restartChronometer(){
+        chronometer.setVisibility(View.VISIBLE);
+        chronometer.setBase(SystemClock.elapsedRealtime());
+        chronometer.start();
+
+    }
 
     @Override
     public void onStart() {

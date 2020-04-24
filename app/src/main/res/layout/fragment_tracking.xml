@@ -224,12 +224,24 @@
             android:textAlignment="center"
             android:textSize="25sp" />
 
-        <TextView
-            android:id="@+id/tvCurrentStatus"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/nessun_organization_ti_sta_tracciando"
-            android:textSize="15sp" />
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvCurrentStatus"
+                android:layout_width="333dp"
+                android:layout_height="wrap_content"
+                android:text="@string/nessun_organization_ti_sta_tracciando"
+                android:textSize="15sp" />
+
+            <Chronometer
+                android:id="@+id/chronometer"
+                android:layout_width="59dp"
+                android:layout_height="20dp" />
+
+        </LinearLayout>
 
     </LinearLayout>
 
