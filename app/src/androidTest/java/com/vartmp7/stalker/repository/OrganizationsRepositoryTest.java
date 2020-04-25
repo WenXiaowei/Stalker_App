@@ -203,7 +203,7 @@
  *
  */
 
-package com.vartmp7.stalker;
+package com.vartmp7.stalker.repository;
 
 import android.util.Log;
 
@@ -213,6 +213,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
+import com.vartmp7.stalker.TestUtil;
 import com.vartmp7.stalker.datamodel.Organization;
 import com.vartmp7.stalker.datamodel.TrackRecord;
 import com.vartmp7.stalker.datamodel.TrackSignal;
@@ -315,9 +316,12 @@ public class OrganizationsRepositoryTest {
 
     @Test
     public void testUpdateOrganizations(){
+        List<Organization> organizations = Arrays.asList(
+            new Organization().setId(1), new Organization().setId(2)
+        );
         doNothing().when(storage).updateOrganizations(anyList());
-        orgRepo.updateOrganizations(new ArrayList<Organization>());
-        verify(storage).updateOrganizations(anyList());
+        orgRepo.updateOrganizations(organizations);
+        verify(storage).updateOrganizations(organizations);
     }
 
     @Test

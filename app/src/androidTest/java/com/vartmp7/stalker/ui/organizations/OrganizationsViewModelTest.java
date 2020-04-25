@@ -187,7 +187,7 @@
  *       same "printed page" as the copyright notice for easier
  *       identification within third-party archives.
  *
- *    Copyright [2020] [VartTmp7]
+ *    Copyright [yyyy] [name of copyright owner]
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -200,180 +200,96 @@
  *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
+ *
  */
 
-package com.vartmp7.stalker.repository;
+package com.vartmp7.stalker.ui.organizations;
+
+
 
 import android.util.Log;
 
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.vartmp7.stalker.TestUtil;
 import com.vartmp7.stalker.datamodel.Organization;
-import com.vartmp7.stalker.datamodel.OrganizationResponse;
-import com.vartmp7.stalker.datamodel.PolygonPlace;
-import com.vartmp7.stalker.datamodel.TrackHistory;
-import com.vartmp7.stalker.datamodel.TrackRecord;
-import com.vartmp7.stalker.datamodel.TrackSignal;
-import com.vartmp7.stalker.datamodel.placecomponent.Coordinate;
+import com.vartmp7.stalker.repository.OrganizationsRepository;
+import com.vartmp7.stalker.ui.organizations.OrganizationsViewModel;
 
-import org.jetbrains.annotations.NotNull;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TestRule;
+import org.mockito.stubbing.Answer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
-import lombok.SneakyThrows;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-public class RESTObtainer implements Obtainer {
+public class OrganizationsViewModelTest{
+    private static final String TAG="com.vartmp7.stalker.OrganizationsViewModelTest";
 
+    private OrganizationsViewModel viewModel ;
+    private OrganizationsRepository orgRepo;
+    private LifecycleOwner lifecycleOwner;
 
-    private static final String TAG = "com.vartmp7.stalker.repository.RESTObtainer";
-    private RestApiService service = null;
+    private List<Organization> organizationsToGet;
 
+    @Rule
+    public TestRule rule = new InstantTaskExecutorRule();
 
-    private static int count = 0;
+    @Before
+    public void setup(){
+        viewModel = new OrganizationsViewModel();
+        orgRepo = mock(OrganizationsRepository.class);
+        lifecycleOwner = TestUtil.mockLifecycleOwner();
 
-    private MutableLiveData<List<Organization>> mutableLiveDataOrganizzazioni;
-    private MutableLiveData<List<TrackRecord>> trackRecords;
+        organizationsToGet = Arrays.asList(
+                new Organization().setId(1),
+                new Organization().setId(2)
+        );
 
-
-    public RESTObtainer(MutableLiveData<List<Organization>> list, RestApiService service) {
-        this.service = service;
-        //this.mutableLiveDataOrganizzazioni= list;
-        mutableLiveDataOrganizzazioni = new MutableLiveData<>();
-        trackRecords = new MutableLiveData<>(new ArrayList<>());
+        MutableLiveData<List<Organization>> liveOrganizations = new MutableLiveData<>();
+        when(orgRepo.getOrganizations()).then(invoker->{
+            liveOrganizations.postValue(organizationsToGet);
+            return liveOrganizations;
+        });
+        viewModel.initData(orgRepo);
     }
 
-
-    @Override
-    public LiveData<List<Organization>> getOrganizations() {
-
-        Call<OrganizationResponse> organizations = service.organizations();
-        organizations.enqueue(new Callback<OrganizationResponse>() {
-            @SneakyThrows
-            @Override
-            public void onResponse(@NotNull Call<OrganizationResponse> call, @NotNull Response<OrganizationResponse> response) {
-//                Log.d(TAG, "onResponse: "+response.body().getOrganizations());
-                List<Organization> organizations1 = response.body().getOrganizations();
-                mutableLiveDataOrganizzazioni.postValue(organizations1);
-            }
-
-            @Override
-            public void onFailure(@NotNull Call<OrganizationResponse> call, @NotNull Throwable throwable) {
-                Log.d(TAG, "onFailure: " + throwable.getMessage());
-                ArrayList<Coordinate> torreArchimede = new ArrayList<>();
-                torreArchimede.add(new Coordinate(45.411555, 11.887476));
-                torreArchimede.add(new Coordinate(45.411442, 11.887942));
-                torreArchimede.add(new Coordinate(45.411108, 11.887787));
-                torreArchimede.add(new Coordinate(45.411222, 11.887319));
-                PolygonPlace t = new PolygonPlace();
-                t.setId(1).setName("Torre Archimede").setNumMaxPeople(10);
-                t.setCoordinates(torreArchimede).setOrgId(1);
-
-                ArrayList<Coordinate> dsea = new ArrayList<>();
-                dsea.add(new Coordinate(45.411660, 11.887957));
-                dsea.add(new Coordinate(45.411702, 11.888113));
-                dsea.add(new Coordinate(45.411341, 11.888381));
-                dsea.add(new Coordinate(45.411284, 11.888224));
-                PolygonPlace d = new PolygonPlace();
-                d.setId(1).setName("TORRE 3C").setNumMaxPeople(10);
-                d.setCoordinates(dsea).setOrgId(2);
-
-
-                List<Organization> orgs = Arrays.asList(
-                        new Organization().setId(1)
-                                .setName("UniPD Dipartimento di Matematica")
-                                .setTracking(true)
-                                .setAddress("Trieste n. 8")
-                                .setCity("Padova")
-                                .setRegion("Padova")
-                                .setNation("IT")
-                                .setPostalCode("35921")
-                                .setPhoneNumber("049********")
-                                .setLdapDomainComponent("dc=daf,dc=test,dc=it")
-                                .setLdapCommonName("")
-                                .setLdapPort(389)
-                                .setType("both")
-                                .setEmail("info@math.unipd.it")
-//                                .setImage_url("https://upload.wikimedia.org/wikipedia/it/thumb/5/53/Logo_Universit%C3%A0_Padova.svg/1200px-Logo_Universit%C3%A0_Padova.svg.png")
-                                .setImageUrl("https://pbs.twimg.com/profile_images/1173976802416582657/LCZXVSqH_400x400.jpg")
-                                .setPlaces(Collections.singletonList(t)),
-//                        new Organization()
-//                                .setId(count + 1)
-//                                .setName("UniPD DEI")
-//                                .setTracking(true)
-//                                .setImage_url("https://www.dei.unipd.it/sites/dei.unipd.it/files/sublogo_3.png")
-//                                .setPlaces(Collections.singletonList(t)),
-                        new Organization()
-                                .setId(2)
-                                .setName("UNIPD dSeA")
-                                .setType("both")
-                                .setTracking(false)
-                                .setImageUrl("https://www.economia.unipd.it/sites/economia.unipd.it/files/img-logo-trentennale-dsea-big.png")
-                                .setPlaces(Collections.singletonList(d)),
-                        new Organization()
-                                .setId(3)
-                                .setName("UNIPD DSFARM")
-                                .setType("both")
-                                .setTracking(true)
-                                .setImageUrl("https://www.dsfarm.unipd.it/sites/dsfarm.unipd.it/files/sublogo_9.png")
-                                .setPlaces(Collections.singletonList(t))
-                );
-                orgs.forEach(o -> Log.d(TAG, "onFailure: " + o.getId()));
-                mutableLiveDataOrganizzazioni.postValue(orgs);
-            }
-
+    @Test
+    public void testGetOrganizations(){
+        viewModel.getOrganizationList().observe(lifecycleOwner,organizations -> {
+            Log.d(TAG, "testGetOrganizations: observer triggered");
+            organizations.forEach(o-> Log.d(TAG, "testGetOrganizations: org id:"+o.getId()));
+            assertEquals(organizationsToGet,organizations);
 
         });
-        return mutableLiveDataOrganizzazioni;
     }
 
-    @Override
-    public LiveData<List<TrackRecord>> getTrackRecords() {
-        return trackRecords;
-
+    @Test
+    public void testRefresh(){
+        doNothing().when(orgRepo).refreshOrganizations();
+        viewModel.refresh();
+        verify(orgRepo).refreshOrganizations();
     }
 
-    @Override
-    public void updateTrackRecords(List<Organization> orgs) {
-        ArrayList<TrackRecord> mockedTrackRecords = new ArrayList<>();
-        if (orgs.size()==0){
-            trackRecords.postValue(mockedTrackRecords);
-            return;
-        }
-        orgs.forEach(org -> {
-            TrackSignal trackSignal = new TrackSignal();
-            trackSignal.setUsername(org.getPersonalCn());
-            trackSignal.setPassword(org.getLdapPassword());
-            Call<TrackHistory> tracks = service.getTracks(org.getId(), trackSignal);
-            tracks.enqueue(new Callback<TrackHistory>() {
-                @Override
-                public void onResponse(@NotNull Call<TrackHistory> call, @NotNull Response<TrackHistory> response) {
-                    if (response.body() != null) {
-                        mockedTrackRecords.addAll(response.body().getTracks());
-                        trackRecords.postValue(mockedTrackRecords);
-                    }
-                }
-
-                @Override
-                public void onFailure(@NotNull Call<TrackHistory> call, @NotNull Throwable t) {
-                    mockedTrackRecords.add(new TrackRecord().setPlaceName("Torre Archimede").setOrgName("UNIPD").setEntered(false).setPlaceId(1).setDateTime("2020-01-01T13:14:15"));
-                    mockedTrackRecords.add(new TrackRecord().setPlaceName("Torre Archimede").setOrgName("UNIPD").setEntered(false).setPlaceId(1).setDateTime("2020-01-01T13:14:12"));
-                    mockedTrackRecords.add(new TrackRecord().setPlaceName("Torre Archimede").setOrgName("UNIPD").setEntered(false).setPlaceId(1).setDateTime("2020-01-01T13:14:13"));
-                    mockedTrackRecords.add(new TrackRecord().setPlaceName("Torre Archimede").setOrgName("UNIPD").setEntered(false).setPlaceId(1).setDateTime("2020-01-01T13:14:15"));
-                    trackRecords.postValue(mockedTrackRecords);
-                }
-            });
-        });
-
-
-
+    @Test
+    public void testUpdateOrganization(){
+        Organization o = new Organization().setId(1);
+        doNothing().when(orgRepo).updateOrganization(any(Organization.class));
+        viewModel.updateOrganizzazione(o);
+        verify(orgRepo).updateOrganization(o);
     }
-
 
 }
