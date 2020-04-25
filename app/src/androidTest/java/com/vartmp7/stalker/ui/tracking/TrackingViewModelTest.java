@@ -225,8 +225,10 @@ import org.junit.rules.TestRule;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -240,7 +242,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class TrackingViewModelTest {
-    private static final String TAG="com.vartmp7.stalker.OrganizationsViewModelTest";
+    private static final String TAG="com.vartmp7.stalker.TrackingViewModelTest";
 
     private TrackingViewModel viewModel ;
     private OrganizationsRepository orgRepo;
@@ -258,8 +260,8 @@ public class TrackingViewModelTest {
         lifecycleOwner = TestUtil.mockLifecycleOwner();
 
         organizationsToGet = Arrays.asList(
-                new Organization().setId(1),
-                new Organization().setId(2)
+                new Organization().setId(1).setTracking(true),
+                new Organization().setId(2).setTracking(false)
         );
 
         MutableLiveData<List<Organization>> liveOrganizations = new MutableLiveData<>();
@@ -276,7 +278,6 @@ public class TrackingViewModelTest {
 
     @Test
     public void testGetOrganizations(){
-
         doNothing().when(observer).onChanged(anyList());
         viewModel.getOrganizations().observe(lifecycleOwner,observer);
         verify(observer).onChanged(organizationsToGet);
@@ -324,9 +325,13 @@ public class TrackingViewModelTest {
         }
     }
     @Test
-    public void active(){
+    public void testActiveAllTrackingOrganization(){
+        doNothing().when(orgRepo).updateOrganizations(anyList());
         viewModel.activeAllTrackingOrganization(true);
-        verify(viewModel,atLeast(0))
+        ArrayList<Organization> toSet = organizationsToGet.stream().filter(Organization::isTracking).collect(Collectors.toCollection(ArrayList::new));
+        toSet.forEach(o->o.setTrackingActive(true));
+        verify(orgRepo).updateOrganizations(toSet);
+        //verify(viewModel,atLeast(0));
     }
 
 }

@@ -203,15 +203,10 @@
  *
  */
 
-package com.vartmp7.stalker.ui.organizations;
-
-
-
-import android.util.Log;
+package com.vartmp7.stalker.ui.favorites;
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
@@ -219,7 +214,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import com.vartmp7.stalker.TestUtil;
 import com.vartmp7.stalker.datamodel.Organization;
 import com.vartmp7.stalker.repository.OrganizationsRepository;
-import com.vartmp7.stalker.ui.organizations.OrganizationsViewModel;
+import com.vartmp7.stalker.ui.favorite.FavoritesViewModel;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -228,14 +223,12 @@ import org.junit.rules.TestRule;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.stubbing.Answer;
 
-import java.util.ArrayList;
+
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
@@ -243,35 +236,31 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(AndroidJUnit4.class)
-public class OrganizationsViewModelTest{
-    private static final String TAG="com.vartmp7.stalker.OrganizationsViewModelTest";
-
-    private OrganizationsViewModel viewModel ;
+public class FavoritesViewModelTest {
+    private FavoritesViewModel viewModel;
     private OrganizationsRepository orgRepo;
+    private List<Organization> allOrganizations;
     private LifecycleOwner lifecycleOwner;
-
-    private List<Organization> organizationsToGet;
 
     @Rule
     public TestRule rule = new InstantTaskExecutorRule();
 
+
     @Before
     public void setup(){
-        viewModel = new OrganizationsViewModel();
+        viewModel=new FavoritesViewModel();
         orgRepo = mock(OrganizationsRepository.class);
-        lifecycleOwner = TestUtil.mockLifecycleOwner();
-
-        organizationsToGet = Arrays.asList(
-                new Organization().setId(1),
-                new Organization().setId(2)
+        allOrganizations = Arrays.asList(
+                new Organization().setId(1).setFavorite(false),
+                new Organization().setId(2).setFavorite(true)
         );
-
-        MutableLiveData<List<Organization>> liveOrganizations = new MutableLiveData<>();
-        when(orgRepo.getOrganizations()).then(invoker->{
-            liveOrganizations.postValue(organizationsToGet);
-            return liveOrganizations;
+        when(orgRepo.getOrganizations()).then(invocation->{
+            MutableLiveData<List<Organization>> allLiveOrgs = new MutableLiveData<>();
+             allLiveOrgs.postValue(allOrganizations);
+             return allLiveOrgs;
         });
-        viewModel.initData(orgRepo);
+        viewModel.init(orgRepo);
+        lifecycleOwner = TestUtil.mockLifecycleOwner();
         MockitoAnnotations.initMocks(this);
     }
 
@@ -280,24 +269,9 @@ public class OrganizationsViewModelTest{
 
     @Test
     public void testGetOrganizations(){
-        viewModel.getOrganizationList().observe(lifecycleOwner,observer);
+        List<Organization> expected = allOrganizations.stream().filter(Organization::isFavorite).collect(Collectors.toList());
         doNothing().when(observer).onChanged(anyList());
-        verify(observer).onChanged(organizationsToGet);
+        viewModel.getOrganizzazioni().observe(lifecycleOwner,observer);
+        verify(observer).onChanged(expected);
     }
-
-    @Test
-    public void testRefresh(){
-        doNothing().when(orgRepo).refreshOrganizations();
-        viewModel.refresh();
-        verify(orgRepo).refreshOrganizations();
-    }
-
-    @Test
-    public void testUpdateOrganization(){
-        Organization o = new Organization().setId(1);
-        doNothing().when(orgRepo).updateOrganization(any(Organization.class));
-        viewModel.updateOrganizzazione(o);
-        verify(orgRepo).updateOrganization(o);
-    }
-
 }
