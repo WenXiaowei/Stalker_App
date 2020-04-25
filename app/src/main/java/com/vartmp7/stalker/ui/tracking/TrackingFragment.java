@@ -247,7 +247,7 @@ import com.vartmp7.stalker.R;
 import com.vartmp7.stalker.component.StalkerTrackingService;
 import com.vartmp7.stalker.Tools;
 import com.vartmp7.stalker.component.NotLogged;
-import com.vartmp7.stalker.component.StalkerReceiver;
+import com.vartmp7.stalker.component.StalkerPositionManager;
 import com.vartmp7.stalker.component.StalkerServiceCallback;
 import com.vartmp7.stalker.datamodel.Organization;
 import com.vartmp7.stalker.datamodel.PolygonPlace;
@@ -295,7 +295,8 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
 //              todo da cambiare cosa far vedere all'utente.
             if (organizationToTrack.stream().noneMatch(Organization::isTrackingActive)) return;
             List<PolygonPlace> places = new ArrayList<>();
-            if (organizationToTrack.stream().noneMatch(Organization::isTrackingActive)) return;// se non ci sono organizzazioni che stanno tracciando, non devo fare nessun controllo.
+            if (organizationToTrack.stream().noneMatch(Organization::isTrackingActive))
+                return;// se non ci sono organizzazioni che stanno tracciando, non devo fare nessun controllo.
             organizationToTrack.forEach(organization -> places.addAll(organization.getPlaces()));
             Coordinate coordinate = new Coordinate(l.getLatitude(), l.getLongitude());
 
@@ -304,8 +305,6 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
             if (optionalPolygonPlace.isPresent()) {
                 PolygonPlace place = optionalPolygonPlace.get();
                 Optional<Organization> any = organizationToTrack.stream().filter(organization -> place.getOrgId() == organization.getId()).findAny();
-
-
 
 
                 message = any.map(organization -> getString(R.string.sei_in_tale_dei_tali, place.getName(), organization.getName())).orElseGet(() -> getString(R.string.non_presente_nei_luoghi_tracciati));
@@ -325,7 +324,6 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
 
     public static class StalkerHandler extends Handler {
         WeakReference<TrackingFragment> reference;
-
         StalkerHandler(TrackingFragment reference) {
             this.reference = new WeakReference<>(reference);
         }
@@ -360,17 +358,24 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
     private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
 
     // The BroadcastReceiver used to listen from broadcasts from the service.
-    private StalkerReceiver myReceiver;
 
     // A reference to the service used to get location updates.
     private StalkerTrackingService mService = null;
 
     // Tracks the bound state of the service.
     private boolean mBound = false;
-
+    private RestApiService restApiService;
     // UI elements.
     private Button mRequestLocationUpdatesButton;
     private Button mRemoveLocationUpdatesButton;
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (mService!=null){
+            mService.setCallback(null);
+        }
+    }
 
     // Monitors the state of the connection to the service.
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
@@ -379,12 +384,16 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
         public void onServiceConnected(ComponentName name, IBinder service) {
             StalkerTrackingService.LocalBinder binder = (StalkerTrackingService.LocalBinder) service;
             mService = binder.getService();
-            binder.setServiceCallback(callback);
+            mService.updateOrganizations(organizationToTrack);
+            mService.setApiService(restApiService);
+            mService.setCallback(callback);
+
             mBound = true;
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
+            mService.setCallback(null);
             mService = null;
             mBound = false;
         }
@@ -395,6 +404,7 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
             if (!checkPermissions()) {
                 requestPermissions();
             } else {
+                mService.updateOrganizations(organizationToTrack);
                 mService.requestLocationUpdates();
             }
         } else {
@@ -420,7 +430,7 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
                 .client(Tools.getUnsafeOkHttpClient())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
-        myReceiver = new StalkerReceiver(new ArrayList<>(),retrofit.create(RestApiService.class));
+        restApiService = retrofit.create(RestApiService.class);
 
         RecyclerView recyclerView = root.findViewById(R.id.trackingRecycleView);
 
@@ -432,7 +442,12 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
 //                .filter(Organization::isTracking)
 //                .filter(Organization::isTrackingActive)
 //                .collect(Collectors.toList());
-
+        organizationToTrack = trackingViewModel
+                .getOrganizations()
+                .getValue()
+                .stream()
+                .filter(Organization::isTrackingActive)
+                .collect(Collectors.toList());
         mAdapter = new TrackingViewAdapter(getContext(), trackingViewModel);
         trackingViewModel.getOrganizations().observe(getViewLifecycleOwner(),
                 list -> {
@@ -440,10 +455,12 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
                     List<Organization> organizationsReadyToTrack = list.stream().filter(Organization::isTracking).collect(Collectors.toList());
                     mAdapter.setList(organizationsReadyToTrack);
                     organizationToTrack = organizationsReadyToTrack.stream().filter(Organization::isTrackingActive).collect(Collectors.toList());
-                    myReceiver.setOrganizations(organizationToTrack);
 
-                    mRemoveLocationUpdatesButton.setEnabled(organizationToTrack.stream().count()>0);
-                    mRequestLocationUpdatesButton.setEnabled(organizationsReadyToTrack.stream().anyMatch(o->!o.isTrackingActive()));
+                    if (mService != null)
+                        mService.updateOrganizations(organizationsReadyToTrack);
+
+                    mRemoveLocationUpdatesButton.setEnabled((long) organizationToTrack.size() > 0);
+                    mRequestLocationUpdatesButton.setEnabled(organizationsReadyToTrack.stream().anyMatch(o -> !o.isTrackingActive()));
                 });
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
@@ -462,22 +479,20 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
                 o.setTrackingActive(false);
                 trackingViewModel.updateOrganization(o);
                 mAdapter.notifyItemChanged(viewHolder.getAdapterPosition());
-                Toast.makeText(requireContext(), "Organizzazione eliminata!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), R.string.organizzazione_rimossa, Toast.LENGTH_SHORT).show();
             }
         }).attachToRecyclerView(recyclerView);
-        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
-            @Override
-            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
-                return false;
-            }
+        if (Tools.isUserLogged(requireContext())) {
+            new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+                @Override
+                public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                    return false;
+                }
 
-            @Override
-            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                Organization o = mAdapter.getOrganizationAt(viewHolder.getAdapterPosition());
-                int msg;
-                if (o.isLogged())
-                    msg = R.string.prima_devi_fare_accesso;
-                else {
+                @Override
+                public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                    Organization o = mAdapter.getOrganizationAt(viewHolder.getAdapterPosition());
+                    int msg;
                     mAdapter.notifyItemChanged(viewHolder.getAdapterPosition());
                     try {
 
@@ -490,10 +505,11 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
                     }
                     msg = o.isFavorite() ? R.string.organizzazione_added_to_favorite :
                             R.string.organizzazione_removed_from_favorite;
+
+                    Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show();
                 }
-                Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show();
-            }
-        }).attachToRecyclerView(recyclerView);
+            }).attachToRecyclerView(recyclerView);
+        }
 
         return root;
     }
@@ -502,9 +518,10 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mRequestLocationUpdatesButton.setOnClickListener(view1 ->{
-                    setAllOrganizationTracking(true);
-        tvCurrentStatus.setText(R.string.initializing_tracking);});
+        mRequestLocationUpdatesButton.setOnClickListener(view1 -> {
+            setAllOrganizationTracking(true);
+            tvCurrentStatus.setText(R.string.initializing_tracking);
+        });
         mRemoveLocationUpdatesButton.setOnClickListener(view12 -> {
             setAllOrganizationTracking(false);
             tvCurrentStatus.setText(R.string.tracking_terminated);
@@ -520,11 +537,12 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
     }
 
 
-    private void stopChronometer(){
+    private void stopChronometer() {
         chronometer.stop();
         chronometer.setVisibility(View.GONE);
     }
-    private void restartChronometer(){
+
+    private void restartChronometer() {
         chronometer.setVisibility(View.VISIBLE);
         chronometer.setBase(SystemClock.elapsedRealtime());
         chronometer.start();
@@ -539,18 +557,6 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
 
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        LocalBroadcastManager.getInstance(requireContext()).registerReceiver(myReceiver,
-                new IntentFilter(StalkerTrackingService.ACTION_BROADCAST));
-    }
-
-    @Override
-    public void onPause() {
-        LocalBroadcastManager.getInstance(requireContext()).unregisterReceiver(myReceiver);
-        super.onPause();
-    }
 
     @Override
     public void onStop() {
@@ -558,6 +564,7 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
             // Unbind from the service. This signals to the service that this activity is no longer
             // in the foreground, and the service can respond by promoting itself to a foreground
             // service.
+
             requireContext().unbindService(mServiceConnection);
             mBound = false;
         }
@@ -582,7 +589,7 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
         // Provide an additional rationale to the user. This would happen if the user denied the
         // request previously, but didn't check the "Don't ask again" checkbox.
         if (shouldProvideRationale) {
-            Log.i(TAG, "Displaying permission rationale to provide additional context.");
+//            Log.i(TAG, "Displaying permission rationale to provide additional context.");
             Snackbar.make(root,
                     getString(R.string.app_necessita_di_permessi),
                     Snackbar.LENGTH_INDEFINITE)
@@ -594,7 +601,7 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
                     })
                     .show();
         } else {
-            Log.i(TAG, "Requesting permission");
+//            Log.i(TAG, "Requesting permission");
             // Request permission. It's possible this can be auto answered if device policy
             // sets the permission in a given state or the user denied the permission
             // previously and checked "Never ask again".
@@ -616,6 +623,7 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
                 Log.i(TAG, "User interaction was cancelled.");
             } else if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // Permission was granted.
+                mService.updateOrganizations(organizationToTrack);
                 mService.requestLocationUpdates();
             } else {
                 // Permission denied.

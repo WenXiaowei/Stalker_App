@@ -227,11 +227,7 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
-public class StalkerReceiver extends BroadcastReceiver {
+public class StalkerPositionManager {
     private static final String TAG = "BroadcastReceiver";
     private List<Organization> organizations;
     private TrackSignal trackSignal;
@@ -239,16 +235,13 @@ public class StalkerReceiver extends BroadcastReceiver {
     private RestApiService service;
     private Organization currentOrganization = null;
 
-    static AtomicInteger count = new AtomicInteger(0);
-
-
-    public StalkerReceiver(@NotNull List<Organization> orgs, @NotNull RestApiService service) {
+    public StalkerPositionManager(@NotNull List<Organization> orgs, @NotNull RestApiService service) {
         this.organizations = orgs;
         this.service = service;
         trackSignal = new TrackSignal();
     }
 
-    public void setOrganizations(@NotNull List<Organization> organizations) {
+    public void updateOrganizations(@NotNull List<Organization> organizations) {
         this.organizations = organizations;
         if (currentOrganization != null) {
             Optional<Organization> optionalOrg = organizations.stream().filter(org -> org.getId() == currentOrganization.getId()).findAny();
@@ -262,8 +255,6 @@ public class StalkerReceiver extends BroadcastReceiver {
                 clearSignal.setIdPlace(currentPlace.getId()).setIdOrganization(organization.getId())
                         .setUsername(organization.getPersonalCn()).setPassword(organization.getLdapPassword());
 
-                Log.d(TAG, "setOrganizations: "+organization.isAnonymous());
-                Log.d(TAG, "setOrganizations: "+currentOrganization.isAnonymous());
                 if (organization.isAnonymous() == currentOrganization.isAnonymous()) {
                     currentOrganization = organization;
                     if (organization.isAnonymous()) {
@@ -290,8 +281,7 @@ public class StalkerReceiver extends BroadcastReceiver {
 
     }
 
-    @Override
-    public void onReceive(Context context, @NotNull Intent intent) {
+    public void onNewLocation(Context context, @NotNull Intent intent) {
         Location location = intent.getParcelableExtra(StalkerTrackingService.EXTRA_LOCATION);
         if (location != null) {
             onLocationsChanged(location);
@@ -310,7 +300,6 @@ public class StalkerReceiver extends BroadcastReceiver {
 
 
     private void onLocationsChanged(@NotNull Location l) {
-        count.incrementAndGet();
         Coordinate currentCoordinate = new Coordinate(l.getLatitude(), l.getLongitude());
         List<PolygonPlace> places = new ArrayList<>();
         organizations.forEach(elOrganizations -> {
@@ -337,7 +326,6 @@ public class StalkerReceiver extends BroadcastReceiver {
                         .setUsername(currentOrganization.getPersonalCn())
                         .setPassword(currentOrganization.getLdapPassword())
                         .setIdOrganization(place.getOrgId());
-                Log.d(TAG, "onLocationsChanged: sei entrato in un luogo"+count.get());
 
                 sendSignal(trackSignal);
                 currentPlace = previousPlace;
@@ -354,7 +342,6 @@ public class StalkerReceiver extends BroadcastReceiver {
                         .setPassword(currentOrganization.getLdapPassword())
                         .setIdOrganization(place.getOrgId());
                 sendSignal(trackSignal);
-                Log.d(TAG, "onLocationsChanged: sei uscito da un luogo e entrato in un altro"+count.get());
                 previousPlace = currentPlace;
                 currentPlace = place;
             }
@@ -367,7 +354,6 @@ public class StalkerReceiver extends BroadcastReceiver {
                 trackSignal.setEntered(false);
                 sendSignal(trackSignal);
                 previousPlace = null;
-                Log.d(TAG, "onLocationsChanged: sei uscito da un luogo"+count.get());
             }
             currentPlace = null;
 //            else{
@@ -379,6 +365,7 @@ public class StalkerReceiver extends BroadcastReceiver {
 
     private void sendSignal(TrackSignal signal) {
         Log.d(TAG, "sendSignal() called with: signal = [" + signal + "]");
+        /*
         service.tracking(signal.getIdOrganization(), signal.getIdPlace(), signal).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(@NotNull Call<Void> call, @NotNull Response<Void> response) {
@@ -392,5 +379,7 @@ public class StalkerReceiver extends BroadcastReceiver {
             }
 
         });
+    */
     }
+
 }
