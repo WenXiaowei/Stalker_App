@@ -208,6 +208,7 @@ import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -221,6 +222,8 @@ import android.os.Looper;
 import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -228,6 +231,7 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.vartmp7.stalker.MainActivity;
 import com.vartmp7.stalker.R;
 import com.vartmp7.stalker.Tools;
 
@@ -235,25 +239,14 @@ import org.jetbrains.annotations.NotNull;
 
 public class StalkerTrackingService extends Service {
     private static final String PACKAGE_NAME = "com.vartmp7.stalker.StalkerTrackingService";
-    private static final String NOTIFICATION_CHANNEL_ID = "channel_01";
 
     private static final String TAG = StalkerTrackingService.class.getSimpleName();
-    public static final String ACTION_BROADCAST = PACKAGE_NAME + ".broadcast";
-    public static final String EXTRA_LOCATION = PACKAGE_NAME + ".location";
-    private static final String EXTRA_STARTED_FROM_NOTIFICATION = PACKAGE_NAME +
-            ".started_from_notification";
 
 
     private final Binder mBinder = new LocalBinder();
-    private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 100;
-
-    private static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS =
-            UPDATE_INTERVAL_IN_MILLISECONDS / 2;
-    private static final int NOTIFICATION_ID = 12345678;
 
     private boolean mChangingConfiguration = false;
 
-    private NotificationManager mNotificationManager;
 
     private LocationRequest mLocationRequest;
 
@@ -264,6 +257,16 @@ public class StalkerTrackingService extends Service {
 
     private Location mLocation;
     private StalkerServiceCallback serviceCallback;
+    private static final String NOTIFICATION_CHANNEL_ID = "channel_01";
+    public static final String ACTION_BROADCAST = PACKAGE_NAME + ".broadcast";
+    public static final String EXTRA_LOCATION = PACKAGE_NAME + ".location";
+    private static final String EXTRA_STARTED_FROM_NOTIFICATION = PACKAGE_NAME +
+            ".started_from_notification";
+    private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 100;
+    private static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS =
+            UPDATE_INTERVAL_IN_MILLISECONDS / 2;
+    private static final int NOTIFICATION_ID = 12345678;
+    private NotificationManager mNotificationManager;
 
     @Override
     public void onCreate() {
@@ -296,13 +299,13 @@ public class StalkerTrackingService extends Service {
         mNotificationManager.createNotificationChannel(mChannel);
     }
 
-    public StalkerTrackingService() {
-    }
-
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         boolean startedFromNotification = intent.getBooleanExtra(EXTRA_STARTED_FROM_NOTIFICATION,
                 false);
+
+        LiveData<String> t = new MutableLiveData<>(new String("asda"));
+
 
         // We got here because the user decided to remove location updates from the notification.
         if (startedFromNotification) {
@@ -396,13 +399,13 @@ public class StalkerTrackingService extends Service {
 //                PendingIntent.FLAG_UPDATE_CURRENT);
 //
         // The PendingIntent to launch activity.
-//        PendingIntent activityPendingIntent = PendingIntent.getActivity(this, 0,
-//                new Intent(this, MainActivity.class), 0);
+        PendingIntent activityPendingIntent = PendingIntent.getActivity(this, 0,
+                new Intent(this, MainActivity.class), 0);
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
-//                .addAction(R.drawable.icon, getString(R.string.launch_activity),
-//                        activityPendingIntent)
-//                .addAction(R.drawable.ic_cancel, getString(R.string.remove_location_updates),
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this,"")
+                .addAction(R.drawable.icon_stalker, getString(R.string.apri_app),
+                        activityPendingIntent)
+//                .addAction(R.drawable.icon_stalker, getString(R.string.stop),
 //                        servicePendingIntent)
                 .setContentText(text)
                 .setContentTitle(Tools.getLocationTitle(this))
