@@ -222,6 +222,7 @@ import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
 import android.util.Log;
+import android.widget.Chronometer;
 
 import androidx.core.app.NotificationCompat;
 import androidx.lifecycle.LiveData;
@@ -264,12 +265,11 @@ public class StalkerTrackingService extends Service {
     private FusedLocationProviderClient mFusedLocationClient;
     private LocationCallback mLocationCallback;
     private Handler mServiceHandler;
-    private Location mLocation;
+
     private StalkerServiceCallback serviceCallback;
     private static final String NOTIFICATION_CHANNEL_ID = "channel_01";
-    public static final String ACTION_BROADCAST = PACKAGE_NAME + ".broadcast";
     public static final String EXTRA_LOCATION = PACKAGE_NAME + ".location";
-    private static final String EXTRA_STARTED_FROM_NOTIFICATION = PACKAGE_NAME +
+    public static final String EXTRA_STARTED_FROM_NOTIFICATION = PACKAGE_NAME +
             ".started_from_notification";
     private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 100;
     private static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS =
@@ -277,10 +277,10 @@ public class StalkerTrackingService extends Service {
     private static final int NOTIFICATION_ID = 12345678;
     private NotificationManager mNotificationManager;
     private List<Organization> organizations;
-
     @Override
     public void onCreate() {
         super.onCreate();
+
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         mLocationCallback = new LocationCallback() {
@@ -372,6 +372,8 @@ public class StalkerTrackingService extends Service {
     }
 
     public void requestLocationUpdates() {
+        if (organizations.stream().noneMatch(Organization::isTrackingActive))
+            return;
 //        Log.i(TAG, "Requesting location updates");
         Tools.setRequestingLocationUpdates(this, true);
         startService(new Intent(getApplicationContext(), StalkerTrackingService.class));
@@ -437,7 +439,6 @@ public class StalkerTrackingService extends Service {
             mFusedLocationClient.getLastLocation()
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful() && task.getResult() != null) {
-                            mLocation = task.getResult();
                             onNewLocation(task.getResult());
                         } else {
 //                                Log.w(TAG, "Failed to get location.");
@@ -491,6 +492,8 @@ public class StalkerTrackingService extends Service {
 
 
     public void updateOrganizations(@NotNull List<Organization> organizations) {
+        if (organizations.size()==0 && serviceCallback!=null)
+            serviceCallback.stopTracking();
         this.organizations = organizations;
         if (currentOrganization != null) {
             Optional<Organization> optionalOrg = organizations.stream().filter(org -> org.getId() == currentOrganization.getId()).findAny();
@@ -531,7 +534,6 @@ public class StalkerTrackingService extends Service {
     }
 
     public void onNewLocation(Location location) {
-        mLocation = location;
         if (serviceCallback != null) {
 //            Log.d(TAG, "onNewLocation: calling back");
             serviceCallback.onNewLocation(location);

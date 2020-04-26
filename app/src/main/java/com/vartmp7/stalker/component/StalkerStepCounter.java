@@ -209,15 +209,18 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 
+import java.util.concurrent.atomic.AtomicLong;
+
 public class StalkerStepCounter {
     private SensorManager manager;
-    private int stepFromLastRead = 0;
+    private AtomicLong stepFromLastRead;
     private Sensor sensor;
     private SensorEventListener li;
 
     public StalkerStepCounter(SensorManager manager, Sensor sensor) {
         this.manager = manager;
         this.sensor = sensor;
+        stepFromLastRead = new AtomicLong();
         addListener();
     }
 
@@ -231,8 +234,8 @@ public class StalkerStepCounter {
                 if (values.length > 0)
                     val = (int) values[0];
 
-                if (sensor.getType() == Sensor.TYPE_STEP_COUNTER) {
-                    stepFromLastRead = val;
+                if (sensor1.getType() == Sensor.TYPE_STEP_COUNTER && val != -1) {
+                    stepFromLastRead.addAndGet(val);
 //                    Toast.makeText(MainActivity.this,"On sensor changed: "+val, Toast.LENGTH_SHORT).show();
                 }
             }
@@ -245,9 +248,9 @@ public class StalkerStepCounter {
         manager.registerListener(li, sensor, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
-    public int getSteps() {
-        int toRe = stepFromLastRead;
-        stepFromLastRead = 0;
+    public long getSteps() {
+        long toRe = stepFromLastRead.get();
+        stepFromLastRead.set(0);
         return toRe;
     }
 
