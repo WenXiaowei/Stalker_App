@@ -223,14 +223,11 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
-import android.os.Parcelable;
 import android.util.Log;
-import android.widget.Chronometer;
 
 import androidx.core.app.NotificationCompat;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -255,10 +252,6 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.OptionalDouble;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
 public class StalkerTrackingService extends Service {
     private static final String PACKAGE_NAME = "com.vartmp7.stalker.StalkerTrackingService";
 
@@ -275,13 +268,13 @@ public class StalkerTrackingService extends Service {
     public static final String EXTRA_LOCATION = PACKAGE_NAME + ".location";
     public static final String EXTRA_STARTED_FROM_NOTIFICATION = PACKAGE_NAME +
             ".started_from_notification";
-    private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 100;
-    private static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS =
-            UPDATE_INTERVAL_IN_MILLISECONDS / 2;
     private static final int NOTIFICATION_ID = 12345678;
     private NotificationManager mNotificationManager;
     private List<Organization> organizations;
     private TrackRequestCreator creator;
+
+    public StalkerTrackingService() {
+    }
 
     @Override
     public void onCreate() {
@@ -298,7 +291,7 @@ public class StalkerTrackingService extends Service {
         };
         SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         Sensor stepSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
-        creator= new TrackRequestCreator(new StalkerStepCounter(sensorManager,stepSensor));
+        creator = new TrackRequestCreator(new StalkerStepCounter(sensorManager, stepSensor));
         createLocationRequest();
         getLastLocation();
 
@@ -387,7 +380,7 @@ public class StalkerTrackingService extends Service {
         Tools.setRequestingLocationUpdates(this, true);
         startService(new Intent(getApplicationContext(), StalkerTrackingService.class));
         try {
-             mFusedLocationClient.requestLocationUpdates(mLocationRequest,
+            mFusedLocationClient.requestLocationUpdates(mLocationRequest,
                     mLocationCallback, Looper.myLooper());
         } catch (SecurityException unlikely) {
             Tools.setRequestingLocationUpdates(this, false);
@@ -474,7 +467,6 @@ public class StalkerTrackingService extends Service {
 
     private void createLocationRequest() {
         mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(UPDATE_INTERVAL_IN_MILLISECONDS);
         mLocationRequest.setMaxWaitTime(1000);
         mLocationRequest.setInterval(1_000);
         mLocationRequest.setSmallestDisplacement(2);
@@ -494,16 +486,17 @@ public class StalkerTrackingService extends Service {
         this.serviceCallback = callback;
     }
 
-    private TrackSignal trackSignal;
     private PolygonPlace currentPlace = null, previousPlace = null;
     private RestApiService service;
     private Organization currentOrganization = null;
 
 
     public void updateOrganizations(@NotNull List<Organization> organizations) {
-        if (organizations.size()==0 && serviceCallback!=null)
-            serviceCallback.stopTracking();
         this.organizations = organizations;
+        //quando non ci sono organizzazioni con isTrackingActive == true e
+        //è diverso da null, allora mostro il messaggio di nessun organizzazione ti sta tracciando!
+        if (organizations.size() == 0 && serviceCallback != null)
+            serviceCallback.stopTracking();
         if (currentOrganization != null) {
             Optional<Organization> optionalOrg = organizations.stream().filter(org -> org.getId() == currentOrganization.getId()).findAny();
 
@@ -575,7 +568,6 @@ public class StalkerTrackingService extends Service {
         Optional<PolygonPlace> opti = places.stream().filter(polygonPlace -> polygonPlace.isInside(currentCoordinate)).findFirst();
         trackSignal.setDateTime(getFormattedTime());
 
-
         if (opti.isPresent()) {
             PolygonPlace place = opti.get();
 
@@ -610,12 +602,13 @@ public class StalkerTrackingService extends Service {
                 previousPlace = currentPlace;
                 currentPlace = place;
             }
-            removeLocationUpdates();
             mLocationRequest = creator.getNewRequest(-1);
-            requestLocationUpdates();
-//            else {
-//                Log.d(TAG, "onLocationsChanged: No conditions");
-//            }
+            //todo sarebbero da decommentare le due righe sotto, la looper si rompe, e non funziona
+            // come anche nella riga 632/33
+
+//            mFusedLocationClient.removeLocationUpdates(mLocationCallback);
+//            mFusedLocationClient.requestLocationUpdates(mLocationRequest,mLocationCallback,Looper.myLooper());
+
         } else {
             if (previousPlace != null) {
                 Log.d(TAG, "onLocationsChanged: opti.isPresent = false");
@@ -630,14 +623,15 @@ public class StalkerTrackingService extends Service {
 //            }
 
             OptionalDouble min = places.stream().mapToDouble(p -> p.distanceTo(currentCoordinate)).min();
-            if (min.isPresent()){
+            if (min.isPresent()) {
                 double distance = min.getAsDouble();
-                mFusedLocationClient.removeLocationUpdates(mLocationCallback);
                 LocationRequest newRequest = creator.getNewRequest(distance);
-                if (newRequest.getPriority()!=mLocationRequest.getPriority()){
-                    removeLocationUpdates();
-                    mLocationRequest = newRequest;
-                    requestLocationUpdates();
+                if (newRequest.getPriority() != mLocationRequest.getPriority()) {
+                    mLocationRequest = creator.getNewRequest(distance);
+
+//                    mFusedLocationClient.removeLocationUpdates(mLocationCallback);
+//                    mFusedLocationClient.requestLocationUpdates(mLocationRequest,mLocationCallback,Looper.myLooper());
+
                 }
             }
         }
@@ -646,16 +640,16 @@ public class StalkerTrackingService extends Service {
 
     @NotNull
     private String getNotificationText(long orgId, long placeId) {
-        Optional<Organization> s = organizations.stream().filter(o->o.getId()== orgId).findAny();
+        Optional<Organization> s = organizations.stream().filter(o -> o.getId() == orgId).findAny();
         List<PolygonPlace> places = new ArrayList<>();
-        organizations.stream().filter(organization -> organization.getId()==orgId).forEach(o->places.addAll(o.getPlaces()));
+        organizations.stream().filter(organization -> organization.getId() == orgId).forEach(o -> places.addAll(o.getPlaces()));
         Optional<PolygonPlace> any = places.stream().filter(p -> p.getId() == placeId).findAny();
 
-        if (s.isPresent()&& any.isPresent()){
-            String orgName= s.get().getName();
+        if (s.isPresent() && any.isPresent()) {
+            String orgName = s.get().getName();
             String placeName = any.get().getName();
 
-            return getString(R.string.sei_in_tale_dei_tali, placeName,orgName);
+            return getString(R.string.sei_in_tale_dei_tali, placeName, orgName);
         }
 
         return "Non sei nei luoghi delle organizzazioni che ti stanno tracciando!";

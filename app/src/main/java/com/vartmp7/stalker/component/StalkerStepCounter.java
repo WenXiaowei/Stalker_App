@@ -217,7 +217,7 @@ public class StalkerStepCounter {
     private Sensor sensor;
     private SensorEventListener li;
 
-    public StalkerStepCounter(SensorManager manager, Sensor sensor) {
+    StalkerStepCounter(SensorManager manager, Sensor sensor) {
         this.manager = manager;
         this.sensor = sensor;
         stepFromLastRead = new AtomicLong();

@@ -242,12 +242,12 @@ public class TrackRequestCreator {
                     .setInterval(INTERMEDIATE_DISTANCE_AWAIT_TIME)
                     .setPriority(LocationRequest.PRIORITY_LOW_POWER);
         } else
-//            if (distance >= ALMOST_MOST_PRECISE_DISTANCE) {
-//            Log.d("TAG", "getNewRequest: creating third level request");
-//            request.setSmallestDisplacement((float) ALMOST_MOST_PRECISE_DISTANCE)
-//                    .setInterval(ALMOST_MOST_DISTANCE_AWAIT_TIME)
-//                    .setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
-//        } else     (distance >= MOST_PRECISE_DISTANCE || stepCounter.getSteps() > STEPS)
+            if (distance >= ALMOST_MOST_PRECISE_DISTANCE) {
+            Log.d("TAG", "getNewRequest: creating third level request");
+            request.setSmallestDisplacement((float) ALMOST_MOST_PRECISE_DISTANCE)
+                    .setInterval(ALMOST_MOST_DISTANCE_AWAIT_TIME)
+                    .setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+        } else if(distance >= MOST_PRECISE_DISTANCE || stepCounter.getSteps() > STEPS)
         {
             Log.d("TAG", "getNewRequest: creating fourth level request");
             request.setSmallestDisplacement((float) MOST_PRECISE_DISTANCE)
