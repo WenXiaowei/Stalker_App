@@ -213,6 +213,8 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
 import android.icu.text.SimpleDateFormat;
 import android.icu.util.Calendar;
 import android.location.Location;
@@ -221,6 +223,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
+import android.os.Parcelable;
 import android.util.Log;
 import android.widget.Chronometer;
 
@@ -250,6 +253,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.OptionalDouble;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -277,6 +281,8 @@ public class StalkerTrackingService extends Service {
     private static final int NOTIFICATION_ID = 12345678;
     private NotificationManager mNotificationManager;
     private List<Organization> organizations;
+    private TrackRequestCreator creator;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -290,7 +296,9 @@ public class StalkerTrackingService extends Service {
                 onNewLocation(locationResult.getLastLocation());
             }
         };
-
+        SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        Sensor stepSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
+        creator= new TrackRequestCreator(new StalkerStepCounter(sensorManager,stepSensor));
         createLocationRequest();
         getLastLocation();
 
@@ -307,6 +315,7 @@ public class StalkerTrackingService extends Service {
 
         // Set the Notification Channel for the Notification Manager.
         mNotificationManager.createNotificationChannel(mChannel);
+
     }
 
     @Override
@@ -601,6 +610,9 @@ public class StalkerTrackingService extends Service {
                 previousPlace = currentPlace;
                 currentPlace = place;
             }
+            removeLocationUpdates();
+            mLocationRequest = creator.getNewRequest(-1);
+            requestLocationUpdates();
 //            else {
 //                Log.d(TAG, "onLocationsChanged: No conditions");
 //            }
@@ -616,6 +628,18 @@ public class StalkerTrackingService extends Service {
 //            else{
 //                Log.d(TAG, "onLocationsChanged() called with: ");
 //            }
+
+            OptionalDouble min = places.stream().mapToDouble(p -> p.distanceTo(currentCoordinate)).min();
+            if (min.isPresent()){
+                double distance = min.getAsDouble();
+                mFusedLocationClient.removeLocationUpdates(mLocationCallback);
+                LocationRequest newRequest = creator.getNewRequest(distance);
+                if (newRequest.getPriority()!=mLocationRequest.getPriority()){
+                    removeLocationUpdates();
+                    mLocationRequest = newRequest;
+                    requestLocationUpdates();
+                }
+            }
         }
 
     }

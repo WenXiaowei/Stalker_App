@@ -187,7 +187,7 @@
  *       same "printed page" as the copyright notice for easier
  *       identification within third-party archives.
  *
- *    Copyright [2020] [VartTmp7]
+ *    Copyright 2020 - VartTmp7
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -204,12 +204,63 @@
 
 package com.vartmp7.stalker.component;
 
-import android.location.Location;
+import android.util.Log;
 
-public interface CallBack {
-    void onNewLocation(Location l);
+import com.google.android.gms.location.LocationRequest;
 
-    void updateTimer(String time);
+public class TrackRequestCreator {
+    private StalkerStepCounter stepCounter;
+    private static final double MAXIMUM_DISTANCE = 10_000;
+    private static final long MAX_DISTANCE_AWAIT_TIME=10 *60*1000;
+    private static final double INTERMEDIATE_DISTANCE = 5_000;
+    private static final long INTERMEDIATE_DISTANCE_AWAIT_TIME=5 *60*1000;
+    private static final double ALMOST_MOST_PRECISE_DISTANCE = 1_000;
+    private static final long ALMOST_MOST_DISTANCE_AWAIT_TIME=3*60*1000;
+    private static final double MOST_PRECISE_DISTANCE = 100;
+    private static final long MOST_PRECISE_DISTANCE_AWAIT_TIME=2*60*1000;
 
-    void stopTracking();
+    private static final int STEPS = 50;
+
+
+    public TrackRequestCreator(StalkerStepCounter stepCounter) {
+        this.stepCounter = stepCounter;
+    }
+
+
+    public LocationRequest getNewRequest(double distance) {
+        LocationRequest request = new LocationRequest();
+
+        if (distance >= MAXIMUM_DISTANCE) {
+            Log.d("TAG", "getNewRequest: creating first level request");
+            request.setSmallestDisplacement((float) MAXIMUM_DISTANCE)
+                    .setInterval(MAX_DISTANCE_AWAIT_TIME)
+                    .setPriority(LocationRequest.PRIORITY_NO_POWER)
+            .setMaxWaitTime(10);
+        } else if (distance >= INTERMEDIATE_DISTANCE) {
+            Log.d("TAG", "getNewRequest: creating second level request");
+            request.setSmallestDisplacement((float) INTERMEDIATE_DISTANCE)
+                    .setInterval(INTERMEDIATE_DISTANCE_AWAIT_TIME)
+                    .setPriority(LocationRequest.PRIORITY_LOW_POWER);
+        } else
+//            if (distance >= ALMOST_MOST_PRECISE_DISTANCE) {
+//            Log.d("TAG", "getNewRequest: creating third level request");
+//            request.setSmallestDisplacement((float) ALMOST_MOST_PRECISE_DISTANCE)
+//                    .setInterval(ALMOST_MOST_DISTANCE_AWAIT_TIME)
+//                    .setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+//        } else     (distance >= MOST_PRECISE_DISTANCE || stepCounter.getSteps() > STEPS)
+        {
+            Log.d("TAG", "getNewRequest: creating fourth level request");
+            request.setSmallestDisplacement((float) MOST_PRECISE_DISTANCE)
+                    .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                    .setInterval(MOST_PRECISE_DISTANCE_AWAIT_TIME);
+        }
+        return request;
+    }
+
+    public LocationRequest getMostPrecise() {
+        return new LocationRequest()
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                .setSmallestDisplacement(1)
+                .setMaxWaitTime(1);
+    }
 }

@@ -212,6 +212,5 @@ public abstract class StalkerServiceCallback implements CallBack{
     public StalkerServiceCallback(Handler handler) {
         this.handler = handler;
     }
-    public abstract void updateTimer(String time);
-    public abstract void stopTracking();
+
 }
