@@ -212,6 +212,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
@@ -223,11 +224,14 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
+import android.os.SystemClock;
 import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceManager;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -586,6 +590,7 @@ public class StalkerTrackingService extends Service {
 
                 sendSignal(trackSignal);
                 currentPlace = previousPlace;
+                updateChronometerBase(SystemClock.elapsedRealtime());
             } else if (previousPlace != place) {
 //                Log.d(TAG, "onLocationsChanged: prevPlace !=null");
                 trackSignal.setEntered(false)
@@ -601,6 +606,7 @@ public class StalkerTrackingService extends Service {
                 sendSignal(trackSignal);
                 previousPlace = currentPlace;
                 currentPlace = place;
+                updateChronometerBase(SystemClock.elapsedRealtime());
             }
             mLocationRequest = creator.getNewRequest(-1);
             //todo sarebbero da decommentare le due righe sotto, la looper si rompe, e non funziona
@@ -615,6 +621,7 @@ public class StalkerTrackingService extends Service {
                 trackSignal.setEntered(false);
                 sendSignal(trackSignal);
                 previousPlace = null;
+                updateChronometerBase(-1);
             }
             currentPlace = null;
             currentOrganization = null;
@@ -680,5 +687,16 @@ public class StalkerTrackingService extends Service {
 //
 //        });
 
+    }
+
+    public static final String CHRONOMETER_KEY = "chronometer_key";
+    public static final String LAST_PLACE_ID="last_place_id";
+    public void updateChronometerBase(
+//            long placeId,
+            long time) {
+        Log.d("TAG", "updateChronometerBase: " + time);
+        SharedPreferences defaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+
+        defaultSharedPreferences.edit().putLong(CHRONOMETER_KEY, time).apply();
     }
 }

@@ -667,6 +667,17 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
             setButtonsState(sharedPreferences.getBoolean(Tools.KEY_REQUESTING_LOCATION_UPDATES,
                     false));
         }
+        if (s.equalsIgnoreCase(StalkerTrackingService.CHRONOMETER_KEY)) {
+            long aLong = sharedPreferences.getLong(StalkerTrackingService.CHRONOMETER_KEY, SystemClock.elapsedRealtime());
+            if (aLong == -1) {
+                tvTimer.setBase(SystemClock.elapsedRealtime());
+                tvTimer.stop();
+            } else {
+                tvTimer.setBase(aLong);
+                tvTimer.start();
+
+            }
+        }
     }
 
     private void setButtonsState(boolean requestingLocationUpdates) {
