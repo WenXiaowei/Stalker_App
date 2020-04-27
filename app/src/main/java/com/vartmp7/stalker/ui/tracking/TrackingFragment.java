@@ -289,15 +289,6 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
     private StalkerServiceCallback callback = new StalkerServiceCallback(handler) {
 
         @Override
-        public void updateTimer(String time) {
-            Message msg = new Message();
-            Bundle b = new Bundle();
-            b.putString(UPDATE_TIMER, time);
-            msg.setData(b);
-            handler.sendMessage(msg);
-        }
-
-        @Override
         public void stopTracking() {
             handler.sendEmptyMessage(TRACKING_STOP_MSG_CODE);
         }
@@ -331,6 +322,11 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
             msg.setData(b);
             handler.sendMessage(msg);
 
+        }
+
+        @Override
+        public void notInAnyPlace() {
+            handler.sendEmptyMessage(TRACKING_NOT_IN_PLACE_MSG_CODE);
         }
 
 
@@ -436,13 +432,20 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
     };
 
     public void setAllOrganizationTracking(boolean isTrackingActive) {
+
+
         if (isTrackingActive) {
             if (!checkPermissions()) {
                 requestPermissions();
                 return;
             } else {
-                mService.updateOrganizations(organizationToTrack);
-                mService.requestLocationUpdates();
+                if (mService!=null){
+                    mService.updateOrganizations(organizationToTrack);
+                    mService.requestLocationUpdates();
+                }else{
+                    requireContext().bindService(new Intent(requireContext(), StalkerTrackingService.class), mServiceConnection,
+                            Context.BIND_AUTO_CREATE);
+                }
             }
         } else {
             mService.removeLocationUpdates();
@@ -542,7 +545,7 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
         organizationToTrack = organizationsReadyToTrack.stream().filter(Organization::isTrackingActive).collect(Collectors.toList());
 
         if (mService != null)
-            mService.updateOrganizations(organizationsReadyToTrack);
+            mService.updateOrganizations(organizationToTrack);
 
         if (list.stream().anyMatch(Organization::isTrackingActive))
             requireContext().bindService(new Intent(requireContext(), StalkerTrackingService.class), mServiceConnection,

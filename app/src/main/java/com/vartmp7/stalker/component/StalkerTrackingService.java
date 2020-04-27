@@ -537,6 +537,9 @@ public class StalkerTrackingService extends Service {
 
                 sendSignal(trackSignal);
             }
+        }else{
+            if (serviceCallback!=null)
+                serviceCallback.notInAnyPlace();
         }
 
     }
@@ -547,7 +550,8 @@ public class StalkerTrackingService extends Service {
             serviceCallback.onNewLocation(location);
         }
         if (location != null) {
-            onLocationsChanged(location);
+            Coordinate currentCoordinate = new Coordinate(location.getLatitude(), location.getLongitude());
+            onLocationsChanged(currentCoordinate);
 //            Toast.makeText(context, "new Location", Toast.LENGTH_SHORT).show();
         }
     }
@@ -560,9 +564,9 @@ public class StalkerTrackingService extends Service {
         return formattedDate.replace(" ", "T");
     }
 
-
-    private void onLocationsChanged(@NotNull Location l) {
-        Coordinate currentCoordinate = new Coordinate(l.getLatitude(), l.getLongitude());
+    private Coordinate currentCoordinate;
+    private void onLocationsChanged(@NotNull Coordinate newCoordinate) {
+        currentCoordinate = newCoordinate;
         List<PolygonPlace> places = new ArrayList<>();
         TrackSignal trackSignal = new TrackSignal();
         if (organizations == null) return;
