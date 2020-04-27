@@ -210,6 +210,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -249,6 +250,7 @@ public class HistoryFragment extends Fragment implements SwipeRefreshLayout.OnRe
         tvMessageBox = v.findViewById(R.id.tvMessageBox);
 
 
+
         historyViewModel.getTrackRecords().observe(getViewLifecycleOwner(), records ->{
             if (historyViewModel.getOrganizations().getValue().stream().noneMatch(Organization::isLogged)){
                 tvMessageBox.setText(R.string.devi_loggare_con_ldap);
@@ -283,7 +285,12 @@ public class HistoryFragment extends Fragment implements SwipeRefreshLayout.OnRe
 
     @Override
     public void onRefresh() {
-        refreshLayout.setRefreshing(true);
-        historyViewModel.updateTrackHistories();
+        if (historyViewModel.getOrganizations().getValue().stream().anyMatch(Organization::isLogged)){
+            refreshLayout.setRefreshing(true);
+            historyViewModel.updateTrackHistories();
+        }else{
+            refreshLayout.setEnabled(false);
+            Toast.makeText(requireContext(), R.string.devi_loggare_con_ldap, Toast.LENGTH_SHORT).show();
+        }
     }
 }

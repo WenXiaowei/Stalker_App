@@ -212,19 +212,27 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
+import android.icu.text.SimpleDateFormat;
+import android.icu.util.Calendar;
 import android.location.Location;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
+import android.os.SystemClock;
+import android.telecom.Call;
 import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceManager;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -234,43 +242,52 @@ import com.google.android.gms.location.LocationServices;
 import com.vartmp7.stalker.MainActivity;
 import com.vartmp7.stalker.R;
 import com.vartmp7.stalker.Tools;
+import com.vartmp7.stalker.datamodel.Organization;
+import com.vartmp7.stalker.datamodel.PolygonPlace;
+import com.vartmp7.stalker.datamodel.TrackSignal;
+import com.vartmp7.stalker.datamodel.placecomponent.Coordinate;
+import com.vartmp7.stalker.repository.RestApiService;
 
 import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
+import java.util.OptionalDouble;
+
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class StalkerTrackingService extends Service {
     private static final String PACKAGE_NAME = "com.vartmp7.stalker.StalkerTrackingService";
 
     private static final String TAG = StalkerTrackingService.class.getSimpleName();
-
-
     private final Binder mBinder = new LocalBinder();
-
     private boolean mChangingConfiguration = false;
-
-
     private LocationRequest mLocationRequest;
-
     private FusedLocationProviderClient mFusedLocationClient;
     private LocationCallback mLocationCallback;
-
     private Handler mServiceHandler;
 
-    private Location mLocation;
-    private StalkerServiceCallback serviceCallback;
+    private CallBack serviceCallback;
     private static final String NOTIFICATION_CHANNEL_ID = "channel_01";
-    public static final String ACTION_BROADCAST = PACKAGE_NAME + ".broadcast";
     public static final String EXTRA_LOCATION = PACKAGE_NAME + ".location";
-    private static final String EXTRA_STARTED_FROM_NOTIFICATION = PACKAGE_NAME +
+    public static final String EXTRA_STARTED_FROM_NOTIFICATION = PACKAGE_NAME +
             ".started_from_notification";
-    private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 100;
-    private static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS =
-            UPDATE_INTERVAL_IN_MILLISECONDS / 2;
     private static final int NOTIFICATION_ID = 12345678;
     private NotificationManager mNotificationManager;
+    private List<Organization> organizations;
+    private TrackRequestCreator creator;
+
+    public StalkerTrackingService() {
+    }
 
     @Override
     public void onCreate() {
         super.onCreate();
+
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         mLocationCallback = new LocationCallback() {
@@ -280,7 +297,9 @@ public class StalkerTrackingService extends Service {
                 onNewLocation(locationResult.getLastLocation());
             }
         };
-
+        SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        Sensor stepSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
+        creator = new TrackRequestCreator(new StalkerStepCounter(sensorManager, stepSensor));
         createLocationRequest();
         getLastLocation();
 
@@ -297,10 +316,11 @@ public class StalkerTrackingService extends Service {
 
         // Set the Notification Channel for the Notification Manager.
         mNotificationManager.createNotificationChannel(mChannel);
+
     }
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
+    public int onStartCommand(@NotNull Intent intent, int flags, int startId) {
         boolean startedFromNotification = intent.getBooleanExtra(EXTRA_STARTED_FROM_NOTIFICATION,
                 false);
 
@@ -344,7 +364,8 @@ public class StalkerTrackingService extends Service {
         if (!mChangingConfiguration && Tools.requestingLocationUpdates(this)) {
 //            Log.i(TAG, "Starting foreground service");
 
-            startForeground(NOTIFICATION_ID, getNotification());
+            if (currentOrganization != null && currentPlace != null)
+                startForeground(NOTIFICATION_ID, getNotification(getNotificationText(currentOrganization.getId(), currentPlace.getId())));
         }
         return true; // Ensures onRebind() is called when a client re-binds.
     }
@@ -361,6 +382,8 @@ public class StalkerTrackingService extends Service {
     }
 
     public void requestLocationUpdates() {
+        if (organizations.stream().noneMatch(Organization::isTrackingActive))
+            return;
 //        Log.i(TAG, "Requesting location updates");
         Tools.setRequestingLocationUpdates(this, true);
         startService(new Intent(getApplicationContext(), StalkerTrackingService.class));
@@ -386,10 +409,9 @@ public class StalkerTrackingService extends Service {
     }
 
 
-    private Notification getNotification() {
+    private Notification getNotification(String text) {
         Intent intent = new Intent(this, StalkerTrackingService.class);
 
-        CharSequence text = Tools.getLocationText(mLocation);
 
         // Extra to help us figure out if we arrived in onStartCommand via the notification or not.
         intent.putExtra(EXTRA_STARTED_FROM_NOTIFICATION, true);
@@ -400,19 +422,20 @@ public class StalkerTrackingService extends Service {
 //
         // The PendingIntent to launch activity.
         PendingIntent activityPendingIntent = PendingIntent.getActivity(this, 0,
-                new Intent(this, MainActivity.class), 0);
+                new Intent(this, MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK), 0);
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this,"")
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "")
                 .addAction(R.drawable.icon_stalker, getString(R.string.apri_app),
                         activityPendingIntent)
 //                .addAction(R.drawable.icon_stalker, getString(R.string.stop),
 //                        servicePendingIntent)
-                .setContentText(text)
+//                .setContentText(text)
                 .setContentTitle(Tools.getLocationTitle(this))
                 .setOngoing(true)
                 .setPriority(Notification.BADGE_ICON_LARGE)
                 .setSmallIcon(R.mipmap.ic_launcher)
-                .setTicker(text)
+//                .setTicker(text)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(text))
                 .setWhen(System.currentTimeMillis());
 
         // Set the Channel ID for Android O.
@@ -426,7 +449,6 @@ public class StalkerTrackingService extends Service {
             mFusedLocationClient.getLastLocation()
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful() && task.getResult() != null) {
-                            mLocation = task.getResult();
                             onNewLocation(task.getResult());
                         } else {
 //                                Log.w(TAG, "Failed to get location.");
@@ -434,26 +456,6 @@ public class StalkerTrackingService extends Service {
                     });
         } catch (SecurityException unlikely) {
 //            Log.e(TAG, "Lost location permission." + unlikely);
-        }
-    }
-
-    private void onNewLocation(Location location) {
-//        Log.i(TAG, "New location: " + location);
-
-        mLocation = location;
-        if (serviceCallback != null){
-//            Log.d(TAG, "onNewLocation: calling back");
-            serviceCallback.onNewLocation(location);
-        }
-
-        // Notify anyone listening for broadcasts about the new location.
-        Intent intent = new Intent(ACTION_BROADCAST);
-        intent.putExtra(EXTRA_LOCATION, location);
-        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
-
-        // Update notification content if running as a foreground service.
-        if (serviceIsRunningInForeground(this)) {
-            mNotificationManager.notify(NOTIFICATION_ID, getNotification());
         }
     }
 
@@ -473,7 +475,6 @@ public class StalkerTrackingService extends Service {
 
     private void createLocationRequest() {
         mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(UPDATE_INTERVAL_IN_MILLISECONDS);
         mLocationRequest.setMaxWaitTime(1000);
         mLocationRequest.setInterval(1_000);
         mLocationRequest.setSmallestDisplacement(2);
@@ -481,13 +482,234 @@ public class StalkerTrackingService extends Service {
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
 
+
     public class LocalBinder extends Binder {
         public StalkerTrackingService getService() {
             return StalkerTrackingService.this;
         }
 
-        public void setServiceCallback(StalkerServiceCallback callback) {
-            StalkerTrackingService.this.serviceCallback = callback;
+    }
+
+    public void setCallback(CallBack callback) {
+        this.serviceCallback = callback;
+    }
+
+    private PolygonPlace currentPlace = null, previousPlace = null;
+    private RestApiService service;
+    private Organization currentOrganization = null;
+
+
+    public void updateOrganizations(@NotNull List<Organization> organizations) {
+        this.organizations = organizations;
+        //quando non ci sono organizzazioni con isTrackingActive == true e
+        //è diverso da null, allora mostro il messaggio di nessun organizzazione ti sta tracciando!
+        if (organizations.size() == 0 && serviceCallback != null){
+            serviceCallback.stopTracking();
+            updateChronometerBase(-1,-1);
+        }
+        if (currentOrganization != null) {
+            Optional<Organization> optionalOrg = organizations.stream().filter(org -> org.getId() == currentOrganization.getId()).findAny();
+
+            if (optionalOrg.isPresent()) {
+                Organization organization = optionalOrg.get();
+                TrackSignal anonymousSignal = new TrackSignal().setAuthenticated(false);
+                TrackSignal clearSignal = new TrackSignal().setAuthenticated(true);
+                anonymousSignal.setIdOrganization(organization.getId())
+                        .setIdPlace(currentPlace.getId());
+                clearSignal.setIdPlace(currentPlace.getId()).setIdOrganization(organization.getId())
+                        .setUsername(organization.getPersonalCn()).setPassword(organization.getLdapPassword());
+
+                if (organization.isAnonymous() == currentOrganization.isAnonymous()) {
+                    currentOrganization = organization;
+                    if (organization.isAnonymous()) {
+                        sendSignal(clearSignal.setEntered(false));
+                        sendSignal(anonymousSignal.setEntered(true));
+                    } else {
+                        sendSignal(anonymousSignal.setEntered(false));
+                        sendSignal(clearSignal.setEntered(true));
+                    }
+                }
+
+            } else {
+                TrackSignal trackSignal = new TrackSignal().setIdOrganization(currentOrganization.getId())
+                        .setIdPlace(currentPlace.getId())
+                        .setDateTime(getFormattedTime())
+                        .setAuthenticated(currentOrganization.isLogged());
+                if (currentOrganization.isLogged()) {
+                    trackSignal.setUsername(currentOrganization.getPersonalCn()).setPassword(currentOrganization.getLdapPassword());
+                }
+
+                sendSignal(trackSignal);
+            }
+        }else{
+            if (serviceCallback!=null)
+                serviceCallback.notInAnyPlace();
+        }
+
+    }
+
+    public void onNewLocation(Location location) {
+        if (serviceCallback != null) {
+//            Log.d(TAG, "onNewLocation: calling back");
+            serviceCallback.onNewLocation(location);
+        }
+        if (location != null) {
+            Coordinate currentCoordinate = new Coordinate(location.getLatitude(), location.getLongitude());
+            onLocationsChanged(currentCoordinate);
+//            Toast.makeText(context, "new Location", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @NotNull
+    private String getFormattedTime() {
+        SimpleDateFormat format = new SimpleDateFormat("Y-M-d hh:mm:ss");
+        Date date = Calendar.getInstance(Locale.getDefault()).getTime();
+        String formattedDate = format.format(date);
+        return formattedDate.replace(" ", "T");
+    }
+
+    private Coordinate currentCoordinate;
+    private void onLocationsChanged(@NotNull Coordinate newCoordinate) {
+        currentCoordinate = newCoordinate;
+        List<PolygonPlace> places = new ArrayList<>();
+        TrackSignal trackSignal = new TrackSignal();
+        if (organizations == null) return;
+        organizations.forEach(elOrganizations -> {
+            List<PolygonPlace> orgPlaces = elOrganizations.getPlaces();
+            orgPlaces.forEach(e -> e.setOrgId(elOrganizations.getId()));
+            places.addAll(orgPlaces);
+        });
+        Optional<PolygonPlace> opti = places.stream().filter(polygonPlace -> polygonPlace.isInside(currentCoordinate)).findFirst();
+        trackSignal.setDateTime(getFormattedTime());
+
+        if (opti.isPresent()) {
+            PolygonPlace place = opti.get();
+
+            Optional<Organization> optionalOrganization = organizations.stream().filter(organization -> organization.getId() == place.getOrgId()).findFirst();
+            optionalOrganization.ifPresent(value -> currentOrganization = value);
+
+            if (previousPlace == null) {
+//                Log.d(TAG, "onLocationsChanged: prevPlace ==null");
+                previousPlace = place;
+                trackSignal.setIdPlace(previousPlace.getId())
+                        .setEntered(true)
+                        .setAuthenticated(currentOrganization.isLogged() && !currentOrganization.isAnonymous())
+                        .setUsername(currentOrganization.getPersonalCn())
+                        .setPassword(currentOrganization.getLdapPassword())
+                        .setIdOrganization(place.getOrgId());
+
+                sendSignal(trackSignal);
+                currentPlace = previousPlace;
+                updateChronometerBase(currentPlace.getId(),SystemClock.elapsedRealtime());
+            } else if (previousPlace != place) {
+//                Log.d(TAG, "onLocationsChanged: prevPlace !=null");
+                trackSignal.setEntered(false)
+                        .setIdPlace(previousPlace.getId());
+                sendSignal(trackSignal);
+
+                trackSignal.setEntered(true)
+                        .setIdPlace(place.getId())
+                        .setAuthenticated(!currentOrganization.isAnonymous() && currentOrganization.isLogged())
+                        .setUsername(currentOrganization.getPersonalCn())
+                        .setPassword(currentOrganization.getLdapPassword())
+                        .setIdOrganization(place.getOrgId());
+                sendSignal(trackSignal);
+                previousPlace = currentPlace;
+                currentPlace = place;
+                updateChronometerBase(currentPlace.getId(),SystemClock.elapsedRealtime());
+            }
+            mLocationRequest = creator.getNewRequest(-1);
+            //todo sarebbero da decommentare le due righe sotto, la looper si rompe, e non funziona
+            // come anche nella riga 632/33
+
+//            mFusedLocationClient.removeLocationUpdates(mLocationCallback);
+//            mFusedLocationClient.requestLocationUpdates(mLocationRequest,mLocationCallback,Looper.myLooper());
+
+        } else {
+            if (previousPlace != null) {
+                Log.d(TAG, "onLocationsChanged: opti.isPresent = false");
+                trackSignal.setEntered(false);
+                sendSignal(trackSignal);
+                previousPlace = null;
+                updateChronometerBase(-1,-1);
+            }
+            currentPlace = null;
+            currentOrganization = null;
+//            else{
+//                Log.d(TAG, "onLocationsChanged() called with: ");
+//            }
+
+            OptionalDouble min = places.stream().mapToDouble(p -> p.distanceTo(currentCoordinate)).min();
+            if (min.isPresent()) {
+                double distance = min.getAsDouble();
+                LocationRequest newRequest = creator.getNewRequest(distance);
+                if (newRequest.getPriority() != mLocationRequest.getPriority()) {
+                    mLocationRequest = creator.getNewRequest(distance);
+
+//                    mFusedLocationClient.removeLocationUpdates(mLocationCallback);
+//                    mFusedLocationClient.requestLocationUpdates(mLocationRequest,mLocationCallback,Looper.myLooper());
+
+                }
+            }
+        }
+
+    }
+
+    @NotNull
+    private String getNotificationText(long orgId, long placeId) {
+        Optional<Organization> s = organizations.stream().filter(o -> o.getId() == orgId).findAny();
+        List<PolygonPlace> places = new ArrayList<>();
+        organizations.stream().filter(organization -> organization.getId() == orgId).forEach(o -> places.addAll(o.getPlaces()));
+        Optional<PolygonPlace> any = places.stream().filter(p -> p.getId() == placeId).findAny();
+
+        if (s.isPresent() && any.isPresent()) {
+            String orgName = s.get().getName();
+            String placeName = any.get().getName();
+
+            return getString(R.string.sei_in_tale_dei_tali, placeName, orgName);
+        }
+
+        return "Non sei nei luoghi delle organizzazioni che ti stanno tracciando!";
+    }
+
+    public void setApiService(RestApiService service) {
+        this.service = service;
+    }
+
+    private void sendSignal(@NotNull TrackSignal signal) {
+        if (serviceIsRunningInForeground(this)) {
+            mNotificationManager.notify(NOTIFICATION_ID,
+                    getNotification(getNotificationText(signal.getIdOrganization(), signal.getIdPlace())));
+        }
+        Log.d(TAG, "sendSignal() called with: signal = [" + signal + "]");
+
+        service.tracking(signal.getIdOrganization(), signal.getIdPlace(), signal).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(@NotNull retrofit2.Call<Void> call, @NotNull Response<Void> response) {
+//                Log.d(TAG, "onResponse: " + response.toString());
+//                Log.d(TAG, "onResponse: RESPONSE");
+            }
+
+            @Override
+            public void onFailure(@NotNull retrofit2.Call<Void> call, @NotNull Throwable t) {
+//                Log.d(TAG, "onFailure: " + t.getMessage());
+            }
+
+        });
+
+    }
+
+    public static final String CHRONOMETER_KEY = "chronometer_key";
+    public static final String LAST_PLACE_ID = "last_place_id";
+
+    public void updateChronometerBase(
+            long placeId,
+            long time) {
+        Log.d("TAG", "updateChronometerBase: " + time);
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        long lastPlaceId = sharedPreferences.getLong(LAST_PLACE_ID, -1);
+        if (lastPlaceId != placeId) {
+            sharedPreferences.edit().putLong(LAST_PLACE_ID, placeId).putLong(CHRONOMETER_KEY, time).apply();
         }
     }
 }

@@ -236,10 +236,20 @@
                 android:text="@string/nessun_organization_ti_sta_tracciando"
                 android:textSize="15sp" />
 
-            <Chronometer
-                android:id="@+id/chronometer"
-                android:layout_width="59dp"
-                android:layout_height="20dp" />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tempo_trascorso"/>
+
+                <Chronometer
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/tvTimer"/>
+            </LinearLayout>
 
         </LinearLayout>
 

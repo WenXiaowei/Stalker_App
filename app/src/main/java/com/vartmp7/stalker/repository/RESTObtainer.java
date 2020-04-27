@@ -314,14 +314,14 @@ public class RESTObtainer implements Obtainer {
                                 .setName("UNIPD dSeA")
                                 .setType("both")
                                 .setTracking(false)
-                                .setImageUrl("https://www.economia.unipd.it/sites/economia.unipd.it/files/img-logo-trentennale-dsea-big.png")
+//                                .setImageUrl("https://www.economia.unipd.it/sites/economia.unipd.it/files/img-logo-trentennale-dsea-big.png")
                                 .setPlaces(Collections.singletonList(d)),
                         new Organization()
                                 .setId(3)
                                 .setName("UNIPD DSFARM")
                                 .setType("both")
                                 .setTracking(true)
-                                .setImageUrl("https://www.dsfarm.unipd.it/sites/dsfarm.unipd.it/files/sublogo_9.png")
+//                                .setImageUrl("https://www.dsfarm.unipd.it/sites/dsfarm.unipd.it/files/sublogo_9.png")
                                 .setPlaces(Collections.singletonList(t))
                 );
                 orgs.forEach(o -> Log.d(TAG, "onFailure: " + o.getId()));
