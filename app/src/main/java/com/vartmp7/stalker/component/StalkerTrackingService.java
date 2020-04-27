@@ -316,7 +316,7 @@ public class StalkerTrackingService extends Service {
     }
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
+    public int onStartCommand(@NotNull Intent intent, int flags, int startId) {
         boolean startedFromNotification = intent.getBooleanExtra(EXTRA_STARTED_FROM_NOTIFICATION,
                 false);
 
@@ -499,8 +499,10 @@ public class StalkerTrackingService extends Service {
         this.organizations = organizations;
         //quando non ci sono organizzazioni con isTrackingActive == true e
         //è diverso da null, allora mostro il messaggio di nessun organizzazione ti sta tracciando!
-        if (organizations.size() == 0 && serviceCallback != null)
+        if (organizations.size() == 0 && serviceCallback != null){
             serviceCallback.stopTracking();
+            updateChronometerBase(-1,-1);
+        }
         if (currentOrganization != null) {
             Optional<Organization> optionalOrg = organizations.stream().filter(org -> org.getId() == currentOrganization.getId()).findAny();
 
@@ -590,7 +592,7 @@ public class StalkerTrackingService extends Service {
 
                 sendSignal(trackSignal);
                 currentPlace = previousPlace;
-                updateChronometerBase(SystemClock.elapsedRealtime());
+                updateChronometerBase(currentPlace.getId(),SystemClock.elapsedRealtime());
             } else if (previousPlace != place) {
 //                Log.d(TAG, "onLocationsChanged: prevPlace !=null");
                 trackSignal.setEntered(false)
@@ -606,7 +608,7 @@ public class StalkerTrackingService extends Service {
                 sendSignal(trackSignal);
                 previousPlace = currentPlace;
                 currentPlace = place;
-                updateChronometerBase(SystemClock.elapsedRealtime());
+                updateChronometerBase(currentPlace.getId(),SystemClock.elapsedRealtime());
             }
             mLocationRequest = creator.getNewRequest(-1);
             //todo sarebbero da decommentare le due righe sotto, la looper si rompe, e non funziona
@@ -621,7 +623,7 @@ public class StalkerTrackingService extends Service {
                 trackSignal.setEntered(false);
                 sendSignal(trackSignal);
                 previousPlace = null;
-                updateChronometerBase(-1);
+                updateChronometerBase(-1,-1);
             }
             currentPlace = null;
             currentOrganization = null;
@@ -690,13 +692,16 @@ public class StalkerTrackingService extends Service {
     }
 
     public static final String CHRONOMETER_KEY = "chronometer_key";
-    public static final String LAST_PLACE_ID="last_place_id";
+    public static final String LAST_PLACE_ID = "last_place_id";
+
     public void updateChronometerBase(
-//            long placeId,
+            long placeId,
             long time) {
         Log.d("TAG", "updateChronometerBase: " + time);
-        SharedPreferences defaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-
-        defaultSharedPreferences.edit().putLong(CHRONOMETER_KEY, time).apply();
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        long lastPlaceId = sharedPreferences.getLong(LAST_PLACE_ID, -1);
+        if (lastPlaceId != placeId) {
+            sharedPreferences.edit().putLong(LAST_PLACE_ID, placeId).putLong(CHRONOMETER_KEY, time).apply();
+        }
     }
 }

@@ -388,6 +388,20 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
     private Button mRemoveLocationUpdatesButton;
 
     @Override
+    public void onResume() {
+        super.onResume();
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext());
+        long lastPlaceId = sharedPreferences.getLong(StalkerTrackingService.LAST_PLACE_ID, -1);
+        if (lastPlaceId!=-1){
+            long timeBase = sharedPreferences.getLong(StalkerTrackingService.CHRONOMETER_KEY, -1);
+            if (timeBase!=-1){
+                tvTimer.setBase(timeBase);
+                tvTimer.start();
+            }
+        }
+    }
+
+    @Override
     public void onPause() {
         super.onPause();
         if (mService != null) {
