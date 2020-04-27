@@ -279,7 +279,6 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
 
 
     private final static String MSG_CODE = "MSG_CODE";
-    private final static String UPDATE_TIMER = "UPDATE_TIMER";
     private TrackingViewModel trackingViewModel;
     private List<Organization> organizationToTrack;
     private TrackingViewAdapter mAdapter;
@@ -395,6 +394,8 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
                 tvTimer.start();
             }
         }
+        if (mService!=null)
+            mService.setCallback(callback);
     }
 
     @Override
@@ -431,9 +432,7 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
         }
     };
 
-    public void setAllOrganizationTracking(boolean isTrackingActive) {
-
-
+    private void setAllOrganizationTracking(boolean isTrackingActive) {
         if (isTrackingActive) {
             if (!checkPermissions()) {
                 requestPermissions();

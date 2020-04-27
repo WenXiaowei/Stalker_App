@@ -225,6 +225,7 @@ import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.SystemClock;
+import android.telecom.Call;
 import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
@@ -256,6 +257,9 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.OptionalDouble;
 
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class StalkerTrackingService extends Service {
     private static final String PACKAGE_NAME = "com.vartmp7.stalker.StalkerTrackingService";
 
@@ -267,7 +271,7 @@ public class StalkerTrackingService extends Service {
     private LocationCallback mLocationCallback;
     private Handler mServiceHandler;
 
-    private StalkerServiceCallback serviceCallback;
+    private CallBack serviceCallback;
     private static final String NOTIFICATION_CHANNEL_ID = "channel_01";
     public static final String EXTRA_LOCATION = PACKAGE_NAME + ".location";
     public static final String EXTRA_STARTED_FROM_NOTIFICATION = PACKAGE_NAME +
@@ -486,7 +490,7 @@ public class StalkerTrackingService extends Service {
 
     }
 
-    public void setCallback(StalkerServiceCallback callback) {
+    public void setCallback(CallBack callback) {
         this.serviceCallback = callback;
     }
 
@@ -679,19 +683,19 @@ public class StalkerTrackingService extends Service {
         }
         Log.d(TAG, "sendSignal() called with: signal = [" + signal + "]");
 
-//        service.tracking(signal.getIdOrganization(), signal.getIdPlace(), signal).enqueue(new Callback<Void>() {
-//            @Override
-//            public void onResponse(@NotNull Call<Void> call, @NotNull Response<Void> response) {
+        service.tracking(signal.getIdOrganization(), signal.getIdPlace(), signal).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(@NotNull retrofit2.Call<Void> call, @NotNull Response<Void> response) {
 //                Log.d(TAG, "onResponse: " + response.toString());
 //                Log.d(TAG, "onResponse: RESPONSE");
-//            }
-//
-//            @Override
-//            public void onFailure(@NotNull Call<Void> call, @NotNull Throwable t) {
+            }
+
+            @Override
+            public void onFailure(@NotNull retrofit2.Call<Void> call, @NotNull Throwable t) {
 //                Log.d(TAG, "onFailure: " + t.getMessage());
-//            }
-//
-//        });
+            }
+
+        });
 
     }
 
