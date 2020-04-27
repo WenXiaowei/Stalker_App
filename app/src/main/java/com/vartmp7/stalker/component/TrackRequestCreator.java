@@ -187,7 +187,7 @@
  *       same "printed page" as the copyright notice for easier
  *       identification within third-party archives.
  *
- *    Copyright [2020] [VartTmp7]
+ *    Copyright 2020 - VartTmp7
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -204,45 +204,63 @@
 
 package com.vartmp7.stalker.component;
 
-import android.content.Context;
-import android.location.Location;
-import android.location.LocationListener;
-import android.os.Bundle;
+import android.util.Log;
 
-/**
- * @author Xiaowei Wen, Lorenzo Taschin
- */
-public class Tracker implements LocationListener {
-    public static final String TAG ="com.vartmp7.stalker.component.Tracker";
-    private Context mContext;
-    private StalkerTrackingCallBack callBack;
-    private  boolean inPlace;
-    public  Tracker(Context context, StalkerTrackingCallBack s){
-        mContext= context;
-        callBack= s;
+import com.google.android.gms.location.LocationRequest;
+
+public class TrackRequestCreator {
+    private StalkerStepCounter stepCounter;
+    private static final double MAXIMUM_DISTANCE = 10_000;
+    private static final long MAX_DISTANCE_AWAIT_TIME=10 *60*1000;
+    private static final double INTERMEDIATE_DISTANCE = 5_000;
+    private static final long INTERMEDIATE_DISTANCE_AWAIT_TIME=5 *60*1000;
+    private static final double ALMOST_MOST_PRECISE_DISTANCE = 1_000;
+    private static final long ALMOST_MOST_DISTANCE_AWAIT_TIME=3*60*1000;
+    private static final double MOST_PRECISE_DISTANCE = 100;
+    private static final long MOST_PRECISE_DISTANCE_AWAIT_TIME=2*60*1000;
+
+    private static final int STEPS = 50;
+
+
+    public TrackRequestCreator(StalkerStepCounter stepCounter) {
+        this.stepCounter = stepCounter;
     }
 
 
+    public LocationRequest getNewRequest(double distance) {
+        LocationRequest request = new LocationRequest();
 
-    @Override
-    public void onLocationChanged(Location location) {
-        if (callBack != null){
-            callBack.onLocationsChanged(location );
+        if (distance >= MAXIMUM_DISTANCE) {
+            Log.d("TAG", "getNewRequest: creating first level request");
+            request.setSmallestDisplacement((float) MAXIMUM_DISTANCE)
+                    .setInterval(MAX_DISTANCE_AWAIT_TIME)
+                    .setPriority(LocationRequest.PRIORITY_NO_POWER)
+            .setMaxWaitTime(10);
+        } else if (distance >= INTERMEDIATE_DISTANCE) {
+            Log.d("TAG", "getNewRequest: creating second level request");
+            request.setSmallestDisplacement((float) INTERMEDIATE_DISTANCE)
+                    .setInterval(INTERMEDIATE_DISTANCE_AWAIT_TIME)
+                    .setPriority(LocationRequest.PRIORITY_LOW_POWER);
+        } else
+            if (distance >= ALMOST_MOST_PRECISE_DISTANCE) {
+            Log.d("TAG", "getNewRequest: creating third level request");
+            request.setSmallestDisplacement((float) ALMOST_MOST_PRECISE_DISTANCE)
+                    .setInterval(ALMOST_MOST_DISTANCE_AWAIT_TIME)
+                    .setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+        } else if(distance >= MOST_PRECISE_DISTANCE || stepCounter.getSteps() > STEPS)
+        {
+            Log.d("TAG", "getNewRequest: creating fourth level request");
+            request.setSmallestDisplacement((float) MOST_PRECISE_DISTANCE)
+                    .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                    .setInterval(MOST_PRECISE_DISTANCE_AWAIT_TIME);
         }
+        return request;
     }
 
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-
-    }
-
-    @Override
-    public void onProviderEnabled(String provider) {
-
-    }
-
-    @Override
-    public void onProviderDisabled(String provider) {
-
+    public LocationRequest getMostPrecise() {
+        return new LocationRequest()
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                .setSmallestDisplacement(1)
+                .setMaxWaitTime(1);
     }
 }
