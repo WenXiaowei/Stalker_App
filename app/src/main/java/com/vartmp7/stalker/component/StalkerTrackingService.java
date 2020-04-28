@@ -668,8 +668,7 @@ public class StalkerTrackingService extends Service {
 
             return getString(R.string.sei_in_tale_dei_tali, placeName, orgName);
         }
-
-        return "Non sei nei luoghi delle organizzazioni che ti stanno tracciando!";
+        return getString(R.string.non_presente_nei_luoghi_tracciati);
     }
 
     public void setApiService(RestApiService service) {

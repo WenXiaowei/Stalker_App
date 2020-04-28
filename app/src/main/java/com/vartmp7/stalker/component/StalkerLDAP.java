@@ -215,6 +215,8 @@ import java.util.concurrent.FutureTask;
 
 /**
  * @author Xiaowei Wen, Lorenzo Taschin
+ *
+ * Classe viene usato per gestire la connessione e l'autenticazione LDAP utilizzando la libreria Unboundid LDAP
  */
 public class StalkerLDAP {
     private static final String TAG = "com.vartmp7.stalker.component.StalkerLDAP";

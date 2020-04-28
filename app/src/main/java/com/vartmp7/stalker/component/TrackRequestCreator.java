@@ -204,8 +204,6 @@
 
 package com.vartmp7.stalker.component;
 
-import android.util.Log;
-
 import com.google.android.gms.location.LocationRequest;
 
 public class TrackRequestCreator {
@@ -227,29 +225,31 @@ public class TrackRequestCreator {
     }
 
 
+    /**
+     * costruisce un LocationRequest in base alla distanza da una coordinata
+     * @param distance distanza in double
+     * @return restituisce un LocationRequest con determinate caratteristiche in base alla distanza. 
+     */
     public LocationRequest getNewRequest(double distance) {
         LocationRequest request = new LocationRequest();
 
         if (distance >= MAXIMUM_DISTANCE) {
-            Log.d("TAG", "getNewRequest: creating first level request");
             request.setSmallestDisplacement((float) MAXIMUM_DISTANCE)
                     .setInterval(MAX_DISTANCE_AWAIT_TIME)
                     .setPriority(LocationRequest.PRIORITY_NO_POWER)
             .setMaxWaitTime(10);
         } else if (distance >= INTERMEDIATE_DISTANCE) {
-            Log.d("TAG", "getNewRequest: creating second level request");
             request.setSmallestDisplacement((float) INTERMEDIATE_DISTANCE)
                     .setInterval(INTERMEDIATE_DISTANCE_AWAIT_TIME)
                     .setPriority(LocationRequest.PRIORITY_LOW_POWER);
         } else
             if (distance >= ALMOST_MOST_PRECISE_DISTANCE) {
-            Log.d("TAG", "getNewRequest: creating third level request");
             request.setSmallestDisplacement((float) ALMOST_MOST_PRECISE_DISTANCE)
                     .setInterval(ALMOST_MOST_DISTANCE_AWAIT_TIME)
                     .setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
         } else if(distance >= MOST_PRECISE_DISTANCE || stepCounter.getSteps() > STEPS)
         {
-            Log.d("TAG", "getNewRequest: creating fourth level request");
+            stepCounter.resetSteps();
             request.setSmallestDisplacement((float) MOST_PRECISE_DISTANCE)
                     .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                     .setInterval(MOST_PRECISE_DISTANCE_AWAIT_TIME);

@@ -206,7 +206,11 @@ package com.vartmp7.stalker.component;
 
 import android.os.Handler;
 
-
+/**
+ * @author Xiaowei Wen
+ *
+ * Classe astratta che eredita da Callback, ha inoltre un reference di Handler per poter modificare gli elementi di UI dal thread non principale
+ */
 public abstract class StalkerServiceCallback implements CallBack{
     private Handler handler;
     public StalkerServiceCallback(Handler handler) {
