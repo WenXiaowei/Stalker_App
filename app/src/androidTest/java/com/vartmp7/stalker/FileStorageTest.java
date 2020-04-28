@@ -225,7 +225,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
@@ -233,33 +234,24 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
+
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.timeout;
+import static org.mockito.Mockito.verify;
+
+
 
 @RunWith(AndroidJUnit4.class)
 public class FileStorageTest {
     private static final String TAG ="com.vartmp7.stalker.FileOrganizationsLocalSourceTest" ;
     private FileStorage source;
-    private TestObserver observer;
     private List<Organization> firsts;
     private List<Organization> expected;
-    private static boolean triggered;
     private LifecycleOwner lifecycleOwner;
 
     @Rule
     public TestRule rule = new InstantTaskExecutorRule();
-
-    @SuppressWarnings("unchecked")
-    public static Observer<List<Organization>> mockObserver() {
-        return (Observer<List<Organization>>) Mockito.mock(Observer.class);
-    }
-
-
-    private static void  setTriggered(){
-        triggered=true;
-    }
 
     @Before
     public void setUpTest(){
@@ -278,37 +270,27 @@ public class FileStorageTest {
         }catch(FileNotFoundException e){
             Log.e(TAG,e.getMessage());
         }
-        source = new FileStorage("prova.json",context,new MutableLiveData<>(firsts));
-        observer = new TestObserver();
-        source.getLocalOrganizations().observe(lifecycleOwner, observer);
+        source = new FileStorage("prova.json",context,new MutableLiveData<>());
+        MockitoAnnotations.initMocks(this);
+        doNothing().when(observer).onChanged(anyList());
     }
+
+    @Mock
+    private Observer<List<Organization>> observer;
 
     @Test
     public void testGet(){
-        observer.setTester(organizzazioni -> {
-            Log.d(TAG, "testGet: observer triggered");
-            organizzazioni.forEach(organizzazione -> Log.d(TAG, "testGet: "+organizzazione.getId()));
-            assertEquals(organizzazioni,firsts);
-            Log.d(TAG, "testGet: test terminated");
-        });
+        doNothing().when(observer).onChanged(anyList());
+        source.getLocalOrganizations().observe(lifecycleOwner, observer);
+        verify(observer,timeout(1000)).onChanged(firsts);
     }
 
     @Test
     public void testSave() {
-        Log.d(TAG,"as");
         expected = Arrays.asList(new Organization().setId(12));
-        observer.setTester(organizzazioni -> {
-            Log.e(TAG, "testSave: observer triggered");
-            if(!organizzazioni.equals(firsts)){
-                organizzazioni.forEach(organizzazione -> Log.d(TAG, "testSave: "+organizzazione.getId()));
-                assertEquals(organizzazioni,expected);
-                Log.d(TAG, "testSave: test terminated");
-            }else{
-                Log.d(TAG, "testSave: pescate organizzazioni iniziali");
-            }
-
-        });
         source.saveOrganizations(expected);
+        source.getLocalOrganizations().observe(lifecycleOwner, observer);
+        verify(observer,timeout(1000)).onChanged(expected);
     }
 
     @Test
@@ -317,20 +299,12 @@ public class FileStorageTest {
         for (Organization org: firsts){
             toUpdate.add(new Organization().setId(org.getId()).setName((org.getName())));
         }
-        Organization o = toUpdate.get(0).setId(firsts.get(0).getId()).setName("updated");
-        //toUpdate.sort(Comparator.comparing(Organizzazione::getId));
+        Organization o = toUpdate.get(0).setName("updated");
         expected = toUpdate;
-        observer.setTester(organizations->{
-            Log.d(TAG, "testUpdateOrganizzazione: observer triggered");
-            if(!organizations.equals(firsts)){
-                //organizzazioni.sort(Comparator.comparing(Organizzazione::getId));
-                organizations.forEach(organization -> Log.d(TAG,"testUpdateOrganizzazione: id: "+organization.getId()+", name: "+organization.getName()));
-                assertEquals(expected,organizations);
-            }else{
-                Log.d(TAG, "testUpdateOrganizzazione: pescate organizzazioni iniziali");
-            }
-        });
+
+        source.getLocalOrganizations().observe(lifecycleOwner, observer);
         source.updateOrganization(o);
+        verify(observer,timeout(1000)).onChanged(expected);
 
     }
 
@@ -343,23 +317,11 @@ public class FileStorageTest {
         }
         toUpdate.get(0).setTrackingActive(true).setName("updated0");
         toUpdate.get(1).setAnonymous(true).setTracking(true).setName("updated1");
-        toUpdate.forEach(o-> Log.d(TAG, "updateOrganizations: "+o.getId()));
-        //toUpdate.sort(Comparator.comparing(Organizzazione::getId));
+//        toUpdate.forEach(o-> Log.d(TAG, "updateOrganizations: "+o.getId()));
         expected = toUpdate;
+        source.getLocalOrganizations().observe(lifecycleOwner,observer);
         source.updateOrganizations(toUpdate);
-        source.getLocalOrganizations().observe(lifecycleOwner,organizations->{
-            Log.d(TAG, "testUpdateOrganizzazione: observer triggered");
-            organizations.forEach(o-> Log.d(TAG, "updateOrganizations: "+o.getId()));
-            if(!organizations.equals(firsts)){
-                //organizzazioni.sort(Comparator.comparing(Organizzazione::getId));
-                organizations.forEach(organization -> Log.d(TAG,"testUpdateOrganizzazione: id: "+organization.getId()+", name: "+organization.getName()));
-                assertEquals(expected,organizations);
-            }else{
-                Log.d(TAG, "testUpdateOrganizzazione: pescate organizzazioni iniziali");
-                firsts.forEach(o-> Log.d(TAG, "testUpdateOrganizations: "+o.getId()));
-            }
-        });
-        source.updateOrganizations(toUpdate);
+        verify(observer,timeout(1000)).onChanged(expected);
     }
 
     @Test
@@ -371,36 +333,11 @@ public class FileStorageTest {
         ));
         expected = new ArrayList<>(firsts);
         TestUtil.updateOrganizationsFromOrganizationsLists(expected,updater);
-       /* for(int i=0;i<toUpdate.size();i++){
-            Organizzazione orgToUpdate = toUpdate.get(i);
-            boolean contained=false;
-            for (int j=0;j<expected.size() &&!contained;j++){
-                Organizzazione currentOrg = expected.get(j);
-                if(orgToUpdate.getId()==currentOrg.getId()){
-                    contained=true;
-                    orgToUpdate.setTrackingActive(currentOrg.isTrackingActive());
-                    orgToUpdate.setTracking(currentOrg.isTracking());
-                    orgToUpdate.setPreferito(currentOrg.isPreferito());
-                    expected.set(i,orgToUpdate);
-                }
-            }
-            if(!contained) expected.add(orgToUpdate);
-        }*/
-        expected.forEach(o-> Log.d(TAG, "testUpdateOrganizzazioni: EXPECTED:"+o.getId()+"name "+o.getName()));
+//        expected.forEach(o-> Log.d(TAG, "testUpdateOrganizzazioni: EXPECTED:"+o.getId()+"name "+o.getName()));
+        source.updateOrganizationInfo(updater);
+        source.getLocalOrganizations().observe(lifecycleOwner,observer);
+        verify(observer,timeout(1000)).onChanged(expected);
 
-        observer.setTester(organizzazioni->{
-            Log.d(TAG, "testUpdateOrganizzazioni: observer triggered size:"+organizzazioni.size());
-            if(!organizzazioni.equals(firsts)){
-                Log.d(TAG, "testUpdateOrganizationsInfo: ");
-                organizzazioni.forEach(organizzazione -> Log.d(TAG,"testUpdateOrganizzazioni: ACTUAL: "+organizzazione.getId()+", name: "+organizzazione.getName()));
-                assertEquals(expected,organizzazioni);
-            }else{
-                Log.d(TAG, "testUpdateOrganizzazioni: pescate organizzazioni iniziali");
-            }
-        });
-        source.updateOrganizationInfo(updater);
-        source.updateOrganizationInfo(updater);
-        source.updateOrganizations(updater);
     }
 
 }
