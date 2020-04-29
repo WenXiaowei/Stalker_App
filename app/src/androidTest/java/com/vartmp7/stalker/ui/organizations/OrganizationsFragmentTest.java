@@ -218,6 +218,7 @@ import com.vartmp7.stalker.datamodel.Organization;
 import com.vartmp7.stalker.ui.organizations.OrganizationsFragment;
 
 import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static androidx.test.espresso.Espresso.onView;
@@ -232,7 +233,9 @@ public class OrganizationsFragmentTest{
 
     @Before
     public void setup(){
-        FragmentScenario scenario = FragmentScenario.launch(OrganizationsFragment.class);
+        FragmentScenario scenario = FragmentScenario.launchInContainer(OrganizationsFragment.class);
     }
+
+
 
 }
