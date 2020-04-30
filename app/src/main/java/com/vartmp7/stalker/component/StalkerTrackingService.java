@@ -360,6 +360,7 @@ public class StalkerTrackingService extends Service {
         super.onRebind(intent);
     }
 
+
     @Override
     public boolean onUnbind(Intent intent) {
         Log.i(TAG, "Last client unbound from service");

@@ -205,13 +205,16 @@
 package com.vartmp7.stalker.ui.tracking;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -252,6 +255,7 @@ import com.vartmp7.stalker.datamodel.placecomponent.Coordinate;
 import com.vartmp7.stalker.datamodel.placecomponent.Line;
 import com.vartmp7.stalker.repository.RestApiService;
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.ref.WeakReference;

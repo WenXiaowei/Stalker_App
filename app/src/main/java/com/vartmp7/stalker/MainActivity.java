@@ -212,9 +212,14 @@
 //     * _g0uY5uQ87yD469NmjFJ4kS7
 package com.vartmp7.stalker;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -226,7 +231,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.MutableLiveData;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -239,13 +243,11 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.EmailAuthProvider;
-import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.vartmp7.stalker.component.StalkerTrackingService;
 import com.vartmp7.stalker.datamodel.Organization;
 import com.vartmp7.stalker.repository.FavoritesSource;
 import com.vartmp7.stalker.repository.FileStorage;
@@ -260,7 +262,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -332,6 +333,32 @@ public class MainActivity extends AppCompatActivity {
         // Build a GoogleSignInClient with the options specified by gso.
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
+
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!Tools.isNetworkAvailable(this))
+            gotoSetting(R.string.devi_attivare_connessione, Settings.ACTION_WIFI_SETTINGS);
+        if (!Tools.isGPSEnable(this)) {
+            gotoSetting(R.string.devi_attivare_gps, Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+        }
+    }
+
+    private void gotoSetting(int msg, String action) {
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
+        builder.setMessage(msg)
+                .setPositiveButton(R.string.ok, (dialog, which) -> {
+                    startActivity(new Intent(action));
+                })
+                .setTitle(R.string.attenzione)
+                .setNegativeButton(R.string.annulla, (dialog, which) -> {
+                    dialog.cancel();
+                    finish();
+                });
+        builder.create().show();
     }
 
 
@@ -346,11 +373,11 @@ public class MainActivity extends AppCompatActivity {
                         FirebaseAuth.getInstance().getCurrentUser().getProviderData().get(1).getProviderId()
                                 .equals(EmailAuthProvider.EMAIL_PASSWORD_SIGN_IN_METHOD))) {
                     menu.removeItem(R.id.menuModificaDati);
-                }else{
+                } else {
                     Log.d(TAG, "onCreateOptionsMenu: if dentro");
                 }
 
-            }else{
+            } else {
                 Log.d(TAG, "onCreateOptionsMenu: if fuori");
             }
         } else {
@@ -446,16 +473,16 @@ public class MainActivity extends AppCompatActivity {
 
     private void cleanUserData() {
         List<Organization> organizations = repository.getOrganizations().getValue();
-        if(organizations!=null){
+        if (organizations != null) {
             organizations = new ArrayList<>(organizations);
-            organizations.stream().sequential().forEach(o->
+            organizations.stream().sequential().forEach(o ->
                     o.setLogged(false)
-                    .setTracking(false)
-                    .setTrackingActive(false)
-                    .setAnonymous(false)
-                    .setFavorite(false)
-                    .setPersonalCn("")
-                    .setLdapPassword("")
+                            .setTracking(false)
+                            .setTrackingActive(false)
+                            .setAnonymous(false)
+                            .setFavorite(false)
+                            .setPersonalCn("")
+                            .setLdapPassword("")
             );
             repository.updateOrganizations(organizations);
         }

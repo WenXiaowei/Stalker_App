@@ -310,4 +310,7 @@
     <string name="apri_app">Apri applicazione</string>
     <string name="organizzazione_rimossa">Organizzazione rimossa!</string>
     <string name="tempo_trascorso">Tempo Trascorso</string>
+    <string name="attenzione">Attenzione</string>
+    <string name="devi_attivare_gps">Devi attivare il GPS!</string>
+    <string name="devi_attivare_connessione">Devi attivare la connesione!</string>
 </resources>
