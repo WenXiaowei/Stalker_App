@@ -248,6 +248,7 @@ public class TrackSignal {
 
     @Setter
     @Accessors(chain = true)
+    @Getter
     @Expose
     private boolean authenticated=false;
 

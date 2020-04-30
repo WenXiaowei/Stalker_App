@@ -187,7 +187,7 @@
  *       same "printed page" as the copyright notice for easier
  *       identification within third-party archives.
  *
- *    Copyright [2020] [VartTmp7]
+ *    Copyright 2020 - VartTmp7
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -202,213 +202,79 @@
  *    limitations under the License.
  */
 
-package com.vartmp7.stalker.repository;
+package com.vartmp7.stalker.component;
 
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
-import android.util.Log;
+import android.content.Intent;
 
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
+import androidx.core.app.NotificationCompat;
 
-import com.google.gson.Gson;
-import com.vartmp7.stalker.datamodel.Organization;
-import com.vartmp7.stalker.datamodel.OrganizationResponse;
-import com.vartmp7.stalker.datamodel.TrackRecord;
+import com.vartmp7.stalker.MainActivity;
+import com.vartmp7.stalker.R;
+import com.vartmp7.stalker.Tools;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import static android.content.Context.NOTIFICATION_SERVICE;
+import static android.provider.ContactsContract.Directory.PACKAGE_NAME;
 
-import lombok.AccessLevel;
-import lombok.Getter;
+public class StalkerNotificationManager {
 
-public class FileStorage implements Storage {
-    private static final String TAG = "com.vartmp7.stalker.repository.FileOrganizationsLocalSource";
-    private String fileName;
+    public static final String NOTIFICATION_CHANNEL_ID = "channel_01";
+    public static final String EXTRA_LOCATION = PACKAGE_NAME + ".location";
+    public static final String EXTRA_STARTED_FROM_NOTIFICATION = PACKAGE_NAME +
+            ".started_from_notification";
+    public static final int NOTIFICATION_ID = 12345678;
+    private NotificationManager mNotificationManager;
     private Context context;
-    private Gson gson;
-    //    List<Organizzazione> organizzazioni;
-    @Getter(AccessLevel.PUBLIC)
-    private MutableLiveData<List<Organization>> mLiveOrgs;
 
-    public FileStorage(String fileName, Context context, MutableLiveData<List<Organization>> org) {
-        this.fileName = fileName;
-        this.context = context;
-        this.gson = new Gson();
-        this.mLiveOrgs = new MutableLiveData<>();
-//        this.mLiveOrgs = org;
+    public StalkerNotificationManager(@NotNull Context context, NotificationManager manager) {
+        CharSequence name = context.getString(R.string.app_name);
+        NotificationChannel mChannel =
+                new NotificationChannel(NOTIFICATION_CHANNEL_ID, name, NotificationManager.IMPORTANCE_DEFAULT);
+
+        this.context =context;
+        mNotificationManager = manager;
+        // Set the Notification Channel for the Notification Manager.
+        mNotificationManager.createNotificationChannel(mChannel);
     }
 
-    @Override
-    public void updateOrganizations(@NotNull List<Organization> org) {
-        List<Organization> orgList = mLiveOrgs.getValue()!=null ? new ArrayList<>(mLiveOrgs.getValue()) : new ArrayList<>();
-        for (Organization organization : org) {
-            int i = orgList.indexOf(organization);
-            if(i!=-1){
-                orgList.set(i,organization);
-            }
-//            Log.d(TAG, "updateOrganizations: " + organization);
-        }
-        saveOrganizations(orgList);
-        mLiveOrgs.setValue(orgList);
+    public Notification getNotification(String text) {
+        Intent intent = new Intent(context, StalkerTrackingService.class);
+
+
+        // Extra to help us figure out if we arrived in onStartCommand via the notification or not.
+        intent.putExtra(EXTRA_STARTED_FROM_NOTIFICATION, true);
+
+        // The PendingIntent that leads to a call to onStartCommand() in this service.
+//        PendingIntent servicePendingIntent = PendingIntent.getService(this, 0, intent,
+//                PendingIntent.FLAG_UPDATE_CURRENT);
+//
+        // The PendingIntent to launch activity.
+        PendingIntent activityPendingIntent = PendingIntent.getActivity(context, 0,
+                new Intent(context, MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK), 0);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "")
+                .addAction(R.drawable.icon_stalker, context.getString(R.string.apri_app),
+                        activityPendingIntent)
+//                .addAction(R.drawable.icon_stalker, getString(R.string.stop),
+//                        servicePendingIntent)
+//                .setContentText(text)
+                .setContentTitle(Tools.getLocationTitle(context))
+                .setOngoing(true)
+                .setPriority(Notification.BADGE_ICON_LARGE)
+                .setSmallIcon(R.mipmap.ic_launcher)
+//                .setTicker(text)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(text))
+                .setWhen(System.currentTimeMillis());
+
+        // Set the Channel ID for Android O.
+        builder.setChannelId(NOTIFICATION_CHANNEL_ID); // Channel ID
+
+        return builder.build();
     }
-
-    @Override
-    public void updateOrganization(Organization o) {
-        List<Organization> l = mLiveOrgs.getValue()!=null ? new ArrayList<>(mLiveOrgs.getValue()) : new ArrayList<>();
-        int pos = -1;
-        for (int i = 0; i < l.size() && pos == -1; i++)
-            if (o.getId() == l.get(i).getId())
-                pos = i;
-//        int pos = l.indexOf(o);
-        if (pos != -1) {
-            l.remove(pos);
-            l.add(pos, o);
-            saveOrganizations(l);
-        }
-    }
-
-    @Override
-    public void updateOrganizationInfo(@NotNull List<Organization> orgsToUpdate) {
-//        orgsToUpdate.forEach(o -> Log.d(TAG, "updateOrganizzazioni: updateOrgs" + o.getId()));
-        List<Organization> currentOrgs = mLiveOrgs.getValue()!=null? new ArrayList<>(mLiveOrgs.getValue()) : new ArrayList<>();
-        List<Organization> toSave = new ArrayList<>();
-//        currentOrgs.forEach(o -> Log.d(TAG, "currentorg: " + o.getId()));
-        for (int j = 0; j < orgsToUpdate.size(); j++) {
-            boolean contained = false;
-            Organization orgToUpdate = orgsToUpdate.get(j);
-            for (int i = 0; i < currentOrgs.size() && !contained; i++) {
-                Organization currentOrg = currentOrgs.get(i);
-                if (currentOrg.getId() == orgToUpdate.getId()) {
-                    contained = true;
-                    orgToUpdate.setTrackingActive(currentOrg.isTrackingActive());
-                    orgToUpdate.setTracking(currentOrg.isTracking());
-                    orgToUpdate.setFavorite(currentOrg.isFavorite());
-                    toSave.add(orgToUpdate);
-                    //currentOrgs.remove(currentOrg);
-                }
-            }
-            if (!contained) {
-                toSave.add(orgToUpdate);
-//                Log.e(TAG, "updateOrganizzazioni: chel cannnn");
-            }
-        }
-//        Log.d(TAG, "updateOrganizzazioni: futureOrgs");
-//        toSave.forEach(o -> Log.d(TAG, "org: " + o.getId()));
-        saveOrganizations(toSave);
-    }
-
-
-    @Override
-    public LiveData<List<Organization>> getLocalOrganizations() {
-        //MutableLiveData<List<Organizzazione>> mLiveOrgs = new MutableLiveData<>();
-        //this.mLiveOrgs.setValue(organizzazioni);
-//        Log.d("TEST","arrivo qua1");
-        new Thread() {
-            @Override
-            public void run() {
-                super.run();
-                FileInputStream fis = null;
-//                Log.d("TEST","arrivo qua 2");
-                try {
-//                    Log.d(TAG, "run: lettura dal file");
-                    // fixme sonarqube segna come bug
-                    fis = context.openFileInput(fileName);
-                    // fixme sonarqube segna come bug
-                    InputStreamReader inputStreamReader = new InputStreamReader(fis, StandardCharsets.UTF_8);
-                    StringBuilder stringBuilder = new StringBuilder();
-                    try (BufferedReader reader = new BufferedReader(inputStreamReader)) {
-                        String line = reader.readLine();
-                        while (line != null) {
-                            stringBuilder.append(line).append('\n');
-                            line = reader.readLine();
-                        }
-                    } catch (IOException e) {
-//                        Log.e(TAG, "run: Errore");
-                        // Error occurred when opening raw file for reading.
-                    } finally {
-                        String contents = stringBuilder.toString();
-                        OrganizationResponse responseOrganizzazioni = gson.fromJson(contents, OrganizationResponse.class);
-                        if (responseOrganizzazioni != null) {
-
-                            //fixme ogni tanto sputa un null pointer
-                            List<Organization> organizzazioni = responseOrganizzazioni.getOrganizations();//mLiveOrgs.getValue();
-//                    List<Organizzazione> orgs = mLiveOrgs.getValue();
-                            //                            Log.d(TAG, "run: lista non vuota");
-//                          organizzazioni.addAll(responseOrganizzazioni.getOrganizations().stream().distinct().collect(Collectors.toList()));
-                            mLiveOrgs.postValue(organizzazioni);
-                            //organizzazioni.clear();
-                            //organizzazioni.addAll(responseOrganizzazioni.getOrganizations());
-//                            Log.d("TEST", "arrivo qua 3");
-//                        mLiveOrgs.postValue(organizzazioni.stream().distinct().collect(Collectors.toList()));
-//                        Log.d(TAG, "run: dati letti dal file");
-                        } else {
-//                            Log.e(TAG, "run: ResponseOrganizzazioni null");
-                        }
-
-                    }
-
-
-                } catch (FileNotFoundException ex) {
-
-                }
-            }
-        }.start();
-        return mLiveOrgs;
-    }
-
-
-    @Override
-    public synchronized void saveOrganizations(List<Organization> orgs) {
-        ExecutorService executorService = Executors.newSingleThreadExecutor();
-
-        executorService.execute(new Runnable() {
-            @Override
-            public synchronized void run() {
-
-                File orgJson = new File(context.getFilesDir(), fileName);
-                if (!orgJson.exists()) {
-                    try {
-                        orgJson.createNewFile();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-//                    Log.d(TAG, "creazione file");
-//                    Log.d(TAG, "doInBackground: " + orgJson.mkdir());
-                }
-
-                try {
-                    // fixme sonarqube segna come bug
-                    FileWriter writer = new FileWriter(orgJson);
-                    // fixme quest'istruzione delle volte, genera un concurrentModificationException
-                    String l = new Gson().toJson(new OrganizationResponse().setOrganizations(orgs));
-//                    Log.d(TAG, "saving data:");
-                    orgs.forEach(o -> Log.d(TAG, "save org:" + o.getId()));
-                    writer.write(l);
-                    writer.flush();
-                    writer.close();
-                    mLiveOrgs.postValue(orgs);
-                } catch (IOException e) {
-//                    Log.e(TAG, "Errore, file non trovato");
-                    e.printStackTrace();
-                }
-//                Log.d(TAG, "doInBackground: finished saving data");
-            }
-        });
-//        saveOrganizzazioni(orgs);
-    }
-
-
-
 }

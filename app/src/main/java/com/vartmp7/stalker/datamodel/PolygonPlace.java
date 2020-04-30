@@ -208,6 +208,7 @@ import com.vartmp7.stalker.datamodel.placecomponent.Line;
 import com.vartmp7.stalker.datamodel.placecomponent.RayCasting;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.vartmp7.stalker.datamodel.placecomponent.Coordinate;
 
