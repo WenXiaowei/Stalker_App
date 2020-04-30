@@ -203,81 +203,37 @@
  *
  */
 
-package com.vartmp7.stalker.ui.organizations;
+package com.vartmp7.stalker;
 
+import android.os.Bundle;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
 
-import androidx.fragment.app.testing.FragmentScenario;
-import androidx.lifecycle.MutableLiveData;
-import androidx.test.ext.junit.runners.AndroidJUnit4;
-import androidx.test.rule.ActivityTestRule;
+import androidx.annotation.Nullable;
+import androidx.annotation.RestrictTo;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
-import com.android.dx.command.Main;
-import com.vartmp7.stalker.MainActivity;
-import com.vartmp7.stalker.R;
-import com.vartmp7.stalker.SingleFragmentActivity;
-import com.vartmp7.stalker.datamodel.Organization;
-
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
-import java.lang.reflect.Field;
-import java.util.List;
-
-import static androidx.test.espresso.Espresso.onView;
-import static androidx.test.espresso.action.ViewActions.swipeDown;
-import static androidx.test.espresso.matcher.ViewMatchers.assertThat;
-import static androidx.test.espresso.matcher.ViewMatchers.withId;
-import static androidx.test.espresso.matcher.ViewMatchers.withText;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.mockito.junit.MockitoJUnit.rule;
-
-@RunWith(AndroidJUnit4.class)
-public class OrganizationsFragmentTest{
-    private OrganizationsFragment fragment;
-    private OrganizationsViewModel viewModel;
-
-    private List<Organization> organizations;
-
-    @Rule
-    public ActivityTestRule<SingleFragmentActivity> activityRule = new ActivityTestRule<>(SingleFragmentActivity.class, true, true);
-
-    @Before
-    public void setup(){
-        viewModel = mock(OrganizationsViewModel.class);
-        when(viewModel.getOrganizationList()).then(invoker->{
-            MutableLiveData<List<Organization>> liveOrganizations = new MutableLiveData<>();
-            liveOrganizations.setValue(organizations);
-            return liveOrganizations;
-        });
-
-        //OrganizationsFragment fragment = OrganizationsFragment.newInstance()
-//        try {
-//
-//            Field viewModelField = OrganizationsFragment.class.getField("organizzazioneViewModel");
-//            viewModelField.setAccessible(true);
-//            viewModelField.set(viewModelField.get(fragment),viewModel);
-//
-//
-//        } catch (NoSuchFieldException | IllegalAccessException e) {
-//            e.printStackTrace();
-//        }
-
-
-      //  activityRule.getActivity().setFragment();
-
+@RestrictTo(RestrictTo.Scope.TESTS)
+public class SingleFragmentActivity extends AppCompatActivity {
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        FrameLayout content = new FrameLayout(this);
+        content.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT));
+        content.setId(R.id.content_frame);
+        setContentView(content);
     }
 
-    @Test
-    public void testSwipeDown(){
-        //assertTrue(false);
-
-        onView(withId(R.id.srfl)).perform(swipeDown());
+    public void setFragment(Fragment fragment) {
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.content_frame, fragment, "TEST")
+                .commit();
     }
 
-
-
+    public void replaceFragment(Fragment fragment) {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.content_frame, fragment).commit();
+    }
 }
