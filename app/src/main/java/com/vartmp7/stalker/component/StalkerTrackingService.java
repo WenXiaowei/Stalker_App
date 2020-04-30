@@ -280,6 +280,7 @@ public class StalkerTrackingService extends Service {
     private NotificationManager mNotificationManager;
     private List<Organization> organizations;
     private TrackRequestCreator creator;
+    private Location mLocation;
 
     public StalkerTrackingService() {
     }
@@ -293,6 +294,7 @@ public class StalkerTrackingService extends Service {
         mLocationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
+                Log.d(TAG, "Location call back , onLocationResult: ");
                 super.onLocationResult(locationResult);
                 onNewLocation(locationResult.getLastLocation());
             }
@@ -335,6 +337,7 @@ public class StalkerTrackingService extends Service {
 
         // We got here because the user decided to remove location updates from the notification.
         if (startedFromNotification) {
+            Log.e(TAG, "onStartCommand: a");
             removeLocationUpdates();
             stopSelf();
         }
@@ -499,6 +502,7 @@ public class StalkerTrackingService extends Service {
 
     public void setCallback(CallBack callback) {
         this.serviceCallback = callback;
+        if(mLocation!=null && callback!=null) callback.onNewLocation(mLocation);
     }
 
     private PolygonPlace currentPlace = null, previousPlace = null;
@@ -562,6 +566,8 @@ public class StalkerTrackingService extends Service {
     }
 
     public void onNewLocation(Location location) {
+        Log.d(TAG, "onNewLocation: "+location.getLongitude()+ " "+location.getLatitude());
+        mLocation=location;
         if (serviceCallback != null) {
 //            Log.d(TAG, "onNewLocation: calling back");
             serviceCallback.onNewLocation(location);
@@ -689,7 +695,7 @@ public class StalkerTrackingService extends Service {
             mNotificationManager.notify(NOTIFICATION_ID,
                     getNotification(getNotificationText(signal.getIdOrganization(), signal.getIdPlace())));
         }
-        Log.d(TAG, "sendSignal() called with: signal = [" + signal + "]");
+        //Log.d(TAG, "sendSignal() called with: signal = [" + signal + "]");
 
         restApiService.tracking(signal.getIdOrganization(), signal.getIdPlace(), signal).enqueue(new Callback<Void>() {
             @Override
