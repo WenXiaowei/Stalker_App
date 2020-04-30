@@ -203,39 +203,117 @@
  *
  */
 
-package com.vartmp7.stalker.ui.organizations;
+package com.vartmp7.stalker.ui.history;
 
-
-import android.widget.ProgressBar;
-
-import androidx.fragment.app.testing.FragmentScenario;
-import androidx.test.core.app.ActivityScenario;
-import androidx.test.espresso.Espresso;
-import androidx.test.espresso.ViewAssertion;
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
+import com.vartmp7.stalker.TestUtil;
 import com.vartmp7.stalker.datamodel.Organization;
-import com.vartmp7.stalker.ui.organizations.OrganizationsFragment;
+import com.vartmp7.stalker.datamodel.PolygonPlace;
+import com.vartmp7.stalker.datamodel.TrackRecord;
+import com.vartmp7.stalker.repository.OrganizationsRepository;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestRule;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
-import static androidx.test.espresso.Espresso.onView;
-import static androidx.test.espresso.matcher.ViewMatchers.assertThat;
-import static androidx.test.espresso.matcher.ViewMatchers.withId;
-import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.timeout;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(AndroidJUnit4.class)
-public class OrganizationsFragmentTest{
-    private OrganizationsFragment fragment;
+public class HistoryViewModelTest {
+    private List<TrackRecord> trackRecords;
 
+    private HistoryViewModel viewModel;
+    private OrganizationsRepository orgRepo;
+    private LifecycleOwner lifecycleOwner = TestUtil.mockLifecycleOwner();
+    @Mock
+    private Observer<List<TrackRecord>> trackRecordsObserver;
+    @Mock
+    private Observer<List<Organization>> organizationsObserver;
+
+    @Rule
+    public TestRule rule = new InstantTaskExecutorRule();
+    private List<Organization> organizations;
 
     @Before
-    public void setup(){
-        FragmentScenario scenario = FragmentScenario.launchInContainer(OrganizationsFragment.class);
+    public void setup() {
+        orgRepo = mock(OrganizationsRepository.class);
+
+        organizations = Arrays.asList(
+                new Organization().setId(1).setLogged(true).setPlaces(Arrays.asList()),
+                new Organization().setId(2).setLogged(false),
+                new Organization().setId(3).setLogged(true)
+        );
+        for (int i=0;i<organizations.size();i++){
+            Organization org = organizations.get(i);
+            PolygonPlace place = new PolygonPlace();
+            place.setId(i);
+            place.setOrgId(org.getId());
+            org.setPlaces(Collections.singletonList(place));
+        }
+        when(orgRepo.getOrganizations()).then(invoker->{
+            MutableLiveData<List<Organization>> liveOrganizations = new MutableLiveData<>();
+            liveOrganizations.setValue(organizations);
+            return liveOrganizations;
+        });
+
+        trackRecords = Arrays.asList(
+                new TrackRecord().setPlaceId(1),
+                new TrackRecord().setPlaceId(2),
+                new TrackRecord().setPlaceId(3)
+        );
+        when(orgRepo.getTrackHistory()).then(invoker->{
+            MutableLiveData<List<TrackRecord>> liveTrackRecords = new MutableLiveData<>();
+            liveTrackRecords.setValue(trackRecords);
+            return liveTrackRecords;
+        });
+
+        viewModel = new HistoryViewModel();
+        viewModel.init(orgRepo);
+        MockitoAnnotations.initMocks(this);
     }
 
+    @Test
+    public void testGetTrackRecords(){
+        doNothing().when(trackRecordsObserver).onChanged(anyList());
+        viewModel.getTrackRecords().observe(lifecycleOwner,trackRecordsObserver);
+        verify(trackRecordsObserver).onChanged(trackRecords);
+    }
 
+    @Test
+    public void testGetOrganizations(){
+        doNothing().when(organizationsObserver).onChanged(anyList());
+        viewModel.getOrganizations().observe(lifecycleOwner,organizationsObserver);
+        verify(organizationsObserver).onChanged(organizations);
+    }
+
+    @Test
+    public void testUpdateTrackRecords(){
+        doNothing().when(orgRepo).updateTrackRecords(anyList());
+        List<Organization> orgToUpdateHistory = organizations.stream()
+                .filter(Organization::isLogged)
+                .collect(Collectors.toList());
+        viewModel.updateTrackHistories();
+        verify(orgRepo).updateTrackRecords(orgToUpdateHistory);
+     }
 
 }
