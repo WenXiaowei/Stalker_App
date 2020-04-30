@@ -297,27 +297,27 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
         }
 
         @Override
-        public void onNewLocation(@NotNull Location l) {
+        public void onNewLocation(@NotNull String message) {
             Message msg = new Message();
             Bundle b = new Bundle();
-            String message;
-//              todo da cambiare cosa far vedere all'utente.
-            List<PolygonPlace> places = new ArrayList<>();
-            if (organizationToTrack.stream().noneMatch(Organization::isTrackingActive)) {
-                message = getString(R.string.nessun_organization_ti_sta_tracciando);
-                // se non ci sono organizzazioni che stanno tracciando, non devo fare nessun controllo.
-            } else {
-                organizationToTrack.forEach(organization -> places.addAll(organization.getPlaces()));
-                Coordinate coordinate = new Coordinate(l.getLatitude(), l.getLongitude());
-                Optional<PolygonPlace> optionalPolygonPlace = places.stream().filter(p -> p.isInside(coordinate)).findAny();
 
-                if (optionalPolygonPlace.isPresent()) {
-                    PolygonPlace place = optionalPolygonPlace.get();
-                    Optional<Organization> any = organizationToTrack.stream().filter(organization -> place.getOrgId() == organization.getId()).findAny();
-                    message = any.map(organization -> getString(R.string.sei_in_tale_dei_tali, place.getName(), organization.getName())).orElseGet(() -> getString(R.string.non_presente_nei_luoghi_tracciati));
-                } else
-                    message = getString(R.string.non_presente_nei_luoghi_tracciati);
-            }
+////              todo da cambiare cosa far vedere all'utente.
+//            List<PolygonPlace> places = new ArrayList<>();
+//            if (organizationToTrack.stream().noneMatch(Organization::isTrackingActive)) {
+//                message = getString(R.string.nessun_organization_ti_sta_tracciando);
+//                // se non ci sono organizzazioni che stanno tracciando, non devo fare nessun controllo.
+//            } else {
+//                organizationToTrack.forEach(organization -> places.addAll(organization.getPlaces()));
+//                Coordinate coordinate = new Coordinate(l.getLatitude(), l.getLongitude());
+//                Optional<PolygonPlace> optionalPolygonPlace = places.stream().filter(p -> p.isInside(coordinate)).findAny();
+//
+//                if (optionalPolygonPlace.isPresent()) {
+//                    PolygonPlace place = optionalPolygonPlace.get();
+//                    Optional<Organization> any = organizationToTrack.stream().filter(organization -> place.getOrgId() == organization.getId()).findAny();
+//                    message = any.map(organization -> getString(R.string.sei_in_tale_dei_tali, place.getName(), organization.getName())).orElseGet(() -> getString(R.string.non_presente_nei_luoghi_tracciati));
+//                } else
+//                    message = getString(R.string.non_presente_nei_luoghi_tracciati);
+//            }
             b.putInt(MSG_CODE, TRACKING_MSG_CODE);
             b.putString(PLACE_MSG, message);
             msg.setData(b);
@@ -375,11 +375,11 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
             mService = binder.getService();
             mService.updateOrganizations(organizationToTrack);
             mService.setCallback(callback);
-            if (trackingViewModel.getOrganizations()
-                    .getValue()
-                    .stream()
-                    .anyMatch(o -> o.isTrackingActive() && o.isTracking()))
-                mService.requestLocationUpdates();
+//            if (trackingViewModel.getOrganizations()
+//                    .getValue()
+//                    .stream()
+//                    .anyMatch(o -> o.isTrackingActive() && o.isTracking()))
+//                mService.requestLocationUpdates();
             mBound = true;
         }
 
@@ -391,27 +391,26 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
         }
     };
 
-    private void setAllOrganizationTracking(boolean isTrackingActive) {
-        trackingViewModel.activeAllTrackingOrganization(isTrackingActive);
-        if (isTrackingActive) {
-            if (!checkPermissions()) {
-                requestPermissions();
-                return;
-            } else {
-                if (mService != null) {
-                    mService.updateOrganizations(organizationToTrack);
-                    mService.requestLocationUpdates();
-                } else {
-                    requireContext().bindService(new Intent(requireContext(), StalkerTrackingService.class), mServiceConnection,
-                            Context.BIND_AUTO_CREATE);
-                }
-            }
-        } else {
-            mService.removeLocationUpdates();
-        }
-//        organizationToTrack.forEach(organization -> organization.setTrackingActive(isTrackingActive));
-
-    }
+//    private void setAllOrganizationTracking(boolean isTrackingActive) {
+//        trackingViewModel.activeAllTrackingOrganization(isTrackingActive);
+//        if (isTrackingActive) {
+//            if (!checkPermissions()) {
+//                requestPermissions();
+//                return;
+//            } else {
+//                if (mService != null) {
+//                    mService.requestLocationUpdates();
+//                } else {
+//                    requireContext().bindService(new Intent(requireContext(), StalkerTrackingService.class), mServiceConnection,
+//                            Context.BIND_AUTO_CREATE);
+//                }
+//            }
+//        } else {
+//            mService.removeLocationUpdates();
+//        }
+////        organizationToTrack.forEach(organization -> organization.setTrackingActive(isTrackingActive));
+//
+//    }
 
     private View root;
 
@@ -503,14 +502,11 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
 
         if (mService != null){
             mService.updateOrganizations(organizationToTrack);
-
         }
 
         if (list.stream().anyMatch(Organization::isTrackingActive))
             requireContext().bindService(new Intent(requireContext(), StalkerTrackingService.class), mServiceConnection,
                     Context.BIND_AUTO_CREATE);
-
-
 
         mRemoveLocationUpdatesButton.setEnabled((long) organizationToTrack.size() > 0);
         mRequestLocationUpdatesButton.setEnabled(organizationsReadyToTrack.stream().anyMatch(o -> !o.isTrackingActive()));
@@ -521,11 +517,15 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
         super.onViewCreated(view, savedInstanceState);
 
         mRequestLocationUpdatesButton.setOnClickListener(view1 -> {
-            setAllOrganizationTracking(true);
-            tvCurrentStatus.setText(R.string.initializing_tracking);
+            if (checkPermissions()){
+                trackingViewModel.activeAllTrackingOrganization(true);
+                tvCurrentStatus.setText(R.string.initializing_tracking);
+            }else{
+                requestPermissions();
+            }
         });
         mRemoveLocationUpdatesButton.setOnClickListener(view12 -> {
-            setAllOrganizationTracking(false);
+            trackingViewModel.activeAllTrackingOrganization(false);
             tvCurrentStatus.setText(R.string.tracking_terminated);
         });
 
@@ -613,8 +613,9 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
 //                Log.i(TAG, "User interaction was cancelled.");
             } else if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // Permission was granted.
-                mService.updateOrganizations(organizationToTrack);
-                mService.requestLocationUpdates();
+                trackingViewModel.activeAllTrackingOrganization(true);
+//                mService.updateOrganizations(organizationToTrack);
+//                mService.requestLocationUpdates();
             } else {
                 // Permission denied.
                 setButtonsState(false);

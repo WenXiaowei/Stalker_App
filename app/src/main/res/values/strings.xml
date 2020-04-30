@@ -284,7 +284,7 @@
     <string name="settings">Impostazione</string>
     <string name="ferma_tutti">Ferma \nTutti</string>
     <string name="avvia_tutti">Avvia\n tutti</string>
-    <string name="nessun_organization_ti_sta_tracciando">Nessuna organizzazione ti sta tracciando</string>
+    <string name="nessun_organization_ti_sta_tracciando">Nessun\'organizzazione ti sta tracciando</string>
     <string name="logged">Logged</string>
     <string name="connection_to_ldap_failed">Connessione al server LDAP fallita, riprovare più tardi!</string>
     <string name="ldap_login_failed_check_credentials">Login fallito, verificare di aver inserito le credenziali corrette e riprovare</string>

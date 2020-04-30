@@ -322,7 +322,7 @@ public class RESTObtainer implements Obtainer {
                                 .setType("both")
                                 .setTracking(true)
 //                                .setImageUrl("https://www.dsfarm.unipd.it/sites/dsfarm.unipd.it/files/sublogo_9.png")
-                                .setPlaces(Collections.singletonList(t))
+
                 );
                 orgs.forEach(o -> Log.d(TAG, "onFailure: " + o.getId()));
                 mutableLiveDataOrganizzazioni.postValue(orgs);

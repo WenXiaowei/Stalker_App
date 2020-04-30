@@ -224,15 +224,15 @@ import static android.provider.ContactsContract.Directory.PACKAGE_NAME;
 
 public class StalkerNotificationManager {
 
-    public static final String NOTIFICATION_CHANNEL_ID = "channel_01";
+    private static final String NOTIFICATION_CHANNEL_ID = "channel_01";
     public static final String EXTRA_LOCATION = PACKAGE_NAME + ".location";
-    public static final String EXTRA_STARTED_FROM_NOTIFICATION = PACKAGE_NAME +
+    static final String EXTRA_STARTED_FROM_NOTIFICATION = PACKAGE_NAME +
             ".started_from_notification";
-    public static final int NOTIFICATION_ID = 12345678;
+    static final int NOTIFICATION_ID = 12345678;
     private NotificationManager mNotificationManager;
     private Context context;
 
-    public StalkerNotificationManager(@NotNull Context context, NotificationManager manager) {
+    StalkerNotificationManager(@NotNull Context context, NotificationManager manager) {
         CharSequence name = context.getString(R.string.app_name);
         NotificationChannel mChannel =
                 new NotificationChannel(NOTIFICATION_CHANNEL_ID, name, NotificationManager.IMPORTANCE_DEFAULT);
@@ -243,7 +243,7 @@ public class StalkerNotificationManager {
         mNotificationManager.createNotificationChannel(mChannel);
     }
 
-    public Notification getNotification(String text) {
+    Notification getNotification(String text) {
         Intent intent = new Intent(context, StalkerTrackingService.class);
 
 
@@ -256,7 +256,7 @@ public class StalkerNotificationManager {
 //
         // The PendingIntent to launch activity.
         PendingIntent activityPendingIntent = PendingIntent.getActivity(context, 0,
-                new Intent(context, MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK), 0);
+                new Intent(context, MainActivity.class), 0);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "")
                 .addAction(R.drawable.icon_stalker, context.getString(R.string.apri_app),
