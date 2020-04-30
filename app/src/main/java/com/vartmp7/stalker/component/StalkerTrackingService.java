@@ -225,13 +225,11 @@ import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.SystemClock;
-import android.telecom.Call;
 import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.preference.Preference;
 import androidx.preference.PreferenceManager;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -259,6 +257,8 @@ import java.util.OptionalDouble;
 
 import retrofit2.Callback;
 import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class StalkerTrackingService extends Service {
     private static final String PACKAGE_NAME = "com.vartmp7.stalker.StalkerTrackingService";
@@ -297,6 +297,13 @@ public class StalkerTrackingService extends Service {
                 onNewLocation(locationResult.getLastLocation());
             }
         };
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(MainActivity.URL_SERVER)
+                .client(Tools.getUnsafeOkHttpClient())
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        restApiService = retrofit.create(RestApiService.class);
+
         SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         Sensor stepSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
         creator = new TrackRequestCreator(new StalkerStepCounter(sensorManager, stepSensor));
@@ -316,7 +323,6 @@ public class StalkerTrackingService extends Service {
 
         // Set the Notification Channel for the Notification Manager.
         mNotificationManager.createNotificationChannel(mChannel);
-
     }
 
     @Override
@@ -495,7 +501,7 @@ public class StalkerTrackingService extends Service {
     }
 
     private PolygonPlace currentPlace = null, previousPlace = null;
-    private RestApiService service;
+    private RestApiService restApiService;
     private Organization currentOrganization = null;
 
 
@@ -503,9 +509,14 @@ public class StalkerTrackingService extends Service {
         this.organizations = organizations;
         //quando non ci sono organizzazioni con isTrackingActive == true e
         //è diverso da null, allora mostro il messaggio di nessun organizzazione ti sta tracciando!
-        if (organizations.size() == 0 && serviceCallback != null){
-            serviceCallback.stopTracking();
-            updateChronometerBase(-1,-1);
+        if ( serviceCallback != null){
+            if (organizations.size() == 0){
+                serviceCallback.stopTracking();
+                updateChronometerBase(-1,-1);
+            }else{
+                serviceCallback.notInAnyPlace();
+            }
+
         }
         if (currentOrganization != null) {
             Optional<Organization> optionalOrg = organizations.stream().filter(org -> org.getId() == currentOrganization.getId()).findAny();
@@ -671,10 +682,6 @@ public class StalkerTrackingService extends Service {
         return getString(R.string.non_presente_nei_luoghi_tracciati);
     }
 
-    public void setApiService(RestApiService service) {
-        this.service = service;
-    }
-
     private void sendSignal(@NotNull TrackSignal signal) {
         if (serviceIsRunningInForeground(this)) {
             mNotificationManager.notify(NOTIFICATION_ID,
@@ -682,7 +689,7 @@ public class StalkerTrackingService extends Service {
         }
         Log.d(TAG, "sendSignal() called with: signal = [" + signal + "]");
 
-        service.tracking(signal.getIdOrganization(), signal.getIdPlace(), signal).enqueue(new Callback<Void>() {
+        restApiService.tracking(signal.getIdOrganization(), signal.getIdPlace(), signal).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(@NotNull retrofit2.Call<Void> call, @NotNull Response<Void> response) {
 //                Log.d(TAG, "onResponse: " + response.toString());
