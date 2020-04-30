@@ -212,12 +212,8 @@
 //     * _g0uY5uQ87yD469NmjFJ4kS7
 package com.vartmp7.stalker;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.location.LocationManager;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
@@ -271,8 +267,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "com.vartmp7.stalker.MainActivity";
-    public static final String TOKEN_NAME = "Organization-Token";
-    public static final String TOKEN_VALUE = "vartmp7";
     public static final String PREFERENCE_FILE = "stalker";
     public static final String PREFERENCE_NOT_LOGIN = "not_login";
     //    public static final String URL_SERVER="https://stalker-be.ddns.net/";
@@ -354,7 +348,7 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(new Intent(action));
                 })
                 .setTitle(R.string.attenzione)
-                .setNegativeButton(R.string.annulla, (dialog, which) -> {
+                .setNegativeButton(R.string.esci, (dialog, which) -> {
                     dialog.cancel();
                     finish();
                 });

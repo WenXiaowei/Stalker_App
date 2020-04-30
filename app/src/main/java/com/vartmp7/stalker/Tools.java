@@ -299,7 +299,7 @@ public class Tools {
                 .apply();
     }
 
- 
+
     @NotNull
     public static String getLocationTitle(@NotNull Context context) {
         return context.getString(R.string.luogo_cambiato,
