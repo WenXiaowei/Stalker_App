@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   ~                                  Apache License
   ~                            Version 2.0, January 2004
   ~                         http://www.apache.org/licenses/
@@ -187,7 +188,7 @@
   ~       same "printed page" as the copyright notice for easier
   ~       identification within third-party archives.
   ~
-  ~    Copyright 2020 - VartTmp7
+  ~    Copyright [yyyy] [name of copyright owner]
   ~
   ~    Licensed under the Apache License, Version 2.0 (the "License");
   ~    you may not use this file except in compliance with the License.
@@ -200,34 +201,9 @@
   ~    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~    See the License for the specific language governing permissions and
   ~    limitations under the License.
+  ~
   -->
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:gravity="center_vertical"
-    android:layout_marginBottom="5dp"
-    android:orientation="horizontal">
-
-    <TextView
-        android:id="@+id/tvOrganizationInfo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:textSize="16sp" />
-
-    <TextView
-        android:id="@+id/tvTime"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:textSize="16sp" />
-
-    <ImageView
-        android:id="@+id/ivInOut"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:layout_weight="1"
-        android:contentDescription="@string/icona_che_rappresenta_ingresso_o_uscita"
-        android:src="@drawable/ic_exit" />
-</LinearLayout>
+<resources>
+    <item name="content_frame" type="id" />
+</resources>

@@ -211,12 +211,20 @@ import android.hardware.SensorManager;
 
 import java.util.concurrent.atomic.AtomicLong;
 
+/**
+ * Contatore dei passi utilizzando i sensori messi a disposizione da Android permette di resettare il contatore dopo la lettura
+ */
 public class StalkerStepCounter {
     private SensorManager manager;
     private AtomicLong stepFromLastRead;
     private Sensor sensor;
     private SensorEventListener li;
 
+    /**
+     * Costruttore a 2 parametri
+     * @param manager SensorManager di default di Android
+     * @param sensor Sensor
+     */
     StalkerStepCounter(SensorManager manager, Sensor sensor) {
         this.manager = manager;
         this.sensor = sensor;
@@ -248,10 +256,20 @@ public class StalkerStepCounter {
         manager.registerListener(li, sensor, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
+    /**
+     * restituisce i numeri di passi rilevati.
+     * @return i numeri di passi rilevati dall'ultima invocazione di StalkerStepCounter#resetSteps
+     */
     public long getSteps() {
-        long toRe = stepFromLastRead.get();
+        return stepFromLastRead.get();
+    }
+
+
+    /**
+     * mette a 0 il contatore dei passi a 0
+     */
+    public void resetSteps(){
         stepFromLastRead.set(0);
-        return toRe;
     }
 
     public void removeListener() {

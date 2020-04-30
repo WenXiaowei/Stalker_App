@@ -246,17 +246,18 @@ public class FileStorage implements Storage {
         this.fileName = fileName;
         this.context = context;
         this.gson = new Gson();
-        this.mLiveOrgs = new MutableLiveData<>(new ArrayList<>());
+        this.mLiveOrgs = new MutableLiveData<>();
 //        this.mLiveOrgs = org;
     }
 
     @Override
     public void updateOrganizations(@NotNull List<Organization> org) {
-        List<Organization> orgList = mLiveOrgs.getValue();
+        List<Organization> orgList = mLiveOrgs.getValue()!=null ? new ArrayList<>(mLiveOrgs.getValue()) : new ArrayList<>();
         for (Organization organization : org) {
             int i = orgList.indexOf(organization);
-            orgList.remove(i);
-            orgList.add(i, organization);
+            if(i!=-1){
+                orgList.set(i,organization);
+            }
             Log.d(TAG, "updateOrganizations: " + organization);
         }
         saveOrganizations(orgList);
@@ -265,7 +266,7 @@ public class FileStorage implements Storage {
 
     @Override
     public void updateOrganization(Organization o) {
-        List<Organization> l = new ArrayList<>(mLiveOrgs.getValue());
+        List<Organization> l = mLiveOrgs.getValue()!=null ? new ArrayList<>(mLiveOrgs.getValue()) : new ArrayList<>();
         int pos = -1;
         for (int i = 0; i < l.size() && pos == -1; i++)
             if (o.getId() == l.get(i).getId())
@@ -281,7 +282,7 @@ public class FileStorage implements Storage {
     @Override
     public void updateOrganizationInfo(@NotNull List<Organization> orgsToUpdate) {
         orgsToUpdate.forEach(o -> Log.d(TAG, "updateOrganizzazioni: updateOrgs" + o.getId()));
-        List<Organization> currentOrgs = new ArrayList<>(mLiveOrgs.getValue());
+        List<Organization> currentOrgs = mLiveOrgs.getValue()!=null? new ArrayList<>(mLiveOrgs.getValue()) : new ArrayList<>();
         List<Organization> toSave = new ArrayList<>();
         currentOrgs.forEach(o -> Log.d(TAG, "currentorg: " + o.getId()));
         for (int j = 0; j < orgsToUpdate.size(); j++) {

@@ -187,7 +187,7 @@
  *       same "printed page" as the copyright notice for easier
  *       identification within third-party archives.
  *
- *    Copyright [2020] [VartTmp7]
+ *    Copyright [yyyy] [name of copyright owner]
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -200,302 +200,138 @@
  *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
+ *
  */
 
-//     * Stalker
-//     * P=3.1415926
-//     *
-//     * project google sign in client id
-//     * 543529788745-mc7pagmter3bvr7i3e1vim0tjq0fhov6.apps.googleusercontent.com
-//     *
-//     *client secret:
-//     * _g0uY5uQ87yD469NmjFJ4kS7
-package com.vartmp7.stalker;
+package com.vartmp7.stalker.ui.tracking;
 
-import android.content.Intent;
-import android.content.res.Resources;
-import android.os.Bundle;
-import android.provider.Settings;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.EditText;
-import android.widget.Toast;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
+import androidx.lifecycle.Observer;
 
-import com.facebook.login.LoginManager;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.firebase.auth.EmailAuthProvider;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.vartmp7.stalker.TestUtil;
+import com.vartmp7.stalker.component.NotLogged;
 import com.vartmp7.stalker.datamodel.Organization;
-import com.vartmp7.stalker.repository.FavoritesSource;
-import com.vartmp7.stalker.repository.FileStorage;
-import com.vartmp7.stalker.repository.FirebaseFavoritesSource;
-import com.vartmp7.stalker.repository.Obtainer;
 import com.vartmp7.stalker.repository.OrganizationsRepository;
-import com.vartmp7.stalker.repository.RESTObtainer;
-import com.vartmp7.stalker.repository.RestApiService;
-import com.vartmp7.stalker.repository.Storage;
 
-import org.jetbrains.annotations.NotNull;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TestRule;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.Mockito.atLeast;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-/**
- * @author Xiaowei Wen, Lorenzo Taschin
- */
-public class MainActivity extends AppCompatActivity {
-    private static final String TAG = "com.vartmp7.stalker.MainActivity";
-    public static final String PREFERENCE_FILE = "stalker";
-    public static final String PREFERENCE_NOT_LOGIN = "not_login";
-    //    public static final String URL_SERVER="https://stalker-be.ddns.net/";
-    public static final String URL_SERVER = "https://10.0.2.2/";
+public class TrackingViewModelTest {
+    private static final String TAG="com.vartmp7.stalker.TrackingViewModelTest";
 
-    private GoogleSignInClient mGoogleSignInClient;
+    private TrackingViewModel viewModel ;
+    private OrganizationsRepository orgRepo;
+    private LifecycleOwner lifecycleOwner;
 
-    public static OrganizationsRepository repository;
+    private List<Organization> organizationsToGet;
 
-    @Override
-    public Resources.Theme getTheme() {
-        Resources.Theme them = super.getTheme();
-        them.applyStyle(R.style.AppTheme, true);
-        return them;
+    @Rule
+    public TestRule rule = new InstantTaskExecutorRule();
+
+    @Before
+    public void setup(){
+        viewModel = new TrackingViewModel();
+        orgRepo = mock(OrganizationsRepository.class);
+        lifecycleOwner = TestUtil.mockLifecycleOwner();
+
+        organizationsToGet = Arrays.asList(
+                new Organization().setId(1).setTracking(true),
+                new Organization().setId(2).setTracking(false)
+        );
+
+        MutableLiveData<List<Organization>> liveOrganizations = new MutableLiveData<>();
+        when(orgRepo.getOrganizations()).then(invoker->{
+            liveOrganizations.postValue(organizationsToGet);
+            return liveOrganizations;
+        });
+        viewModel.init(orgRepo);
+        MockitoAnnotations.initMocks(this);
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        if (!Tools.isUserLogged(this) && !getSharedPreferences(PREFERENCE_FILE, MODE_PRIVATE).getBoolean(PREFERENCE_NOT_LOGIN, false))
-            goToLoginActivity(false);
-        BottomNavigationView navView = findViewById(R.id.nav_view);
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
-        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.navigation_organizations, R.id.navigation_tracking, R.id.navigation_preferiti, R.id.navigation_cronologia)
-                .build();
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+    @Mock
+    private Observer<List<Organization>> observer;
 
+    @Test
+    public void testGetOrganizations(){
+        doNothing().when(observer).onChanged(anyList());
+        viewModel.getOrganizations().observe(lifecycleOwner,observer);
+        verify(observer).onChanged(organizationsToGet);
+    }
 
-        MutableLiveData<List<Organization>> list = new MutableLiveData<>(new ArrayList<>());
-        Storage localStorage = new FileStorage("orgs.json", this, list);
-        FavoritesSource preferitiRepository = null;
-        if (FirebaseAuth.getInstance().getCurrentUser() != null || GoogleSignIn.getLastSignedInAccount(this) != null) {
-            preferitiRepository = new FirebaseFavoritesSource(getUserId(), FirebaseFirestore.getInstance());
+    @Test
+    public void testUpdateOrganization(){
+        Organization o = new Organization().setId(1);
+        doNothing().when(orgRepo).updateOrganization(any());
+        viewModel.updateOrganization(o);
+        verify(orgRepo).updateOrganization(o);
+    }
+
+    @Test
+    public void testUpdateOrganizations(){
+        List<Organization> organizations = Arrays.asList(
+                new Organization().setId(1), new Organization().setId(2)
+        );
+        doNothing().when(orgRepo).updateOrganizations(anyList());
+        viewModel.updateOrganizations(organizations);
+        verify(orgRepo).updateOrganizations(organizations);
+    }
+
+    @Test
+    public void testAddFavorite(){
+        Organization o = new Organization().setId(1);
+        try {
+            doNothing().when(orgRepo).addFavorite(any());
+            viewModel.addFavorite(o);
+            verify(orgRepo).addFavorite(o);
+        } catch (NotLogged notLogged) {
+            fail();
         }
-
-        GsonBuilder builder = new GsonBuilder().excludeFieldsWithoutExposeAnnotation();
-
-        Gson gson = builder.create();
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(URL_SERVER)
-                .client(Tools.getUnsafeOkHttpClient())
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        Obtainer webSource = new RESTObtainer(list, retrofit.create(RestApiService.class));
-
-        repository = new OrganizationsRepository(localStorage, webSource, preferitiRepository);
-
-
-//        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
-        NavigationUI.setupWithNavController(navView, navController);
-
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestEmail()
-                .build();
-        // Build a GoogleSignInClient with the options specified by gso.
-        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-
-
-
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (!Tools.isNetworkAvailable(this))
-            gotoSetting(R.string.devi_attivare_connessione, Settings.ACTION_WIFI_SETTINGS);
-        if (!Tools.isGPSEnable(this)) {
-            gotoSetting(R.string.devi_attivare_gps, Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+    @Test
+    public void testRemoveFavorite(){
+        Organization o = new Organization().setId(1);
+        try {
+            doNothing().when(orgRepo).removeFavorite(any());
+            viewModel.removeFavorite(o);
+            verify(orgRepo).removeFavorite(o);
+        } catch (NotLogged notLogged) {
+            fail();
         }
     }
-
-    private void gotoSetting(int msg, String action) {
-        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
-        builder.setMessage(msg)
-                .setPositiveButton(R.string.ok, (dialog, which) -> {
-                    startActivity(new Intent(action));
-                })
-                .setTitle(R.string.attenzione)
-                .setNegativeButton(R.string.esci, (dialog, which) -> {
-                    dialog.cancel();
-                    finish();
-                });
-        builder.create().show();
+    @Test
+    public void testActiveAllTrackingOrganization(){
+        doNothing().when(orgRepo).updateOrganizations(anyList());
+        viewModel.activeAllTrackingOrganization(true);
+        ArrayList<Organization> toSet = organizationsToGet.stream().filter(Organization::isTracking).collect(Collectors.toCollection(ArrayList::new));
+        toSet.forEach(o->o.setTrackingActive(true));
+        verify(orgRepo).updateOrganizations(toSet);
+        //verify(viewModel,atLeast(0));
     }
 
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        if (Tools.isUserLogged(MainActivity.this)) {
-            inflater.inflate(R.menu.setting_menu, menu);
-            //todo capire come disattivare la scelta per cambiare password!
-            if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-                if ((FirebaseAuth.getInstance().getCurrentUser().getProviderData().size() >= 2 &&
-                        FirebaseAuth.getInstance().getCurrentUser().getProviderData().get(1).getProviderId()
-                                .equals(EmailAuthProvider.EMAIL_PASSWORD_SIGN_IN_METHOD))) {
-                    menu.removeItem(R.id.menuModificaDati);
-                } else {
-                    Log.d(TAG, "onCreateOptionsMenu: if dentro");
-                }
-
-            } else {
-                Log.d(TAG, "onCreateOptionsMenu: if fuori");
-            }
-        } else {
-            inflater.inflate(R.menu.setting_menu_no_log, menu);
-
-        }
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NotNull MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menuLogout:
-                if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-                    logout();
-                } else {
-                    googleSignOut();
-                }
-                goToLoginActivity(false);
-                return false;
-            case R.id.menuLogin:
-                goToLoginActivity(true);
-            case R.id.menuModificaDati:
-                showEditInfoDialog();
-                break;
-            default:
-
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    private void showEditInfoDialog() {
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (currentUser == null)
-            return;
-        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.StalkerDialogTheme);
-//        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(R.string.modifica_dati);
-        LayoutInflater inflater = this.getLayoutInflater();
-        View view = inflater.inflate(R.layout.edit_dati_form, null);
-        EditText etNewMail = view.findViewById(R.id.etEmail);
-
-        etNewMail.setText(currentUser.getEmail());
-        EditText etPassword = view.findViewById(R.id.etPassword);
-        EditText etRPassword = view.findViewById(R.id.etRipetiPassword);
-        builder.setIcon(R.drawable.ic_edit_black_24dp)
-                .setView(view)
-                .setPositiveButton(R.string.conferma, (dialog, which) -> {
-                    if (!etNewMail.getText().toString().trim().equalsIgnoreCase(currentUser.getEmail())) {
-                        currentUser.updateEmail(etNewMail.getText().toString()).addOnCompleteListener(task -> {
-                            int stringId = task.isSuccessful() ? R.string.modificato_con_successo : R.string.modifica_di_fallito;
-                            showToast(getString(stringId, getString(R.string.email)));
-                        });
-                    }
-                    if (etPassword.getText().toString().equalsIgnoreCase(""))
-                        return;
-                    if (etPassword.getText().toString().equals(etRPassword.getText().toString())) {
-                        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-                            FirebaseAuth.getInstance().getCurrentUser()
-                                    .updatePassword(etPassword.getText().toString())
-                                    .addOnCompleteListener(task -> {
-                                        int stringId = task.isSuccessful() ? R.string.modificato_con_successo : R.string.modifica_di_fallito;
-                                        showToast(getString(stringId, getString(R.string.password)));
-                                    });
-                        }
-                    } else {
-                        Toast.makeText(this, R.string.password_non_coincidono, Toast.LENGTH_SHORT).show();
-                    }
-
-                }).setNegativeButton(R.string.annulla, (dialog, which) -> dialog.dismiss());
-
-        builder.create().show();
-    }
-
-    private void showToast(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-    }
-
-    private String getUserId() {
-        if (FirebaseAuth.getInstance().getCurrentUser() != null)
-            return FirebaseAuth.getInstance().getCurrentUser().getUid();
-        if (GoogleSignIn.getLastSignedInAccount(MainActivity.this) != null)
-            return GoogleSignIn.getLastSignedInAccount(MainActivity.this).getId();
-        return "";
-    }
-
-
-    public void logout() {
-        FirebaseAuth.getInstance().signOut();
-        LoginManager.getInstance().logOut();
-        cleanUserData();
-    }
-
-    private void cleanUserData() {
-        List<Organization> organizations = repository.getOrganizations().getValue();
-        if (organizations != null) {
-            organizations = new ArrayList<>(organizations);
-            organizations.stream().sequential().forEach(o ->
-                    o.setLogged(false)
-                            .setTracking(false)
-                            .setTrackingActive(false)
-                            .setAnonymous(false)
-                            .setFavorite(false)
-                            .setPersonalCn("")
-                            .setLdapPassword("")
-            );
-            repository.updateOrganizations(organizations);
-        }
-
-    }
-
-    private void googleSignOut() {
-        mGoogleSignInClient.signOut()
-                .addOnCompleteListener(this, task ->
-                        Toast.makeText(MainActivity.this, R.string.successfully_logout, Toast.LENGTH_SHORT).show());
-    }
-
-    public void goToLoginActivity(boolean backButton) {
-        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-        if (!backButton) {
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        }
-        getApplication().setTheme(R.style.AppThemeNoActionBar);
-
-        startActivity(intent);
-    }
 }

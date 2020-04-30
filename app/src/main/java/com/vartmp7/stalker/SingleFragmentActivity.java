@@ -205,166 +205,35 @@
 
 package com.vartmp7.stalker;
 
-import android.util.Log;
+import android.os.Bundle;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
 
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
-import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.annotation.Nullable;
+import androidx.annotation.RestrictTo;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
-import com.vartmp7.stalker.datamodel.Organization;
-import com.vartmp7.stalker.datamodel.TrackRecord;
-import com.vartmp7.stalker.datamodel.TrackSignal;
-import com.vartmp7.stalker.datamodel.UserTrackInfo;
-import com.vartmp7.stalker.repository.FavoritesSource;
-import com.vartmp7.stalker.repository.Storage;
-import com.vartmp7.stalker.repository.OrganizationsRepository;
-import com.vartmp7.stalker.repository.Obtainer;
-
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestRule;
-import org.junit.runner.RunWith;
-import org.mockito.Mockito;
-import org.mockito.stubbing.Answer;
-
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-@RunWith(AndroidJUnit4.class)
-public class OrganizationsRepositoryTest {
-    private final String TAG="com.vartmp7.stalker.OrganizationsRepositoryTest";
-    private OrganizationsRepository orgRepo;
-    private LifecycleOwner lifecycleOwner;
-    //private TestObserver observer;
-    private List<Organization> firsts;
-    private List<Organization> fromWeb;
-    private List<Organization> expected;
-    private Storage storage;
-    private FavoritesSource favoritesSource;
-    private Obtainer obtainer;
-
-
-    @Rule
-    public TestRule rule = new InstantTaskExecutorRule();
-
-    @Before
-    public void setup(){
-        firsts = Arrays.asList(
-                new Organization().setId(1).setName("asd").setTracking(false),
-                new Organization().setId(2).setName("lol").setTracking(false),
-                new Organization().setId(3).setName("lll").setTracking(false)
-        );
-        final MutableLiveData<List<Organization>> localLiveData = new MutableLiveData<>();
-        storage = Mockito.mock(Storage.class);
-
-        obtainer = Mockito.mock(Obtainer.class);
-        fromWeb = Arrays.asList(
-                new Organization().setId(1).setName("changed").setTracking(false),
-                new Organization().setId(2).setName("lol").setTracking(true),
-                new Organization().setId(37).setName("new org").setTracking(false)
-        );
-
-        when(obtainer.getOrganizations()).then((Answer<LiveData<List<Organization>>>) invocation -> {
-            MutableLiveData<List<Organization>> liveData = new MutableLiveData<>();
-            liveData.postValue(fromWeb);
-            return  liveData;
-        });
-        favoritesSource = Mockito.mock(FavoritesSource.class);
-        orgRepo = new OrganizationsRepository(storage,obtainer,favoritesSource);
-        lifecycleOwner = TestUtil.mockLifecycleOwner();
-        //observer = new TestObserver();
-        //orgRepo.getOrganizzazioni().observe(lifecycleOwner,observer);
+@RestrictTo(RestrictTo.Scope.TESTS)
+public class SingleFragmentActivity extends AppCompatActivity {
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        FrameLayout content = new FrameLayout(this);
+        content.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT));
+        content.setId(R.id.content_frame);
+        setContentView(content);
     }
 
-    @Test
-    public void testGetOrganizations(){
-        expected=firsts;
-        when(storage.getLocalOrganizations()).then((Answer<LiveData<List<Organization>>>) invocation -> {
-            MutableLiveData<List<Organization>> liveData = new MutableLiveData<>();
-            liveData.postValue(firsts);
-            return  liveData;
-        });
-        orgRepo.getOrganizations().observe(lifecycleOwner, organizzazioni -> {
-            Log.d(TAG, "testGet: triggered");
-            organizzazioni.forEach(o-> Log.d(TAG, "testGet: org"+o.getId()));
-            assertEquals(expected,organizzazioni);
-        });
+    public void setFragment(Fragment fragment) {
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.content_frame, fragment, "TEST")
+                .commit();
     }
 
-    @Test
-    public void testUpdateOrganization(){
-        doNothing().when(storage).updateOrganization(any(Organization.class));
-        orgRepo.updateOrganization(new Organization());
-        verify(storage).updateOrganization(any(Organization.class));
-    }
-
-    @Test
-    public void testUpdateOrganizations(){
-        doNothing().when(storage).updateOrganizations(anyList());
-        orgRepo.updateOrganizations(new ArrayList<Organization>());
-        verify(storage).updateOrganizations(anyList());
-    }
-
-    @Test
-    public void testGetFavoritesOrganizationID(){
-        List<Long> favorites =Arrays.asList(1L,2L,3L,45L,1L);
-        when(favoritesSource.getFavoriteOrganizationID()).then((Answer<LiveData<List<Long>>>) invocation -> {
-            MutableLiveData<List<Long>> liveData = new MutableLiveData<>();
-            liveData.postValue(favorites);
-            return  liveData;
-        });
-        orgRepo.getFavorites().observe(lifecycleOwner,fav->assertEquals(favorites,fav));
-    }
-
-
-    @Test
-    public void testGetTrackRecords(){
-        List<TrackRecord> trackRecords =Arrays.asList(
-                new TrackRecord().setEntered(true).setOrgName("Math UNIPD").setPlaceName("Torre Archimede"),
-                new TrackRecord().setEntered(false).setOrgName("Math UNIPD").setPlaceName("Torre Archimede"),
-                new TrackRecord().setEntered(true).setOrgName("Math UNIPD").setPlaceName("Paolotti")
-        );
-        when(obtainer.getTrackRecords()).then((Answer<LiveData<List<TrackRecord>>>) invocation -> {
-            MutableLiveData<List<TrackRecord>> liveData = new MutableLiveData<>();
-            liveData.postValue(trackRecords);
-            return  liveData;
-        });
-        orgRepo.getTrackHistory().observe(lifecycleOwner,tracks->assertEquals(trackRecords, tracks));
-
-    }
-
-    @Test
-    public void testUpdateTrackRecords(){
-        List<Organization> organizations = Arrays.asList(
-                new Organization().setId(1),
-                new Organization().setId(10)
-        );
-        doNothing().when(obtainer).updateTrackRecords(anyList());
-        orgRepo.updateTrackRecords(organizations);
-        verify(obtainer).updateTrackRecords(organizations);
-    }
-
-    @Test
-    public void testRefresh(){
-        orgRepo.refreshOrganizations();
-        doNothing().when(storage).updateOrganizationInfo(anyList());
-        verify(storage).updateOrganizationInfo(fromWeb);
+    public void replaceFragment(Fragment fragment) {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.content_frame, fragment).commit();
     }
 }
-
-

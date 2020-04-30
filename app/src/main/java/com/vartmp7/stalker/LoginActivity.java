@@ -206,6 +206,7 @@ package com.vartmp7.stalker;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -213,6 +214,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.vartmp7.stalker.ui.login.LoginFragment;
 
@@ -247,6 +249,14 @@ public class LoginActivity extends AppCompatActivity {
         LoginFragment fragment = new LoginFragment();
         transaction.replace(R.id.fcvLoginContainer, fragment);
         transaction.commit();
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!Tools.isNetworkAvailable(this))
+            Toast.makeText(this, R.string.devi_attivare_connessione, Toast.LENGTH_SHORT).show();
 
     }
 

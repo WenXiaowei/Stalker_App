@@ -206,6 +206,10 @@ package com.vartmp7.stalker;
 
 import android.content.Context;
 import android.location.Location;
+import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+
 import androidx.preference.PreferenceManager;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -295,23 +299,37 @@ public class Tools {
                 .apply();
     }
 
-    /**
-     * Returns the {@code location} object as a human readable string.
-     * @param location  The {@link Location}.
-     */
-    @NotNull
-    public static String getLocationText(Location location) {
-        return location == null ? "Unknown location" :
-                "(" + location.getLatitude() + ", " + location.getLongitude() + ")";
-    }
 
     @NotNull
     public static String getLocationTitle(@NotNull Context context) {
         return context.getString(R.string.luogo_cambiato,
                 DateFormat.getDateTimeInstance().format(new Date()));
     }
-    public static boolean isUserLogged(Context context) {
+    public static boolean isUserLogged(@NotNull Context context) {
         return FirebaseAuth.getInstance().getCurrentUser() != null || GoogleSignIn.getLastSignedInAccount(context) != null;
     }
 
+    /**
+     *
+     * @param context context dell'activity
+     * @return true sse esiste una connessione internet attiva
+     */
+    public static boolean isNetworkAvailable(@NotNull Context context) {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivityManager==null )
+            return false;
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    /**
+     *
+     * @param context context dell'activity
+     * @return true sse il provider gps è attivo.
+     */
+    public static boolean isGPSEnable(@NotNull Context context) {
+        LocationManager systemService = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        return systemService != null && systemService.isProviderEnabled(LocationManager.GPS_PROVIDER);
+    }
 }

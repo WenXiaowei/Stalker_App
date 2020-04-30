@@ -233,7 +233,7 @@ public class RESTObtainer implements Obtainer {
 
 
     private static final String TAG = "com.vartmp7.stalker.repository.RESTObtainer";
-    private RestApiService service = null;
+    private RestApiService service;
 
 
     private static int count = 0;
@@ -317,7 +317,7 @@ public class RESTObtainer implements Obtainer {
 //                                .setImageUrl("https://www.economia.unipd.it/sites/economia.unipd.it/files/img-logo-trentennale-dsea-big.png")
                                 .setPlaces(Collections.singletonList(d)),
                         new Organization()
-                                .setId(count + 3)
+                                .setId(3)
                                 .setName("UNIPD DSFARM")
                                 .setType("both")
                                 .setTracking(true)
@@ -342,7 +342,7 @@ public class RESTObtainer implements Obtainer {
     @Override
     public void updateTrackRecords(List<Organization> orgs) {
         ArrayList<TrackRecord> mockedTrackRecords = new ArrayList<>();
-        if (orgs.size()==0){
+        if (orgs.size() == 0) {
             trackRecords.postValue(mockedTrackRecords);
             return;
         }
@@ -362,15 +362,14 @@ public class RESTObtainer implements Obtainer {
 
                 @Override
                 public void onFailure(@NotNull Call<TrackHistory> call, @NotNull Throwable t) {
-                    mockedTrackRecords.add(new TrackRecord().setPlaceName("Torre Archimede").setOrgName("UNIPD").setEntered(false).setPlaceId(1).setDateTime("2020-01-01T13:14:15"));
-                    mockedTrackRecords.add(new TrackRecord().setPlaceName("Torre Archimede").setOrgName("UNIPD").setEntered(false).setPlaceId(1).setDateTime("2020-01-01T13:14:12"));
-                    mockedTrackRecords.add(new TrackRecord().setPlaceName("Torre Archimede").setOrgName("UNIPD").setEntered(false).setPlaceId(1).setDateTime("2020-01-01T13:14:13"));
-                    mockedTrackRecords.add(new TrackRecord().setPlaceName("Torre Archimede").setOrgName("UNIPD").setEntered(false).setPlaceId(1).setDateTime("2020-01-01T13:14:15"));
+                    mockedTrackRecords.add(new TrackRecord().setPlaceName("Torre Archimede").setOrgName("UNIPD").setEntered(true).setPlaceId(1).setDateTime("2020-04-20T13:14:15"));
+                    mockedTrackRecords.add(new TrackRecord().setPlaceName("Torre Archimede").setOrgName("UNIPD").setEntered(false).setPlaceId(1).setDateTime("2020-04-20T15:11:12"));
+                    mockedTrackRecords.add(new TrackRecord().setPlaceName("Torre Archimede").setOrgName("UNIPD").setEntered(true).setPlaceId(1).setDateTime("2020-04-20T15:30:15"));
+                    mockedTrackRecords.add(new TrackRecord().setPlaceName("Torre Archimede").setOrgName("UNIPD").setEntered(false).setPlaceId(1).setDateTime("2020-04-20T17:30:15"));
                     trackRecords.postValue(mockedTrackRecords);
                 }
             });
         });
-
 
 
     }

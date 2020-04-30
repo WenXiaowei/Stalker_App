@@ -203,141 +203,81 @@
  *
  */
 
-package com.vartmp7.stalker;
+package com.vartmp7.stalker.ui.organizations;
 
-import android.content.Context;
-import android.util.Log;
 
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
-import androidx.lifecycle.LifecycleOwner;
+import androidx.fragment.app.testing.FragmentScenario;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
-import androidx.test.platform.app.InstrumentationRegistry;
+import androidx.test.rule.ActivityTestRule;
 
-import com.google.gson.Gson;
+import com.android.dx.command.Main;
+import com.vartmp7.stalker.MainActivity;
+import com.vartmp7.stalker.R;
+import com.vartmp7.stalker.SingleFragmentActivity;
 import com.vartmp7.stalker.datamodel.Organization;
-import com.vartmp7.stalker.datamodel.OrganizationResponse;
-import com.vartmp7.stalker.repository.FileStorage;
 
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TestRule;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.lang.reflect.Field;
 import java.util.List;
 
-
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.timeout;
-import static org.mockito.Mockito.verify;
-
-
+import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.action.ViewActions.swipeDown;
+import static androidx.test.espresso.matcher.ViewMatchers.assertThat;
+import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.mockito.junit.MockitoJUnit.rule;
 
 @RunWith(AndroidJUnit4.class)
-public class FileStorageTest {
-    private static final String TAG ="com.vartmp7.stalker.FileOrganizationsLocalSourceTest" ;
-    private FileStorage source;
-    private List<Organization> firsts;
-    private List<Organization> expected;
-    private LifecycleOwner lifecycleOwner;
+public class OrganizationsFragmentTest{
+    private OrganizationsFragment fragment;
+    private OrganizationsViewModel viewModel;
+
+    private List<Organization> organizations;
 
     @Rule
-    public TestRule rule = new InstantTaskExecutorRule();
+    public ActivityTestRule<SingleFragmentActivity> activityRule = new ActivityTestRule<>(SingleFragmentActivity.class, true, true);
 
     @Before
-    public void setUpTest(){
-        Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        this.lifecycleOwner = TestUtil.mockLifecycleOwner();
-        firsts = Arrays.asList(
-                new Organization().setId(1).setName("asd").setTracking(false),
-                new Organization().setId(2).setName("lol").setTracking(false),
-                new Organization().setId(3).setName("lll").setTracking(false)
-        );
-        try (PrintWriter pw = new PrintWriter(context.openFileOutput("prova.json",Context.MODE_PRIVATE))){
-            OrganizationResponse r = new OrganizationResponse().setOrganizations(firsts);
-            pw.println(new Gson().toJson(r));
-            pw.flush();
-            Log.d(TAG,"ok");
-        }catch(FileNotFoundException e){
-            Log.e(TAG,e.getMessage());
-        }
-        source = new FileStorage("prova.json",context,new MutableLiveData<>());
-        MockitoAnnotations.initMocks(this);
-        doNothing().when(observer).onChanged(anyList());
-    }
+    public void setup(){
+        viewModel = mock(OrganizationsViewModel.class);
+        when(viewModel.getOrganizationList()).then(invoker->{
+            MutableLiveData<List<Organization>> liveOrganizations = new MutableLiveData<>();
+            liveOrganizations.setValue(organizations);
+            return liveOrganizations;
+        });
 
-    @Mock
-    private Observer<List<Organization>> observer;
+        //OrganizationsFragment fragment = OrganizationsFragment.newInstance()
+//        try {
+//
+//            Field viewModelField = OrganizationsFragment.class.getField("organizzazioneViewModel");
+//            viewModelField.setAccessible(true);
+//            viewModelField.set(viewModelField.get(fragment),viewModel);
+//
+//
+//        } catch (NoSuchFieldException | IllegalAccessException e) {
+//            e.printStackTrace();
+//        }
 
-    @Test
-    public void testGet(){
-        doNothing().when(observer).onChanged(anyList());
-        source.getLocalOrganizations().observe(lifecycleOwner, observer);
-        verify(observer,timeout(1000)).onChanged(firsts);
+
+      //  activityRule.getActivity().setFragment();
+
     }
 
     @Test
-    public void testSave() {
-        expected = Arrays.asList(new Organization().setId(12));
-        source.saveOrganizations(expected);
-        source.getLocalOrganizations().observe(lifecycleOwner, observer);
-        verify(observer,timeout(1000)).onChanged(expected);
-    }
+    public void testSwipeDown(){
+        //assertTrue(false);
 
-    @Test
-    public void testUpdateOrganization(){
-        List<Organization> toUpdate = new ArrayList<>();
-        for (Organization org: firsts){
-            toUpdate.add(new Organization().setId(org.getId()).setName((org.getName())));
-        }
-        Organization o = toUpdate.get(0).setName("updated");
-        expected = toUpdate;
-
-        source.getLocalOrganizations().observe(lifecycleOwner, observer);
-        source.updateOrganization(o);
-        verify(observer,timeout(1000)).onChanged(expected);
-
+        onView(withId(R.id.srfl)).perform(swipeDown());
     }
 
 
-    @Test
-    public void testUpdateOrganizations(){
-        List<Organization> toUpdate = new ArrayList<>();
-        for (Organization org: firsts){
-            toUpdate.add(new Organization().setId(org.getId()).setName((org.getName())));
-        }
-        toUpdate.get(0).setTrackingActive(true).setName("updated0");
-        toUpdate.get(1).setAnonymous(true).setTracking(true).setName("updated1");
-//        toUpdate.forEach(o-> Log.d(TAG, "updateOrganizations: "+o.getId()));
-        expected = toUpdate;
-        source.getLocalOrganizations().observe(lifecycleOwner,observer);
-        source.updateOrganizations(toUpdate);
-        verify(observer,timeout(1000)).onChanged(expected);
-    }
-
-    @Test
-    public void testUpdateOrganizationsInfo(){
-        List<Organization> updater = new ArrayList<>(Arrays.asList(
-                new Organization().setId(firsts.get(0).getId()).setName("updated1"),
-                new Organization().setId(firsts.get(1).getId()).setName("updated2").setTracking(true),
-                new Organization().setId(36).setName("new org")
-        ));
-        expected = new ArrayList<>(firsts);
-        TestUtil.updateOrganizationsFromOrganizationsLists(expected,updater);
-//        expected.forEach(o-> Log.d(TAG, "testUpdateOrganizzazioni: EXPECTED:"+o.getId()+"name "+o.getName()));
-        source.updateOrganizationInfo(updater);
-        source.getLocalOrganizations().observe(lifecycleOwner,observer);
-        verify(observer,timeout(1000)).onChanged(expected);
-
-    }
 
 }
