@@ -353,6 +353,10 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
                     fragment.tvCurrentStatus.setText(R.string.nessun_organizzazione_ti_sta_stalkerando);
                     break;
                 case TRACKING_NOT_IN_PLACE_MSG_CODE:
+                    SharedPreferences defaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(reference.get().requireContext());
+                    defaultSharedPreferences.edit()
+                            .putLong(StalkerTrackingService.LAST_PLACE_ID,-1)
+                            .putLong(StalkerTrackingService.CHRONOMETER_KEY,-1).apply();
                     fragment.tvCurrentStatus.setText(R.string.non_presente_nei_luoghi_tracciati);
                 default:
             }
