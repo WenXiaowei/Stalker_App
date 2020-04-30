@@ -511,6 +511,7 @@ public class StalkerTrackingService extends Service {
         //è diverso da null, allora mostro il messaggio di nessun organizzazione ti sta tracciando!
         if ( serviceCallback != null){
             if (organizations.size() == 0){
+                removeLocationUpdates();
                 serviceCallback.stopTracking();
                 updateChronometerBase(-1,-1);
             }else{
