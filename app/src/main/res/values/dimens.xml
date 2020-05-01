@@ -206,4 +206,5 @@
 <resources>
     <dimen name="botton_paddings">4dp</dimen>
     <dimen name="login_view_width">200dp</dimen>
+    <dimen name="text_size">17sp</dimen>
 </resources>

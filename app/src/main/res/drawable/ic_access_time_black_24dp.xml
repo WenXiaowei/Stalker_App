@@ -187,7 +187,7 @@
   ~       same "printed page" as the copyright notice for easier
   ~       identification within third-party archives.
   ~
-  ~    Copyright [2020] [VartTmp7]
+  ~    Copyright 2020 - VartTmp7
   ~
   ~    Licensed under the Apache License, Version 2.0 (the "License");
   ~    you may not use this file except in compliance with the License.
@@ -202,98 +202,8 @@
   ~    limitations under the License.
   -->
 
-<resources>
-    <string name="app_name">Stalker</string>
-    <string name="stalker">Stalker</string>
-
-    <string name="sign_in">Accedi</string>
-    <string name="sign_up">Registrati</string>
-    <string name="nessun_organizzazione_ti_sta_stalkerando">Nessun\'organization ti sta stalkerando!</string>
-    <string name="elenco_luoghi">Elenco Luoghi:</string>
-    <string name="password">Password</string>
-    <string name="annulla">Annulla</string>
-    <string name="stop">Stop</string>
-    <string name="conferma">Conferma</string>
-    <string name="facebook_app_id">212692166599390</string><!--todo configurazione login facebook 6.2:  Da togliere successivamente quando renderemo l'app pubblica   -->
-    <string name="fb_login_protocol_scheme">fb212692166599390</string>
-    <string name="continua_senza_autenticazione">Continua senza autenticazione</string>
-    <string name="title_home">Home</string>
-    <string name="cronologia">Cronologia</string>
-    <string name="preferiti">Preferiti</string>
-    <string name="organizzazioni">Organizzazioni</string>
-    <string name="track_me">Tracciami</string>
-    <string name="login_ldap">Login LDAP</string>
-    <string name="anonimo_question">Anonimo?</string>
-    <string name="indirizzo">Indirizzo:</string>
-    <string name="email">Email</string>
-    <string name="logout">Logout</string>
-    <string name="login">Login</string>
-    <string name="icon_dell_organizzazione">icon dell\'organization</string>
-    <string name="tipo_organizzazione">Tipo Organizzazione: </string>
-    <string name="n_d">N.D.</string>
-    <string name="nessun_luogo_tracciabile_per_quest_organizzazione">Nessun luogo tracciabile per quest\'organization</string>
-    <string name="attualmente_sei_in">Attualmente sei in:</string>
-    <string name="organizzazione_added_to_favorite">Organizzazione aggiunta ai preferiti!</string>
-    <string name="organizzazione_removed_from_favorite">Organizzazione rimosso dai preferiti</string>
-    <string name="tracking_terminated">Tracciamento terminato!</string>
-    <string name="initializing_tracking">Inizializzazione del tracciamento!</string>
-    <string name="non_presente_nei_luoghi_tracciati">Non sei presente nei luoghi delle organizzazioni che ti stanno tracciando!</string>
-    <string name="i_tuoi_preferiti">I tuoi preferiti:</string>
-    <string name="should_be_logged_for_favorites">Non hai effettuato accesso, non puoi avere delle organizzazioni preferite, per farlo fai accesso.</string>
-    <string name="not_logged_yet">Non hai fatto Login!</string>
-    <string name="reset">Reset</string>
-    <string name="registrami">Registrami</string>
-    <string name="accedi">Accedi</string>
-    <string name="ripeti_password">Ripeti password</string>
-    <string name="password_dimenticata">Password \ndimenticata</string>
-    <string name="inserire_indirizzo_mail">Dovresti inserire l\'indirizzo mail!</string>
-    <string name="mail_inviata_con_successo">La mail è stata inviata con successo!</string>
-    <string name="qualcosa_non_e_andato_bene">Qualcosa è andato storto!\nRiprovare più tardi!</string>
-    <string name="password_non_coincidono">Password non coincidono!</string>
-    <string name="password_troppo_corta">Password troppo corta!</string>
-    <string name="modificato_con_successo">%s modificato con successo!</string>
-    <string name="modifica_di_fallito">La modifica di %s fallito!</string>
-    <string name="mail_di_verifica_inviata">Ti abbiamo mandato una mail di verifica dell\'indirizzo!</string>
-    <string name="modifica_dati">Modifica Dati</string>
-    <string name="account_esistente_con_questa_mail">Esiste già un account con questa mail!</string>
-    <string name="unknown_error">Errori sconosciuti, riprova più tardi</string>
-    <string name="luogo_cambiato">Luogo cambiato: %1$s</string>
-    <string name="sei_in_tale_dei_tali">Sei in %s di \"%s\"!</string>
-    <string name="ok">OK</string>
-    <string name="app_necessita_di_permessi">Ho bisogno dei permessi per funzionare!</string>
-    <string name="permission_denied_explanation">Applicazione ha bisogno dei permessi!</string>
-    <string name="settings">Impostazione</string>
-    <string name="ferma_tutti">Ferma \nTutti</string>
-    <string name="avvia_tutti">Avvia\n tutti</string>
-    <string name="nessun_organization_ti_sta_tracciando">Nessun\'organizzazione ti sta tracciando</string>
-    <string name="tuo_cn">Tuo CN</string>
-    <string name="nome_organizzazione">Nome:</string>
-    <string name="numero_telefonico">Numero telefonico:</string>
-    <string name="informazione_di_ldap">Informazione LDAP</string>
-    <string name="icona_dell_organizzazione">Icona dell\'organizzazione</string>
-    <string name="template_indirizzo" formatted="false">via: "%s , %s, CAP: %s, %s, %s.</string>
-    <string name="template_ldap" formatted="false">url: \"%s\", port: %d, dn: \"%s\", cn: \"%s\".</string>
-    <string name="chiudi">Chiudi</string>
-    <string name="elenco_delle_organizzazioni_disponibili">Elenco delle organizzazioni disponibili:</string>
-    <string name="recupero_password">Recupero password</string>
-    <string name="ask_mail_for_recupero_password">Inserisci la mail con la quale ti sei registrato/a all\'applicazione!</string>
-    <string name="inserisci_le_credenziali_ldap">Inserisci le tue credenziali LDAP</string>
-    <string name="successfully_logout">Successufully logout</string>
-    <string name="icona_che_rappresenta_ingresso_o_uscita">Icona che rappresenta ingresso o uscita</string>
-    <string name="storico_tracciamenti">Storico degli tracciamenti:</string>
-    <string name="devi_loggare_con_ldap">Devi prima effetturare login LDAP in un\'organizzazione!</string>
-    <string name="non_ci_sono_tracciamenti">Non ci sono tracciamenti per le organizzazioni in cui hai effettuato login LDAP</string>
-    <string name="apri_app">Apri applicazione</string>
-    <string name="organizzazione_rimossa">Organizzazione rimossa!</string>
-    <string name="tempo_trascorso">Tempo trascorso</string>
-    <string name="attenzione">Attenzione</string>
-    <string name="devi_attivare_gps">Devi attivare il GPS!</string>
-    <string name="devi_attivare_connessione">Devi attivare la connesione!</string>
-    <string name="esci">Esci</string>
-    <string name="organizazzioni_private_no_loogato">Ci sono delle organizzazioni private presso cui non hai fatto login!</string>
-    <string name="segnala_bug">Segnalazione bug</string>
-    <string name="descrizione_bug">Descrizione bug: </string>
-    <string name="mail_gruppo">vartmp7@gmail.com</string>
-    <string name="choose_mail_client">Scegli una app di email:</string>
-    <string name="clock_icon">clock icon</string>
-</resources>
+<vector android:height="24dp" android:tint="#1999FF"
+    android:viewportHeight="24.0" android:viewportWidth="24.0"
+    android:width="24dp" xmlns:android="http://schemas.android.com/apk/res/android">
+    <path android:fillColor="#FF000000" android:pathData="M11.99,2C6.47,2 2,6.48 2,12s4.47,10 9.99,10C17.52,22 22,17.52 22,12S17.52,2 11.99,2zM12,20c-4.42,0 -8,-3.58 -8,-8s3.58,-8 8,-8 8,3.58 8,8 -3.58,8 -8,8zM12.5,7H11v6l5.25,3.15 0.75,-1.23 -4.5,-2.67z"/>
+</vector>

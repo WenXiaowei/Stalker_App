@@ -215,43 +215,49 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
-        android:orientation="vertical">
+        android:orientation="horizontal">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/attualmente_sei_in"
-            android:textAlignment="center"
-            android:textSize="25sp" />
+
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal">
-
+            android:layout_weight="8"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="@string/attualmente_sei_in"
+                android:textAlignment="center"
+                android:textSize="@dimen/text_size" />
             <TextView
                 android:id="@+id/tvCurrentStatus"
-                android:layout_width="333dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/nessun_organization_ti_sta_tracciando"
                 android:textSize="15sp" />
+        </LinearLayout>
 
-            <LinearLayout
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:gravity="center_horizontal"
+            android:layout_gravity="center_horizontal"
+            android:orientation="vertical">
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/tempo_trascorso"/>
-
-                <Chronometer
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/tvTimer"/>
-            </LinearLayout>
-
+                android:gravity="center_horizontal"
+                android:text="@string/tempo_trascorso"/>
+            <Chronometer
+                android:layout_gravity="center_horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/tvTimer"/>
         </LinearLayout>
+
 
     </LinearLayout>
 
