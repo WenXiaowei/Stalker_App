@@ -204,8 +204,6 @@
 
 package com.vartmp7.stalker.repository;
 
-import android.util.Log;
-
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
@@ -235,9 +233,6 @@ public class RESTObtainer implements Obtainer {
     private static final String TAG = "com.vartmp7.stalker.repository.RESTObtainer";
     private RestApiService service;
 
-
-    private static int count = 0;
-
     private MutableLiveData<List<Organization>> mutableLiveDataOrganizzazioni;
     private MutableLiveData<List<TrackRecord>> trackRecords;
 
@@ -265,7 +260,7 @@ public class RESTObtainer implements Obtainer {
 
             @Override
             public void onFailure(@NotNull Call<OrganizationResponse> call, @NotNull Throwable throwable) {
-                Log.d(TAG, "onFailure: " + throwable.getMessage());
+//                Log.d(TAG, "onFailure: " + throwable.getMessage());
                 ArrayList<Coordinate> torreArchimede = new ArrayList<>();
                 torreArchimede.add(new Coordinate(45.411555, 11.887476));
                 torreArchimede.add(new Coordinate(45.411442, 11.887942));
@@ -318,7 +313,7 @@ public class RESTObtainer implements Obtainer {
 //                                .setImageUrl("https://www.dsfarm.unipd.it/sites/dsfarm.unipd.it/files/sublogo_9.png")
 
                 );
-                orgs.forEach(o -> Log.d(TAG, "onFailure: " + o.getId()));
+//                orgs.forEach(o -> Log.d(TAG, "onFailure: " + o.getId()));
                 mutableLiveDataOrganizzazioni.postValue(orgs);
             }
 

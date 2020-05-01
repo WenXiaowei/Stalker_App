@@ -206,7 +206,6 @@ package com.vartmp7.stalker.ui.organizations;
 
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -215,14 +214,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.firebase.auth.FirebaseAuth;
 import com.vartmp7.stalker.MainActivity;
 import com.vartmp7.stalker.R;
 import com.vartmp7.stalker.repository.OrganizationsRepository;
@@ -270,8 +266,8 @@ public class OrganizationsFragment extends Fragment implements SwipeRefreshLayou
         setUpRecyclerView();
         organizzazioneViewModel.getOrganizationList().observe(getViewLifecycleOwner(), lista -> {
 //            Log.e(TAG, "onCreateView: triggered");
-            Log.e(TAG, "stampa organizzazioni fetchate: ");
-            lista.forEach(o-> Log.e(TAG, "onCreateView: "+o.getId()+" name "+o.getName()+" isPreferito"+o.isFavorite()));
+//            Log.e(TAG, "stampa organizzazioni fetchate: ");
+//            lista.forEach(o-> Log.e(TAG, "onCreateView: "+o.getId()+" name "+o.getName()+" isPreferito"+o.isFavorite()));
             mAdapter.setOrganizations(lista);
             mAdapter.notifyDataSetChanged();
             swipeRefreshLayout.setRefreshing(false);

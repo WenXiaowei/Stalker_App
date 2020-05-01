@@ -204,8 +204,6 @@
 
 package com.vartmp7.stalker.ui.favorite;
 
-import android.util.Log;
-
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -243,16 +241,16 @@ public class FavoritesViewModel extends ViewModel {
 
     public FavoritesViewModel() {
         queryExhaustedObserver = aBoolean -> {
-            Log.e(TAG, "cambiamento");
+//            Log.e(TAG, "cambiamento");
             if (firebaseQueryExhausted.getValue() && organizationsQueryExhausted.getValue()) {
-                Log.d(TAG, "onChanged: if sotto cambiamento");
+//                Log.d(TAG, "onChanged: if sotto cambiamento");
                 final List<Long> orgIds = mutableliveDataOrgIds.getValue();
                 List<Organization> list = liveDataOrganizzazioni.getValue()
                         .stream()
                         .filter(o -> orgIds.contains(o.getId()))
                         .collect(Collectors.toList());
                 list.forEach(o-> orgRepo.updateOrganization(o.setFavorite(true)));
-                Log.i(TAG, "onChanged: " + list);
+//                Log.i(TAG, "onChanged: " + list);
                 organizzazioni.postValue(list);
 //                organizzazioni.removeSource(liveDataOrganizzazioni);
 //                organizzazioni.removeSource(mutableliveDataOrgIds);
@@ -290,7 +288,7 @@ public class FavoritesViewModel extends ViewModel {
     }
 
     public void refresh() {
-        Log.e(TAG, "refresh: chiamato");
+//        Log.e(TAG, "refresh: chiamato");
         int i = 0;
         //MutableLiveData<List<Organizzazione>> listOrgs= new MutableLiveData<>();
         this.firebaseQueryExhausted.setValue(false);

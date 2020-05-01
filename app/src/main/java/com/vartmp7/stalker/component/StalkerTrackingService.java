@@ -205,9 +205,7 @@
 package com.vartmp7.stalker.component;
 
 import android.app.ActivityManager;
-import android.app.Notification;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -219,7 +217,6 @@ import android.icu.text.SimpleDateFormat;
 import android.icu.util.Calendar;
 import android.location.Location;
 import android.os.Binder;
-import android.os.Build;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
@@ -227,7 +224,6 @@ import android.os.Looper;
 import android.os.SystemClock;
 import android.util.Log;
 
-import androidx.core.app.NotificationCompat;
 import androidx.preference.PreferenceManager;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -439,13 +435,18 @@ public class StalkerTrackingService extends Service {
                 Context.ACTIVITY_SERVICE);
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(
                 Integer.MAX_VALUE)) {
-            if (getClass().getName().equals(service.service.getClassName())) {
+            String className = getClass().getName();
+            String otherClasseName = service.service.getClassName();
+            Log.d("serviceIsRunningInForeground", "Class name"+className);
+            Log.d("serviceIsRunningInForeground", "Other Class name"+otherClasseName);
+            if (className.equals(otherClasseName)) {
+                Log.d("serviceIsRunningInForeground", "FOUND match");
                 if (service.foreground) {
-                    Log.d(PACKAGE_NAME, "serviceIsRunningInForeground: true");
+                    Log.d(TAG, "Service is running foreground");
                     return true;
-                } else {
-                    Log.d(PACKAGE_NAME, "serviceIsRunningInForeground: false");
-                }
+                }else
+                    Log.d(TAG, "Service is NOT running foreground");
+
             }
         }
         return false;
@@ -477,8 +478,8 @@ public class StalkerTrackingService extends Service {
 //                removeLocationUpdates();
                 serviceCallback.stopTracking();
                 updateChronometerBase(-1, -1);
-                currentOrganization=null;
-                currentPlace=null;
+                currentOrganization = null;
+                currentPlace = null;
             }
 
         }
@@ -508,11 +509,11 @@ public class StalkerTrackingService extends Service {
                         sendSignal(authSignal.setEntered(true).setDateTime(getFormattedTime()));
                     }
                     updateChronometerBase(currentPlace.getId(), SystemClock.elapsedRealtime());
-                }else if (organization.isLogged()!= currentOrganization.isLogged()){
-                    if (organization.isLogged()){
+                } else if (organization.isLogged() != currentOrganization.isLogged()) {
+                    if (organization.isLogged()) {
                         sendSignal(anonymousSignal.setEntered(false).setDateTime(getFormattedTime()));
                         sendSignal(authSignal.setEntered(true).setDateTime(getFormattedTime()));
-                    }else{
+                    } else {
                         sendSignal(authSignal.setEntered(false).setDateTime(getFormattedTime()));
                         sendSignal(anonymousSignal.setEntered(true).setDateTime(getFormattedTime()));
                     }
@@ -564,10 +565,11 @@ public class StalkerTrackingService extends Service {
             PolygonPlace place = opti.get();
 
             Optional<Organization> optionalOrganization = organizations.stream().filter(organization -> organization.getId() == place.getOrgId()).findFirst();
-            Organization newOrganization = null;
+            Organization newOrganization;
             if (optionalOrganization.isPresent())
                 newOrganization = optionalOrganization.get();
-
+            else
+                return;
             if (currentPlace == null) {
 //                Log.d(TAG, "onLocationsChanged: prevPlace ==null");
                 currentPlace = place;
@@ -600,9 +602,8 @@ public class StalkerTrackingService extends Service {
                 sendSignal(trackSignal);
                 currentPlace = place;
                 updateChronometerBase(currentPlace.getId(), SystemClock.elapsedRealtime());
-            } else {
-
             }
+//            else {}
             mLocationRequest = creator.getNewRequest(-1);
             //todo sarebbero da decommentare le due righe sotto, la looper si rompe, e non funziona
 
@@ -653,7 +654,7 @@ public class StalkerTrackingService extends Service {
 //            Log.d(TAG, "onNewLocation: calling back");
             serviceCallback.onNewLocation(getDisplayMessage(currentOrganization, currentPlace));
         }
-        displayNotifica(getDisplayMessage(currentOrganization, currentPlace));
+        displayNotification(getDisplayMessage(currentOrganization, currentPlace));
 //            Toast.makeText(context, "new Location", Toast.LENGTH_SHORT).show();
     }
 
@@ -678,10 +679,11 @@ public class StalkerTrackingService extends Service {
         return getString(R.string.nessun_organization_ti_sta_tracciando);
     }
 
-    private void displayNotifica(String message) {
+    private void displayNotification(String message) {
         Log.d(PACKAGE_NAME, "displayNotifica: " + serviceIsRunningInForeground(this));
-        if (serviceIsRunningInForeground(this) || true) {
-            mNotificationManager.notify(NOTIFICATION_ID, stalkerNotificationManager.getNotification(message));
+        if (serviceIsRunningInForeground(this)) {
+            stalkerNotificationManager.notify(stalkerNotificationManager.getNotification(message));
+//            mNotificationManager.notify(NOTIFICATION_ID, );
 //            mNotificationManager.notify(NOTIFICATION_ID,getNotification());
         }
 
@@ -710,13 +712,13 @@ public class StalkerTrackingService extends Service {
     public static final String CHRONOMETER_KEY = "chronometer_key";
     public static final String LAST_PLACE_ID = "last_place_id";
 
-    public void updateChronometerBase(long placeId,long time) {
+    public void updateChronometerBase(long placeId, long time) {
         Log.d("TAG", "updateChronometerBase: " + time);
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         long lastPlaceId = sharedPreferences.getLong(LAST_PLACE_ID, -1);
 
-        if (placeId==-1){
-            sharedPreferences.edit().putLong(LAST_PLACE_ID,placeId).putLong(CHRONOMETER_KEY,-1).apply();
+        if (placeId == -1) {
+            sharedPreferences.edit().putLong(LAST_PLACE_ID, placeId).putLong(CHRONOMETER_KEY, -1).apply();
             return;
         }
 //      todo decidere se va bene così

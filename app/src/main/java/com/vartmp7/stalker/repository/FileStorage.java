@@ -205,7 +205,6 @@
 package com.vartmp7.stalker.repository;
 
 import android.content.Context;
-import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -213,7 +212,6 @@ import androidx.lifecycle.MutableLiveData;
 import com.google.gson.Gson;
 import com.vartmp7.stalker.datamodel.Organization;
 import com.vartmp7.stalker.datamodel.OrganizationResponse;
-import com.vartmp7.stalker.datamodel.TrackRecord;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -234,7 +232,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 
 public class FileStorage implements Storage {
-    private static final String TAG = "com.vartmp7.stalker.repository.FileOrganizationsLocalSource";
+    private static final String TAG = "com.vartmp7.stalker.repository.FileStorage";
     private String fileName;
     private Context context;
     private Gson gson;
@@ -394,7 +392,7 @@ public class FileStorage implements Storage {
                     // fixme quest'istruzione delle volte, genera un concurrentModificationException
                     String l = new Gson().toJson(new OrganizationResponse().setOrganizations(orgs));
 //                    Log.d(TAG, "saving data:");
-                    orgs.forEach(o -> Log.d(TAG, "save org:" + o.getId()));
+//                    orgs.forEach(o -> Log.d(TAG, "save org:" + o.getId()));
                     writer.write(l);
                     writer.flush();
                     writer.close();

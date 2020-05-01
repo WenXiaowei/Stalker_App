@@ -210,6 +210,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 
@@ -219,54 +220,44 @@ import com.vartmp7.stalker.Tools;
 
 import org.jetbrains.annotations.NotNull;
 
-import static android.provider.ContactsContract.Directory.PACKAGE_NAME;
-
 
 public class StalkerNotificationManager {
-
+    private static  final String PACKAGE_NAME="com.vartmp7.stalker.component.StalkerTrackingService";
     private static final String NOTIFICATION_CHANNEL_ID = "channel_01";
-    public static final String EXTRA_LOCATION = PACKAGE_NAME + ".location";
     static final String EXTRA_STARTED_FROM_NOTIFICATION = PACKAGE_NAME +
             ".started_from_notification";
     static final int NOTIFICATION_ID = 12345678;
     private Context context;
-
+    private NotificationManager manager;
     StalkerNotificationManager(@NotNull Context context, NotificationManager manager) {
+        this.context =context;
+        this.manager = manager;
         CharSequence name = context.getString(R.string.app_name);
         NotificationChannel mChannel =
                 new NotificationChannel(NOTIFICATION_CHANNEL_ID, name, NotificationManager.IMPORTANCE_DEFAULT);
 
-        this.context =context;
         // Set the Notification Channel for the Notification Manager.
-        manager.createNotificationChannel(mChannel);
+        this.manager.createNotificationChannel(mChannel);
+
+    }
+    public void notify(@NotNull Notification notification){
+
+        manager.notify(NOTIFICATION_ID,notification);
     }
 
     Notification getNotification(String text) {
         Intent intent = new Intent(context, StalkerTrackingService.class);
-
-
-        // Extra to help us figure out if we arrived in onStartCommand via the notification or not.
         intent.putExtra(EXTRA_STARTED_FROM_NOTIFICATION, true);
-
-        // The PendingIntent that leads to a call to onStartCommand() in this service.
-//        PendingIntent servicePendingIntent = PendingIntent.getService(this, 0, intent,
-//                PendingIntent.FLAG_UPDATE_CURRENT);
-//
-        // The PendingIntent to launch activity.
         PendingIntent activityPendingIntent = PendingIntent.getActivity(context, 0,
                 new Intent(context, MainActivity.class), 0);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "")
                 .addAction(R.drawable.icon_stalker, context.getString(R.string.apri_app),
                         activityPendingIntent)
-//                .addAction(R.drawable.icon_stalker, getString(R.string.stop),
-//                        servicePendingIntent)
-//                .setContentText(text)
                 .setContentTitle(Tools.getLocationTitle(context))
                 .setOngoing(true)
                 .setPriority(Notification.BADGE_ICON_LARGE)
                 .setSmallIcon(R.mipmap.ic_launcher)
-//                .setTicker(text)
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(text))
                 .setWhen(System.currentTimeMillis());
 
