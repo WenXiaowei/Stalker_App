@@ -205,7 +205,6 @@
 package com.vartmp7.stalker;
 
 import android.content.Context;
-import android.location.Location;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
