@@ -242,13 +242,6 @@ public class OrganizationsFragment extends Fragment implements SwipeRefreshLayou
 
     }
 
-    private String getUserId() {
-        if (FirebaseAuth.getInstance().getCurrentUser() != null)
-            return FirebaseAuth.getInstance().getCurrentUser().getUid();
-        if (GoogleSignIn.getLastSignedInAccount(requireContext()) != null)
-            return GoogleSignIn.getLastSignedInAccount(requireContext()).getId();
-        return "";
-    }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {

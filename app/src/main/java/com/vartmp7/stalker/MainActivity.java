@@ -365,7 +365,7 @@ public class MainActivity extends AppCompatActivity {
             inflater.inflate(R.menu.setting_menu, menu);
             //todo capire come disattivare la scelta per cambiare password!
             if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-                if ((FirebaseAuth.getInstance().getCurrentUser().getProviderData().size() >= 2 &&
+                if (!(FirebaseAuth.getInstance().getCurrentUser().getProviderData().size() >= 2 &&
                         FirebaseAuth.getInstance().getCurrentUser().getProviderData().get(1).getProviderId()
                                 .equals(EmailAuthProvider.EMAIL_PASSWORD_SIGN_IN_METHOD))) {
                     menu.removeItem(R.id.menuModificaDati);
@@ -374,7 +374,7 @@ public class MainActivity extends AppCompatActivity {
                 }
 
             } else {
-                Log.d(TAG, "onCreateOptionsMenu: if fuori");
+                menu.removeItem(R.id.menuModificaDati);
             }
         } else {
             inflater.inflate(R.menu.setting_menu_no_log, menu);
