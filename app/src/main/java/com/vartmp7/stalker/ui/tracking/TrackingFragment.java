@@ -338,7 +338,9 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             StalkerTrackingService.LocalBinder binder = (StalkerTrackingService.LocalBinder) service;
+            Log.d(TAG, "onRebind ");
             mService = binder.getService();
+            mService.requestLocationUpdates();
             mService.updateOrganizations(organizationToTrack);//fixme maybe useless, buggoso
             mService.setCallback(callback);
             mBound = true;

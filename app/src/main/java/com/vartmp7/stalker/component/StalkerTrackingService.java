@@ -393,13 +393,13 @@ public class StalkerTrackingService extends Service {
 //        Log.i(TAG, "Requesting location updates");
         Tools.setRequestingLocationUpdates(this, true);
         startService(new Intent(getApplicationContext(), StalkerTrackingService.class));
-        try {
-            mFusedLocationClient.requestLocationUpdates(mLocationRequest,
-                    mLocationCallback, Looper.myLooper());
-        } catch (SecurityException unlikely) {
-            Tools.setRequestingLocationUpdates(this, false);
-//            Log.e(TAG, "Lost location permission. Could not request updates. " + unlikely);
-        }
+//        try {
+//            mFusedLocationClient.requestLocationUpdates(mLocationRequest,
+//                    mLocationCallback, Looper.myLooper());
+//        } catch (SecurityException unlikely) {
+//            Tools.setRequestingLocationUpdates(this, false);
+////            Log.e(TAG, "Lost location permission. Could not request updates. " + unlikely);
+//        }
     }
 
     public void removeLocationUpdates() {
