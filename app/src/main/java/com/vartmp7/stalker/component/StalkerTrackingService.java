@@ -477,6 +477,8 @@ public class StalkerTrackingService extends Service {
 //                removeLocationUpdates();
                 serviceCallback.stopTracking();
                 updateChronometerBase(-1, -1);
+                currentOrganization=null;
+                currentPlace=null;
             }
 
         }
@@ -705,9 +707,13 @@ public class StalkerTrackingService extends Service {
         Log.d("TAG", "updateChronometerBase: " + time);
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         long lastPlaceId = sharedPreferences.getLong(LAST_PLACE_ID, -1);
-        if (lastPlaceId != placeId || placeId==-1) {
-            sharedPreferences.edit().putLong(LAST_PLACE_ID, placeId).putLong(CHRONOMETER_KEY, time).apply();
-        } else {
+
+        if (placeId==-1){
+            sharedPreferences.edit().putLong(LAST_PLACE_ID,placeId).putLong(CHRONOMETER_KEY,-1).apply();
+            return;
+        }
+
+        if (lastPlaceId != placeId) {
             sharedPreferences.edit().putLong(LAST_PLACE_ID, placeId).putLong(CHRONOMETER_KEY, time).apply();
         }
     }

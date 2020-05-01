@@ -353,7 +353,7 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
         public void onServiceConnected(ComponentName name, IBinder service) {
             StalkerTrackingService.LocalBinder binder = (StalkerTrackingService.LocalBinder) service;
             mService = binder.getService();
-            mService.updateOrganizations(organizationToTrack);
+            mService.updateOrganizations(organizationToTrack);//fixme maybe useless, buggoso
             mService.setCallback(callback);
             mBound = true;
         }
@@ -444,6 +444,7 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
                 .getOrganizations()
                 .getValue()
                 .stream()
+                .filter(Organization::isTracking)
                 .filter(Organization::isTrackingActive)
                 .collect(Collectors.toList());
         if (mService != null)
@@ -631,7 +632,7 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
             mRequestLocationUpdatesButton.setEnabled(true);
             mRemoveLocationUpdatesButton.setEnabled(false);
         }
-        updateOrganizationToTrack();
+//        updateOrganizationToTrack();
     }
 
 
@@ -657,10 +658,6 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
                     fragment.tvCurrentStatus.setText(R.string.nessun_organizzazione_ti_sta_stalkerando);
                     break;
                 case TRACKING_NOT_IN_PLACE_MSG_CODE:
-                    SharedPreferences defaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(reference.get().requireContext());
-                    defaultSharedPreferences.edit()
-                            .putLong(StalkerTrackingService.LAST_PLACE_ID, -1)
-                            .putLong(StalkerTrackingService.CHRONOMETER_KEY, -1).apply();
                     fragment.tvCurrentStatus.setText(R.string.non_presente_nei_luoghi_tracciati);
                 default:
             }
