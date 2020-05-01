@@ -207,6 +207,9 @@
     <item
         android:id="@+id/menuModificaDati"
         android:title="@string/modifica_dati" />
+
+    <item android:id="@+id/menuReportBug"
+        android:title="@string/segnala_bug"/>
     <item
         android:id="@+id/menuLogout"
         android:title="@string/logout" />

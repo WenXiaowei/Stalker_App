@@ -213,7 +213,9 @@
 package com.vartmp7.stalker;
 
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.res.Resources;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
@@ -328,7 +330,6 @@ public class MainActivity extends AppCompatActivity {
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
 
-
     }
 
     @Override
@@ -346,6 +347,7 @@ public class MainActivity extends AppCompatActivity {
         builder.setMessage(msg)
                 .setPositiveButton(R.string.ok, (dialog, which) -> {
                     startActivity(new Intent(action));
+                    dialog.dismiss();
                 })
                 .setTitle(R.string.attenzione)
                 .setNegativeButton(R.string.esci, (dialog, which) -> {
@@ -397,11 +399,24 @@ public class MainActivity extends AppCompatActivity {
             case R.id.menuModificaDati:
                 showEditInfoDialog();
                 break;
+            case R.id.menuReportBug:
+                segnalaBug();
+                break;
             default:
 
         }
         return super.onOptionsItemSelected(item);
     }
+
+    private void segnalaBug() {
+        Intent mailIntent = new Intent(Intent.ACTION_SEND);
+        mailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{getString(R.string.mail_gruppo)});
+        mailIntent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.segnala_bug));
+        mailIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.descrizione_bug));
+        mailIntent.setType("message/rfc822");
+        startActivity(Intent.createChooser(mailIntent,getString(R.string.choose_mail_client)));
+    }
+
 
     private void showEditInfoDialog() {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();

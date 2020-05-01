@@ -315,4 +315,8 @@
     <string name="devi_attivare_connessione">Devi attivare la connesione!</string>
     <string name="esci">Esci</string>
     <string name="organizazzioni_private_no_loogato">Ci sono delle organizzazioni private presso cui non hai fatto login!</string>
+    <string name="segnala_bug">Segnalazione bug</string>
+    <string name="descrizione_bug">Descrizione bug: </string>
+    <string name="mail_gruppo">vartmp7@gmail.com</string>
+    <string name="choose_mail_client">Scegli una app di email:</string>
 </resources>
