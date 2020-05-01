@@ -207,9 +207,10 @@ package com.vartmp7.stalker.repository;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 
-import com.vartmp7.stalker.component.NotLogged;
 import com.vartmp7.stalker.datamodel.Organization;
 import com.vartmp7.stalker.datamodel.TrackRecord;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -278,20 +279,20 @@ public class OrganizationsRepository {
         return organizationFavoritesSource.getFavoriteOrganizationID();
     }
 
-    public void addFavorite(Organization org) throws NotLogged {
-        if (organizationFavoritesSource != null) {
+    public void addFavorite(@NotNull Organization org) {
+
             org.setFavorite(true);
             updateOrganization(org);
             organizationFavoritesSource.addOrganization(org.getId());
-        } else throw new NotLogged();
+
     }
 
-    public void removeFavorite(Organization org) throws NotLogged {
-        if (organizationFavoritesSource != null) {
+    public void removeFavorite(@NotNull Organization org) {
+
             org.setFavorite(false);
             updateOrganization(org);
             organizationFavoritesSource.removeOrganization(org.getId());
-        } else throw new NotLogged();
+
     }
 
     private final Observer<List<Organization>> observer = new Observer<List<Organization>>() {

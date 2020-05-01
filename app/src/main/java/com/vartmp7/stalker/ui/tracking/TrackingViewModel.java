@@ -207,7 +207,6 @@ package com.vartmp7.stalker.ui.tracking;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.vartmp7.stalker.component.NotLogged;
 import com.vartmp7.stalker.datamodel.Organization;
 import com.vartmp7.stalker.repository.OrganizationsRepository;
 
@@ -254,14 +253,14 @@ public class TrackingViewModel extends ViewModel {
         this.repository = repository;
     }
 
-    public void removeFavorite(Organization o) throws NotLogged {
+    public void removeFavorite(Organization o) {
         repository.removeFavorite(o);
     }
     public void updateOrganizations(List<Organization> list){
         repository.updateOrganizations(list);
     }
 
-    public void addFavorite(Organization o) throws NotLogged {
+    public void addFavorite(Organization o)  {
         repository.addFavorite(o);
     }
 

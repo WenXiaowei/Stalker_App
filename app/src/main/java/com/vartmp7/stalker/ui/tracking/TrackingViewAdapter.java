@@ -206,8 +206,6 @@ package com.vartmp7.stalker.ui.tracking;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -230,15 +228,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
-import com.unboundid.ldap.sdk.LDAPException;
 import com.vartmp7.stalker.R;
-import com.vartmp7.stalker.component.NotLogged;
-import com.vartmp7.stalker.component.StalkerLDAP;
+import com.vartmp7.stalker.Tools;
 import com.vartmp7.stalker.datamodel.Organization;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -305,21 +300,24 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
                     }
                     break;
                 case R.id.ibtnAddToPreferiti:
-                    holder.ibtnPreferito.setImageResource(!org.isFavorite() ? R.drawable.icon_fav_si : R.drawable.icon_fav_no);
-                    RotateAnimation rotate1 = new RotateAnimation(0, 216, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-                    rotate1.setDuration(500);
-                    rotate1.setInterpolator(new LinearInterpolator());
-                    holder.ibtnPreferito.startAnimation(rotate1);
+
 //                    org.setPreferito(!org.isPreferito());
+                    if (Tools.isUserLogged(context)){
+                        holder.ibtnPreferito.setImageResource(!org.isFavorite() ? R.drawable.icon_fav_si : R.drawable.icon_fav_no);
+                        RotateAnimation rotate1 = new RotateAnimation(0, 216, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+                        rotate1.setDuration(500);
+                        rotate1.setInterpolator(new LinearInterpolator());
+                        holder.ibtnPreferito.startAnimation(rotate1);
 
+                           if (org.isFavorite())
+                               viewModel.removeFavorite(org);
+                           else viewModel.addFavorite(org);
 
-                    try {
-                        if (org.isFavorite())
-                            viewModel.removeFavorite(org);
-                        else viewModel.addFavorite(org);
-                    } catch (NotLogged ex) {
+                    }else{
                         Toast.makeText(context, R.string.not_logged_yet, Toast.LENGTH_SHORT).show();
                     }
+
+
                     break;
                 case R.id.sAnonymousSwitch:
                     viewModel.updateOrganization(org.setAnonymous(holder.sAnonimo.isChecked()));
