@@ -525,7 +525,7 @@ public class StalkerTrackingService extends Service {
                 sendSignal(trackSignal);
                 if (serviceCallback != null)
                     serviceCallback.notInAnyPlace();
-                updateChronometerBase(trackSignal.getIdPlace(), SystemClock.elapsedRealtime());
+                updateChronometerBase(-1, -1);
             }
         } else {
             if (serviceCallback != null)
