@@ -477,7 +477,9 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
 
         mRequestLocationUpdatesButton.setOnClickListener(view1 -> {
             if (checkPermissions()){
-                trackingViewModel.activeAllTrackingOrganization(true);
+                if (trackingViewModel.activeAllTrackingOrganization(true)){
+                    Toast.makeText(requireContext(), R.string.organizazzioni_private_no_loogato, Toast.LENGTH_LONG).show();
+                }
                 tvCurrentStatus.setText(R.string.initializing_tracking);
             }else{
                 requestPermissions();
@@ -572,7 +574,9 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
 //                Log.i(TAG, "User interaction was cancelled.");
             } else if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // Permission was granted.
-                trackingViewModel.activeAllTrackingOrganization(true);
+                if (trackingViewModel.activeAllTrackingOrganization(true))
+                    Toast.makeText(requireContext(), R.string.organizazzioni_private_no_loogato, Toast.LENGTH_LONG).show();
+
 //                mService.updateOrganizations(organizationToTrack);
 //                mService.requestLocationUpdates();
             } else {

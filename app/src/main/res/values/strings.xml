@@ -314,4 +314,5 @@
     <string name="devi_attivare_gps">Devi attivare il GPS!</string>
     <string name="devi_attivare_connessione">Devi attivare la connesione!</string>
     <string name="esci">Esci</string>
+    <string name="organizazzioni_private_no_loogato">Ci sono delle organizzazioni private presso cui non hai fatto login!</string>
 </resources>

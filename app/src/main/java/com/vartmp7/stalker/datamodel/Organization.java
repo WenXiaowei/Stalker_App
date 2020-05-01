@@ -224,6 +224,9 @@ import lombok.experimental.Accessors;
  */
 public class Organization implements Serializable {
     public static final String TAG = "com.vartmp7.stalker.gsonbeans.Organizzazione";
+    public static final String BOTH= "both";
+    public static final String PUBLIC = "public";
+    public static final String PRIVATE = "private";
 
     @Getter(AccessLevel.PUBLIC)
     @Setter(AccessLevel.PUBLIC)

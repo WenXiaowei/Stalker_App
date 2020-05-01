@@ -303,12 +303,6 @@ public class RESTObtainer implements Obtainer {
 //                                .setImage_url("https://upload.wikimedia.org/wikipedia/it/thumb/5/53/Logo_Universit%C3%A0_Padova.svg/1200px-Logo_Universit%C3%A0_Padova.svg.png")
                                 .setImageUrl("https://pbs.twimg.com/profile_images/1173976802416582657/LCZXVSqH_400x400.jpg")
                                 .setPlaces(Collections.singletonList(t)),
-//                        new Organization()
-//                                .setId(count + 1)
-//                                .setName("UniPD DEI")
-//                                .setTracking(true)
-//                                .setImage_url("https://www.dei.unipd.it/sites/dei.unipd.it/files/sublogo_3.png")
-//                                .setPlaces(Collections.singletonList(t)),
                         new Organization()
                                 .setId(2)
                                 .setName("UNIPD dSeA")
@@ -319,7 +313,7 @@ public class RESTObtainer implements Obtainer {
                         new Organization()
                                 .setId(3)
                                 .setName("UNIPD DSFARM")
-                                .setType("both")
+                                .setType("private")
                                 .setTracking(true)
 //                                .setImageUrl("https://www.dsfarm.unipd.it/sites/dsfarm.unipd.it/files/sublogo_9.png")
 

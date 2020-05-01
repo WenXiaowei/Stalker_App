@@ -506,7 +506,7 @@ public class StalkerTrackingService extends Service {
                         sendSignal(anonymousSignal.setEntered(false).setDateTime(getFormattedTime()));
                         sendSignal(authSignal.setEntered(true).setDateTime(getFormattedTime()));
                     }
-                    updateChronometerBase(currentPlace.getId(),SystemClock.elapsedRealtime());
+                    updateChronometerBase(currentPlace.getId(), SystemClock.elapsedRealtime());
                 }
                 currentOrganization = new Organization(organization);
             } else {
@@ -518,17 +518,17 @@ public class StalkerTrackingService extends Service {
                 if (trackSignal.isAuthenticated()) {
                     trackSignal.setAuthenticated(true).setUsername(currentOrganization.getPersonalCn()).setPassword(currentOrganization.getLdapPassword());
                 }
-                currentOrganization=null;
-                currentPlace=null;
+                currentOrganization = null;
+                currentPlace = null;
                 sendSignal(trackSignal);
-                if (serviceCallback!=null)
+                if (serviceCallback != null)
                     serviceCallback.notInAnyPlace();
-                updateChronometerBase(trackSignal.getIdPlace(),SystemClock.elapsedRealtime());
+                updateChronometerBase(trackSignal.getIdPlace(), SystemClock.elapsedRealtime());
             }
         } else {
             if (serviceCallback != null)
                 serviceCallback.notInAnyPlace();
-            if (mLocation!=null){
+            if (mLocation != null) {
                 Coordinate coordinate = new Coordinate(mLocation.getLatitude(), mLocation.getLongitude());
                 onLocationsChanged(coordinate);
             }
@@ -568,7 +568,8 @@ public class StalkerTrackingService extends Service {
                 if (!currentOrganization.isAnonymous() && currentOrganization.isLogged())
                     trackSignal.setUsername(currentOrganization.getPersonalCn())
                             .setPassword(currentOrganization.getLdapPassword());
-
+                if (serviceCallback != null)
+                    serviceCallback.onNewLocation(getDisplayMessage(currentOrganization, currentPlace));
                 sendSignal(trackSignal);
                 updateChronometerBase(currentPlace.getId(), SystemClock.elapsedRealtime());
             } else if (currentPlace.getId() != place.getId()) {
@@ -601,7 +602,7 @@ public class StalkerTrackingService extends Service {
             if (currentPlace != null) {
                 Log.d(TAG, "onLocationsChanged: opti.isPresent = false");
                 trackSignal.setEntered(false)
-                        .setAuthenticated(!currentOrganization.isAnonymous()&& currentOrganization.isLogged())
+                        .setAuthenticated(!currentOrganization.isAnonymous() && currentOrganization.isLogged())
                         .setIdOrganization(currentOrganization.getId())
                         .setIdPlace(currentPlace.getId());
                 if (!currentOrganization.isAnonymous() && currentOrganization.isLogged())
@@ -704,7 +705,9 @@ public class StalkerTrackingService extends Service {
         Log.d("TAG", "updateChronometerBase: " + time);
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         long lastPlaceId = sharedPreferences.getLong(LAST_PLACE_ID, -1);
-        if (lastPlaceId != placeId) {
+        if (lastPlaceId != placeId || placeId==-1) {
+            sharedPreferences.edit().putLong(LAST_PLACE_ID, placeId).putLong(CHRONOMETER_KEY, time).apply();
+        } else {
             sharedPreferences.edit().putLong(LAST_PLACE_ID, placeId).putLong(CHRONOMETER_KEY, time).apply();
         }
     }
@@ -716,37 +719,5 @@ public class StalkerTrackingService extends Service {
 
     }
 
-    private Notification getNotification() {
-        Intent intent = new Intent(this, StalkerTrackingService.class);
-
-//        CharSequence text = Utils.getLocationText(mLocation);
-
-        // Extra to help us figure out if we arrived in onStartCommand via the notification or not.
-        intent.putExtra(EXTRA_STARTED_FROM_NOTIFICATION, true);
-
-        // The PendingIntent that leads to a call to onStartCommand() in this service.
-        PendingIntent servicePendingIntent = PendingIntent.getService(this, 0, intent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
-
-        // The PendingIntent to launch activity.
-        PendingIntent activityPendingIntent = PendingIntent.getActivity(this, 0,
-                new Intent(this, MainActivity.class), 0);
-
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
-//                .addAction(R.drawable.ic_launch, getString(R.string.launch_activity),
-//                        activityPendingIntent)
-//                .addAction(R.drawable.ic_cancel, getString(R.string.remove_location_updates),
-//                        servicePendingIntent)
-                .setContentText("text")
-//                .setContentTitle(Utils.getLocationTitle(this))
-                .setOngoing(true)
-                .setPriority(Notification.PRIORITY_HIGH)
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setTicker("text")
-                .setWhen(System.currentTimeMillis());
-
-
-        return builder.build();
-    }
 
 }

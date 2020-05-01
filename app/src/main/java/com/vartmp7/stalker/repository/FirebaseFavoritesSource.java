@@ -352,26 +352,6 @@ public class FirebaseFavoritesSource implements FavoritesSource {
 
                 })
                 .addOnFailureListener(e -> Log.w(TAG, "errore avvenuto rimuovendo organizzazione", e));
-/*
-        Map<String, Object> org = new HashMap<>();
-        org.put(FIELDNAME_ID,organizzazione.getId());
-        // remove a document with a generated ID
-        db.collection("utenti").document(userId).collection("organizzazioni")
-                .document(""+organizzazione.getId())
-                .delete()
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.w(TAG,"deleted with success");
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG,"failure: not deleted");
-                    }
-                });
- */
     }
 
 

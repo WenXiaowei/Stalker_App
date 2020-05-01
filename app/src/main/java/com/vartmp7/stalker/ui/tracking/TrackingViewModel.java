@@ -212,6 +212,7 @@ import com.vartmp7.stalker.datamodel.Organization;
 import com.vartmp7.stalker.repository.OrganizationsRepository;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import lombok.AccessLevel;
@@ -235,10 +236,18 @@ public class TrackingViewModel extends ViewModel {
         repository.updateOrganization(o);
     }
 
-    public void activeAllTrackingOrganization(boolean active){
+    public boolean activeAllTrackingOrganization(boolean active){
         List<Organization> l=repository.getOrganizations().getValue().stream().filter(Organization::isTracking).collect(Collectors.toList());
-        l.forEach(organizzazione -> organizzazione.setTrackingActive(active));
+        AtomicBoolean toReturn = new AtomicBoolean(false);
+        l.forEach(organizzazione ->{
+            if (organizzazione.isLogged()||!organizzazione.getType().equalsIgnoreCase(Organization.PRIVATE)){
+                organizzazione.setTrackingActive(active);
+            }else{
+                toReturn.set(true);
+            }
+        } );
         repository.updateOrganizations(l);
+        return toReturn.get();
     }
 
     public void init(OrganizationsRepository repository) {

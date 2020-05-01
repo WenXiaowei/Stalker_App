@@ -296,11 +296,12 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
                     if (!org.isLogged()) {
                         showLDAPLoginDialog((Button) v, holder.sAnonimo, org);
                     } else {
-                        org.setLogged(false);
+                        org.setLogged(false).setTrackingActive(false);
                         ((Button) v).setText(R.string.login_ldap);
 
                         holder.sAnonimo.setEnabled(false);
                         holder.sAnonimo.setChecked(false);
+                        notifyItemChanged(position);
                     }
                     break;
                 case R.id.ibtnAddToPreferiti:
@@ -331,18 +332,19 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
                 .setDefaultRequestOptions(new RequestOptions().error(R.drawable.logo_unipd))
                 .load(org.getImageUrl())
                 .fitCenter()
-               .into(holder.civIconOrganizzazione);
+                .into(holder.civIconOrganizzazione);
 
         holder.btnTracciami.setOnClickListener(listener);
 
-        if (org.getType().equalsIgnoreCase("public")){
+        if (org.getType().equalsIgnoreCase(Organization.PUBLIC)) {
             holder.sAnonimo.setVisibility(View.GONE);
             holder.btnLoginLDAP.setVisibility(View.GONE);
-        }else{
+        } else {
             holder.sAnonimo.setVisibility(View.VISIBLE);
             holder.btnLoginLDAP.setVisibility(View.VISIBLE);
         }
 
+        holder.tvTipoOrganizzazione.setText(org.getType());
 
 
         if (org.isTrackingActive()) {
@@ -353,7 +355,6 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
             holder.btnTracciami.setText(R.string.track_me);
         }
         if (org.getPlaces() != null) {
-
             StringBuilder builder = new StringBuilder();
             org.getPlaces().forEach(p -> builder.append(p.getName()));
             holder.tvElencoLuoghi.setText(builder.toString());
@@ -369,10 +370,13 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
 
         holder.btnLoginLDAP.setOnClickListener(listener);
         holder.btnLoginLDAP.setActivated(org.isLogged());
-        holder.btnLoginLDAP.setText(org.isLogged()? R.string.logout: R.string.login_ldap);
+        holder.btnLoginLDAP.setText(org.isLogged() ? R.string.logout : R.string.login_ldap);
 
         holder.sAnonimo.setOnClickListener(listener);
         holder.sAnonimo.setChecked(org.isAnonymous());
+
+        holder.btnTracciami.setEnabled(!org.getType().equalsIgnoreCase(Organization.PRIVATE) || org.isLogged());
+
 
     }
 
@@ -404,12 +408,13 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
 //                        ldap.bind();
 //                        ldap.search();
 //                        v.setText(R.string.logout);
-                        organization.setLogged(true);
-                        organization.setPersonalCn(etUsername.getText().toString());
-                        organization.setLdapPassword(etPassword.getText().toString());
-                        viewModel.updateOrganization(organization);
-                        anonimo.setEnabled(true);
-                        anonimo.setChecked(false);
+                    organization.setLogged(true);
+                    organization.setPersonalCn(etUsername.getText().toString());
+                    organization.setLdapPassword(etPassword.getText().toString());
+                    viewModel.updateOrganization(organization);
+                    anonimo.setEnabled(true);
+                    anonimo.setChecked(false);
+
 //                        Toast.makeText(context, R.string.logged, Toast.LENGTH_SHORT).show();
 //                    } catch (LDAPException e) {
 //                        Toast.makeText(context, R.string.connection_to_ldap_failed, Toast.LENGTH_SHORT).show();
@@ -439,7 +444,7 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
 
     static class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView tvNomeOrganizzazione, tvStatusCorrente, tvElencoLuoghi, tvIndirizzo;
+        TextView tvNomeOrganizzazione, tvElencoLuoghi, tvIndirizzo, tvTipoOrganizzazione;
         Button btnTracciami, btnLoginLDAP;
         ImageButton ibtnPreferito, ibtnTrackingStatus;
         Switch sAnonimo;
@@ -449,9 +454,10 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
 
         public ViewHolder(@NonNull View v) {
             super(v);
+            tvTipoOrganizzazione = v.findViewById(R.id.tvTipoOrganizzazione);
             tvIndirizzo = v.findViewById(R.id.tvIndirizzo);
             tvNomeOrganizzazione = v.findViewById(R.id.tvNomeOrganizzazione);
-            tvStatusCorrente = v.findViewById(R.id.tvCurrentStatus);
+
             tvElencoLuoghi = v.findViewById(R.id.tvElencoLuoghi);
             btnTracciami = v.findViewById(R.id.btnStartTracking);
             btnLoginLDAP = v.findViewById(R.id.btnLoginLDAP);
