@@ -292,6 +292,8 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
                         showLDAPLoginDialog((Button) v, holder.sAnonimo, org);
                     } else {
                         org.setLogged(false).setAnonymous(false);
+                        if (org.getType().equalsIgnoreCase(Organization.PRIVATE))
+                            org.setTrackingActive(false);
                         ((Button) v).setText(R.string.login_ldap);
                         viewModel.updateOrganization(org);
                         holder.sAnonimo.setEnabled(false);

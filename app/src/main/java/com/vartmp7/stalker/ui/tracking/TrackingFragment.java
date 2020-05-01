@@ -394,32 +394,32 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
             }
         }).attachToRecyclerView(recyclerView);
 
-            new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
-                @Override
-                public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
-                    return false;
-                }
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
 
-                @Override
-                public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                    Organization o = mAdapter.getOrganizationAt(viewHolder.getAdapterPosition());
-                    int msg;
-                    if (Tools.isUserLogged(requireContext())) {
-                        if (o.isFavorite()) {
-                            mAdapter.notifyItemChanged(viewHolder.getAdapterPosition());
-                            trackingViewModel.removeFavorite(o);
-                        }
-
-                        msg = o.isFavorite() ? R.string.organizzazione_added_to_favorite :
-                                R.string.organizzazione_removed_from_favorite;
-                    }else{
-                        msg =R.string.devi_loggarti;
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                Organization o = mAdapter.getOrganizationAt(viewHolder.getAdapterPosition());
+                int msg;
+                if (Tools.isUserLogged(requireContext())) {
+                    if (o.isFavorite()) {
+                        mAdapter.notifyItemChanged(viewHolder.getAdapterPosition());
+                        trackingViewModel.removeFavorite(o);
                     }
 
-
-                    Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show();
+                    msg = o.isFavorite() ? R.string.organizzazione_added_to_favorite :
+                            R.string.organizzazione_removed_from_favorite;
+                } else {
+                    msg = R.string.devi_loggarti;
                 }
-            }).attachToRecyclerView(recyclerView);
+
+
+                Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show();
+            }
+        }).attachToRecyclerView(recyclerView);
 
 
         return root;
