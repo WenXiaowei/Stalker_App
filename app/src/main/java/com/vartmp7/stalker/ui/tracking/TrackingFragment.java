@@ -205,16 +205,12 @@
 package com.vartmp7.stalker.ui.tracking;
 
 import android.Manifest;
-import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.location.Location;
-import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -246,26 +242,15 @@ import com.vartmp7.stalker.BuildConfig;
 import com.vartmp7.stalker.MainActivity;
 import com.vartmp7.stalker.R;
 import com.vartmp7.stalker.Tools;
-import com.vartmp7.stalker.component.NotLogged;
 import com.vartmp7.stalker.component.StalkerServiceCallback;
 import com.vartmp7.stalker.component.StalkerTrackingService;
 import com.vartmp7.stalker.datamodel.Organization;
-import com.vartmp7.stalker.datamodel.PolygonPlace;
-import com.vartmp7.stalker.datamodel.placecomponent.Coordinate;
-import com.vartmp7.stalker.datamodel.placecomponent.Line;
-import com.vartmp7.stalker.repository.RestApiService;
 
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
-
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 
 /**
@@ -294,6 +279,7 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
         public void stopTracking() {
             handler.sendEmptyMessage(TRACKING_STOP_MSG_CODE);
         }
+
         @Override
         public void onNewLocation(@NotNull String message) {
             Message msg = new Message();
@@ -407,7 +393,7 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
                 Toast.makeText(requireContext(), R.string.organizzazione_rimossa, Toast.LENGTH_SHORT).show();
             }
         }).attachToRecyclerView(recyclerView);
-        if (Tools.isUserLogged(requireContext())) {
+
             new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
                 @Override
                 public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
@@ -418,19 +404,23 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
                 public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                     Organization o = mAdapter.getOrganizationAt(viewHolder.getAdapterPosition());
                     int msg;
+                    if (Tools.isUserLogged(requireContext())) {
+                        if (o.isFavorite()) {
+                            mAdapter.notifyItemChanged(viewHolder.getAdapterPosition());
+                            trackingViewModel.removeFavorite(o);
+                        }
 
-                    if (o.isFavorite()) {
-                        mAdapter.notifyItemChanged(viewHolder.getAdapterPosition());
-                        trackingViewModel.removeFavorite(o);
+                        msg = o.isFavorite() ? R.string.organizzazione_added_to_favorite :
+                                R.string.organizzazione_removed_from_favorite;
+                    }else{
+                        msg =R.string.devi_loggarti;
                     }
 
-                    msg = o.isFavorite() ? R.string.organizzazione_added_to_favorite :
-                            R.string.organizzazione_removed_from_favorite;
 
                     Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show();
                 }
             }).attachToRecyclerView(recyclerView);
-        }
+
 
         return root;
     }
@@ -452,15 +442,15 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
         mAdapter.setList(organizationsReadyToTrack);
         organizationToTrack = organizationsReadyToTrack.stream().filter(Organization::isTrackingActive).collect(Collectors.toList());
 
-        if (mService != null){
+        if (mService != null) {
             mService.updateOrganizations(organizationToTrack);
         }
         if (organizationsReadyToTrack.stream().anyMatch(Organization::isTrackingActive))
-            Tools.setRequestingLocationUpdates(requireContext(),true);
+            Tools.setRequestingLocationUpdates(requireContext(), true);
         else
-            Tools.setRequestingLocationUpdates(requireContext(),false);
+            Tools.setRequestingLocationUpdates(requireContext(), false);
 
-        if (list.stream().anyMatch(Organization::isTrackingActive)&& mService==null)
+        if (list.stream().anyMatch(Organization::isTrackingActive) && mService == null)
             requireContext().bindService(new Intent(requireContext(), StalkerTrackingService.class), mServiceConnection,
                     Context.BIND_AUTO_CREATE);
 
@@ -473,12 +463,12 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
         super.onViewCreated(view, savedInstanceState);
 
         mRequestLocationUpdatesButton.setOnClickListener(view1 -> {
-            if (checkPermissions()){
-                if (trackingViewModel.activeAllTrackingOrganization(true)){
+            if (checkPermissions()) {
+                if (trackingViewModel.activeAllTrackingOrganization(true)) {
                     Toast.makeText(requireContext(), R.string.organizazzioni_private_no_loogato, Toast.LENGTH_LONG).show();
                 }
                 tvCurrentStatus.setText(R.string.initializing_tracking);
-            }else{
+            } else {
                 requestPermissions();
             }
         });
