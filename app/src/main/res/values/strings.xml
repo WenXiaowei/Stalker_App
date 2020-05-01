@@ -232,7 +232,6 @@
     <string name="tipo_organizzazione">Tipo Organizzazione: </string>
     <string name="n_d">N.D.</string>
     <string name="nessun_luogo_tracciabile_per_quest_organizzazione">Nessun luogo tracciabile per quest\'organization</string>
-    <string name="attualmente_sei_in">Attualmente sei in:</string>
     <string name="organizzazione_added_to_favorite">Organizzazione aggiunta ai preferiti!</string>
     <string name="organizzazione_removed_from_favorite">Organizzazione rimosso dai preferiti</string>
     <string name="tracking_terminated">Tracciamento terminato!</string>
@@ -295,4 +294,5 @@
     <string name="descrizione_bug">Descrizione bug: </string>
     <string name="mail_gruppo">vartmp7@gmail.com</string>
     <string name="choose_mail_client">Scegli una app di email:</string>
+    <string name="posizione_attuale">Posizione attuale</string>
 </resources>

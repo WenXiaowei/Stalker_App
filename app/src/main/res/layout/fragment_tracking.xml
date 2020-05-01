@@ -220,7 +220,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/attualmente_sei_in"
+            android:text="@string/posizione_attuale"
             android:textAlignment="center"
             android:textSize="25sp" />
 
@@ -240,15 +240,17 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/tempo_trascorso"/>
+                    android:text="@string/tempo_trascorso" />
 
                 <Chronometer
+                    android:id="@+id/tvTimer"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/tvTimer"/>
+                    android:layout_gravity="center_horizontal" />
             </LinearLayout>
 
         </LinearLayout>
@@ -265,19 +267,19 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="5dp"
-            android:textColor="@color/white"
             android:layout_weight="1"
             android:background="@drawable/refresh_btn_style"
-            android:text="@string/avvia_tutti" />
+            android:text="@string/avvia_tutti"
+            android:textColor="@color/white" />
 
         <Button
             android:id="@+id/btnStopAll"
             android:layout_width="0dp"
-            android:textColor="@color/white"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/refresh_btn_style"
-            android:text="@string/ferma_tutti" />
+            android:text="@string/ferma_tutti"
+            android:textColor="@color/white" />
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
