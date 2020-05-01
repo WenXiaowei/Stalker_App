@@ -226,7 +226,7 @@
 
         <TextView
             android:id="@+id/tvCurrentStatus"
-            android:layout_width="333dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/nessun_organization_ti_sta_tracciando"
             android:textSize="15sp" />
