@@ -246,7 +246,7 @@ public class FileStorage implements Storage {
         this.fileName = fileName;
         this.context = context;
         this.gson = new Gson();
-        this.mLiveOrgs = new MutableLiveData<>();
+        this.mLiveOrgs = new MutableLiveData<>(new ArrayList<>());
 //        this.mLiveOrgs = org;
     }
 

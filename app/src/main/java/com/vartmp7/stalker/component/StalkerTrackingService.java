@@ -320,6 +320,8 @@ public class StalkerTrackingService extends Service {
         HandlerThread handlerThread = new HandlerThread(TAG);
         handlerThread.start();
         mServiceHandler = new Handler(handlerThread.getLooper());
+
+
         mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
         stalkerNotificationManager = new StalkerNotificationManager(this, mNotificationManager);
@@ -342,6 +344,7 @@ public class StalkerTrackingService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
+        Log.d(TAG, "onBind: ");
         stopForeground(true);
         mChangingConfiguration = false;
         return mBinder;
@@ -366,12 +369,15 @@ public class StalkerTrackingService extends Service {
         // Called when the last client (MainActivity in case of this sample) unbinds from this
         // service. If this method is called due to a configuration change in MainActivity, we
         // do nothing. Otherwise, we make this service a foreground service.
-        Log.d(PACKAGE_NAME, "onUnbind: !mChangingConfiguration && Tools.requestingLocationUpdates(this) "
-                +(!mChangingConfiguration && Tools.requestingLocationUpdates(this)));
+        Log.d(PACKAGE_NAME, "onUnbind: !mChangingConfiguration "
+                + (!mChangingConfiguration));
+        Log.d(PACKAGE_NAME, "onUnbind:  Tools.requestingLocationUpdates(this) "
+                + (Tools.requestingLocationUpdates(this)));
         if (!mChangingConfiguration && Tools.requestingLocationUpdates(this)) {
-//            Log.i(TAG, "Starting foreground service");
+            Log.i(PACKAGE_NAME, "Starting foreground service");
             startForeground(NOTIFICATION_ID, stalkerNotificationManager.getNotification(getDisplayMessage(currentOrganization, currentPlace)));
-//            startForeground(NOTIFICATION_ID, getNotification());
+
+            //            startForeground(NOTIFICATION_ID, getNotification());
         }
         return true; // Ensures onRebind() is called when a client re-binds.
     }
@@ -388,8 +394,6 @@ public class StalkerTrackingService extends Service {
     }
 
     public void requestLocationUpdates() {
-        if (organizations.stream().noneMatch(Organization::isTrackingActive))
-            return;
 //        Log.i(TAG, "Requesting location updates");
         Tools.setRequestingLocationUpdates(this, true);
         startService(new Intent(getApplicationContext(), StalkerTrackingService.class));
@@ -436,11 +440,11 @@ public class StalkerTrackingService extends Service {
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(
                 Integer.MAX_VALUE)) {
             if (getClass().getName().equals(service.service.getClassName())) {
-
-//                Log.d(PACKAGE_NAME, "serviceIsRunningInForeground: "+getClass().getName());
-//                Log.d(PACKAGE_NAME, "serviceIsRunningInForeground: "+service.service.getClassName());
                 if (service.foreground) {
+                    Log.d(PACKAGE_NAME, "serviceIsRunningInForeground: true");
                     return true;
+                } else {
+                    Log.d(PACKAGE_NAME, "serviceIsRunningInForeground: false");
                 }
             }
         }
@@ -486,37 +490,48 @@ public class StalkerTrackingService extends Service {
                         .setIdOrganization(organization.getId())
                         .setIdPlace(currentPlace.getId());
 
-                TrackSignal clearSignal = new TrackSignal()
+                TrackSignal authSignal = new TrackSignal()
                         .setAuthenticated(true)
                         .setIdPlace(currentPlace.getId())
                         .setIdOrganization(organization.getId())
                         .setUsername(organization.getPersonalCn())
                         .setPassword(organization.getLdapPassword());
 
-                if (organization.isAnonymous() == currentOrganization.isAnonymous()) {
-                    currentOrganization = organization;
-                    if (organization.isAnonymous()) {
-                        sendSignal(clearSignal.setEntered(false));
-                        sendSignal(anonymousSignal.setEntered(true));
-                    } else {
-                        sendSignal(anonymousSignal.setEntered(false));
-                        sendSignal(clearSignal.setEntered(true));
-                    }
-                }
+                if (organization.isAnonymous() != currentOrganization.isAnonymous()) {
 
+                    if (organization.isAnonymous()) {
+                        sendSignal(authSignal.setEntered(false).setDateTime(getFormattedTime()));
+                        sendSignal(anonymousSignal.setEntered(true).setDateTime(getFormattedTime()));
+                    } else {
+                        sendSignal(anonymousSignal.setEntered(false).setDateTime(getFormattedTime()));
+                        sendSignal(authSignal.setEntered(true).setDateTime(getFormattedTime()));
+                    }
+                    updateChronometerBase(currentPlace.getId(),SystemClock.elapsedRealtime());
+                }
+                currentOrganization = new Organization(organization);
             } else {
                 TrackSignal trackSignal = new TrackSignal().setIdOrganization(currentOrganization.getId())
+                        .setEntered(false)
                         .setIdPlace(currentPlace.getId())
                         .setDateTime(getFormattedTime())
                         .setAuthenticated(currentOrganization.isLogged() && !currentOrganization.isAnonymous());
                 if (trackSignal.isAuthenticated()) {
                     trackSignal.setAuthenticated(true).setUsername(currentOrganization.getPersonalCn()).setPassword(currentOrganization.getLdapPassword());
                 }
+                currentOrganization=null;
+                currentPlace=null;
                 sendSignal(trackSignal);
+                if (serviceCallback!=null)
+                    serviceCallback.notInAnyPlace();
+                updateChronometerBase(trackSignal.getIdPlace(),SystemClock.elapsedRealtime());
             }
         } else {
             if (serviceCallback != null)
                 serviceCallback.notInAnyPlace();
+            if (mLocation!=null){
+                Coordinate coordinate = new Coordinate(mLocation.getLatitude(), mLocation.getLongitude());
+                onLocationsChanged(coordinate);
+            }
         }
 
     }
@@ -545,7 +560,7 @@ public class StalkerTrackingService extends Service {
             if (currentPlace == null) {
 //                Log.d(TAG, "onLocationsChanged: prevPlace ==null");
                 currentPlace = place;
-                currentOrganization = newOrganization;
+                currentOrganization = new Organization(newOrganization);
                 trackSignal.setIdPlace(currentPlace.getId())
                         .setEntered(true)
                         .setAuthenticated(currentOrganization.isLogged() && !currentOrganization.isAnonymous())
@@ -562,7 +577,7 @@ public class StalkerTrackingService extends Service {
                         .setIdPlace(currentPlace.getId());
                 sendSignal(trackSignal);
 
-                currentOrganization = newOrganization;
+                currentOrganization = new Organization(newOrganization);
                 trackSignal.setEntered(true)
                         .setIdPlace(place.getId())
                         .setAuthenticated(!currentOrganization.isAnonymous() && currentOrganization.isLogged())
@@ -586,7 +601,9 @@ public class StalkerTrackingService extends Service {
             if (currentPlace != null) {
                 Log.d(TAG, "onLocationsChanged: opti.isPresent = false");
                 trackSignal.setEntered(false)
-                        .setAuthenticated(!currentOrganization.isAnonymous());
+                        .setAuthenticated(!currentOrganization.isAnonymous()&& currentOrganization.isLogged())
+                        .setIdOrganization(currentOrganization.getId())
+                        .setIdPlace(currentPlace.getId());
                 if (!currentOrganization.isAnonymous() && currentOrganization.isLogged())
                     trackSignal.setUsername(currentOrganization.getPersonalCn())
                             .setPassword(currentOrganization.getLdapPassword());
@@ -623,8 +640,8 @@ public class StalkerTrackingService extends Service {
         if (serviceCallback != null) {
 //            Log.d(TAG, "onNewLocation: calling back");
             serviceCallback.onNewLocation(getDisplayMessage(currentOrganization, currentPlace));
-            displayNotifica(getDisplayMessage(currentOrganization, currentPlace));
         }
+        displayNotifica(getDisplayMessage(currentOrganization, currentPlace));
 //            Toast.makeText(context, "new Location", Toast.LENGTH_SHORT).show();
     }
 
@@ -639,26 +656,20 @@ public class StalkerTrackingService extends Service {
 
     @NotNull
     private String getDisplayMessage(Organization org, PolygonPlace place) {
-//        Optional<Organization> inOrg = organizations.stream().filter(o -> o.getId() == orgId).findAny();
-//        List<PolygonPlace> places = new ArrayList<>();
-//        organizations.stream().filter(organization -> organization.getId() == orgId).forEach(o -> places.addAll(o.getPlaces()));
-//        Optional<PolygonPlace> inPlace = places.stream().filter(p -> p.getId() == placeId).findAny();
-
         if (org != null && place != null) {
-//        if (inOrg.isPresent() && inPlace.isPresent()) {
             String orgName = org.getName();
             String placeName = place.getName();
             return getString(R.string.sei_in_tale_dei_tali, placeName, orgName);
         }
-        if (organizations.size() != 0)
+        if (organizations != null && organizations.size() != 0)
             return getString(R.string.non_presente_nei_luoghi_tracciati);
         return getString(R.string.nessun_organization_ti_sta_tracciando);
     }
 
     private void displayNotifica(String message) {
-        Log.d(PACKAGE_NAME, "displayNotifica: "+serviceIsRunningInForeground(this));
-        if (serviceIsRunningInForeground(this)) {
-            mNotificationManager.notify(NOTIFICATION_ID,stalkerNotificationManager.getNotification(message));
+        Log.d(PACKAGE_NAME, "displayNotifica: " + serviceIsRunningInForeground(this));
+        if (serviceIsRunningInForeground(this) || true) {
+            mNotificationManager.notify(NOTIFICATION_ID, stalkerNotificationManager.getNotification(message));
 //            mNotificationManager.notify(NOTIFICATION_ID,getNotification());
         }
 
@@ -666,7 +677,7 @@ public class StalkerTrackingService extends Service {
 
     private void sendSignal(@NotNull TrackSignal signal) {
 
-        //Log.d(TAG, "sendSignal() called with: signal = [" + signal + "]");
+        Log.d("SIGNAL", "sendSignal() called with: signal = [" + signal + "]");
 
         restApiService.tracking(signal.getIdOrganization(), signal.getIdPlace(), signal).enqueue(new Callback<Void>() {
             @Override
@@ -703,7 +714,9 @@ public class StalkerTrackingService extends Service {
             return StalkerTrackingService.this;
         }
 
-    }private Notification getNotification() {
+    }
+
+    private Notification getNotification() {
         Intent intent = new Intent(this, StalkerTrackingService.class);
 
 //        CharSequence text = Utils.getLocationText(mLocation);

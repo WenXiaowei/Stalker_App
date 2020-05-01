@@ -214,6 +214,7 @@ import com.vartmp7.stalker.datamodel.Organization;
 import com.vartmp7.stalker.datamodel.TrackRecord;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class OrganizationsRepository {
 
@@ -245,6 +246,12 @@ public class OrganizationsRepository {
         this.obtainer = orgsWebSource;
         this.organizationFavoritesSource = fa;
         //liveOrganizzazioni = new MediatorLiveData<>();
+        organizationFavoritesSource.getFavoriteOrganizationID().observeForever(longs -> {
+            List<Organization> value = getOrganizations().getValue();
+            List<Organization> collect = value.stream().filter(o -> longs.contains(o.getId())).collect(Collectors.toList());
+            collect.forEach(o->o.setFavorite(true));
+            updateOrganizations(collect);
+        });
     }
 
     public LiveData<List<Organization>> getOrganizations() {

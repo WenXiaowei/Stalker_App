@@ -406,7 +406,7 @@ public class FirebaseFavoritesSource implements FavoritesSource {
                             final List<Long> orgIds = (List<Long>) data.get(FIELDNAME_ORGANIZZAZIONI);
                             Log.w(TAG, "data got from firebase:");
 //                            orgIds.forEach(l->Log.d(TAG,"orgId:"+l));
-                            mutableliveDataOrgIds.setValue(orgIds);
+                            mutableliveDataOrgIds.postValue(orgIds);
                             Log.w(TAG, "id delle org preferite ottenuti correttamente");
                         }
                     } catch (ClassCastException e) {

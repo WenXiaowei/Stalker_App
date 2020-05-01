@@ -281,7 +281,7 @@ public class RESTObtainer implements Obtainer {
                 dsea.add(new Coordinate(45.411341, 11.888381));
                 dsea.add(new Coordinate(45.411284, 11.888224));
                 PolygonPlace d = new PolygonPlace();
-                d.setId(1).setName("TORRE 3C").setNumMaxPeople(10);
+                d.setId(2).setName("TORRE 3C").setNumMaxPeople(10);
                 d.setCoordinates(dsea).setOrgId(2);
 
 

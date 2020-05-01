@@ -363,6 +363,32 @@ public class Organization implements Serializable {
         return getId() == that.getId();
     }
 
+    public Organization(@NotNull Organization org) {
+        this.address=org.address;
+        this.city=org.city;
+        this.email=org.email;
+        this.id=org.id;
+        this.name=org.name;
+        this.nation=org.nation;
+        this.phoneNumber=org.phoneNumber;
+        this.postalCode=org.postalCode;
+        this.region=org.region;
+        this.type=org.type;
+        this.ldapCommonName=org.ldapCommonName;
+        this.ldapDomainComponent=org.ldapDomainComponent;
+        this.ldapPort=org.ldapPort;
+        this.ldapUrl=org.ldapUrl;
+        this.imageUrl=org.imageUrl;
+        this.places=org.places;
+        this.isFavorite=org.isFavorite;
+        this.isTracking=org.isTracking;
+        this.isLogged=org.isLogged;
+        this.isAnonymous=org.isAnonymous;
+        this.isTrackingActive=org.isTrackingActive;
+        this.personalCn=org.personalCn;
+        this.ldapPassword=org.ldapPassword;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(getId());

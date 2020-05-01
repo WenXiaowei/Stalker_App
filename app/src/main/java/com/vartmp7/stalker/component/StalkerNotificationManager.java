@@ -219,8 +219,8 @@ import com.vartmp7.stalker.Tools;
 
 import org.jetbrains.annotations.NotNull;
 
-import static android.content.Context.NOTIFICATION_SERVICE;
 import static android.provider.ContactsContract.Directory.PACKAGE_NAME;
+
 
 public class StalkerNotificationManager {
 
@@ -229,7 +229,6 @@ public class StalkerNotificationManager {
     static final String EXTRA_STARTED_FROM_NOTIFICATION = PACKAGE_NAME +
             ".started_from_notification";
     static final int NOTIFICATION_ID = 12345678;
-    private NotificationManager mNotificationManager;
     private Context context;
 
     StalkerNotificationManager(@NotNull Context context, NotificationManager manager) {
@@ -238,9 +237,8 @@ public class StalkerNotificationManager {
                 new NotificationChannel(NOTIFICATION_CHANNEL_ID, name, NotificationManager.IMPORTANCE_DEFAULT);
 
         this.context =context;
-        mNotificationManager = manager;
         // Set the Notification Channel for the Notification Manager.
-        mNotificationManager.createNotificationChannel(mChannel);
+        manager.createNotificationChannel(mChannel);
     }
 
     Notification getNotification(String text) {
