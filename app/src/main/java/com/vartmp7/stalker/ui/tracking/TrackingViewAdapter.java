@@ -296,9 +296,9 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
                     if (!org.isLogged()) {
                         showLDAPLoginDialog((Button) v, holder.sAnonimo, org);
                     } else {
-                        org.setLogged(false).setTrackingActive(false);
+                        org.setLogged(false).setAnonymous(false);
                         ((Button) v).setText(R.string.login_ldap);
-
+                        viewModel.updateOrganization(org);
                         holder.sAnonimo.setEnabled(false);
                         holder.sAnonimo.setChecked(false);
                         notifyItemChanged(position);
@@ -327,6 +327,7 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
             }
         };
 
+        holder.sAnonimo.setEnabled(org.isLogged());
 
         Glide.with(context)
                 .setDefaultRequestOptions(new RequestOptions().error(R.drawable.logo_unipd))

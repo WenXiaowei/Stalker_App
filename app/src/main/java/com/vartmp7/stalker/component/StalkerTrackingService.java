@@ -500,7 +500,6 @@ public class StalkerTrackingService extends Service {
                         .setPassword(organization.getLdapPassword());
 
                 if (organization.isAnonymous() != currentOrganization.isAnonymous()) {
-
                     if (organization.isAnonymous()) {
                         sendSignal(authSignal.setEntered(false).setDateTime(getFormattedTime()));
                         sendSignal(anonymousSignal.setEntered(true).setDateTime(getFormattedTime()));
@@ -508,6 +507,16 @@ public class StalkerTrackingService extends Service {
                         sendSignal(anonymousSignal.setEntered(false).setDateTime(getFormattedTime()));
                         sendSignal(authSignal.setEntered(true).setDateTime(getFormattedTime()));
                     }
+                    updateChronometerBase(currentPlace.getId(), SystemClock.elapsedRealtime());
+                }else if (organization.isLogged()!= currentOrganization.isLogged()){
+                    if (organization.isLogged()){
+                        sendSignal(anonymousSignal.setEntered(false).setDateTime(getFormattedTime()));
+                        sendSignal(authSignal.setEntered(true).setDateTime(getFormattedTime()));
+                    }else{
+                        sendSignal(authSignal.setEntered(false).setDateTime(getFormattedTime()));
+                        sendSignal(anonymousSignal.setEntered(true).setDateTime(getFormattedTime()));
+                    }
+
                     updateChronometerBase(currentPlace.getId(), SystemClock.elapsedRealtime());
                 }
                 currentOrganization = new Organization(organization);
@@ -701,9 +710,7 @@ public class StalkerTrackingService extends Service {
     public static final String CHRONOMETER_KEY = "chronometer_key";
     public static final String LAST_PLACE_ID = "last_place_id";
 
-    public void updateChronometerBase(
-            long placeId,
-            long time) {
+    public void updateChronometerBase(long placeId,long time) {
         Log.d("TAG", "updateChronometerBase: " + time);
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         long lastPlaceId = sharedPreferences.getLong(LAST_PLACE_ID, -1);
@@ -712,7 +719,11 @@ public class StalkerTrackingService extends Service {
             sharedPreferences.edit().putLong(LAST_PLACE_ID,placeId).putLong(CHRONOMETER_KEY,-1).apply();
             return;
         }
-
+//      todo decidere se va bene così
+        // id dell'ultimo place viene modificato solo se si cambia da un place ad un'altra,
+        // mentre se si passa da modalità loggato a non loggato, id non viene modificato,
+        // quindi il tempo di permanenza in un luogo non riparte.
+        // si potrebbe modificare in modo che riparta.
         if (lastPlaceId != placeId) {
             sharedPreferences.edit().putLong(LAST_PLACE_ID, placeId).putLong(CHRONOMETER_KEY, time).apply();
         }
