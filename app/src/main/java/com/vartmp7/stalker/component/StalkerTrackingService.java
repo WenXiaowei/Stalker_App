@@ -525,11 +525,11 @@ public class StalkerTrackingService extends Service {
                 sendSignal(trackSignal);
                 if (serviceCallback != null)
                     serviceCallback.notInAnyPlace();
-                updateChronometerBase(trackSignal.getIdPlace(), SystemClock.elapsedRealtime());
+                updateChronometerBase(-1,-1);
             }
         } else {
-            if (serviceCallback != null)
-                serviceCallback.notInAnyPlace();
+//            if (serviceCallback != null)
+//                serviceCallback.notInAnyPlace();
             if (mLocation != null) {
                 Coordinate coordinate = new Coordinate(mLocation.getLatitude(), mLocation.getLongitude());
                 onLocationsChanged(coordinate);
@@ -611,10 +611,10 @@ public class StalkerTrackingService extends Service {
                     trackSignal.setUsername(currentOrganization.getPersonalCn())
                             .setPassword(currentOrganization.getLdapPassword());
                 sendSignal(trackSignal);
-                updateChronometerBase(-1, -1);
                 currentPlace = null;
                 currentOrganization = null;
             }
+            updateChronometerBase(-1, -1);
 //            else{
 //                Log.d(TAG, "onLocationsChanged() called with: ");
 //            }
