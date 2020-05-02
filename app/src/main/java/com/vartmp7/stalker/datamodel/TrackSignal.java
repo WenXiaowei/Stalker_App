@@ -232,7 +232,15 @@ public class TrackSignal {
     @Accessors(chain = true)
     private long idPlace=0;
 
+    public static final String LDAP_V3="ldapv3";
+    public static final String GOOGLE="GOOGLE";
+    public static final String FACEBOOK="FACEBOOK";
 
+    @Setter
+    @Accessors(chain = true)
+    @Expose
+    @SerializedName(value = "auth_type")
+    private String authType=LDAP_V3;
 
     @Accessors(chain = true)
     @Expose @Setter
