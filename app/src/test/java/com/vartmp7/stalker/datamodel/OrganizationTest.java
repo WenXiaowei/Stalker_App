@@ -300,8 +300,8 @@ public class OrganizationTest {
         assertEquals(org, organization);
         assertEquals(organization.toString(), organization.toString());
         assertEquals(organization.hashCode(), organization.hashCode());
-        Organization newOrg = new Organization(org);
-        assertEquals(newOrg.toString(), org.toString());
+        Organization newOrg = new Organization(organization);
+        assertEquals(newOrg.toString(), organization.toString());
 
     }
 
