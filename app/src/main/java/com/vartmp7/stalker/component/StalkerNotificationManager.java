@@ -210,7 +210,6 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 
@@ -227,6 +226,7 @@ public class StalkerNotificationManager {
     static final String EXTRA_STARTED_FROM_NOTIFICATION = PACKAGE_NAME +
             ".started_from_notification";
     static final int NOTIFICATION_ID = 12345678;
+    public static final String GO_TO_TRACKINGFRAGMENT = "go_to_tracking_fragment";
     private Context context;
     private NotificationManager manager;
     StalkerNotificationManager(@NotNull Context context, NotificationManager manager) {
@@ -240,7 +240,7 @@ public class StalkerNotificationManager {
         this.manager.createNotificationChannel(mChannel);
 
     }
-    public void notify(@NotNull Notification notification){
+    void notify(@NotNull Notification notification){
 
         manager.notify(NOTIFICATION_ID,notification);
     }
@@ -249,8 +249,9 @@ public class StalkerNotificationManager {
         Intent intent = new Intent(context, StalkerTrackingService.class);
         intent.putExtra(EXTRA_STARTED_FROM_NOTIFICATION, true);
         PendingIntent activityPendingIntent = PendingIntent.getActivity(context, 0,
-                new Intent(context, MainActivity.class), 0);
-
+                new Intent(context, MainActivity.class)
+                        .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        .putExtra(GO_TO_TRACKINGFRAGMENT,true), 0);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "")
                 .addAction(R.drawable.icon_stalker, context.getString(R.string.apri_app),
                         activityPendingIntent)

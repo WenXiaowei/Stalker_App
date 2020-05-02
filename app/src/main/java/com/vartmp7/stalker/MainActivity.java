@@ -213,9 +213,7 @@
 package com.vartmp7.stalker;
 
 import android.content.Intent;
-import android.content.IntentSender;
 import android.content.res.Resources;
-import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
@@ -246,6 +244,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.vartmp7.stalker.component.StalkerNotificationManager;
 import com.vartmp7.stalker.datamodel.Organization;
 import com.vartmp7.stalker.repository.FavoritesSource;
 import com.vartmp7.stalker.repository.FileStorage;
@@ -284,7 +283,7 @@ public class MainActivity extends AppCompatActivity {
         them.applyStyle(R.style.AppTheme, true);
         return them;
     }
-
+    NavController navController;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -297,7 +296,7 @@ public class MainActivity extends AppCompatActivity {
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.navigation_organizations, R.id.navigation_tracking, R.id.navigation_preferiti, R.id.navigation_cronologia)
                 .build();
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        navController = Navigation.findNavController(this, R.id.nav_host_fragment);
 
 
         MutableLiveData<List<Organization>> list = new MutableLiveData<>(new ArrayList<>());
@@ -369,10 +368,7 @@ public class MainActivity extends AppCompatActivity {
                         FirebaseAuth.getInstance().getCurrentUser().getProviderData().get(1).getProviderId()
                                 .equals(EmailAuthProvider.EMAIL_PASSWORD_SIGN_IN_METHOD))) {
                     menu.removeItem(R.id.menuModificaDati);
-                } else {
-                    Log.d(TAG, "onCreateOptionsMenu: if dentro");
                 }
-
             } else {
                 menu.removeItem(R.id.menuModificaDati);
             }

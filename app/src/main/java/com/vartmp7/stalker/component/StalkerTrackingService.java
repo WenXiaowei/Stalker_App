@@ -287,7 +287,6 @@ public class StalkerTrackingService extends Service {
         mLocationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
-                Log.d(TAG, "Location call back , onLocationResult: ");
                 super.onLocationResult(locationResult);
                 onNewLocation(locationResult.getLastLocation());
             }
@@ -343,6 +342,7 @@ public class StalkerTrackingService extends Service {
         Log.d(TAG, "onBind: ");
         stopForeground(true);
         mChangingConfiguration = false;
+        lastMessage="";
         return mBinder;
     }
 
@@ -353,6 +353,7 @@ public class StalkerTrackingService extends Service {
         // service when that happens.
         Log.i(TAG, "in onRebind()");
         stopForeground(true);
+        lastMessage="";
         mChangingConfiguration = false;
         super.onRebind(intent);
     }
@@ -437,15 +438,15 @@ public class StalkerTrackingService extends Service {
                 Integer.MAX_VALUE)) {
             String className = getClass().getName();
             String otherClasseName = service.service.getClassName();
-            Log.d("serviceIsRunningInForeground", "Class name"+className);
-            Log.d("serviceIsRunningInForeground", "Other Class name"+otherClasseName);
+            //Log.d("serviceIsRunningInForeground", "Class name"+className);
+            //Log.d("serviceIsRunningInForeground", "Other Class name"+otherClasseName);
             if (className.equals(otherClasseName)) {
-                Log.d("serviceIsRunningInForeground", "FOUND match");
+              //  Log.d("serviceIsRunningInForeground", "FOUND match");
                 if (service.foreground) {
-                    Log.d(TAG, "Service is running foreground");
+                //    Log.d(TAG, "Service is running foreground");
                     return true;
-                }else
-                    Log.d(TAG, "Service is NOT running foreground");
+                }
+               // else Log.d(TAG, "Service is NOT running foreground");
 
             }
         }
@@ -634,11 +635,10 @@ public class StalkerTrackingService extends Service {
                 double distance = min.getAsDouble();
                 LocationRequest newRequest = creator.getNewRequest(distance);
 //                if (newRequest.getPriority() != mLocationRequest.getPriority()) {
-//                    mLocationRequest = creator.getNewRequest(distance);
-//                    todo sarebbero da decommentare le due righe sotto, la looper si rompe, e non funziona
+//                    mLocationRequest = newRequest;
+////                    todo sarebbero da decommentare le due righe sotto, la looper si rompe, e non funziona
 //                    mFusedLocationClient.removeLocationUpdates(mLocationCallback);
 //                    mFusedLocationClient.requestLocationUpdates(mLocationRequest,mLocationCallback,Looper.myLooper());
-
 //                }
             }
         }
@@ -646,7 +646,7 @@ public class StalkerTrackingService extends Service {
     }
 
     public void onNewLocation(@NotNull Location location) {
-        Log.d(TAG, "onNewLocation: " + location.getLongitude() + " " + location.getLatitude());
+//        Log.d("TAG", "onNewLocation: " + location.getLongitude() + " " + location.getLatitude());
         mLocation = location;
         Coordinate currentCoordinate = new Coordinate(location.getLatitude(), location.getLongitude());
         onLocationsChanged(currentCoordinate);
@@ -679,10 +679,12 @@ public class StalkerTrackingService extends Service {
         return getString(R.string.nessun_organization_ti_sta_tracciando);
     }
 
+    private String lastMessage="";
     private void displayNotification(String message) {
-        Log.d(PACKAGE_NAME, "displayNotifica: " + serviceIsRunningInForeground(this));
-        if (serviceIsRunningInForeground(this)) {
+//        Log.d(PACKAGE_NAME, "displayNotifica: " + serviceIsRunningInForeground(this));
+        if (serviceIsRunningInForeground(this) && !lastMessage.equalsIgnoreCase(message)) {
             stalkerNotificationManager.notify(stalkerNotificationManager.getNotification(message));
+            lastMessage= message;
 //            mNotificationManager.notify(NOTIFICATION_ID, );
 //            mNotificationManager.notify(NOTIFICATION_ID,getNotification());
         }
@@ -690,9 +692,7 @@ public class StalkerTrackingService extends Service {
     }
 
     private void sendSignal(@NotNull TrackSignal signal) {
-
         Log.d("SIGNAL", "sendSignal() called with: signal = [" + signal + "]");
-
         restApiService.tracking(signal.getIdOrganization(), signal.getIdPlace(), signal).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(@NotNull retrofit2.Call<Void> call, @NotNull Response<Void> response) {
@@ -713,7 +713,7 @@ public class StalkerTrackingService extends Service {
     public static final String LAST_PLACE_ID = "last_place_id";
 
     public void updateChronometerBase(long placeId, long time) {
-        Log.d("TAG", "updateChronometerBase: " + time);
+//        Log.d("TAG", "updateChronometerBase: " + time);
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         long lastPlaceId = sharedPreferences.getLong(LAST_PLACE_ID, -1);
 
