@@ -211,7 +211,7 @@ import com.vartmp7.stalker.datamodel.Organization;
 import com.vartmp7.stalker.datamodel.OrganizationResponse;
 import com.vartmp7.stalker.datamodel.TrackHistory;
 import com.vartmp7.stalker.datamodel.TrackRecord;
-import com.vartmp7.stalker.datamodel.TrackSignal;
+import com.vartmp7.stalker.datamodel.TrackRequest;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -330,22 +330,23 @@ public class RESTObtainer implements Obtainer {
     @Override
     public void updateTrackRecords(List<Organization> orgs) {
         ArrayList<TrackRecord> mockedTrackRecords = new ArrayList<>();
-        if (orgs.size() == 0) {
+        if (orgs.size() == 0 || orgs.stream().anyMatch(Organization::isLogged)) {
             trackRecords.postValue(mockedTrackRecords);
             return;
         }
         orgs.forEach(org -> {
-            TrackSignal trackSignal = new TrackSignal();
-            trackSignal.setUsername(org.getPersonalCn());
-            trackSignal.setPassword(org.getLdapPassword());
-            Call<TrackHistory> tracks = service.getTracks(org.getId(), trackSignal);
+            TrackRequest trackRequest = new TrackRequest();
+            trackRequest.setUserName(org.getPersonalCn());
+            trackRequest.setPassword(org.getLdapPassword());
+            Call<TrackHistory> tracks = service.getTracks(org.getId(), trackRequest);
             tracks.enqueue(new Callback<TrackHistory>() {
                 @Override
                 public void onResponse(@NotNull Call<TrackHistory> call, @NotNull Response<TrackHistory> response) {
+                    response.raw().body();
                     if (response.body() != null) {
                         mockedTrackRecords.addAll(response.body().getTracks());
-                        trackRecords.postValue(mockedTrackRecords);
                     }
+                    trackRecords.postValue(mockedTrackRecords);
                 }
 
                 @Override

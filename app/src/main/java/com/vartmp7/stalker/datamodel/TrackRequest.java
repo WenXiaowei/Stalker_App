@@ -187,7 +187,7 @@
  *       same "printed page" as the copyright notice for easier
  *       identification within third-party archives.
  *
- *    Copyright [2020] [VartTmp7]
+ *    Copyright 2020 - VartTmp7
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -207,111 +207,30 @@ package com.vartmp7.stalker.datamodel;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import org.jetbrains.annotations.Contract;
-
-import java.util.Objects;
-
-import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
-/**
- * @author Xiaowei Wen, Lorenzo Taschin
- */
-public class TrackSignal {
+public class TrackRequest {
 
-
-    private static final String TAG="com.vartmp7.stalker.GsonBeans.TrackSignal";
-    // Annotazione expose usato indicare quale campo devo venir serializzato
-    @Setter
-    @Getter
-    @Accessors(chain = true)
-    private long idOrganization;
-    @Setter
-    @Getter
-    @Accessors(chain = true)
-    private long idPlace=0;
-
-
-
-    @Accessors(chain = true)
-    @Expose @Setter
-    private boolean entered=false;
-
-    @Setter
-    @Accessors(chain = true)
-    @Getter
-    @Expose
-    private boolean authenticated=false;
+    public static final String LDAP_V3="ldapv3";
+    public static final String GOOGLE="GOOGLE";
+    public static final String FACEBOOK="FACEBOOK";
 
     @Setter
     @Accessors(chain = true)
     @Expose
-    @SerializedName(value = "date_time")
-    private String dateTime;
+    @SerializedName(value = "auth_type")
+    private String authType=LDAP_V3;
 
     @Setter
     @Accessors(chain = true)
     @Expose
-    private String username;
+    @SerializedName(value = "user_name")
+    private String userName;
 
     @Setter
-
     @Accessors(chain = true)
     @Expose
     private String password;
-
-    public TrackSignal(long idOrganization) {
-        this.idOrganization = idOrganization;
-    }
-
-    public TrackSignal() {
-
-    }
-
-    @Override
-    public String toString() {
-        return "TrackSignal{" +
-                "idOrganization=" + idOrganization +
-                ", idPlace=" + idPlace +
-                ", auth_type='" + authType + '\'' +
-                ", entered=" + entered +
-                ", authenticated=" + authenticated +
-                ", date_time='" + dateTime + '\'' +
-                ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
-                '}';
-    }
-
-    @Contract(value = "null -> false", pure = true)
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof TrackSignal)) return false;
-        TrackSignal that = (TrackSignal) o;
-        return idOrganization == that.idOrganization &&
-                idPlace == that.idPlace &&
-                entered == that.entered &&
-                authenticated == that.authenticated &&
-                Objects.equals(authType, that.authType) &&
-                Objects.equals(dateTime, that.dateTime) &&
-                Objects.equals(username, that.username) &&
-                Objects.equals(password, that.password);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(idOrganization, idPlace, authType, entered, authenticated, dateTime, username, password);
-    }
-
-    public TrackSignal(boolean en, boolean au, long uid, String user, String date) {
-        entered = en;
-        authenticated = au;
-        username = user;
-        dateTime = date;
-    }
-
-
-
 
 }

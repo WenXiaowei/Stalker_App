@@ -223,7 +223,7 @@
     <string name="organizzazioni">Organizzazioni</string>
     <string name="track_me">Tracciami</string>
     <string name="login_ldap">Login LDAP</string>
-    <string name="anonimo_question">Anonimo?</string>
+    <string name="anonimo_question">Anonimo</string>
     <string name="indirizzo">Indirizzo:</string>
     <string name="email">Email</string>
     <string name="logout">Logout</string>

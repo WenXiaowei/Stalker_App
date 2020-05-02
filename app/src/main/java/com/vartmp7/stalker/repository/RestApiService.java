@@ -205,12 +205,11 @@
 package com.vartmp7.stalker.repository;
 
 import com.vartmp7.stalker.datamodel.Organization;
-import com.vartmp7.stalker.datamodel.PlaceResponse;
 import com.vartmp7.stalker.datamodel.OrganizationResponse;
+import com.vartmp7.stalker.datamodel.PlaceResponse;
 import com.vartmp7.stalker.datamodel.TrackHistory;
+import com.vartmp7.stalker.datamodel.TrackRequest;
 import com.vartmp7.stalker.datamodel.TrackSignal;
-
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -242,5 +241,5 @@ public interface RestApiService {
 
     @Headers("Organization-Token: vartmp7")
     @POST("organizations/{id_orgs}/user/tracks")
-    Call<TrackHistory> getTracks(@Path("id_orgs") long id, @Body TrackSignal signal);
+    Call<TrackHistory> getTracks(@Path("id_orgs") long id, @Body TrackRequest signal);
 }
