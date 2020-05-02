@@ -241,8 +241,6 @@ import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.vartmp7.stalker.datamodel.Organization;
 import com.vartmp7.stalker.repository.FavoritesSource;
 import com.vartmp7.stalker.repository.FileStorage;
@@ -304,9 +302,7 @@ public class MainActivity extends AppCompatActivity {
             preferitiRepository = new FirebaseFavoritesSource(getUserId(), FirebaseFirestore.getInstance());
         }
 
-        GsonBuilder builder = new GsonBuilder().excludeFieldsWithoutExposeAnnotation();
 
-        Gson gson = builder.create();
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(URL_SERVER)
                 .client(Tools.getUnsafeOkHttpClient())
@@ -317,13 +313,12 @@ public class MainActivity extends AppCompatActivity {
         repository = new OrganizationsRepository(localStorage, webSource, preferitiRepository);
 
 
-//        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
                 .build();
-        // Build a GoogleSignInClient with the options specified by gso.
+        // Build a GoogleSignInClient with the options specified by gson.
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
 
@@ -360,7 +355,6 @@ public class MainActivity extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         if (Tools.isUserLogged(MainActivity.this)) {
             inflater.inflate(R.menu.setting_menu, menu);
-            //todo capire come disattivare la scelta per cambiare password!
             if (FirebaseAuth.getInstance().getCurrentUser() != null) {
                 if (!(FirebaseAuth.getInstance().getCurrentUser().getProviderData().size() >= 2 &&
                         FirebaseAuth.getInstance().getCurrentUser().getProviderData().get(1).getProviderId()
@@ -390,6 +384,7 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             case R.id.menuLogin:
                 goToLoginActivity(true);
+                break;
             case R.id.menuModificaDati:
                 showEditInfoDialog();
                 break;
@@ -417,7 +412,6 @@ public class MainActivity extends AppCompatActivity {
         if (currentUser == null)
             return;
         AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.StalkerDialogTheme);
-//        AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.modifica_dati);
         LayoutInflater inflater = this.getLayoutInflater();
         View view = inflater.inflate(R.layout.edit_dati_form, null);
@@ -437,22 +431,26 @@ public class MainActivity extends AppCompatActivity {
                     }
                     if (etPassword.getText().toString().trim().equalsIgnoreCase(""))
                         return;
-                    if (etPassword.getText().toString().trim().equals(etRPassword.getText().toString().trim())) {
-                        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-                            FirebaseAuth.getInstance().getCurrentUser()
-                                    .updatePassword(etPassword.getText().toString())
-                                    .addOnCompleteListener(task -> {
-                                        int stringId = task.isSuccessful() ? R.string.modificato_con_successo : R.string.modifica_di_fallito;
-                                        showToast(getString(stringId, getString(R.string.password)));
-                                    });
-                        }
-                    } else {
-                        Toast.makeText(this, R.string.password_non_coincidono, Toast.LENGTH_SHORT).show();
-                    }
+                    updatePassword(etPassword.getText().toString(), etRPassword.getText().toString());
 
                 }).setNegativeButton(R.string.annulla, (dialog, which) -> dialog.dismiss());
 
         builder.create().show();
+    }
+
+    private void updatePassword(@NotNull String password, @NotNull String repeatPassword) {
+        if (password.trim().equals(repeatPassword.trim())) {
+            if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+                FirebaseAuth.getInstance().getCurrentUser()
+                        .updatePassword(password)
+                        .addOnCompleteListener(task -> {
+                            int stringId = task.isSuccessful() ? R.string.modificato_con_successo : R.string.modifica_di_fallito;
+                            showToast(getString(stringId, getString(R.string.password)));
+                        });
+            }
+        } else {
+            Toast.makeText(this, R.string.password_non_coincidono, Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void showToast(String message) {

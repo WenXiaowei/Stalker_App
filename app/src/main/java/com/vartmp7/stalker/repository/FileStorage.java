@@ -218,7 +218,6 @@ import org.jetbrains.annotations.NotNull;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -321,16 +320,12 @@ public class FileStorage implements Storage {
             @Override
             public void run() {
                 super.run();
-                FileInputStream fis = null;
 //                Log.d("TEST","arrivo qua 2");
-                try {
+                try (FileInputStream fis = context.openFileInput(fileName)){
 //                    Log.d(TAG, "run: lettura dal file");
-                    // fixme sonarqube segna come bug
-                    fis = context.openFileInput(fileName);
-                    // fixme sonarqube segna come bug
-                    InputStreamReader inputStreamReader = new InputStreamReader(fis, StandardCharsets.UTF_8);
+
                     StringBuilder stringBuilder = new StringBuilder();
-                    try (BufferedReader reader = new BufferedReader(inputStreamReader)) {
+                    try (BufferedReader reader = new BufferedReader(new InputStreamReader(fis, StandardCharsets.UTF_8))) {
                         String line = reader.readLine();
                         while (line != null) {
                             stringBuilder.append(line).append('\n');
@@ -355,14 +350,13 @@ public class FileStorage implements Storage {
 //                            Log.d("TEST", "arrivo qua 3");
 //                        mLiveOrgs.postValue(organizzazioni.stream().distinct().collect(Collectors.toList()));
 //                        Log.d(TAG, "run: dati letti dal file");
-                        } else {
-//                            Log.e(TAG, "run: ResponseOrganizzazioni null");
-                        }
+                        }  //                            Log.e(TAG, "run: ResponseOrganizzazioni null");
+
 
                     }
 
 
-                } catch (FileNotFoundException ex) {
+                } catch (IOException ignored) {
 
                 }
             }
@@ -382,17 +376,17 @@ public class FileStorage implements Storage {
                 File orgJson = new File(context.getFilesDir(), fileName);
                 if (!orgJson.exists()) {
                     try {
-                        orgJson.createNewFile();
+                        boolean b =orgJson.createNewFile();
+                        if (!b)
+                            return;
                     } catch (IOException e) {
-                        e.printStackTrace();
                     }
 //                    Log.d(TAG, "creazione file");
 //                    Log.d(TAG, "doInBackground: " + orgJson.mkdir());
                 }
 
-                try {
+                try (FileWriter writer = new FileWriter(orgJson)){
                     // fixme sonarqube segna come bug
-                    FileWriter writer = new FileWriter(orgJson);
                     // fixme quest'istruzione delle volte, genera un concurrentModificationException
                     String l = new Gson().toJson(new OrganizationResponse().setOrganizations(orgs));
 //                    Log.d(TAG, "saving data:");
@@ -403,7 +397,7 @@ public class FileStorage implements Storage {
                     mLiveOrgs.postValue(orgs);
                 } catch (IOException e) {
 //                    Log.e(TAG, "Errore, file non trovato");
-                    e.printStackTrace();
+//                    e.printStackTrace();
                 }
 //                Log.d(TAG, "doInBackground: finished saving data");
             }
