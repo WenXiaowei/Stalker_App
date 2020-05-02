@@ -204,56 +204,31 @@
 
 package com.vartmp7.stalker.datamodel;
 
-import com.google.gson.annotations.SerializedName;
+import org.junit.Before;
+import org.junit.Test;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.Accessors;
+import static junit.framework.TestCase.assertEquals;
 
-public class TrackRecord {
-
+public class TrackRequestTest {
 
 
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    private String orgName;
+    private String userName;
+    private String password;
+    private TrackRequest request;
 
-    @Setter
-    @Accessors(chain = true)
-    private String placeName;
-
-    @Getter @Setter
-    @Accessors(chain = true)
-    @SerializedName("place_id")
-    private long placeId;
-
-    @Getter @Setter
-    @Accessors(chain = true)
-    @SerializedName("place")
-    private PolygonPlace place;
-
-    @Getter @Setter
-    @Accessors(chain = true)
-    @SerializedName("date_time")
-    private String dateTime;
-
-    @Getter @Setter
-    @Accessors(chain = true)
-    private boolean entered;
-
-    @Override
-    public String toString() {
-        return "TrackRecord{" +
-                "orgName='" + orgName + '\'' +
-                ", placeName='" + placeName + '\'' +
-                ", placeId=" + placeId +
-                ", dateTime='" + dateTime + '\'' +
-                ", entered=" + entered +
-                '}';
+    @Before
+    public void setUp() throws Exception {
+        password = "00000000";
+        userName = "bob";
+        request= new TrackRequest().setAuthType(TrackRequest.LDAP_V3);
+        request.setPassword(password).setUserName(userName);
     }
 
-    public String getPlaceName() {
-        return place.getName();
+    @Test
+    public void setAuthType() {
+        assertEquals(request.getAuthType(),TrackRequest.LDAP_V3);
+        assertEquals(request.getUserName(),userName);
+        assertEquals(request.getPassword(),password);
+
     }
 }

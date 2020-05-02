@@ -207,6 +207,7 @@ package com.vartmp7.stalker.datamodel;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
@@ -217,18 +218,21 @@ public class TrackRequest {
     public static final String FACEBOOK="FACEBOOK";
 
     @Setter
+    @Getter
     @Accessors(chain = true)
     @Expose
     @SerializedName(value = "auth_type")
     private String authType=LDAP_V3;
 
     @Setter
+    @Getter
     @Accessors(chain = true)
     @Expose
     @SerializedName(value = "username")
     private String userName;
 
     @Setter
+    @Getter
     @Accessors(chain = true)
     @Expose
     private String password;

@@ -204,56 +204,55 @@
 
 package com.vartmp7.stalker.datamodel;
 
-import com.google.gson.annotations.SerializedName;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.Accessors;
+import static junit.framework.TestCase.assertEquals;
 
-public class TrackRecord {
-
-
-
-    @Getter
-    @Setter
-    @Accessors(chain = true)
+@RunWith(JUnit4.class)
+public class TrackRecordTest {
     private String orgName;
-
-    @Setter
-    @Accessors(chain = true)
-    private String placeName;
-
-    @Getter @Setter
-    @Accessors(chain = true)
-    @SerializedName("place_id")
     private long placeId;
-
-    @Getter @Setter
-    @Accessors(chain = true)
-    @SerializedName("place")
     private PolygonPlace place;
-
-    @Getter @Setter
-    @Accessors(chain = true)
-    @SerializedName("date_time")
     private String dateTime;
-
-    @Getter @Setter
-    @Accessors(chain = true)
     private boolean entered;
+    private TrackRecord record;
+    private String placeName ;
 
-    @Override
-    public String toString() {
-        return "TrackRecord{" +
-                "orgName='" + orgName + '\'' +
-                ", placeName='" + placeName + '\'' +
-                ", placeId=" + placeId +
-                ", dateTime='" + dateTime + '\'' +
-                ", entered=" + entered +
-                '}';
+    @Before
+    public void setUp() throws Exception {
+        orgName ="Math UNIPD";
+        placeId=1;
+        place = new PolygonPlace();
+        dateTime="Oggi";
+        entered=false;
+        placeName="Torre";
+        place.setName(placeName);
+
+        record = new TrackRecord()
+                .setDateTime(dateTime)
+                .setEntered(entered)
+                .setOrgName(orgName)
+                .setPlace(place)
+                .setPlaceId(placeId)
+        .setPlaceName(placeName);
     }
 
-    public String getPlaceName() {
-        return place.getName();
+    @Test
+    public void testToString() {
+        assertEquals(record.toString(),"TrackRecord{orgName='Math UNIPD', placeName='Torre', placeId=1, dateTime='Oggi', entered=false}");
     }
+
+    @Test
+    public void getPlaceName() {
+        assertEquals(record.getOrgName(),orgName);
+        assertEquals(record.getDateTime(),dateTime);
+        assertEquals(record.isEntered(),entered);
+        assertEquals(record.getPlaceId(),placeId);
+        assertEquals(record.getPlace(),place);
+        assertEquals(record.getPlaceName(),placeName);
+    }
+
 }

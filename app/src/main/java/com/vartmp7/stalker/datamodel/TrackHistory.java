@@ -206,6 +206,8 @@ package com.vartmp7.stalker.datamodel;
 
 import com.google.gson.annotations.SerializedName;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
 import lombok.Getter;
@@ -230,6 +232,7 @@ public class TrackHistory {
     @Accessors(chain = true)
     private List<TrackRecord> tracks;
 
+    @NotNull
     @Override
     public String toString() {
         return "TrackHistory{" +

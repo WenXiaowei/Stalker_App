@@ -220,6 +220,12 @@ import org.junit.runners.Suite;
         PlaceResponseTest.class,
         ResponseOrganizationTest.class,
         TrackSignalTest.class,
-        WrongNumberOfCoordinatesTest.class
+        WrongNumberOfCoordinatesTest.class,
+        TrackHistoryTest.class,
+        TrackRecordTest.class,
+        TrackRequestTest.class,
+        UserTrackInfoTest.class
+
+
 })
 public class GsonBeansTestSuite {}

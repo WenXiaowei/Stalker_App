@@ -206,6 +206,8 @@ package com.vartmp7.stalker.datamodel;
 
 import com.google.gson.annotations.SerializedName;
 
+import org.jetbrains.annotations.NotNull;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -224,4 +226,14 @@ public class UserTrackInfo {
     @Accessors(chain = true)
     @SerializedName("uid_number")
     private String uidNumber;
+
+    @NotNull
+    @Override
+    public String toString() {
+        return "UserTrackInfo{" +
+                "name='" + name + '\'' +
+                ", surname='" + surname + '\'' +
+                ", uidNumber='" + uidNumber + '\'' +
+                '}';
+    }
 }

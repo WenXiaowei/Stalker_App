@@ -264,7 +264,6 @@ public class TrackSignal {
     private String username;
 
     @Setter
-
     @Accessors(chain = true)
     @Expose
     private String password;
@@ -311,15 +310,5 @@ public class TrackSignal {
     public int hashCode() {
         return Objects.hash(idOrganization, idPlace, authType, entered, authenticated, dateTime, username, password);
     }
-
-    public TrackSignal(boolean en, boolean au, long uid, String user, String date) {
-        entered = en;
-        authenticated = au;
-        username = user;
-        dateTime = date;
-    }
-
-
-
 
 }

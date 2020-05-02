@@ -204,56 +204,43 @@
 
 package com.vartmp7.stalker.datamodel;
 
-import com.google.gson.annotations.SerializedName;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.Accessors;
+import java.util.ArrayList;
+import java.util.List;
 
-public class TrackRecord {
+import static org.junit.Assert.*;
 
+@RunWith(JUnit4.class)
+public class TrackHistoryTest {
+    private UserTrackInfo userTrackInfo;
+    private PolygonPlace polygonPlace;
+    private List<TrackRecord> tracks;
+    private TrackHistory history;
 
+    @Before
+    public void tear_down() {
+        userTrackInfo = new UserTrackInfo();
+        polygonPlace = new PolygonPlace();
+        tracks = new ArrayList<>();
+        history = new TrackHistory();
+        history.setPlace(polygonPlace).setTracks(tracks).setUserInfo(userTrackInfo);
 
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    private String orgName;
-
-    @Setter
-    @Accessors(chain = true)
-    private String placeName;
-
-    @Getter @Setter
-    @Accessors(chain = true)
-    @SerializedName("place_id")
-    private long placeId;
-
-    @Getter @Setter
-    @Accessors(chain = true)
-    @SerializedName("place")
-    private PolygonPlace place;
-
-    @Getter @Setter
-    @Accessors(chain = true)
-    @SerializedName("date_time")
-    private String dateTime;
-
-    @Getter @Setter
-    @Accessors(chain = true)
-    private boolean entered;
-
-    @Override
-    public String toString() {
-        return "TrackRecord{" +
-                "orgName='" + orgName + '\'' +
-                ", placeName='" + placeName + '\'' +
-                ", placeId=" + placeId +
-                ", dateTime='" + dateTime + '\'' +
-                ", entered=" + entered +
-                '}';
     }
 
-    public String getPlaceName() {
-        return place.getName();
+    @Test
+    public void testGetterSetters() {
+        history.setPlace(polygonPlace).setTracks(tracks).setUserInfo(userTrackInfo);
+        assertEquals(history.getPlace(), polygonPlace);
+        assertEquals(history.getTracks(),tracks);
+        assertEquals(history.getUserInfo(), userTrackInfo);
+    }
+
+    @Test
+    public void testToString(){
+        assertEquals(history.toString(),"TrackHistory{userInfo=UserTrackInfo{name='null', surname='null', uidNumber='null'}, tracks=[]}");
     }
 }

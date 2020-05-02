@@ -213,8 +213,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 @RunWith(JUnit4.class)
 public class OrganizationTest {
@@ -233,6 +231,8 @@ public class OrganizationTest {
     private static final int ldap_port = 250;
     private static final String ldap_url = "ulr";
     private static final String image_url = "ulr";
+    private static final String personalCN = "ulr";
+    private static final String ldapPassword = "ulr";
     private static final List<PolygonPlace> luoghi = new ArrayList<>();
     private static final Organization org = new Organization()
             .setAddress(address)
@@ -240,6 +240,8 @@ public class OrganizationTest {
             .setEmail(email)
             .setId(id)
             .setName(name)
+            .setLdapPassword(ldapPassword)
+            .setPersonalCn(personalCN)
             .setNation(nation)
             .setPhoneNumber(phone_number)
             .setPostalCode(postal_code)
@@ -279,6 +281,8 @@ public class OrganizationTest {
                 .setLdapDomainComponent(ldap_domain_component)
                 .setLdapPort(ldap_port)
                 .setLdapUrl(ldap_url)
+                .setLdapPassword(ldapPassword)
+                .setPersonalCn(personalCN)
                 .setImageUrl(image_url)
                 .setPlaces(luoghi)
                 .setFavorite(false)
@@ -296,6 +300,8 @@ public class OrganizationTest {
         assertEquals(org, organization);
         assertEquals(organization.toString(), organization.toString());
         assertEquals(organization.hashCode(), organization.hashCode());
+        Organization newOrg = new Organization(org);
+        assertEquals(newOrg.toString(), org.toString());
 
     }
 
@@ -317,14 +323,19 @@ public class OrganizationTest {
         assertEquals(org.getLdapCommonName(), organization.getLdapCommonName());
         assertEquals(org.getLdapDomainComponent(), organization.getLdapDomainComponent());
         assertEquals(org.getLdapPort(), organization.getLdapPort());
+        assertEquals(org.getLdapUrl(), organization.getLdapUrl());
+        assertEquals(org.getLdapPassword(), organization.getLdapPassword());
+        assertEquals(org.getPersonalCn(), organization.getPersonalCn());
         assertEquals(org.isFavorite(), organization.isFavorite());
         assertEquals(org.hashCode(), org.hashCode());
+
         assertEquals(org, org);
 //        assertEquals(org.getPlacesInfo(), "");
         List<PolygonPlace> p = new ArrayList<>();
         p.add((PolygonPlace) new PolygonPlace().setName("Unipd").setNumMaxPeople(100));
         org.setPlaces(p);
         assertEquals(org.getPlacesInfo(), "Nome Luogo: Unipd, Num. persone massimo: 100\n");
+
 
     }
 

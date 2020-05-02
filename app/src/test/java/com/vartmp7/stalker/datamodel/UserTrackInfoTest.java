@@ -204,56 +204,39 @@
 
 package com.vartmp7.stalker.datamodel;
 
-import com.google.gson.annotations.SerializedName;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.Accessors;
+import static org.junit.Assert.*;
 
-public class TrackRecord {
+@RunWith(JUnit4.class)
+public class UserTrackInfoTest {
 
+    private String name;
+    private String surname;
+    private String uidNumber;
+    private UserTrackInfo info;
 
-
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    private String orgName;
-
-    @Setter
-    @Accessors(chain = true)
-    private String placeName;
-
-    @Getter @Setter
-    @Accessors(chain = true)
-    @SerializedName("place_id")
-    private long placeId;
-
-    @Getter @Setter
-    @Accessors(chain = true)
-    @SerializedName("place")
-    private PolygonPlace place;
-
-    @Getter @Setter
-    @Accessors(chain = true)
-    @SerializedName("date_time")
-    private String dateTime;
-
-    @Getter @Setter
-    @Accessors(chain = true)
-    private boolean entered;
-
-    @Override
-    public String toString() {
-        return "TrackRecord{" +
-                "orgName='" + orgName + '\'' +
-                ", placeName='" + placeName + '\'' +
-                ", placeId=" + placeId +
-                ", dateTime='" + dateTime + '\'' +
-                ", entered=" + entered +
-                '}';
+    @Before
+    public  void setUp(){
+        name="bob";
+        surname="xbob";
+        uidNumber="11111";
+        info = new UserTrackInfo();
+        info.setName(name).setSurname(surname).setUidNumber(uidNumber);
     }
 
-    public String getPlaceName() {
-        return place.getName();
+    @Test
+    public void testGetterSetters(){
+        assertEquals(info.getSurname(), surname);
+        assertEquals(info.getUidNumber(),uidNumber);
+        assertEquals(info.getName(), name);
     }
+    @Test
+    public void testToString(){
+        assertEquals(info.toString(),"UserTrackInfo{name='bob', surname='xbob', uidNumber='11111'}");
+    }
+
 }

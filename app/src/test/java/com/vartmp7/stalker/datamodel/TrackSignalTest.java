@@ -210,7 +210,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 @RunWith(JUnit4.class)
 public class TrackSignalTest {
@@ -256,18 +255,24 @@ public class TrackSignalTest {
     public void testEquals(){
         assertEquals(signal2.hashCode(), trackSignal.hashCode());
         assertEquals(signal2, trackSignal);
+        assertEquals(signal2.toString(), trackSignal.toString());
         TrackSignal s = new TrackSignal()
                 .setIdOrganization(idOrganization)
                 .setEntered(entered)
                 .setIdPlace(idPlace)
                 .setAuthenticated(authenticated)
                 .setUsername(username)
-                .setDateTime(date_time);
+                .setDateTime(date_time)
+                .setPassword("");
+
     }
 
 
     @Test
     public void testGetterSetter(){
+        assertEquals(signal.getIdOrganization(),signal2.getIdOrganization());
+        assertEquals(signal.getIdPlace(),signal2.getIdPlace());
+        assertEquals(signal.isAuthenticated(),signal2.isAuthenticated());
 
     }
 }
