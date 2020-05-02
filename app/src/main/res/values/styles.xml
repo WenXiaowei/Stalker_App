@@ -211,9 +211,7 @@
         <item name="colorPrimaryDark">@color/vartmp7bluChiaro</item>
         <item name="colorAccent">@color/vartmp7bluChiaro</item>
     </style>
-    <style name="ImagePreviewerTheme" >
-        <item name="android:windowIsFloating">false</item>
-    </style>
+
     <style name="StalkerDialogTheme" parent="@android:style/Theme.Dialog" >
         <item name="android:layout_width">match_parent</item>
         <item name="android:minWidth">300dp</item>

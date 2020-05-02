@@ -187,7 +187,7 @@
  *       same "printed page" as the copyright notice for easier
  *       identification within third-party archives.
  *
- *    Copyright [2020] [VartTmp7]
+ *    Copyright 2020 - VartTmp7
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -202,133 +202,69 @@
  *    limitations under the License.
  */
 
-package com.vartmp7.stalker;
+package com.vartmp7.stalker.component;
 
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
-import android.location.LocationManager;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
+import android.content.Intent;
 
-import androidx.preference.PreferenceManager;
+import androidx.core.app.NotificationCompat;
 
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.firebase.auth.FirebaseAuth;
+import com.vartmp7.stalker.MainActivity;
+import com.vartmp7.stalker.R;
+import com.vartmp7.stalker.Tools;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.security.cert.CertificateException;
-import java.text.DateFormat;
-import java.util.Date;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.SSLSocketFactory;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
+public class StalkerNotificationManager {
+    private static  final String PACKAGE_NAME="com.vartmp7.stalker.component.StalkerTrackingService";
+    private static final String NOTIFICATION_CHANNEL_ID = "channel_01";
+    static final String EXTRA_STARTED_FROM_NOTIFICATION = PACKAGE_NAME +
+            ".started_from_notification";
+    static final int NOTIFICATION_ID = 12345678;
+    public static final String GO_TO_TRACKINGFRAGMENT = "go_to_tracking_fragment";
+    private Context context;
+    private NotificationManager manager;
+    StalkerNotificationManager(@NotNull Context context, NotificationManager manager) {
+        this.context =context;
+        this.manager = manager;
+        CharSequence name = context.getString(R.string.app_name);
+        NotificationChannel mChannel =
+                new NotificationChannel(NOTIFICATION_CHANNEL_ID, name, NotificationManager.IMPORTANCE_DEFAULT);
 
-import okhttp3.OkHttpClient;
+        // Set the Notification Channel for the Notification Manager.
+        this.manager.createNotificationChannel(mChannel);
 
-/**
- * @author Xiaowei Wen, Lorenzo Taschin
- */
-public class Tools {
-    public static final String TAG ="com.vartmp7.stalker.tools";
-
-    @NotNull // serve per generare un okhttp client che non faccia controlli sul certificato https
-    public static OkHttpClient getUnsafeOkHttpClient(){
-        try {
-            final TrustManager[] trustAllCerts = new TrustManager[]{
-                    new X509TrustManager() {
-                        @Override
-                        public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
-                        }
-
-                        @Override
-                        public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
-                        }
-
-                        @Override
-                        public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-                            return new java.security.cert.X509Certificate[]{};
-                        }
-                    }
-            };
-
-            // Install the all-trusting trust manager
-            final SSLContext sslContext = SSLContext.getInstance("SSL");
-            sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
-            // Create an ssl socket factory with our all-trusting manager
-            final SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
-
-            OkHttpClient.Builder builder = new OkHttpClient.Builder();
-            builder.sslSocketFactory(sslSocketFactory, (X509TrustManager) trustAllCerts[0]);
-            builder.hostnameVerifier(new HostnameVerifier() {
-                @Override
-                public boolean verify(String hostname, SSLSession session) {
-                    return true;
-                }
-            });
-
-            return builder.build();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
-    public static final String KEY_REQUESTING_LOCATION_UPDATES = "requesting_location_updates";
+    void notify(@NotNull Notification notification){
 
-    /**
-     * Returns true if requesting location updates, otherwise returns false.
-     *
-     * @param context The {@link Context}.
-     */
-   public static boolean requestingLocationUpdates(Context context) {
-        return PreferenceManager.getDefaultSharedPreferences(context)
-                .getBoolean(KEY_REQUESTING_LOCATION_UPDATES, false);
+        manager.notify(NOTIFICATION_ID,notification);
     }
 
-    /**
-     * Stores the location updates state in SharedPreferences.
-     * @param requestingLocationUpdates The location updates state.
-     */
-    public static void setRequestingLocationUpdates(Context context, boolean requestingLocationUpdates) {
-        PreferenceManager.getDefaultSharedPreferences(context)
-                .edit()
-                .putBoolean(KEY_REQUESTING_LOCATION_UPDATES, requestingLocationUpdates)
-                .apply();
-    }
+    Notification getNotification(String text) {
+        Intent intent = new Intent(context, StalkerTrackingService.class);
+        intent.putExtra(EXTRA_STARTED_FROM_NOTIFICATION, true);
+        PendingIntent activityPendingIntent = PendingIntent.getActivity(context, 0,
+                new Intent(context, MainActivity.class)
+                        .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        .putExtra(GO_TO_TRACKINGFRAGMENT,true), 0);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "")
+                .addAction(R.drawable.icon_stalker, context.getString(R.string.apri_app),
+                        activityPendingIntent)
+                .setContentTitle(Tools.getLocationTitle(context))
+                .setOngoing(true)
+                .setPriority(Notification.BADGE_ICON_LARGE)
+                .setSmallIcon(R.drawable.people)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(text))
+                .setWhen(System.currentTimeMillis());
 
+        // Set the Channel ID for Android O.
+        builder.setChannelId(NOTIFICATION_CHANNEL_ID); // Channel ID
 
-    @NotNull
-    public static String getLocationTitle(@NotNull Context context) {
-        return context.getString(R.string.luogo_cambiato,
-                DateFormat.getDateTimeInstance().format(new Date()));
-    }
-    public static boolean isUserLogged(@NotNull Context context) {
-        return FirebaseAuth.getInstance().getCurrentUser() != null || GoogleSignIn.getLastSignedInAccount(context) != null;
-    }
-
-    /**
-     *
-     * @param context context dell'activity
-     * @return true sse esiste una connessione internet attiva
-     */
-    public static boolean isNetworkAvailable(@NotNull Context context) {
-        ConnectivityManager connectivityManager
-                = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (connectivityManager==null )
-            return false;
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
-    }
-
-    /**
-     *
-     * @param context context dell'activity
-     * @return true sse il provider gps è attivo.
-     */
-    public static boolean isGPSEnable(@NotNull Context context) {
-        LocationManager systemService = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-        return systemService != null && systemService.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        return builder.build();
     }
 }

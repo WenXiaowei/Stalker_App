@@ -231,17 +231,18 @@ public class FavoritesViewAdapter extends RecyclerView.Adapter<FavoritesViewAdap
     private List<Organization> organizzazioni;
     private Context context;
     private FavoritesViewModel viewModel;
-
+    private  NavController navController;
 
     public void setOrganizzazioni(List<Organization> organizzazioni) {
         this.organizzazioni = organizzazioni;
         notifyDataSetChanged();
     }
 
-    FavoritesViewAdapter(Context context, FavoritesViewModel model, List<Organization> organizzazioni) {
+    FavoritesViewAdapter(Context context, FavoritesViewModel model, List<Organization> organizzazioni, NavController controller) {
         this.context = context;
         this.organizzazioni = organizzazioni;
         this.viewModel = model;
+        this.navController = controller;
     }
 
 
@@ -270,7 +271,7 @@ public class FavoritesViewAdapter extends RecyclerView.Adapter<FavoritesViewAdap
             } else {
                 org.setTracking(true);
                 viewModel.updateOrganizzazione(org);
-                new NavController(context).navigate(R.id.action_navigation_organizations_to_navigation_tracking);
+                navController.navigate(R.id.action_navigation_preferiti_to_navigation_tracking);
             }
 
         });

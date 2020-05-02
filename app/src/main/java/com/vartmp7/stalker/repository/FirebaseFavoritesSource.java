@@ -261,13 +261,13 @@ public class FirebaseFavoritesSource implements FavoritesSource {
             .get()
             .addOnSuccessListener(docSnapshot->{
                 if(!docSnapshot.exists()){
-                    Log.d(TAG, "initUserStorage(!document...exists()): ");
+//                    Log.d(TAG, "initUserStorage(!document...exists()): ");
                     Map<String, Object> userData = new HashMap<>();
                     userData.put(FIELDNAME_ORGANIZZAZIONI, new ArrayList<Long>());
                     db.collection("utenti").document(userId).set(userData);
                 }
             }).addOnFailureListener(e->{
-                Log.e(TAG, "initUserStorage: "+e.getMessage());
+//                Log.e(TAG, "initUserStorage: "+e.getMessage());
             });
 
     }
@@ -352,26 +352,6 @@ public class FirebaseFavoritesSource implements FavoritesSource {
 
                 })
                 .addOnFailureListener(e -> Log.w(TAG, "errore avvenuto rimuovendo organizzazione", e));
-/*
-        Map<String, Object> org = new HashMap<>();
-        org.put(FIELDNAME_ID,organizzazione.getId());
-        // remove a document with a generated ID
-        db.collection("utenti").document(userId).collection("organizzazioni")
-                .document(""+organizzazione.getId())
-                .delete()
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.w(TAG,"deleted with success");
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG,"failure: not deleted");
-                    }
-                });
- */
     }
 
 
@@ -384,10 +364,10 @@ public class FirebaseFavoritesSource implements FavoritesSource {
                     try {
                         if (data != null) {
                             final List<Long> orgIds = (List<Long>) data.get(FIELDNAME_ORGANIZZAZIONI);
-                            Log.w(TAG, "data got from firebase:");
+//                            Log.w(TAG, "data got from firebase:");
 //                            orgIds.forEach(l->Log.d(TAG,"orgId:"+l));
                             mutableliveDataOrgIds.postValue(orgIds);
-                            Log.w(TAG, "id delle org preferite ottenuti correttamente");
+//                            Log.w(TAG, "id delle org preferite ottenuti correttamente");
                         }
                     } catch (ClassCastException e) {
                     }
@@ -404,10 +384,10 @@ public class FirebaseFavoritesSource implements FavoritesSource {
                     try {
                         if (data != null) {
                             final List<Long> orgIds = (List<Long>) data.get(FIELDNAME_ORGANIZZAZIONI);
-                            Log.w(TAG, "data got from firebase:");
+//                            Log.w(TAG, "data got from firebase:");
 //                            orgIds.forEach(l->Log.d(TAG,"orgId:"+l));
-                            mutableliveDataOrgIds.setValue(orgIds);
-                            Log.w(TAG, "id delle org preferite ottenuti correttamente");
+                            mutableliveDataOrgIds.postValue(orgIds);
+//                            Log.w(TAG, "id delle org preferite ottenuti correttamente");
                         }
                     } catch (ClassCastException e) {
                     }

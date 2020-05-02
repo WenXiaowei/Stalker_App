@@ -216,7 +216,6 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -282,7 +281,7 @@ public class MainActivity extends AppCompatActivity {
         them.applyStyle(R.style.AppTheme, true);
         return them;
     }
-
+    NavController navController;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -295,7 +294,7 @@ public class MainActivity extends AppCompatActivity {
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.navigation_organizations, R.id.navigation_tracking, R.id.navigation_preferiti, R.id.navigation_cronologia)
                 .build();
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        navController = Navigation.findNavController(this, R.id.nav_host_fragment);
 
 
         MutableLiveData<List<Organization>> list = new MutableLiveData<>(new ArrayList<>());
@@ -328,7 +327,6 @@ public class MainActivity extends AppCompatActivity {
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
 
-
     }
 
     @Override
@@ -346,6 +344,7 @@ public class MainActivity extends AppCompatActivity {
         builder.setMessage(msg)
                 .setPositiveButton(R.string.ok, (dialog, which) -> {
                     startActivity(new Intent(action));
+                    dialog.dismiss();
                 })
                 .setTitle(R.string.attenzione)
                 .setNegativeButton(R.string.esci, (dialog, which) -> {
@@ -363,16 +362,13 @@ public class MainActivity extends AppCompatActivity {
             inflater.inflate(R.menu.setting_menu, menu);
             //todo capire come disattivare la scelta per cambiare password!
             if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-                if ((FirebaseAuth.getInstance().getCurrentUser().getProviderData().size() >= 2 &&
+                if (!(FirebaseAuth.getInstance().getCurrentUser().getProviderData().size() >= 2 &&
                         FirebaseAuth.getInstance().getCurrentUser().getProviderData().get(1).getProviderId()
                                 .equals(EmailAuthProvider.EMAIL_PASSWORD_SIGN_IN_METHOD))) {
                     menu.removeItem(R.id.menuModificaDati);
-                } else {
-                    Log.d(TAG, "onCreateOptionsMenu: if dentro");
                 }
-
             } else {
-                Log.d(TAG, "onCreateOptionsMenu: if fuori");
+                menu.removeItem(R.id.menuModificaDati);
             }
         } else {
             inflater.inflate(R.menu.setting_menu_no_log, menu);
@@ -397,11 +393,24 @@ public class MainActivity extends AppCompatActivity {
             case R.id.menuModificaDati:
                 showEditInfoDialog();
                 break;
+            case R.id.menuReportBug:
+                segnalaBug();
+                break;
             default:
 
         }
         return super.onOptionsItemSelected(item);
     }
+
+    private void segnalaBug() {
+        Intent mailIntent = new Intent(Intent.ACTION_SEND);
+        mailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{getString(R.string.mail_gruppo)});
+        mailIntent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.segnala_bug));
+        mailIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.descrizione_bug));
+        mailIntent.setType("message/rfc822");
+        startActivity(Intent.createChooser(mailIntent,getString(R.string.choose_mail_client)));
+    }
+
 
     private void showEditInfoDialog() {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -426,9 +435,9 @@ public class MainActivity extends AppCompatActivity {
                             showToast(getString(stringId, getString(R.string.email)));
                         });
                     }
-                    if (etPassword.getText().toString().equalsIgnoreCase(""))
+                    if (etPassword.getText().toString().trim().equalsIgnoreCase(""))
                         return;
-                    if (etPassword.getText().toString().equals(etRPassword.getText().toString())) {
+                    if (etPassword.getText().toString().trim().equals(etRPassword.getText().toString().trim())) {
                         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
                             FirebaseAuth.getInstance().getCurrentUser()
                                     .updatePassword(etPassword.getText().toString())

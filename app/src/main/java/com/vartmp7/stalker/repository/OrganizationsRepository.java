@@ -204,14 +204,13 @@
 
 package com.vartmp7.stalker.repository;
 
-import android.util.Log;
-
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 
-import com.vartmp7.stalker.component.NotLogged;
 import com.vartmp7.stalker.datamodel.Organization;
 import com.vartmp7.stalker.datamodel.TrackRecord;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -245,6 +244,17 @@ public class OrganizationsRepository {
         this.obtainer = orgsWebSource;
         this.organizationFavoritesSource = fa;
         //liveOrganizzazioni = new MediatorLiveData<>();
+        //fixme
+        // il seguente blocco risolve il problema dei favorites che non si aggiornano se si fa accesso per la prima
+        // volta, ma causa l'aggiornomento all'infinito degli ID delle organizzazioni preferite.
+        // se c'è tempo, trovare un modo di sistemarlo, altrimenti elimina tutto il blocco,
+        // il problema si presenta all'inizializzazione.
+//        organizationFavoritesSource.getFavoriteOrganizationID().observeForever(longs -> {
+//            List<Organization> value = getOrganizations().getValue();
+//            List<Organization> collect = value.stream().filter(o -> longs.contains(o.getId())).collect(Collectors.toList());
+//            collect.forEach(o->o.setFavorite(true));
+//            updateOrganizations(collect);
+//        });
     }
 
     public LiveData<List<Organization>> getOrganizations() {
@@ -269,77 +279,34 @@ public class OrganizationsRepository {
         return organizationFavoritesSource.getFavoriteOrganizationID();
     }
 
-    public void addFavorite(Organization org) throws NotLogged {
-        if (organizationFavoritesSource != null) {
+    public void addFavorite(@NotNull Organization org) {
+
             org.setFavorite(true);
             updateOrganization(org);
             organizationFavoritesSource.addOrganization(org.getId());
-        } else throw new NotLogged();
+
     }
 
-    public void removeFavorite(Organization org) throws NotLogged {
-        if (organizationFavoritesSource != null) {
+    public void removeFavorite(@NotNull Organization org) {
+
             org.setFavorite(false);
             updateOrganization(org);
             organizationFavoritesSource.removeOrganization(org.getId());
-        } else throw new NotLogged();
+
     }
 
     private final Observer<List<Organization>> observer = new Observer<List<Organization>>() {
         @Override
         public void onChanged(List<Organization> organizzazioni) {
-            Log.d(TAG, "onChanged: aggiornare org");
+//            Log.d(TAG, "onChanged: aggiornare org");
             storage.updateOrganizationInfo(organizzazioni);
         }
     };
 
     public void refreshOrganizations() {
         LiveData<List<Organization>> resultFromWebCall = obtainer.getOrganizations();
-        /*liveOrganizzazioni.addSource(resultFromWebCall,organizzazioni->{
-            Log.d(TAG, "refreshOrganizzazioni: ");
-            organizzazioni.forEach(o-> Log.d(TAG, "refreshOrg: "+o.getId()));
-            organizationsLocalSource.updateOrganizzazioni(organizzazioni);
-            liveOrganizzazioni.removeSource(resultFromWebCall);
-        });*/
-
-
         resultFromWebCall.observeForever(observer);
 
-
-        /*MutableLiveData<Boolean> webQueryExhausted = new MutableLiveData<Boolean>(false);
-        MutableLiveData<Boolean> localQueryExhausted = new MutableLiveData<Boolean>(false);
-        resultFromWebCall.observeForever(organizzazioni->{
-            webQueryExhausted.setValue(true);
-        });
-        LiveData<List<Organizzazione>> resultFromLocalQuery = organizationsLocalSource.getOrganizzazioni();
-        resultFromLocalQuery.observeForever(organizzazioni->{
-           localQueryExhausted.setValue(true);
-        });
-        final Observer<Boolean> queryObserver = new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean aBoolean) {
-                if(webQueryExhausted.getValue() && localQueryExhausted.getValue()){
-                    localQueryExhausted.removeObserver(this);
-                    webQueryExhausted.removeObserver(this);
-                    for (Organizzazione orgFromWeb: resultFromWebCall.getValue()){
-                        for (Organizzazione org: resultFromLocalQuery.getValue()) {
-                            if(org.getId()==orgFromWeb.getId()){
-                                orgFromWeb.setPreferito(org.isPreferito());
-                                orgFromWeb.setTracking(org.isTracking());
-                                orgFromWeb.setTrackingActive(org.isTracking());
-                                rg=orgFromWeb;o
-                            }
-                        }
-                    }
-                    List<Organizzazione> toSave = resultFromLocalQuery.getValue();
-                    Log.d(TAG, "refreshOrganizzazioni: org che verranno salvate");
-                    toSave.forEach(o-> Log.d(TAG, "refreshOrganizzazioni: "+o.getId()+" "+o.getName()+o.isPreferito()));
-                    organizationsLocalSource.saveOrganizzazioni(toSave);
-                }
-            }
-        };
-        localQueryExhausted.observeForever(queryObserver);
-        webQueryExhausted.observeForever(queryObserver);*/
     }
 
     /*

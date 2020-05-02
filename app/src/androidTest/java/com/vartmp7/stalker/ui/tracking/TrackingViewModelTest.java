@@ -205,16 +205,12 @@
 
 package com.vartmp7.stalker.ui.tracking;
 
-import android.util.Log;
-
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 
 import com.vartmp7.stalker.TestUtil;
-import com.vartmp7.stalker.component.NotLogged;
 import com.vartmp7.stalker.datamodel.Organization;
 import com.vartmp7.stalker.repository.OrganizationsRepository;
 
@@ -230,12 +226,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -304,25 +296,21 @@ public class TrackingViewModelTest {
     @Test
     public void testAddFavorite(){
         Organization o = new Organization().setId(1);
-        try {
+
             doNothing().when(orgRepo).addFavorite(any());
             viewModel.addFavorite(o);
             verify(orgRepo).addFavorite(o);
-        } catch (NotLogged notLogged) {
-            fail();
-        }
+
     }
 
     @Test
     public void testRemoveFavorite(){
         Organization o = new Organization().setId(1);
-        try {
+
             doNothing().when(orgRepo).removeFavorite(any());
             viewModel.removeFavorite(o);
             verify(orgRepo).removeFavorite(o);
-        } catch (NotLogged notLogged) {
-            fail();
-        }
+
     }
     @Test
     public void testActiveAllTrackingOrganization(){

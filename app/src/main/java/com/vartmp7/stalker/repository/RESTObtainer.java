@@ -204,8 +204,6 @@
 
 package com.vartmp7.stalker.repository;
 
-import android.util.Log;
-
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
@@ -235,9 +233,6 @@ public class RESTObtainer implements Obtainer {
     private static final String TAG = "com.vartmp7.stalker.repository.RESTObtainer";
     private RestApiService service;
 
-
-    private static int count = 0;
-
     private MutableLiveData<List<Organization>> mutableLiveDataOrganizzazioni;
     private MutableLiveData<List<TrackRecord>> trackRecords;
 
@@ -265,7 +260,7 @@ public class RESTObtainer implements Obtainer {
 
             @Override
             public void onFailure(@NotNull Call<OrganizationResponse> call, @NotNull Throwable throwable) {
-                Log.d(TAG, "onFailure: " + throwable.getMessage());
+//                Log.d(TAG, "onFailure: " + throwable.getMessage());
                 ArrayList<Coordinate> torreArchimede = new ArrayList<>();
                 torreArchimede.add(new Coordinate(45.411555, 11.887476));
                 torreArchimede.add(new Coordinate(45.411442, 11.887942));
@@ -281,7 +276,7 @@ public class RESTObtainer implements Obtainer {
                 dsea.add(new Coordinate(45.411341, 11.888381));
                 dsea.add(new Coordinate(45.411284, 11.888224));
                 PolygonPlace d = new PolygonPlace();
-                d.setId(1).setName("TORRE 3C").setNumMaxPeople(10);
+                d.setId(2).setName("TORRE 3C").setNumMaxPeople(10);
                 d.setCoordinates(dsea).setOrgId(2);
 
 
@@ -303,12 +298,6 @@ public class RESTObtainer implements Obtainer {
 //                                .setImage_url("https://upload.wikimedia.org/wikipedia/it/thumb/5/53/Logo_Universit%C3%A0_Padova.svg/1200px-Logo_Universit%C3%A0_Padova.svg.png")
                                 .setImageUrl("https://pbs.twimg.com/profile_images/1173976802416582657/LCZXVSqH_400x400.jpg")
                                 .setPlaces(Collections.singletonList(t)),
-//                        new Organization()
-//                                .setId(count + 1)
-//                                .setName("UniPD DEI")
-//                                .setTracking(true)
-//                                .setImage_url("https://www.dei.unipd.it/sites/dei.unipd.it/files/sublogo_3.png")
-//                                .setPlaces(Collections.singletonList(t)),
                         new Organization()
                                 .setId(2)
                                 .setName("UNIPD dSeA")
@@ -319,12 +308,12 @@ public class RESTObtainer implements Obtainer {
                         new Organization()
                                 .setId(3)
                                 .setName("UNIPD DSFARM")
-                                .setType("both")
+                                .setType("private")
                                 .setTracking(true)
 //                                .setImageUrl("https://www.dsfarm.unipd.it/sites/dsfarm.unipd.it/files/sublogo_9.png")
-                                .setPlaces(Collections.singletonList(t))
+
                 );
-                orgs.forEach(o -> Log.d(TAG, "onFailure: " + o.getId()));
+//                orgs.forEach(o -> Log.d(TAG, "onFailure: " + o.getId()));
                 mutableLiveDataOrganizzazioni.postValue(orgs);
             }
 

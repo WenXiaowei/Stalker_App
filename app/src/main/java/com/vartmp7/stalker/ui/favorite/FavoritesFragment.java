@@ -205,7 +205,6 @@
 package com.vartmp7.stalker.ui.favorite;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -216,6 +215,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -280,11 +280,11 @@ public class FavoritesFragment extends Fragment implements SwipeRefreshLayout.On
         favViewModel.getOrganizzazioni().observe(getViewLifecycleOwner(), organizzazioni -> {
             List<Organization> orgs = organizzazioni;
 
-            Log.e(TAG,"trigger");
-            organizzazioni
-                    .stream()
-                    .filter(Organization::isFavorite)
-                    .forEach(o-> Log.d(TAG, "org: "+o.getId()+" "+o.getName()+" "+o.isTracking()));
+//            Log.e(TAG,"trigger");
+//            organizzazioni
+//                    .stream()
+//                    .filter(Organization::isFavorite)
+//                    .forEach(o-> Log.d(TAG, "org: "+o.getId()+" "+o.getName()+" "+o.isTracking()));
             favViewAdapter.setOrganizzazioni(organizzazioni.stream().filter(Organization::isFavorite).distinct().collect(Collectors.toList()));
 //            Log.e(TAG," triggered");
             preferitiSwipeLayout.setRefreshing(false);
@@ -319,9 +319,10 @@ public class FavoritesFragment extends Fragment implements SwipeRefreshLayout.On
     }
 
     private void initRecyclerView() {
-        if (favViewModel.getOrganizzazioni().getValue() == null) Log.d(TAG, "è null!");
+//        if (favViewModel.getOrganizzazioni().getValue() == null) Log.d(TAG, "è null!");
         favViewAdapter = new FavoritesViewAdapter(getContext(), favViewModel,
-                new ArrayList<>());
+                new ArrayList<>(), Navigation.findNavController(requireActivity(),
+                R.id.nav_host_fragment));
         RecyclerView.LayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         favRecyclerView.setLayoutManager(linearLayoutManager);
         favRecyclerView.setAdapter(favViewAdapter);

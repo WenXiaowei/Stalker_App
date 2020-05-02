@@ -204,14 +204,12 @@
 
 package com.vartmp7.stalker.component;
 
-import android.location.Location;
-
 /**
  * @author  Xiaowei Wen, Lorenzo Taschin
  *
  */
 public interface CallBack {
-    void onNewLocation(Location l);
+    void onNewLocation(String messasge);
     void notInAnyPlace();
     void stopTracking();
 }

@@ -205,36 +205,22 @@
 <resources>
     <string name="app_name">Stalker</string>
     <string name="stalker">Stalker</string>
-    <string name="seleziona_l_organizzazione">Seleziona l\'organization:</string>
 
     <string name="sign_in">Accedi</string>
     <string name="sign_up">Registrati</string>
-    <string name="nessun_organizzazione_ti_sta_stalkerando">Nessun\'organization ti sta stalkerando!</string>
-    <string name="status">Status</string>
+    <string name="nessun_organizzazione_ti_sta_stalkerando">Nessun\'organizzazione ti sta stalkerando!</string>
     <string name="elenco_luoghi">Elenco Luoghi:</string>
-    <string name="elenco_dei_luoghi_tracciati_per_l_organizzazione_selezionata">Elenco dei luoghi tracciati per l\'organization selezionata:</string>
-    <string name="start_track">Start Track</string>
-    <string name="tracciami">Tracciami</string>
-    <string name="agg">Agg.</string>
-    <string name="username">Username</string>
     <string name="password">Password</string>
     <string name="annulla">Annulla</string>
     <string name="stop">Stop</string>
     <string name="conferma">Conferma</string>
-    <string name="not_in_any_place">Non sei in nessun luogo tracciato dell\'organization selezionata!</string>
-    <string name="you_left">Hai lasciato %s</string>
-    <string name="you_are_in">Sei in %s</string>
     <string name="facebook_app_id">212692166599390</string><!--todo configurazione login facebook 6.2:  Da togliere successivamente quando renderemo l'app pubblica   -->
     <string name="fb_login_protocol_scheme">fb212692166599390</string>
     <string name="continua_senza_autenticazione">Continua senza autenticazione</string>
     <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
     <string name="cronologia">Cronologia</string>
     <string name="preferiti">Preferiti</string>
     <string name="organizzazioni">Organizzazioni</string>
-    <string name="scegli">Scegli</string>
-    <string name="il_traccimento_non_ancora_attivo">Il traccimento non è ancora attivo!</string>
     <string name="track_me">Tracciami</string>
     <string name="login_ldap">Login LDAP</string>
     <string name="anonimo_question">Anonimo?</string>
@@ -243,12 +229,9 @@
     <string name="logout">Logout</string>
     <string name="login">Login</string>
     <string name="icon_dell_organizzazione">icon dell\'organization</string>
-    <string name="dettagli">Dettagli</string>
-    <string name="nascondi">Nascondi</string>
     <string name="tipo_organizzazione">Tipo Organizzazione: </string>
     <string name="n_d">N.D.</string>
-    <string name="nessun_luogo_tracciabile_per_quest_organizzazione">Nessun luogo tracciabile per quest\'organization</string>
-    <string name="attualmente_sei_in">Attualmente sei in:</string>
+    <string name="nessun_luogo_tracciabile_per_quest_organizzazione">Nessun luogo tracciabile per quest\'organizzazione</string>
     <string name="organizzazione_added_to_favorite">Organizzazione aggiunta ai preferiti!</string>
     <string name="organizzazione_removed_from_favorite">Organizzazione rimosso dai preferiti</string>
     <string name="tracking_terminated">Tracciamento terminato!</string>
@@ -262,8 +245,6 @@
     <string name="accedi">Accedi</string>
     <string name="ripeti_password">Ripeti password</string>
     <string name="password_dimenticata">Password \ndimenticata</string>
-    <string name="cognome">Cognome</string>
-    <string name="nome">Nome</string>
     <string name="inserire_indirizzo_mail">Dovresti inserire l\'indirizzo mail!</string>
     <string name="mail_inviata_con_successo">La mail è stata inviata con successo!</string>
     <string name="qualcosa_non_e_andato_bene">Qualcosa è andato storto!\nRiprovare più tardi!</string>
@@ -275,7 +256,6 @@
     <string name="modifica_dati">Modifica Dati</string>
     <string name="account_esistente_con_questa_mail">Esiste già un account con questa mail!</string>
     <string name="unknown_error">Errori sconosciuti, riprova più tardi</string>
-    <string name="elimina_account">Elimina account</string>
     <string name="luogo_cambiato">Luogo cambiato: %1$s</string>
     <string name="sei_in_tale_dei_tali">Sei in %s di \"%s\"!</string>
     <string name="ok">OK</string>
@@ -284,11 +264,7 @@
     <string name="settings">Impostazione</string>
     <string name="ferma_tutti">Ferma \nTutti</string>
     <string name="avvia_tutti">Avvia\n tutti</string>
-    <string name="nessun_organization_ti_sta_tracciando">Nessuna organizzazione ti sta tracciando</string>
-    <string name="logged">Logged</string>
-    <string name="connection_to_ldap_failed">Connessione al server LDAP fallita, riprovare più tardi!</string>
-    <string name="ldap_login_failed_check_credentials">Login fallito, verificare di aver inserito le credenziali corrette e riprovare</string>
-    <string name="something_went_wrong">Qualcosa è andato storto, riprovare più tardi!</string>
+    <string name="nessun_organization_ti_sta_tracciando">Nessun\'organizzazione ti sta tracciando</string>
     <string name="tuo_cn">Tuo CN</string>
     <string name="nome_organizzazione">Nome:</string>
     <string name="numero_telefonico">Numero telefonico:</string>
@@ -301,7 +277,6 @@
     <string name="recupero_password">Recupero password</string>
     <string name="ask_mail_for_recupero_password">Inserisci la mail con la quale ti sei registrato/a all\'applicazione!</string>
     <string name="inserisci_le_credenziali_ldap">Inserisci le tue credenziali LDAP</string>
-    <string name="prima_devi_fare_accesso">Devi prima fare accesso!</string>
     <string name="successfully_logout">Successufully logout</string>
     <string name="icona_che_rappresenta_ingresso_o_uscita">Icona che rappresenta ingresso o uscita</string>
     <string name="storico_tracciamenti">Storico degli tracciamenti:</string>
@@ -314,4 +289,11 @@
     <string name="devi_attivare_gps">Devi attivare il GPS!</string>
     <string name="devi_attivare_connessione">Devi attivare la connesione!</string>
     <string name="esci">Esci</string>
+    <string name="organizazzioni_private_no_loogato">Ci sono delle organizzazioni private presso cui non hai fatto login!</string>
+    <string name="segnala_bug">Segnalazione bug</string>
+    <string name="descrizione_bug">Descrizione bug: </string>
+    <string name="mail_gruppo">vartmp7@gmail.com</string>
+    <string name="choose_mail_client">Scegli una app di email:</string>
+    <string name="stato_attuale">Stato attuale</string>
+    <string name="devi_loggarti">Devi devi effettuare il login!</string>
 </resources>

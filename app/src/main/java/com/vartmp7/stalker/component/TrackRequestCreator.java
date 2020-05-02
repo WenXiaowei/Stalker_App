@@ -208,14 +208,14 @@ import com.google.android.gms.location.LocationRequest;
 
 public class TrackRequestCreator {
     private StalkerStepCounter stepCounter;
-    private static final double MAXIMUM_DISTANCE = 10_000;
-    private static final long MAX_DISTANCE_AWAIT_TIME=10 *60*1000;
-    private static final double INTERMEDIATE_DISTANCE = 5_000;
-    private static final long INTERMEDIATE_DISTANCE_AWAIT_TIME=5 *60*1000;
-    private static final double ALMOST_MOST_PRECISE_DISTANCE = 1_000;
-    private static final long ALMOST_MOST_DISTANCE_AWAIT_TIME=3*60*1000;
-    private static final double MOST_PRECISE_DISTANCE = 100;
-    private static final long MOST_PRECISE_DISTANCE_AWAIT_TIME=2*60*1000;
+    private static final double MAXIMUM_DISTANCE = 10_000d;
+    private static final long MAX_DISTANCE_AWAIT_TIME=10 *60*1000L;
+    private static final double INTERMEDIATE_DISTANCE = 5_000d;
+    private static final long INTERMEDIATE_DISTANCE_AWAIT_TIME=5 *60*1000L;
+    private static final double ALMOST_MOST_PRECISE_DISTANCE = 1_000d;
+    private static final long ALMOST_MOST_DISTANCE_AWAIT_TIME=3*60*1000L;
+    private static final double MOST_PRECISE_DISTANCE = 100d;
+    private static final long MOST_PRECISE_DISTANCE_AWAIT_TIME=2*60*1000L;
 
     private static final int STEPS = 50;
 
