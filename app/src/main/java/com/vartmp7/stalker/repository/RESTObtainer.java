@@ -233,7 +233,7 @@ public class RESTObtainer implements Obtainer {
     private MutableLiveData<List<TrackRecord>> trackRecords;
 
 
-    public RESTObtainer(MutableLiveData<List<Organization>> list, RestApiService service) {
+    public RESTObtainer(RestApiService service) {
         this.service = service;
         //this.mutableLiveDataOrganizzazioni= list;
         mutableLiveDataOrganizzazioni = new MutableLiveData<>();
@@ -250,12 +250,11 @@ public class RESTObtainer implements Obtainer {
             @Override
             public void onResponse(@NotNull Call<OrganizationResponse> call, @NotNull Response<OrganizationResponse> response) {
 //                Log.d(TAG, "onResponse: "+response.body().getOrganizations());
-                List<Organization> organizations1;
+                List<Organization> organizations1= new ArrayList<>();
                 if (response.body()!=null){
                     organizations1 = response.body().getOrganizations();
-
-                    mutableLiveDataOrganizzazioni.postValue(organizations1);
                 }
+                mutableLiveDataOrganizzazioni.postValue(organizations1);
             }
 
             @Override

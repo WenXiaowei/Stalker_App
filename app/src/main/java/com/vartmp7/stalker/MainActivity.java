@@ -312,7 +312,7 @@ public class MainActivity extends AppCompatActivity {
                 .client(Tools.getUnsafeOkHttpClient())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
-        Obtainer webSource = new RESTObtainer(list, retrofit.create(RestApiService.class));
+        Obtainer webSource = new RESTObtainer(retrofit.create(RestApiService.class));
 
         repository = new OrganizationsRepository(localStorage, webSource, preferitiRepository);
 
