@@ -293,6 +293,10 @@ public class FileStorage implements Storage {
                     orgToUpdate.setTrackingActive(currentOrg.isTrackingActive());
                     orgToUpdate.setTracking(currentOrg.isTracking());
                     orgToUpdate.setFavorite(currentOrg.isFavorite());
+                    orgToUpdate.setLogged(currentOrg.isLogged());
+                    orgToUpdate.setAnonymous(currentOrg.isAnonymous());
+                    orgToUpdate.setPersonalCn(currentOrg.getPersonalCn());
+                    orgToUpdate.setLdapPassword(currentOrg.getLdapPassword());
                     toSave.add(orgToUpdate);
                     //currentOrgs.remove(currentOrg);
                 }
