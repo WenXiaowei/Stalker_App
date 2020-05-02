@@ -296,4 +296,6 @@
     <string name="choose_mail_client">Scegli una app di email:</string>
     <string name="stato_attuale">Stato attuale</string>
     <string name="devi_loggarti">Devi devi effettuare il login!</string>
+    <string name="verifica_mail">Verifica la mail!</string>
+    <string name="confermare_registrazione">Vuoi confermare la registrazione?</string>
 </resources>

@@ -206,7 +206,6 @@ package com.vartmp7.stalker.ui.login;
 
 import android.app.AlertDialog;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -225,7 +224,6 @@ import com.vartmp7.stalker.R;
 import org.jetbrains.annotations.NotNull;
 
 public class SignUpWithMail extends Fragment implements View.OnClickListener {
-    private static final String TAG = "com.vartmp7.stalker.ui.login.RegisterWithMail";
     private EditText etEmail, etPassword, etRPassword;
 
     @Nullable
@@ -242,10 +240,10 @@ public class SignUpWithMail extends Fragment implements View.OnClickListener {
     }
 
 
-    public void showSignUpDialog() {
+    private void showSignUpDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         builder.setTitle(R.string.sign_up);
-        builder.setMessage("Vuoi confermare la registrazione?");
+        builder.setMessage(R.string.confermare_registrazione);
         builder.setPositiveButton(getString(R.string.conferma), (dialog, which) -> {
             if (etPassword.getText().toString().trim().length() < 8) {
                 Toast.makeText(requireContext(), R.string.password_troppo_corta, Toast.LENGTH_SHORT).show();
@@ -267,7 +265,7 @@ public class SignUpWithMail extends Fragment implements View.OnClickListener {
                 task -> {
                     if (task.isSuccessful()) {
                         // Sign in success, update UI with the signed-in user's information
-                        Log.d(TAG, "createUserWithEmail:success");
+//                        Log.d(TAG, "createUserWithEmail:success");
 
                         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                         if (user != null) {
@@ -281,13 +279,13 @@ public class SignUpWithMail extends Fragment implements View.OnClickListener {
                                         .replace(R.id.fcvLoginContainer, new LoginWithMail())
                                         .commit();
                             } else {
-                                Toast.makeText(requireContext(), "Verifica la mail!",Toast.LENGTH_SHORT).show();
+                                Toast.makeText(requireContext(), R.string.verifica_mail,Toast.LENGTH_SHORT).show();
                             }
                         }
 
                     } else {
                         // If sign in fails, display a message to the user.
-                        Log.w(TAG, "createUserWithEmail:failure", task.getException());
+//                        Log.w(TAG, "createUserWithEmail:failure", task.getException());
                         int message =R.string.unknown_error;
                         if (task.getException() instanceof FirebaseAuthUserCollisionException)
                             message= R.string.account_esistente_con_questa_mail;

@@ -215,7 +215,6 @@
         android:layout_height="match_parent"
         android:layout_margin="5dp"
         android:orientation="vertical"
-        tools:context="com.vartmp7.stalker.ui.organizations.OrganizationsFragment"
         tools:layout_editor_absoluteX="5dp"
         tools:layout_editor_absoluteY="5dp">
         <TextView

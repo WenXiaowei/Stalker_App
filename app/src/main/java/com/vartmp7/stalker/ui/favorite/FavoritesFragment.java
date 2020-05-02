@@ -259,8 +259,6 @@ public class FavoritesFragment extends Fragment implements SwipeRefreshLayout.On
         if (!isUserLogged()) {
             TextView tv = root.findViewById(R.id.tvHeaderFavorites);
             tv.setText(R.string.should_be_logged_for_favorites);
-            tv.setTextSize(18);
-            requireActivity().openOptionsMenu();
             return root;
         }
         listMutableLiveData = new MutableLiveData<>(new ArrayList<>());
