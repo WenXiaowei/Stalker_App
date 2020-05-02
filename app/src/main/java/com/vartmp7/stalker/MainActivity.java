@@ -216,7 +216,6 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -244,7 +243,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.vartmp7.stalker.component.StalkerNotificationManager;
 import com.vartmp7.stalker.datamodel.Organization;
 import com.vartmp7.stalker.repository.FavoritesSource;
 import com.vartmp7.stalker.repository.FileStorage;
@@ -437,9 +435,9 @@ public class MainActivity extends AppCompatActivity {
                             showToast(getString(stringId, getString(R.string.email)));
                         });
                     }
-                    if (etPassword.getText().toString().equalsIgnoreCase(""))
+                    if (etPassword.getText().toString().trim().equalsIgnoreCase(""))
                         return;
-                    if (etPassword.getText().toString().equals(etRPassword.getText().toString())) {
+                    if (etPassword.getText().toString().trim().equals(etRPassword.getText().toString().trim())) {
                         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
                             FirebaseAuth.getInstance().getCurrentUser()
                                     .updatePassword(etPassword.getText().toString())

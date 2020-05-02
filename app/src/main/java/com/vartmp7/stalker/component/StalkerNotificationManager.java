@@ -258,7 +258,7 @@ public class StalkerNotificationManager {
                 .setContentTitle(Tools.getLocationTitle(context))
                 .setOngoing(true)
                 .setPriority(Notification.BADGE_ICON_LARGE)
-                .setSmallIcon(R.mipmap.ic_launcher)
+                .setSmallIcon(R.drawable.people)
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(text))
                 .setWhen(System.currentTimeMillis());
 
