@@ -204,6 +204,8 @@
 
 package com.vartmp7.stalker.repository;
 
+import android.util.Log;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
@@ -329,8 +331,10 @@ public class RESTObtainer implements Obtainer {
 
     @Override
     public void updateTrackRecords(List<Organization> orgs) {
+        Log.d(TAG, "updateTrackRecords: Entrato dentro");
         ArrayList<TrackRecord> mockedTrackRecords = new ArrayList<>();
-        if (orgs.size() == 0 || orgs.stream().anyMatch(Organization::isLogged)) {
+        if (orgs.size() == 0 || orgs.stream().noneMatch(Organization::isLogged)) {
+            Log.d(TAG, "updateTrackRecords: nessuna organizzazione");
             trackRecords.postValue(mockedTrackRecords);
             return;
         }
@@ -339,10 +343,13 @@ public class RESTObtainer implements Obtainer {
             trackRequest.setUserName(org.getPersonalCn());
             trackRequest.setPassword(org.getLdapPassword());
             Call<TrackHistory> tracks = service.getTracks(org.getId(), trackRequest);
+            Log.d(TAG, "updateTrackRecords: trackRequest " + trackRequest.toString());
             tracks.enqueue(new Callback<TrackHistory>() {
                 @Override
                 public void onResponse(@NotNull Call<TrackHistory> call, @NotNull Response<TrackHistory> response) {
-                    response.raw().body();
+                    Log.d(TAG, "onResponse: " + response.raw());;
+                    Log.d(TAG, "onResponse message: " + response.raw().message());;
+                    Log.d(TAG, "onResponse: body string " + response.raw().body().toString());;
                     if (response.body() != null) {
                         mockedTrackRecords.addAll(response.body().getTracks());
                     }
@@ -351,6 +358,7 @@ public class RESTObtainer implements Obtainer {
 
                 @Override
                 public void onFailure(@NotNull Call<TrackHistory> call, @NotNull Throwable t) {
+                    Log.d(TAG, "onResponse: " + t.getMessage());;
 //                    mockedTrackRecords.add(new TrackRecord().setPlaceName("Torre Archimede").setOrgName("UNIPD").setEntered(true).setPlaceId(1).setDateTime("2020-04-20T13:14:15"));
 //                    mockedTrackRecords.add(new TrackRecord().setPlaceName("Torre Archimede").setOrgName("UNIPD").setEntered(false).setPlaceId(1).setDateTime("2020-04-20T15:11:12"));
 //                    mockedTrackRecords.add(new TrackRecord().setPlaceName("Torre Archimede").setOrgName("UNIPD").setEntered(true).setPlaceId(1).setDateTime("2020-04-20T15:30:15"));

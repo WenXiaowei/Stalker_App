@@ -225,7 +225,7 @@ public class TrackRequest {
     @Setter
     @Accessors(chain = true)
     @Expose
-    @SerializedName(value = "user_name")
+    @SerializedName(value = "username")
     private String userName;
 
     @Setter

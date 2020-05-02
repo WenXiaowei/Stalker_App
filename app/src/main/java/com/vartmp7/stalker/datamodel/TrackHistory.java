@@ -222,5 +222,19 @@ public class TrackHistory {
     @Setter
     @Getter
     @Accessors(chain = true)
+    @SerializedName("place")
+    private PolygonPlace place;
+
+    @Setter
+    @Getter
+    @Accessors(chain = true)
     private List<TrackRecord> tracks;
+
+    @Override
+    public String toString() {
+        return "TrackHistory{" +
+                "userInfo=" + userInfo +
+                ", tracks=" + tracks +
+                '}';
+    }
 }

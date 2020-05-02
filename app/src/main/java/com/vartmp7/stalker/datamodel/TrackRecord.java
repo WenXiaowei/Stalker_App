@@ -229,6 +229,11 @@ public class TrackRecord {
 
     @Getter @Setter
     @Accessors(chain = true)
+    @SerializedName("place")
+    private PolygonPlace place;
+
+    @Getter @Setter
+    @Accessors(chain = true)
     @SerializedName("date_time")
     private String dateTime;
 
@@ -236,5 +241,18 @@ public class TrackRecord {
     @Accessors(chain = true)
     private boolean entered;
 
+    @Override
+    public String toString() {
+        return "TrackRecord{" +
+                "orgName='" + orgName + '\'' +
+                ", placeName='" + placeName + '\'' +
+                ", placeId=" + placeId +
+                ", dateTime='" + dateTime + '\'' +
+                ", entered=" + entered +
+                '}';
+    }
 
+    public String getPlaceName() {
+        return place.getName();
+    }
 }

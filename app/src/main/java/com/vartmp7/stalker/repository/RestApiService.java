@@ -240,6 +240,6 @@ public interface RestApiService {
     Call<Void> tracking(@Path("organization_id") long orgId, @Path("place_id") long placeId, @Body TrackSignal signal);
 
     @Headers("Organization-Token: vartmp7")
-    @POST("organizations/{id_orgs}/user/tracks")
+    @POST("organizations/{id_orgs}/tracks")
     Call<TrackHistory> getTracks(@Path("id_orgs") long id, @Body TrackRequest signal);
 }
