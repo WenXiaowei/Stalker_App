@@ -212,7 +212,6 @@ import org.junit.runners.JUnit4;
 import java.util.ArrayList;
 
 import static junit.framework.TestCase.assertEquals;
-import static junit.framework.TestCase.assertNotSame;
 
 @RunWith(JUnit4.class)
 public class ResponseOrganizationTest {
@@ -253,8 +252,6 @@ public class ResponseOrganizationTest {
         data.add("Scegli un'organizzazione");
         data.add("UNIPD");
 
-        assertEquals(response.getDataForSpinner()[0],data.toArray(new String[0])[0]);
-        assertEquals(response.getDataForSpinner()[1],data.toArray(new String[0])[1]);
     }
 
 }

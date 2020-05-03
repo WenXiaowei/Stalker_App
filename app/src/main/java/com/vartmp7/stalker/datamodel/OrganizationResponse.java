@@ -204,11 +204,8 @@
 
 package com.vartmp7.stalker.datamodel;
 
-import com.google.gson.annotations.SerializedName;
-
 import org.jetbrains.annotations.Contract;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -226,17 +223,6 @@ public class OrganizationResponse {
     @Accessors(chain = true)
     private List<Organization> organizations;
 
-    @Deprecated
-    public String[] getDataForSpinner() {
-        ArrayList<String> toRet = new ArrayList<>();
-        toRet.add("Scegli un'organizzazione");
-
-        for (Organization org : organizations) {
-            toRet.add(org.getName());
-        }
-
-        return toRet.toArray(new String[0]);
-    }
 
     public int getOrganizzationsLength() {
         return organizations.size();

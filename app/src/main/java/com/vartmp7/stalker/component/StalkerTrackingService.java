@@ -291,7 +291,10 @@ public class StalkerTrackingService extends Service {
                 onNewLocation(locationResult.getLastLocation());
             }
         };
-        createLocationRequest();
+        SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        Sensor stepSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
+        creator = new TrackRequestCreator(new StalkerStepCounter(sensorManager, stepSensor));
+        mLocationRequest =  creator.getMostPrecise();
         getLastLocation();
         try {
             mFusedLocationClient.requestLocationUpdates(mLocationRequest,
@@ -307,9 +310,6 @@ public class StalkerTrackingService extends Service {
                 .build();
         restApiService = retrofit.create(RestApiService.class);
 
-        SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        Sensor stepSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
-        creator = new TrackRequestCreator(new StalkerStepCounter(sensorManager, stepSensor));
 
 
         HandlerThread handlerThread = new HandlerThread(TAG);
@@ -451,15 +451,6 @@ public class StalkerTrackingService extends Service {
             }
         }
         return false;
-    }
-
-    private void createLocationRequest() {
-        mLocationRequest = new LocationRequest();
-        mLocationRequest.setMaxWaitTime(1000);
-        mLocationRequest.setInterval(1_000);
-        mLocationRequest.setSmallestDisplacement(2);
-        mLocationRequest.setFastestInterval(1000);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
 
     public void setCallback(CallBack callback) {

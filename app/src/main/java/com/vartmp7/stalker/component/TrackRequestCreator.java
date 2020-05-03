@@ -258,9 +258,12 @@ public class TrackRequestCreator {
     }
 
     public LocationRequest getMostPrecise() {
-        return new LocationRequest()
-                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setSmallestDisplacement(1)
-                .setMaxWaitTime(1);
+        LocationRequest mLocationRequest = new LocationRequest();
+        mLocationRequest.setMaxWaitTime(1000);
+        mLocationRequest.setInterval(1_000);
+        mLocationRequest.setSmallestDisplacement(2);
+        mLocationRequest.setFastestInterval(1000);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        return mLocationRequest;
     }
 }

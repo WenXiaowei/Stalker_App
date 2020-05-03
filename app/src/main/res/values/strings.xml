@@ -298,4 +298,8 @@
     <string name="devi_loggarti">Devi devi effettuare il login!</string>
     <string name="verifica_mail">Verifica la mail!</string>
     <string name="confermare_registrazione">Vuoi confermare la registrazione?</string>
+    <string name="logged">Login avvenuto con successo</string>
+    <string name="ldap_login_failed_check_credentials">Login LDAP fallito!\nVerifica il password.</string>
+    <string name="connection_to_ldap_failed">Connessione al  server LDAP fallita.</string>
+    <string name="something_went_wrong">Qualcosa è andato storto. Riprovare più tardi.</string>
 </resources>

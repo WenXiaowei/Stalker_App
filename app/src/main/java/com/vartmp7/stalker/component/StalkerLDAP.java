@@ -276,14 +276,6 @@ public class StalkerLDAP {
         return entry.getAttributeValue("uidNumber");
     }
 
-    /**
-     * restiruisce il sn (non so che sia)
-     * @return
-     */
-    public String getSn() {
-        return entry.getAttributeValue("sn");
-    }
-
     public String getCn() {
         return entry.getAttributeValue("cn");
     }

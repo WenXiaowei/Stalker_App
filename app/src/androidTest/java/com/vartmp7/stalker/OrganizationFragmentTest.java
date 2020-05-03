@@ -187,7 +187,7 @@
  *       same "printed page" as the copyright notice for easier
  *       identification within third-party archives.
  *
- *    Copyright [2020] [VartTmp7]
+ *    Copyright 2020 - VartTmp7
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -202,78 +202,112 @@
  *    limitations under the License.
  */
 
-package com.vartmp7.stalker.component;
+package com.vartmp7.stalker;
 
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
 
-import java.util.concurrent.atomic.AtomicLong;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewParent;
 
-/**
- * Contatore dei passi utilizzando i sensori messi a disposizione da Android permette di resettare il contatore dopo la lettura
- */
-class StalkerStepCounter {
-    private SensorManager manager;
-    private AtomicLong stepFromLastRead;
-    private Sensor sensor;
-    private SensorEventListener li;
+import androidx.test.espresso.ViewInteraction;
+import androidx.test.filters.LargeTest;
+import androidx.test.rule.ActivityTestRule;
+import androidx.test.rule.GrantPermissionRule;
+import androidx.test.runner.AndroidJUnit4;
 
-    /**
-     * Costruttore a 2 parametri
-     * @param manager SensorManager di default di Android
-     * @param sensor Sensor
-     */
-    StalkerStepCounter(SensorManager manager, Sensor sensor) {
-        this.manager = manager;
-        this.sensor = sensor;
-        stepFromLastRead = new AtomicLong();
-        addListener();
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeMatcher;
+import org.hamcrest.core.IsInstanceOf;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.action.ViewActions.scrollTo;
+import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static androidx.test.espresso.matcher.ViewMatchers.withClassName;
+import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.is;
+
+@LargeTest
+@RunWith(AndroidJUnit4.class)
+public class OrganizationFragmentTest {
+
+    @Rule
+    public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class);
+
+    @Rule
+    public GrantPermissionRule mGrantPermissionRule =
+            GrantPermissionRule.grant(
+                    "android.permission.ACCESS_FINE_LOCATION",
+                    "android.permission.ACCESS_COARSE_LOCATION");
+
+    @Test
+    public void organizationFragment() throws InterruptedException {
+        // clicca il pulsante continua senza autenticazione
+//        ViewInteraction appCompatButton = onView(
+//                allOf(withId(R.id.btnProcediSenzaAuth), withText("Continua senza autenticazione"),
+//                        childAtPosition(
+//                                childAtPosition(
+//                                        withId(R.id.fcvLoginContainer),
+//                                        0),
+//                                2),
+//                        isDisplayed()));
+//        appCompatButton.perform(click());
+
+//        onView(withId(R.id.srfl)).perform(swipeDown());
+//        wait(10_000);
+
+        ViewInteraction appCompatButton2 = onView(
+                allOf(withId(R.id.btnShowDetails),
+                        childAtPosition(
+                                childAtPosition(
+                                        withClassName(is("android.widget.LinearLayout")),
+                                        2),
+                                1),
+                        isDisplayed()));
+        appCompatButton2.perform(click());
+        ViewInteraction appCompatButton3 = onView(
+                allOf(withId(android.R.id.button2), withText("Chiudi"),
+                        childAtPosition(
+                                childAtPosition(
+                                        withId(R.id.buttonPanel),
+                                        0),
+                                1)));
+        appCompatButton3.perform(scrollTo(), click());
+
+        ViewInteraction textView = onView(
+                allOf(withId(R.id.tvNomeOrganizzazione), withText("UniPD Dipartimento di Matematica"),
+                        childAtPosition(
+                                childAtPosition(
+                                        IsInstanceOf.instanceOf(android.widget.FrameLayout.class),
+                                        0),
+                                1),
+                        isDisplayed()));
+        textView.check(matches(withText("UniPD Dipartimento di Matematica")));
     }
 
-    private void addListener() {
-        li = new SensorEventListener() {
-            @Override
-            public void onSensorChanged(SensorEvent event) {
-                Sensor sensor1 = event.sensor;
-                float[] values = event.values;
-                int val = -1;
-                if (values.length > 0)
-                    val = (int) values[0];
+    private static Matcher<View> childAtPosition(
+            final Matcher<View> parentMatcher, final int position) {
 
-                if (sensor1.getType() == Sensor.TYPE_STEP_COUNTER && val != -1) {
-                    stepFromLastRead.addAndGet(val);
-//                    Toast.makeText(MainActivity.this,"On sensor changed: "+val, Toast.LENGTH_SHORT).show();
-                }
+        return new TypeSafeMatcher<View>() {
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("Child at position " + position + " in parent ");
+                parentMatcher.describeTo(description);
             }
 
             @Override
-            public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
+            public boolean matchesSafely(View view) {
+                ViewParent parent = view.getParent();
+                return parent instanceof ViewGroup && parentMatcher.matches(parent)
+                        && view.equals(((ViewGroup) parent).getChildAt(position));
             }
         };
-        manager.registerListener(li, sensor, SensorManager.SENSOR_DELAY_NORMAL);
     }
-
-    /**
-     * restituisce i numeri di passi rilevati.
-     * @return i numeri di passi rilevati dall'ultima invocazione di StalkerStepCounter#resetSteps
-     */
-    public long getSteps() {
-        return stepFromLastRead.get();
-    }
-
-
-    /**
-     * mette a 0 il contatore dei passi a 0
-     */
-    public void resetSteps(){
-        stepFromLastRead.set(0);
-    }
-
-    private void removeListener() {
-        manager.unregisterListener(li);
-    }
-
 }
