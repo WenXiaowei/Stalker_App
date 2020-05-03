@@ -48,7 +48,6 @@
             android:name=".component.StalkerTrackingService"
             android:enabled="true"
             android:exported="true"
-            android:foregroundServiceType="location"
             android:permission="android.permission.FOREGROUND_SERVICE"/>
 
         <activity

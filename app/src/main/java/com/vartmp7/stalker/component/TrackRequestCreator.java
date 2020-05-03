@@ -26,31 +26,38 @@ package com.vartmp7.stalker.component;
 
 import com.google.android.gms.location.LocationRequest;
 
-public class TrackRequestCreator {
+class TrackRequestCreator {
     private StalkerStepCounter stepCounter;
+
+
     private static final double MAXIMUM_DISTANCE = 10_000d;
-    private static final long MAX_DISTANCE_AWAIT_TIME=10 *60*1000L;
+    private static final long MAX_DISTANCE_AWAIT_TIME=10 *60*1000L; // dieci minuti
+
+
     private static final double INTERMEDIATE_DISTANCE = 5_000d;
-    private static final long INTERMEDIATE_DISTANCE_AWAIT_TIME=5 *60*1000L;
+    private static final long INTERMEDIATE_DISTANCE_AWAIT_TIME=5 *60*1000L; // cinque minuti
+
+
     private static final double ALMOST_MOST_PRECISE_DISTANCE = 1_000d;
-    private static final long ALMOST_MOST_DISTANCE_AWAIT_TIME=3*60*1000L;
+    private static final long ALMOST_MOST_DISTANCE_AWAIT_TIME=3*60*1000L; // tre minuti
+
+
     private static final double MOST_PRECISE_DISTANCE = 100d;
-    private static final long MOST_PRECISE_DISTANCE_AWAIT_TIME=2*60*1000L;
+    private static final long MOST_PRECISE_DISTANCE_AWAIT_TIME=60*1000L; // un minuto
 
     private static final int STEPS = 50;
 
 
-    public TrackRequestCreator(StalkerStepCounter stepCounter) {
+    TrackRequestCreator(StalkerStepCounter stepCounter) {
         this.stepCounter = stepCounter;
     }
-
 
     /**
      * costruisce un LocationRequest in base alla distanza da una coordinata
      * @param distance distanza in double
      * @return restituisce un LocationRequest con determinate caratteristiche in base alla distanza. 
      */
-    public LocationRequest getNewRequest(double distance) {
+    LocationRequest getNewRequest(double distance) {
         LocationRequest request = new LocationRequest();
 
         if (distance >= MAXIMUM_DISTANCE) {
@@ -77,7 +84,7 @@ public class TrackRequestCreator {
         return request;
     }
 
-    public LocationRequest getMostPrecise() {
+    LocationRequest getMostPrecise() {
         LocationRequest mLocationRequest = new LocationRequest();
         mLocationRequest.setMaxWaitTime(1000);
         mLocationRequest.setInterval(1_000);

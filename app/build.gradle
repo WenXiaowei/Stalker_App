@@ -30,7 +30,7 @@ commando per avviare il container di sonar qube
  gradlew sonarqube -Dsonar.projectKey=Stalker_App -Dsonar.host.url=http://localhost:9000 -Dsonar.login=11ca1a408698561b7b343325b831cb3ad4b279bf
 
 
-gradlew clean test jacocoTestDebugUnitTestReport sonarqube
+gradlew clean test createDebugCoverageReport jacocoTestDebugUnitTestReport sonarqube
 
 */
 apply plugin: 'com.onesignal.androidsdk.onesignal-gradle-plugin'
@@ -57,12 +57,13 @@ repositories {
 
 }
 android {
-    compileSdkVersion 29
+    def $sdkVersion=28
+    compileSdkVersion $sdkVersion
     buildToolsVersion "28.0.3"
     defaultConfig {
         applicationId "com.vartmp7.stalker"
-        minSdkVersion 28
-        targetSdkVersion 29
+        minSdkVersion $sdkVersion
+        targetSdkVersion $sdkVersion
         testApplicationId "com.vartmp7.stalkertest"
         testHandleProfiling true
         testFunctionalTest true
@@ -81,7 +82,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         debug {
-            testCoverageEnabled true
+            testCoverageEnabled  true
         }
     }
 
@@ -164,7 +165,9 @@ sonarqube {
         property 'sonar.coverage.jacoco.xmlReportPaths','build/reports/jacoco/jacocoTestDebugUnitTestReport/jacocoTestDebugUnitTestReport.xml'
 
         def files = fileTree("${buildDir}/outputs/code-coverage/connected/flavors/DEV/").filter { it.isFile() }.files.name
-        def instrumentationFileName = "${buildDir}/outputs/code-coverage/connected/flavors/DEV/" + files[0];
+//        def instrumentationFileName = "${buildDir}/outputs/code-coverage/connected/flavors/DEV/" + files[0];
+        def instrumentationFileName = "${buildDir}/reports/coverage/debug/reports.xml"
+
         property "sonar.coverage.jacoco.itReportPath", instrumentationFileName
     }
 }
