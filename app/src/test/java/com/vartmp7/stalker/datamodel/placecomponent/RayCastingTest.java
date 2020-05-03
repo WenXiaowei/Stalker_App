@@ -218,12 +218,13 @@ import static org.junit.Assert.assertTrue;
 
 @RunWith(Parameterized.class)
 public class RayCastingTest {
-    RayCasting raycasting;
-    boolean isInside;
-
-    public RayCastingTest(RayCasting raycasting,boolean isInside) {
+    private RayCasting raycasting;
+    private boolean isInside;
+    private Coordinate coordinate;
+    public RayCastingTest(RayCasting raycasting, Coordinate coordinate,boolean isInside) {
        this.raycasting=raycasting;
        this.isInside=isInside;
+       this.coordinate = coordinate;
     }
     @Parameterized.Parameters
     public static Collection<Object[]> data() {
@@ -235,14 +236,14 @@ public class RayCastingTest {
         );
         //RayCasting raycasting = new RayCasting(coordinate,new Coordinata(0,1));
         return Arrays.asList(new Object[][]{
-                {new RayCasting(coordinate,new Coordinate(0,1)),true},
-                {new RayCasting(coordinate,new Coordinate(0.01d,2)),false}
+                {new RayCasting(coordinate),new Coordinate(0,1),true},
+                {new RayCasting(coordinate),new Coordinate(0.01d,2),false}
         });
     }
 
     @Test
     public void test(){
-        assertEquals(raycasting.isPointInside(),isInside);
+        assertEquals(raycasting.isPointInside(coordinate),isInside);
     }
 
     @Test
@@ -253,8 +254,8 @@ public class RayCastingTest {
                 new Coordinate(0,2),
                 new Coordinate(-1,1)
         );
-        RayCasting raycasting = new RayCasting(coordinate,new Coordinate(0,1));
-        assertTrue(raycasting.isPointInside());
+        RayCasting raycasting = new RayCasting(coordinate);
+        assertTrue(raycasting.isPointInside(new Coordinate(0,1)));
     }
 
 

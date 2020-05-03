@@ -212,15 +212,13 @@ import java.util.List;
 
 public class RayCasting {
     private List<Coordinate> coordinate;
-    private Coordinate punto;
 
 
-    public RayCasting(List<Coordinate> latLngs, Coordinate latLng) {
+    public RayCasting(List<Coordinate> latLngs) {
         this.coordinate = latLngs;
-        this.punto = latLng;
     }
 
-    public  boolean isPointInside() {
+    public  boolean isPointInside(Coordinate punto) {
         return isPointInsideEdges(getEdgesFromPoints(coordinate), punto);
     }
 

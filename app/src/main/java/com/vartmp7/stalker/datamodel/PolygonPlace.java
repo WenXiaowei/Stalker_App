@@ -204,13 +204,11 @@
 
 package com.vartmp7.stalker.datamodel;
 
-import com.vartmp7.stalker.datamodel.placecomponent.Line;
-import com.vartmp7.stalker.datamodel.placecomponent.RayCasting;
-
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import com.vartmp7.stalker.datamodel.placecomponent.Coordinate;
+import com.vartmp7.stalker.datamodel.placecomponent.Line;
+import com.vartmp7.stalker.datamodel.placecomponent.RayCasting;
 
 import java.util.List;
 
@@ -265,7 +263,7 @@ public class PolygonPlace extends AbstractPlace {
 
     @Override
     public boolean isInside(Coordinate c) {
-        return new RayCasting(getCoordinates(), c).isPointInside();
+        return new RayCasting(getCoordinates()).isPointInside(c);
     }
 
 }

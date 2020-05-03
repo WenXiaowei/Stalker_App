@@ -187,7 +187,7 @@
  *       same "printed page" as the copyright notice for easier
  *       identification within third-party archives.
  *
- *    Copyright [yyyy] [name of copyright owner]
+ *    Copyright 2020 - VartTmp7
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -200,10 +200,9 @@
  *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
- *
  */
 
-package com.vartmp7.stalker;
+package com.vartmp7.stalker.repository;
 
 import android.content.Context;
 import android.util.Log;
@@ -216,9 +215,9 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.google.gson.Gson;
+import com.vartmp7.stalker.TestUtil;
 import com.vartmp7.stalker.datamodel.Organization;
 import com.vartmp7.stalker.datamodel.OrganizationResponse;
-import com.vartmp7.stalker.repository.FileStorage;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -233,7 +232,6 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.doNothing;
