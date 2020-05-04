@@ -25,15 +25,12 @@
 package com.vartmp7.stalker.ui.organizations;
 
 
-import androidx.fragment.app.testing.FragmentScenario;
 import androidx.lifecycle.MutableLiveData;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.rule.ActivityTestRule;
 
-import com.android.dx.command.Main;
-import com.vartmp7.stalker.MainActivity;
 import com.vartmp7.stalker.R;
-import com.vartmp7.stalker.SingleFragmentActivity;
+import com.vartmp7.stalker.ui.SingleFragmentActivity;
 import com.vartmp7.stalker.datamodel.Organization;
 
 import org.junit.Before;
@@ -41,7 +38,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.lang.reflect.Field;
 import java.util.List;
 
 import static androidx.test.espresso.Espresso.onView;
@@ -52,7 +48,6 @@ import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.mockito.junit.MockitoJUnit.rule;
 
 @RunWith(AndroidJUnit4.class)
 public class OrganizationsFragmentTest{

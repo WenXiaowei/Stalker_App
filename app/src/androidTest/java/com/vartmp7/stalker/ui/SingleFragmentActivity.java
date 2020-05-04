@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package com.vartmp7.stalker;
+package com.vartmp7.stalker.ui;
 
 import android.os.Bundle;
 import android.view.ViewGroup;
@@ -32,6 +32,8 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RestrictTo;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+
+import com.vartmp7.stalker.R;
 
 @RestrictTo(RestrictTo.Scope.TESTS)
 public class SingleFragmentActivity extends AppCompatActivity {
