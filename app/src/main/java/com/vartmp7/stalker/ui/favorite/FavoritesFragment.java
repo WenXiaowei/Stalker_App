@@ -41,16 +41,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.firebase.auth.FirebaseAuth;
-import com.vartmp7.stalker.MainActivity;
 import com.vartmp7.stalker.R;
+import com.vartmp7.stalker.Tools;
 import com.vartmp7.stalker.component.NotLogged;
 import com.vartmp7.stalker.datamodel.Organization;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -68,43 +65,36 @@ public class FavoritesFragment extends Fragment implements SwipeRefreshLayout.On
     @Getter(AccessLevel.PUBLIC)
     private MutableLiveData<List<Organization>> listMutableLiveData;
     private SwipeRefreshLayout preferitiSwipeLayout;
-
-    private boolean isUserLogged() {
-        return FirebaseAuth.getInstance().getCurrentUser() != null || GoogleSignIn.getLastSignedInAccount(requireContext()) != null;
-    }
+    private  TextView tvMessageBox;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_preferiti, container, false);
-        if (!isUserLogged()) {
-            TextView tv = root.findViewById(R.id.tvHeaderFavorites);
-            tv.setText(R.string.should_be_logged_for_favorites);
+        tvMessageBox = root.findViewById(R.id.tvHeaderFavorites);
+        if (!Tools.isUserLogged(requireContext())) {
+            tvMessageBox.setText(R.string.should_be_logged_for_favorites);
             return root;
         }
         listMutableLiveData = new MutableLiveData<>(new ArrayList<>());
 
         this.favRecyclerView = root.findViewById(R.id.preferitiRecyclerView);
 
-//        OrganizationsRepository orgRepo = OrganizationsRepository.getInstance();
-
-        this.favViewModel = new ViewModelProvider(requireActivity()).get(FavoritesViewModel.class);
+        this.favViewModel = new ViewModelProvider(requireActivity(),
+                new FavoritesViewModel.FavoritesViewModelFactory()).get(FavoritesViewModel.class);
 
         preferitiSwipeLayout = root.findViewById(R.id.srflPreferiti);
         preferitiSwipeLayout.setOnRefreshListener(this);
 
-        favViewModel.init(MainActivity.repository);
         initRecyclerView();
 
-        favViewModel.getOrganizzazioni().observe(getViewLifecycleOwner(), organizzazioni -> {
-            List<Organization> orgs = organizzazioni;
-
-//            Log.e(TAG,"trigger");
-//            organizzazioni
-//                    .stream()
-//                    .filter(Organization::isFavorite)
-//                    .forEach(o-> Log.d(TAG, "org: "+o.getId()+" "+o.getName()+" "+o.isTracking()));
-            favViewAdapter.setOrganizzazioni(organizzazioni.stream().filter(Organization::isFavorite).distinct().collect(Collectors.toList()));
-//            Log.e(TAG," triggered");
+        favViewModel.getFavoriteOrganizations().observe(getViewLifecycleOwner(), organizzazioni -> {
+            if (organizzazioni.size()==0){
+                tvMessageBox.setText(R.string.non_hai_ancora_org_fav);
+            }else
+            {
+                tvMessageBox.setText(R.string.i_tuoi_preferiti);
+            }
+            favViewAdapter.setOrganizzazioni(organizzazioni);
             preferitiSwipeLayout.setRefreshing(false);
         });
 
@@ -136,8 +126,14 @@ public class FavoritesFragment extends Fragment implements SwipeRefreshLayout.On
         return root;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (Tools.isUserLogged(requireContext()))
+            onRefresh();
+    }
+
     private void initRecyclerView() {
-//        if (favViewModel.getOrganizzazioni().getValue() == null) Log.d(TAG, "è null!");
         favViewAdapter = new FavoritesViewAdapter(getContext(), favViewModel,
                 new ArrayList<>(), Navigation.findNavController(requireActivity(),
                 R.id.nav_host_fragment));
@@ -148,8 +144,7 @@ public class FavoritesFragment extends Fragment implements SwipeRefreshLayout.On
 
     @Override
     public void onRefresh() {
-//        preferitiSwipeLayout.setRefreshing(true);
         favViewModel.refresh();
-//        Log.e(TAG, "onRefresh: ");
+        preferitiSwipeLayout.setRefreshing(true);
     }
 }

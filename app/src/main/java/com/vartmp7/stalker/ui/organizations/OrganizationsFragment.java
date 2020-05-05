@@ -31,7 +31,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
@@ -40,7 +39,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.vartmp7.stalker.R;
-import com.vartmp7.stalker.repository.OrganizationsRepository;
 
 public class OrganizationsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
     public static final String TAG = "com.vartmp7.stalker.ui.organizations.OrganizationsFragment";
@@ -49,16 +47,6 @@ public class OrganizationsFragment extends Fragment implements SwipeRefreshLayou
     private RecyclerView recyclerView;
     private OrganizationViewAdapter mAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
-    private OrganizationsRepository organizationsRepository;
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-    }
-
-
-
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_organizations, container, false);
