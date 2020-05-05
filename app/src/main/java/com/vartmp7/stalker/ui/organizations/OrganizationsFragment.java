@@ -39,7 +39,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.vartmp7.stalker.MainActivity;
 import com.vartmp7.stalker.R;
 import com.vartmp7.stalker.repository.OrganizationsRepository;
 
@@ -59,24 +58,13 @@ public class OrganizationsFragment extends Fragment implements SwipeRefreshLayou
     }
 
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-//        int actionId = OrganizationsFragmentDirections.actionNavigationOrganizationsToNavigationTracking().getActionId();
 
-//        NavDirections navDirections = OrganizationsFragmentDirections.actionNavigationOrganizationsToNavigationTracking();
-
-
-    }
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_organizations, container, false);
-        organizzazioneViewModel = new ViewModelProvider(requireActivity()).get(OrganizationsViewModel.class);
+        organizzazioneViewModel = new ViewModelProvider(requireActivity(),
+                new OrganizationsViewModel.OrganizationViewModelFactory()).get(OrganizationsViewModel.class);
 
-        organizzazioneViewModel.initData(MainActivity.repository);
-
-
-        //organizationsRepository.getPreferiti();
 
         swipeRefreshLayout = root.findViewById(R.id.srfl);
         swipeRefreshLayout.setOnRefreshListener(this);
@@ -85,11 +73,7 @@ public class OrganizationsFragment extends Fragment implements SwipeRefreshLayou
 
         setUpRecyclerView();
         organizzazioneViewModel.getOrganizationList().observe(getViewLifecycleOwner(), lista -> {
-//            Log.e(TAG, "onCreateView: triggered");
-//            Log.e(TAG, "stampa organizzazioni fetchate: ");
-//            lista.forEach(o-> Log.e(TAG, "onCreateView: "+o.getId()+" name "+o.getName()+" isPreferito"+o.isFavorite()));
             mAdapter.setOrganizations(lista);
-            mAdapter.notifyDataSetChanged();
             swipeRefreshLayout.setRefreshing(false);
         });
 
@@ -97,8 +81,8 @@ public class OrganizationsFragment extends Fragment implements SwipeRefreshLayou
     }
 
     private void setUpRecyclerView() {
-        mAdapter = new OrganizationViewAdapter(getContext(), organizzazioneViewModel, Navigation.findNavController(requireActivity(),
-                R.id.nav_host_fragment));
+        mAdapter = new OrganizationViewAdapter(getContext(), organizzazioneViewModel,
+                Navigation.findNavController(requireActivity(), R.id.nav_host_fragment));
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(mAdapter);

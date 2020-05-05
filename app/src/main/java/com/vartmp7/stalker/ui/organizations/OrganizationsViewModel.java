@@ -24,12 +24,16 @@
 
 package com.vartmp7.stalker.ui.organizations;
 
-import androidx.lifecycle.LiveData;
+import androidx.annotation.NonNull;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
 
+import com.vartmp7.stalker.MainActivity;
 import com.vartmp7.stalker.datamodel.Organization;
 import com.vartmp7.stalker.repository.OrganizationsRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import lombok.AccessLevel;
@@ -39,41 +43,34 @@ import lombok.Getter;
  * @author Xiaowei Wen, Lorenzo Taschin
  */
 public class OrganizationsViewModel extends ViewModel {
-    public static final String TAG = "com.vartmp7.stalker.ui.organizations.OrganizationsViewModel";
+
 
     private OrganizationsRepository orgRepo;
     @Getter(AccessLevel.PUBLIC)
-    private LiveData<List<Organization>> organizationList;
+    private MutableLiveData<List<Organization>> organizationList;
 
-
-    public void initData(OrganizationsRepository orgRepo) {
-        if (organizationList != null) {
-            return;
-        }
+    public OrganizationsViewModel(OrganizationsRepository orgRepo) {
         this.orgRepo = orgRepo;
-        //TODO togliere questo casting
-        this.organizationList = orgRepo.getOrganizations();
+        organizationList = new MutableLiveData<>(new ArrayList<>());
+        orgRepo.getOrganizations().observeForever(organizations -> organizationList.setValue(organizations));
     }
 
-
-    public void updateOrganizzazione(Organization o){
+    void updateOrganizzazione(Organization o){
         orgRepo.updateOrganization(o);
     }
 
-   /* public void updateData() {
-        orgRepo.updateOrganizzazioni();
-    }*/
-
-
-//    public void aggiungiOrganizzazione(final Organizzazione org) {
-//        List<Organizzazione> l = organizationList.getValue();
-//        if (l==null)
-//            l= new ArrayList<>();
-//        l.add(org);
-//        organizationList.setValue(l);
-//    }
-
-    public void refresh() {
+    void refresh() {
         orgRepo.refreshOrganizations();
+    }
+
+    public static class OrganizationViewModelFactory implements ViewModelProvider.Factory{
+        @NonNull
+        @Override
+        public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
+            if (modelClass.isAssignableFrom(OrganizationsViewModel.class)){
+                return (T) new OrganizationsViewModel(MainActivity.repository);
+            }
+            throw new IllegalArgumentException("View model not found!");
+        }
     }
 }

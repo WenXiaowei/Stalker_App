@@ -76,8 +76,8 @@ public class OrganizationsViewModelTest{
 
     @Before
     public void setup(){
-        viewModel = new OrganizationsViewModel();
         orgRepo = mock(OrganizationsRepository.class);
+        viewModel = new OrganizationsViewModel(orgRepo);
         lifecycleOwner = TestUtil.mockLifecycleOwner();
 
         organizationsToGet = Arrays.asList(
@@ -90,7 +90,6 @@ public class OrganizationsViewModelTest{
             liveOrganizations.postValue(organizationsToGet);
             return liveOrganizations;
         });
-        viewModel.initData(orgRepo);
         MockitoAnnotations.initMocks(this);
     }
 
