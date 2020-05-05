@@ -24,13 +24,18 @@
 
 package com.vartmp7.stalker.ui.history;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
 
+import com.vartmp7.stalker.MainActivity;
 import com.vartmp7.stalker.datamodel.Organization;
 import com.vartmp7.stalker.datamodel.TrackRecord;
 import com.vartmp7.stalker.repository.OrganizationsRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,16 +43,69 @@ import java.util.stream.Collectors;
  * @author Xiaowei Wen, Lorenzo Taschin
  */
 public class HistoryViewModel extends ViewModel {
+    static public class HistoryViewModelFactory implements ViewModelProvider.Factory{
+
+        @NonNull
+        @Override
+        public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
+            if (modelClass.isAssignableFrom(ViewModel.class)){
+                HistoryViewModel historyViewModel = new HistoryViewModel(MainActivity.repository);
+                return (T) historyViewModel;
+            }
+            throw new IllegalArgumentException("View model not found");
+        }
+    }
+
     public static final String TAG = "com.vartmp7.stalker.ui.cronologia.CronologiaViewModel";
 
+    public enum Message {notLogged, noRecords, hasRecords}
+
     private OrganizationsRepository orgRepo;
+    private MutableLiveData<Message> messageStatus;
+    private MutableLiveData<List<String>> placeNames;
+    private MutableLiveData<List<TrackRecord>> trackrecords;
+
+    public void initData(OrganizationsRepository organizationsRepository){
+        orgRepo= organizationsRepository;
+    }
+    public HistoryViewModel(OrganizationsRepository organizationsRepository) {
+        messageStatus = new MutableLiveData<>(Message.notLogged);
+        orgRepo = organizationsRepository;
+        placeNames = new MutableLiveData<>(new ArrayList<>());
+        trackrecords = new MutableLiveData<>(new ArrayList<>());
+        orgRepo.getOrganizations().observeForever(organizations -> {
+            if (organizations.stream().anyMatch(Organization::isLogged))
+                messageStatus.setValue(Message.noRecords);
+            else
+                messageStatus.setValue(Message.notLogged);
+        });
+
+        trackrecords.observeForever(records -> {
+            if (records.size() != 0)
+                messageStatus.setValue(Message.hasRecords);
+            else
+                messageStatus.setValue(Message.noRecords);
+        });
+
+        orgRepo.getTrackHistory().observeForever(records -> {
+            trackrecords.setValue(records);
+            List<String> collect = new ArrayList<>();
+            collect.add("Selezione un luogo");
+            collect.addAll(records.stream().map(TrackRecord::getPlaceName).distinct().collect(Collectors.toList()));
+            placeNames.setValue(collect);
+        });
+    }
+
+    void setFilterByName(String name) {
+        trackrecords.setValue(orgRepo.getTrackHistory().getValue().stream().filter(t -> t.getPlaceName().equals(name)).collect(Collectors.toList()));
+    }
+
+    void removeFilter() {
+        trackrecords.setValue(orgRepo.getTrackHistory().getValue());
+    }
 
     public LiveData<List<Organization>> getOrganizations() {
         return orgRepo.getOrganizations();
-    }
-
-    LiveData<List<TrackRecord>> getTrackRecords() {
-        return orgRepo.getTrackHistory();
     }
 
     void updateTrackHistories() {
@@ -55,8 +113,15 @@ public class HistoryViewModel extends ViewModel {
     }
 
 
-    void init(OrganizationsRepository repository) {
-        this.orgRepo = repository;
+    LiveData<List<TrackRecord>> getTrackRecords() {
+        return trackrecords;
     }
 
+    LiveData<Message> getMessageStatus() {
+        return messageStatus;
+    }
+
+    LiveData<List<String>> getPlaceNames() {
+        return placeNames;
+    }
 }

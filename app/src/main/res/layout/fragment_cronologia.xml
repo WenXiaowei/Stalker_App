@@ -55,14 +55,20 @@
                 android:id="@+id/sPlace"
                 android:layout_weight="7"
                 android:layout_width="0dp"
+                android:dropDownWidth="250dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
                 android:layout_marginEnd="5dp"
                 android:padding="2dp" />
             <Button
+                android:background="@drawable/refresh_btn_style"
                 android:layout_width="wrap_content"
+                android:layout_weight="3"
                 android:layout_height="wrap_content"
                 android:id="@+id/btnRemoveFilter"
+                android:paddingStart="5dp"
+                android:paddingEnd="5dp"
+                android:textColor="@color/white"
                 android:text="@string/rimuovi_filtro"/>
         </LinearLayout>
 
