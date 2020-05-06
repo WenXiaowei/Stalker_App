@@ -48,7 +48,7 @@ public class HistoryViewModel extends ViewModel {
         @NonNull
         @Override
         public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-            if (modelClass.isAssignableFrom(ViewModel.class)){
+            if (modelClass.isAssignableFrom(HistoryViewModel.class)){
                 HistoryViewModel historyViewModel = new HistoryViewModel(MainActivity.repository);
                 return (T) historyViewModel;
             }

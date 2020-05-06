@@ -44,6 +44,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Chronometer;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -94,6 +95,7 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
     private TextView tvCurrentStatus;
     private Handler handler = new StalkerHandler(this);
     private Chronometer tvTimer;
+    private LinearLayout llChrometer;
     private StalkerServiceCallback callback = new StalkerServiceCallback(handler) {
         @Override
         public void stopTracking() {
@@ -182,7 +184,7 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
 
         tvCurrentStatus = root.findViewById(R.id.tvCurrentStatus);
         tvTimer = root.findViewById(R.id.tvTimer);
-
+        llChrometer= root.findViewById(R.id.llChrometer);
         mRequestLocationUpdatesButton = root.findViewById(R.id.btnStartAll);
         mRemoveLocationUpdatesButton = root.findViewById(R.id.btnStopAll);
 
@@ -267,10 +269,14 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
         if (mService != null) {
             mService.updateOrganizations(organizationToTrack);
         }
-        if (organizationsReadyToTrack.stream().anyMatch(Organization::isTrackingActive))
+        if (organizationsReadyToTrack.stream().anyMatch(Organization::isTrackingActive)){
+            llChrometer.setVisibility(View.VISIBLE);
             Tools.setRequestingLocationUpdates(requireContext(), true);
-        else
+        }
+        else{
+            llChrometer.setVisibility(View.GONE);
             Tools.setRequestingLocationUpdates(requireContext(), false);
+        }
 
         if (list.stream().anyMatch(Organization::isTrackingActive) && mService == null)
             requireContext().bindService(new Intent(requireContext(), StalkerTrackingService.class), mServiceConnection,
