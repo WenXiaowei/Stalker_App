@@ -82,13 +82,11 @@ public class OrganizationViewAdapter extends RecyclerView.Adapter<OrganizationVi
         Glide.with(context)
                 .setDefaultRequestOptions(new RequestOptions().error(R.drawable.logo_unipd))
                 .load(listaOrganization.get(position).getImageUrl())
-
                 .into(holder.ivIconOrganizzazione);
 
         holder.nomeOrganizzazione.setText(org.getName());
         holder.btnTrackMe.setOnClickListener(v -> {
-            org.setTracking(true);
-            viewModel.updateOrganizzazione(org);
+            viewModel.addOrganizationToTrack(org);
             navController.navigate(R.id.action_navigation_organizations_to_navigation_tracking);
         });
 

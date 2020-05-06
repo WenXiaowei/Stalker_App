@@ -33,6 +33,8 @@ import com.vartmp7.stalker.MainActivity;
 import com.vartmp7.stalker.datamodel.Organization;
 import com.vartmp7.stalker.repository.OrganizationsRepository;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,6 +59,9 @@ public class OrganizationsViewModel extends ViewModel {
 
     void updateOrganizzazione(Organization o){
         orgRepo.updateOrganization(o);
+    }
+    void addOrganizationToTrack(@NotNull Organization o){
+        orgRepo.updateOrganization(o.setTracking(true));
     }
 
     void refresh() {
