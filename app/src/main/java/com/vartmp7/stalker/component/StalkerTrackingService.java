@@ -487,7 +487,7 @@ public class StalkerTrackingService extends Service {
         }
         if (organizations != null && organizations.size() != 0)
             return getString(R.string.non_presente_nei_luoghi_tracciati);
-        return getString(R.string.nessun_organization_ti_sta_tracciando);
+        return getString(R.string.nessun_organizzazione_ti_sta_stalkerando);
     }
 
     private String lastMessage="";

@@ -67,8 +67,8 @@ public class FavoritesViewModelTest {
 
     @Before
     public void setup(){
-        viewModel=new FavoritesViewModel();
         orgRepo = mock(OrganizationsRepository.class);
+        viewModel=new FavoritesViewModel(orgRepo);
         allOrganizations = Arrays.asList(
                 new Organization().setId(1).setFavorite(false),
                 new Organization().setId(2).setFavorite(true)
@@ -78,7 +78,6 @@ public class FavoritesViewModelTest {
              allLiveOrgs.postValue(allOrganizations);
              return allLiveOrgs;
         });
-        viewModel.init(orgRepo);
         lifecycleOwner = TestUtil.mockLifecycleOwner();
         MockitoAnnotations.initMocks(this);
     }
@@ -90,7 +89,7 @@ public class FavoritesViewModelTest {
     public void testGetOrganizations(){
         List<Organization> expected = allOrganizations.stream().filter(Organization::isFavorite).collect(Collectors.toList());
         doNothing().when(observer).onChanged(anyList());
-        viewModel.getOrganizzazioni().observe(lifecycleOwner,observer);
+        viewModel.getFavoriteOrganizations().observe(lifecycleOwner,observer);
         verify(observer).onChanged(expected);
     }
 }

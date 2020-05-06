@@ -84,7 +84,6 @@
     <string name="settings">Impostazione</string>
     <string name="ferma_tutti">Ferma \nTutti</string>
     <string name="avvia_tutti">Avvia\n tutti</string>
-    <string name="nessun_organization_ti_sta_tracciando">Nessun\'organizzazione ti sta tracciando</string>
     <string name="tuo_cn">Tuo CN</string>
     <string name="nome_organizzazione">Nome:</string>
     <string name="numero_telefonico">Numero telefonico:</string>
@@ -123,4 +122,5 @@
     <string name="connection_to_ldap_failed">Connessione al  server LDAP fallita.</string>
     <string name="something_went_wrong">Qualcosa è andato storto. Riprovare più tardi.</string>
     <string name="rimuovi_filtro">Rimuovi filtro</string>
+    <string name="non_hai_ancora_org_fav">Non hai ancora nessun\'organizzazione preferita!</string>
 </resources>

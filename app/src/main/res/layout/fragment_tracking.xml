@@ -48,12 +48,14 @@
             android:id="@+id/tvCurrentStatus"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/nessun_organization_ti_sta_tracciando"
+            android:text="@string/nessun_organizzazione_ti_sta_stalkerando"
             android:textSize="15sp" />
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:id="@+id/llChrometer"
+            android:visibility="gone"
             android:orientation="horizontal">
 
             <TextView

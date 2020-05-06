@@ -44,16 +44,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.vartmp7.stalker.MainActivity;
 import com.vartmp7.stalker.R;
 import com.vartmp7.stalker.datamodel.Organization;
-import com.vartmp7.stalker.datamodel.TrackRecord;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 /**
@@ -70,7 +67,6 @@ public class HistoryFragment extends Fragment implements SwipeRefreshLayout.OnRe
     private Spinner sPlaceNames;
 
     private List<String> placeNames;
-    private List<TrackRecord> trackRecords;
     private LinearLayout llFilter;
     private Button btnRemoveFilter;
 
@@ -78,8 +74,7 @@ public class HistoryFragment extends Fragment implements SwipeRefreshLayout.OnRe
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_cronologia, container, false);
-        historyViewModel = new ViewModelProvider(requireActivity()).get(HistoryViewModel.class);
-        historyViewModel.init(MainActivity.repository);
+        historyViewModel = new ViewModelProvider(requireActivity(), new HistoryViewModel.HistoryViewModelFactory()).get(HistoryViewModel.class);
         organizationRecyclerView = v.findViewById(R.id.rvListaOrganizzazioni);
         refreshLayout = v.findViewById(R.id.swipeToRefresh);
         tvMessageBox = v.findViewById(R.id.tvMessageBox);
@@ -87,7 +82,8 @@ public class HistoryFragment extends Fragment implements SwipeRefreshLayout.OnRe
         llFilter = v.findViewById(R.id.llFilter);
 
         btnRemoveFilter = v.findViewById(R.id.btnRemoveFilter);
-        btnRemoveFilter.setOnClickListener(view->{
+        btnRemoveFilter.setOnClickListener(view -> {
+            historyViewModel.removeFilter();
             sPlaceNames.setSelection(0);
             view.setEnabled(false);
         });
@@ -95,12 +91,12 @@ public class HistoryFragment extends Fragment implements SwipeRefreshLayout.OnRe
         sPlaceNames.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                btnRemoveFilter.setEnabled(position!=0);
+                btnRemoveFilter.setEnabled(position != 0);
                 if (position == 0) {
-                    adapter.updateTracks(trackRecords);
+                    historyViewModel.removeFilter();
                     return;
                 }
-                adapter.updateTracks(trackRecords.stream().filter(trackRecord -> trackRecord.getPlaceName().equals(placeNames.get(position))).collect(Collectors.toList()));
+                historyViewModel.setFilterByName(placeNames.get(position));
             }
 
             @Override
@@ -108,25 +104,29 @@ public class HistoryFragment extends Fragment implements SwipeRefreshLayout.OnRe
 
             }
         });
-        historyViewModel.getTrackRecords().observe(getViewLifecycleOwner(), records -> {
-            if (historyViewModel.getOrganizations().getValue().stream().noneMatch(Organization::isLogged)) {
-                tvMessageBox.setText(R.string.devi_loggare_con_ldap);
-                llFilter.setVisibility(View.GONE);
-            } else if (historyViewModel.getTrackRecords().getValue().size() == 0) {
+        historyViewModel.getMessageStatus().observe(getViewLifecycleOwner(), message -> {
+            if (message == HistoryViewModel.Message.hasRecords) {
+                llFilter.setVisibility(View.VISIBLE);
+                tvMessageBox.setText(R.string.storico_tracciamenti);
+
+            } else if (message == HistoryViewModel.Message.noRecords) {
                 tvMessageBox.setText(R.string.non_ci_sono_tracciamenti);
                 llFilter.setVisibility(View.GONE);
             } else {
-                llFilter.setVisibility(View.VISIBLE);
-                tvMessageBox.setText(R.string.storico_tracciamenti);
-                adapter.updateTracks(records);
-                trackRecords = records;
-                initSpinnerData(trackRecords);
+                tvMessageBox.setText(R.string.devi_loggare_con_ldap);
+                llFilter.setVisibility(View.GONE);
             }
-
+        });
+        historyViewModel.getTrackRecords().observe(getViewLifecycleOwner(), records -> {
+            adapter.updateTracks(records);
             refreshLayout.setRefreshing(false);
         });
 
-        initOraganizationList();
+        historyViewModel.getPlaceNames().observe(getViewLifecycleOwner(), strings -> {
+            placeNames = strings;
+            initSpinnerData(strings);
+        });
+        initTrackRecordsList();
 
         return v;
     }
@@ -137,19 +137,14 @@ public class HistoryFragment extends Fragment implements SwipeRefreshLayout.OnRe
         onRefresh();
     }
 
-    private void initSpinnerData(@NotNull List<TrackRecord> list) {
-        placeNames = new ArrayList<>();
-        placeNames.add("Selezione un luogo");
-        list.forEach(trackRecord -> placeNames.add(trackRecord.getPlaceName()));
-        placeNames =  placeNames.stream().distinct().collect(Collectors.toList());
+    private void initSpinnerData(@NotNull List<String> list) {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(requireContext(), android.R.layout.simple_spinner_dropdown_item,
-                placeNames);
+                list);
         adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
         sPlaceNames.setAdapter(adapter);
-
     }
 
-    private void initOraganizationList() {
+    private void initTrackRecordsList() {
         adapter = new TrackRecordAdapter(new ArrayList<>());
         organizationRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         organizationRecyclerView.setAdapter(adapter);

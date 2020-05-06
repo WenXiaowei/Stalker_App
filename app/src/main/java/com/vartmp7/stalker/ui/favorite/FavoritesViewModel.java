@@ -24,18 +24,20 @@
 
 package com.vartmp7.stalker.ui.favorite;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
 
+import com.vartmp7.stalker.MainActivity;
 import com.vartmp7.stalker.component.NotLogged;
 import com.vartmp7.stalker.datamodel.Organization;
 import com.vartmp7.stalker.repository.OrganizationsRepository;
 
-import org.jetbrains.annotations.NotNull;
-
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -46,65 +48,63 @@ import lombok.Getter;
  * @author Xiaowei Wen, Lorenzo Taschin
  */
 public class FavoritesViewModel extends ViewModel {
-    public static final String TAG = "com.vartmp7.stalker.ui.preferiti.PreferitiViewModel";
-    private OrganizationsRepository orgRepo;
+    public static class FavoritesViewModelFactory implements ViewModelProvider.Factory{
 
+        @NonNull
+        @Override
+        public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
+            if (modelClass.isAssignableFrom(FavoritesViewModel.class)){
+                return (T) new FavoritesViewModel(MainActivity.repository);
+            }
+            throw new IllegalArgumentException("Viewmodel not found!");
+        }
+    }
+
+    private OrganizationsRepository orgRepo;
     private LiveData<List<Long>> mutableliveDataOrgIds;
-    private LiveData<List<Organization>> liveDataOrganizzazioni;
+    private LiveData<List<Organization>> liveDataOrganizations;
     @Getter(AccessLevel.PUBLIC)
-    private MediatorLiveData<List<Organization>> organizzazioni;
+    private MediatorLiveData<List<Organization>> favoriteOrganizations;
     private MutableLiveData<Boolean> organizationsQueryExhausted;
     private MutableLiveData<Boolean> firebaseQueryExhausted;
     private final Observer<Boolean> queryExhaustedObserver;
     private final Observer<List<Organization>> storageObserver;
     private final Observer<List<Long>> firebaseObserver;
 
-    public FavoritesViewModel() {
+    public FavoritesViewModel(OrganizationsRepository orgRepo) {
+        this.orgRepo = orgRepo;
+        this.favoriteOrganizations = new MediatorLiveData<>();
+        this.favoriteOrganizations.setValue(orgRepo.getOrganizations().getValue());
+        this.liveDataOrganizations = new MutableLiveData<>(new ArrayList<>());
+        this.firebaseQueryExhausted = new MutableLiveData<>(false);
+        this.organizationsQueryExhausted = new MutableLiveData<>(false);
+
         queryExhaustedObserver = aBoolean -> {
-//            Log.e(TAG, "cambiamento");
+            if (firebaseQueryExhausted.getValue()==null || organizationsQueryExhausted.getValue()==null)
+                return;
             if (firebaseQueryExhausted.getValue() && organizationsQueryExhausted.getValue()) {
-//                Log.d(TAG, "onChanged: if sotto cambiamento");
                 final List<Long> orgIds = mutableliveDataOrgIds.getValue();
-                List<Organization> list = liveDataOrganizzazioni.getValue()
+                List<Organization> list = liveDataOrganizations.getValue()
                         .stream()
                         .filter(o -> orgIds.contains(o.getId()))
                         .collect(Collectors.toList());
                 list.forEach(o-> orgRepo.updateOrganization(o.setFavorite(true)));
-//                Log.i(TAG, "onChanged: " + list);
-                organizzazioni.postValue(list);
-//                organizzazioni.removeSource(liveDataOrganizzazioni);
-//                organizzazioni.removeSource(mutableliveDataOrgIds);
-                organizzazioni.removeSource(organizationsQueryExhausted);
-                organizzazioni.removeSource(firebaseQueryExhausted);
+                favoriteOrganizations.postValue(list);
+                favoriteOrganizations.removeSource(organizationsQueryExhausted);
+                favoriteOrganizations.removeSource(firebaseQueryExhausted);
 
             }
         };
 
-        storageObserver = organizzazioni -> {
-            organizationsQueryExhausted.setValue(true);
+        storageObserver = organizzazioni -> organizationsQueryExhausted.setValue(true);
+        firebaseObserver = organizzazioni -> firebaseQueryExhausted.setValue(true);
 
-        };
-        firebaseObserver = organizzazioni -> {
-            firebaseQueryExhausted.setValue(true);
-
-        };
+        refresh();
     }
 
 
     public void updateOrganizzazione(Organization org) {
         orgRepo.updateOrganization(org);
-    }
-
-    public void init(@NotNull OrganizationsRepository orgRepo) {
-        this.organizzazioni = new MediatorLiveData<>();
-        this.organizzazioni.setValue(orgRepo.getOrganizations().getValue());
-        this.orgRepo = orgRepo;
-
-        //this.liveDataOrganizzazioni = orgRepo.getOrganizzazioni();
-        //this.mutableliveDataOrgIds = orgRepo.getPreferiti();
-        this.firebaseQueryExhausted = new MutableLiveData<>(false);
-        this.organizationsQueryExhausted = new MutableLiveData<>(false);
-        refresh();
     }
 
     public void refresh() {
@@ -113,29 +113,20 @@ public class FavoritesViewModel extends ViewModel {
         //MutableLiveData<List<Organizzazione>> listOrgs= new MutableLiveData<>();
         this.firebaseQueryExhausted.setValue(false);
         this.organizationsQueryExhausted.setValue(false);
-
-        this.liveDataOrganizzazioni = orgRepo.getOrganizations();
+        this.liveDataOrganizations = orgRepo.getOrganizations();
         this.mutableliveDataOrgIds = orgRepo.getFavorites();
 
-        this.organizzazioni.addSource(liveDataOrganizzazioni, storageObserver);
-        this.organizzazioni.addSource(mutableliveDataOrgIds,firebaseObserver);
-        //orgRepo.refreshOrganizzazioni();
+        this.favoriteOrganizations.addSource(liveDataOrganizations, storageObserver);
+        this.favoriteOrganizations.addSource(mutableliveDataOrgIds,firebaseObserver);
 
-
-
-
-        //listOrgs.setValue(Arrays.asList(new Organizzazione().setId(1212)));
-
-
-
-        this.organizzazioni.addSource(organizationsQueryExhausted, queryExhaustedObserver);
-        this.organizzazioni.addSource(firebaseQueryExhausted, queryExhaustedObserver);
+        this.favoriteOrganizations.addSource(organizationsQueryExhausted, queryExhaustedObserver);
+        this.favoriteOrganizations.addSource(firebaseQueryExhausted, queryExhaustedObserver);
     }
 
     public void removeFromPreferiti(Organization org) throws NotLogged {
-        if(organizzazioni.getValue()!=null)
-            organizzazioni.postValue(
-                organizzazioni.getValue()
+        if(favoriteOrganizations.getValue()!=null)
+            favoriteOrganizations.postValue(
+                favoriteOrganizations.getValue()
                     .stream()
                     .filter(o->o.getId()!=org.getId())
                     .collect(Collectors.toList())

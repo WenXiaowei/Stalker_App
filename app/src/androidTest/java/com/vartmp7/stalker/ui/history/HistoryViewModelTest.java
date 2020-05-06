@@ -44,7 +44,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -53,7 +52,6 @@ import java.util.stream.Collectors;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -106,8 +104,8 @@ public class HistoryViewModelTest {
             return liveTrackRecords;
         });
 
-        viewModel = new HistoryViewModel();
-        viewModel.init(orgRepo);
+        viewModel = new HistoryViewModel(orgRepo);
+        viewModel.initData(orgRepo);
         MockitoAnnotations.initMocks(this);
     }
 
