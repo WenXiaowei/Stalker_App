@@ -34,6 +34,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+
+
 public class OrganizationsRepository {
 
     private static final String TAG = "com.vartmp7.stalker.repository.OrganizationsRepository";
@@ -59,6 +64,7 @@ public class OrganizationsRepository {
         storage.updateOrganizations(l);
     }
 
+    @Inject
     public OrganizationsRepository(Storage orgsLocalSource, Obtainer orgsWebSource, FavoritesSource fa) {
         this.storage = orgsLocalSource;
         this.obtainer = orgsWebSource;

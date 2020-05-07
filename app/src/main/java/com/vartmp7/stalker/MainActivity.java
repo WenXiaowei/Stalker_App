@@ -68,6 +68,7 @@ import com.vartmp7.stalker.repository.FirebaseFavoritesSource;
 import com.vartmp7.stalker.repository.Obtainer;
 import com.vartmp7.stalker.repository.OrganizationsRepository;
 import com.vartmp7.stalker.repository.RESTObtainer;
+import com.vartmp7.stalker.repository.RepositoryComponent;
 import com.vartmp7.stalker.repository.RestApiService;
 import com.vartmp7.stalker.repository.Storage;
 
@@ -130,7 +131,9 @@ public class MainActivity extends AppCompatActivity {
                 .build();
         Obtainer webSource = new RESTObtainer(retrofit.create(RestApiService.class));
 
-        repository = new OrganizationsRepository(localStorage, webSource, preferitiRepository);
+
+        RepositoryComponent repositoryComponent = DaggerReposit
+        //repository = //new OrganizationsRepository(localStorage, webSource, preferitiRepository);
 
 
         NavigationUI.setupWithNavController(navView, navController);
