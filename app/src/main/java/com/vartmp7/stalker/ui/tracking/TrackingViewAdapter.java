@@ -51,6 +51,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.vartmp7.stalker.R;
 import com.vartmp7.stalker.Tools;
 import com.vartmp7.stalker.datamodel.Organization;
+import com.vartmp7.stalker.ui.DetailsDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -144,11 +145,14 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
                 case R.id.sAnonymousSwitch:
                     viewModel.updateOrganization(org.setAnonymous(holder.sAnonimo.isChecked()));
                     break;
+                case R.id.ibtnInfo:
+                    new DetailsDialog(context, org).showOrganizationDetails();
+                    break;
             }
         };
 
         holder.sAnonimo.setEnabled(org.isLogged());
-
+        holder.ibtnInfo.setOnClickListener(listener);
         Glide.with(context)
                 .setDefaultRequestOptions(new RequestOptions().error(R.drawable.logo_unipd))
                 .load(org.getImageUrl())
@@ -165,8 +169,6 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
             holder.btnLoginLDAP.setVisibility(View.VISIBLE);
         }
 
-        holder.tvTipoOrganizzazione.setText(org.getType());
-
 
         if (org.isTrackingActive()) {
             holder.ibtnTrackingStatus.setImageResource(R.drawable.ic_tracking_on);
@@ -178,14 +180,12 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
         if (org.getPlaces() != null) {
             StringBuilder builder = new StringBuilder();
             org.getPlaces().forEach(p -> builder.append(p.getName()));
-            holder.tvElencoLuoghi.setText(builder.toString());
         }
 
         holder.tvNomeOrganizzazione.setText(org.getName());
         holder.llTitle.setOnClickListener(listener);
 
 //        holder.tvElencoLuoghi =
-        holder.tvIndirizzo.setText(org.getAddress());
 
         holder.ibtnPreferito.setOnClickListener(listener);
 
@@ -265,21 +265,21 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
 
     static class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView tvNomeOrganizzazione, tvElencoLuoghi, tvIndirizzo, tvTipoOrganizzazione;
+        TextView tvNomeOrganizzazione;
         Button btnTracciami, btnLoginLDAP;
         ImageButton ibtnPreferito, ibtnTrackingStatus;
         Switch sAnonimo;
         CardView cvTrackingitem;
         LinearLayout llInformationToHide, llTitle;
         CircleImageView civIconOrganizzazione;
+        ImageButton ibtnInfo;
 
         public ViewHolder(@NonNull View v) {
             super(v);
-            tvTipoOrganizzazione = v.findViewById(R.id.tvTipoOrganizzazione);
-            tvIndirizzo = v.findViewById(R.id.tvIndirizzo);
+
             tvNomeOrganizzazione = v.findViewById(R.id.tvNomeOrganizzazione);
 
-            tvElencoLuoghi = v.findViewById(R.id.tvElencoLuoghi);
+
             btnTracciami = v.findViewById(R.id.btnStartTracking);
             btnLoginLDAP = v.findViewById(R.id.btnLoginLDAP);
             ibtnPreferito = v.findViewById(R.id.ibtnAddToPreferiti);
@@ -289,6 +289,7 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
             llTitle = v.findViewById(R.id.llTitle);
             ibtnTrackingStatus = v.findViewById(R.id.ibtnTrackingOn);
             civIconOrganizzazione = v.findViewById(R.id.civIconOrganizzazione);
+            ibtnInfo = v.findViewById(R.id.ibtnInfo);
         }
     }
 
