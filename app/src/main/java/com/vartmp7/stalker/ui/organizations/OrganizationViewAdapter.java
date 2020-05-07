@@ -103,6 +103,10 @@ public class OrganizationViewAdapter extends RecyclerView.Adapter<OrganizationVi
         return listaOrganization.size();
     }
 
+    Organization getOrganizationAt(int adapterPosition) {
+        return listaOrganization.get(adapterPosition);
+    }
+
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView nomeOrganizzazione;
 

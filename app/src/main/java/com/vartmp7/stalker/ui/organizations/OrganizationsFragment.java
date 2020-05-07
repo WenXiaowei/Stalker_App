@@ -34,11 +34,13 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.vartmp7.stalker.R;
+import com.vartmp7.stalker.datamodel.Organization;
 
 public class OrganizationsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
     public static final String TAG = "com.vartmp7.stalker.ui.organizations.OrganizationsFragment";
@@ -64,6 +66,22 @@ public class OrganizationsFragment extends Fragment implements SwipeRefreshLayou
             mAdapter.setOrganizations(lista);
             swipeRefreshLayout.setRefreshing(false);
         });
+
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                Organization o = mAdapter.getOrganizationAt(viewHolder.getAdapterPosition());
+                organizzazioneViewModel.addOrganizationToTrack(o);
+                mAdapter.notifyItemChanged(viewHolder.getAdapterPosition());
+
+            }
+        }).attachToRecyclerView(recyclerView);
+
 
         return root;
     }

@@ -37,6 +37,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -44,7 +45,7 @@ import lombok.Getter;
 /**
  * @author Xiaowei Wen, Lorenzo Taschin
  */
-public class OrganizationsViewModel extends ViewModel {
+class OrganizationsViewModel extends ViewModel {
 
 
     private OrganizationsRepository orgRepo;
@@ -54,7 +55,8 @@ public class OrganizationsViewModel extends ViewModel {
     public OrganizationsViewModel(OrganizationsRepository orgRepo) {
         this.orgRepo = orgRepo;
         organizationList = new MutableLiveData<>(new ArrayList<>());
-        orgRepo.getOrganizations().observeForever(organizations -> organizationList.setValue(organizations));
+        orgRepo.getOrganizations().observeForever(organizations ->
+                organizationList.setValue(organizations.stream().filter(o->!o.isTracking()).collect(Collectors.toList())));
     }
 
     void updateOrganizzazione(Organization o){

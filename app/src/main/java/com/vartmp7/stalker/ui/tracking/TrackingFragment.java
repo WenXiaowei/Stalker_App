@@ -201,7 +201,7 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(mAdapter);
 
-        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
                 return false;
@@ -219,7 +219,7 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
         }).attachToRecyclerView(recyclerView);
 
         if (Tools.isUserLogged(requireContext()))
-            new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+            new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
                 @Override
                 public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
                     return false;
@@ -245,7 +245,6 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
             }).attachToRecyclerView(recyclerView);
         else
             Toast.makeText(requireContext(), R.string.devi_loggarti, Toast.LENGTH_SHORT).show();
-
         return root;
     }
 
