@@ -203,53 +203,16 @@
  *
  */
 
-package com.vartmp7.stalker.repository;
+package com.vartmp7.stalker.injection.modules;
 
-import android.content.Context;
-
-import androidx.lifecycle.MutableLiveData;
-
-import com.vartmp7.stalker.MainActivity;
-import com.vartmp7.stalker.Tools;
-
-import java.util.ArrayList;
+import com.vartmp7.stalker.repository.FavoritesSource;
+import com.vartmp7.stalker.repository.FirebaseFavoritesSource;
 
 import dagger.Binds;
 import dagger.Module;
-import dagger.Provides;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 @Module
-abstract class RepositoryModule {
-
-    private Context context;
-
-
-    private String URL_SERVER;
-
-    public RepositoryModule(Context context, String URL_SERVER) {
-        this.context = context;
-        this.URL_SERVER=URL_SERVER;
-    }
-
+public abstract class FavoritesSourceModule {
     @Binds
-    Storage provideFileStorage(FileStorage fileStorage){
-        return new FileStorage("orgs.json", context,  new MutableLiveData<>(new ArrayList<>()));
-    }
-
-    @Binds
-    abstract Obtainer provideObtainer(RESTObtainer restObtainer);
-
-    @Provides
-    RestApiService provideReRestApiService(){
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(URL_SERVER)
-                .client(Tools.getUnsafeOkHttpClient())
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        return retrofit.create(RestApiService.class);
-    }
-
-
+    abstract FavoritesSource provideFavoritesSource(FirebaseFavoritesSource favoritesSource);
 }

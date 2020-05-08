@@ -30,7 +30,9 @@ import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.vartmp7.stalker.MainActivity;
+import com.vartmp7.stalker.StalkerApplication;
 import com.vartmp7.stalker.datamodel.Organization;
+import com.vartmp7.stalker.injection.components.OrganizationsRepositoryComponent;
 import com.vartmp7.stalker.repository.OrganizationsRepository;
 
 import org.jetbrains.annotations.NotNull;
@@ -73,6 +75,8 @@ public class OrganizationsViewModel extends ViewModel {
         @Override
         public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
             if (modelClass.isAssignableFrom(OrganizationsViewModel.class)){
+                OrganizationsRepositoryComponent organizationsRepositoryComponent = ((StalkerApplication) getActivity().getApplication()).getOrganizationsRepositoryComponent();
+
                 return (T) new OrganizationsViewModel(MainActivity.repository);
             }
             throw new IllegalArgumentException("View model not found!");

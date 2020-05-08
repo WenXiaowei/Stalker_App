@@ -203,19 +203,16 @@
  *
  */
 
-package com.vartmp7.stalker.repository;
+package com.vartmp7.stalker.injection.modules;
 
+import com.vartmp7.stalker.repository.Obtainer;
+import com.vartmp7.stalker.repository.RESTObtainer;
 
-import android.content.Context;
+import dagger.Binds;
+import dagger.Module;
 
-import javax.inject.Singleton;
-
-import dagger.Component;
-
-
-@Component(modules = {RepositoryModule.class})
-public interface RepositoryComponent {
-    Context context();
-
-    void inject(OrganizationsRepository orgRepo);
+@Module
+public abstract class ObtainerModule {
+    @Binds
+    abstract Obtainer provideObtainer(RESTObtainer obtainer);
 }

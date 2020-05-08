@@ -38,7 +38,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 
-
+@Singleton
 public class OrganizationsRepository {
 
     private static final String TAG = "com.vartmp7.stalker.repository.OrganizationsRepository";
@@ -65,6 +65,11 @@ public class OrganizationsRepository {
     }
 
     @Inject
+    public OrganizationsRepository(Storage orgsLocalSource, Obtainer orgsWebSource) {
+        this.storage = orgsLocalSource;
+        this.obtainer = orgsWebSource;
+    }
+
     public OrganizationsRepository(Storage orgsLocalSource, Obtainer orgsWebSource, FavoritesSource fa) {
         this.storage = orgsLocalSource;
         this.obtainer = orgsWebSource;
@@ -81,6 +86,10 @@ public class OrganizationsRepository {
 //            collect.forEach(o->o.setFavorite(true));
 //            updateOrganizations(collect);
 //        });
+    }
+
+    public void setOrganizationFavoritesSource(FavoritesSource organizationFavoritesSource) {
+        this.organizationFavoritesSource = organizationFavoritesSource;
     }
 
     public LiveData<List<Organization>> getOrganizations() {
