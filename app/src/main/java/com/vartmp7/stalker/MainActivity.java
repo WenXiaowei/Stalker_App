@@ -33,9 +33,11 @@
 package com.vartmp7.stalker;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -71,6 +73,7 @@ import com.vartmp7.stalker.repository.OrganizationsRepository;
 import com.vartmp7.stalker.repository.RESTObtainer;
 import com.vartmp7.stalker.repository.RestApiService;
 import com.vartmp7.stalker.repository.Storage;
+import com.vartmp7.stalker.ui.IntroActivity;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -89,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String PREFERENCE_NOT_LOGIN = "not_login";
     //    public static final String URL_SERVER="https://stalker-be.ddns.net/";
     public static final String URL_SERVER = "https://10.0.2.2/";
-
+    public static final String FIRST_LOG="first_log";
     private GoogleSignInClient mGoogleSignInClient;
 
     public static OrganizationsRepository repository;
@@ -101,12 +104,23 @@ public class MainActivity extends AppCompatActivity {
         return them;
     }
     NavController navController;
+    private void showIntroduction(){
+        SharedPreferences defaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        if (defaultSharedPreferences.getBoolean(FIRST_LOG,true)){
+            startActivity(new Intent(this, IntroActivity.class));
+        }
+
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        if (!Tools.isUserLogged(this) && !getSharedPreferences(PREFERENCE_FILE, MODE_PRIVATE).getBoolean(PREFERENCE_NOT_LOGIN, false))
+        if (!Tools.isUserLogged(this) && !getSharedPreferences(PREFERENCE_FILE, MODE_PRIVATE).getBoolean(PREFERENCE_NOT_LOGIN, false)){
             goToLoginActivity(false);
+        }else{
+            showIntroduction();
+        }
+
         BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
@@ -141,7 +155,6 @@ public class MainActivity extends AppCompatActivity {
                 .build();
         // Build a GoogleSignInClient with the options specified by gson.
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-
 
     }
 

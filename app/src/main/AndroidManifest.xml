@@ -50,6 +50,7 @@
             android:exported="true"
             android:permission="android.permission.FOREGROUND_SERVICE"/>
 
+        <activity android:name=".ui.IntroActivity" android:exported="false" />
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTask">
