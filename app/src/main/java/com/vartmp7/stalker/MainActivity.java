@@ -120,11 +120,9 @@ public class MainActivity extends AppCompatActivity {
         navController = Navigation.findNavController(this, R.id.nav_host_fragment);
 
 
-        MutableLiveData<List<Organization>> list = new MutableLiveData<>(new ArrayList<>());
-        Storage localStorage = new FileStorage("orgs.json", this, list);
-        String userId = null;
         if (FirebaseAuth.getInstance().getCurrentUser() != null || GoogleSignIn.getLastSignedInAccount(this) != null) {
-            userId=getUserId();
+            OrganizationsRepository orgRepo = ((StalkerApplication) getApplication()).getOrganizationsRepositoryComponent().organizationsRepository();
+            orgRepo.setOrganizationFavoritesSource(new FirebaseFavoritesSource(getUserId(),FirebaseFirestore.getInstance()));
         }
 
         NavigationUI.setupWithNavController(navView, navController);
