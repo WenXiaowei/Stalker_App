@@ -30,4 +30,8 @@
     </item>
     <item android:id="@+id/menuReportBug"
         android:title="@string/segnala_bug"/>
+
+    <item
+        android:id="@+id/menuManuale"
+        android:title="@string/vai_al_manuale"/>
 </menu>

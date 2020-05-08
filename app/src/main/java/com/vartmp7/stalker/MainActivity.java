@@ -34,6 +34,7 @@ package com.vartmp7.stalker;
 
 import android.content.Intent;
 import android.content.res.Resources;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.LayoutInflater;
@@ -210,6 +211,12 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.menuReportBug:
                 segnalaBug();
+                break;
+            case R.id.menuManuale:
+                String url = "https://github.com/varTmp7/Stalker/tree/master/RQ/DocumentiEsterni";
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse(url));
+                startActivity(i);
                 break;
             default:
 

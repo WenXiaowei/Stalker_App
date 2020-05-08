@@ -123,4 +123,5 @@
     <string name="something_went_wrong">Qualcosa è andato storto. Riprovare più tardi.</string>
     <string name="rimuovi_filtro">Rimuovi filtro</string>
     <string name="non_hai_ancora_org_fav">Non hai ancora nessun\'organizzazione preferita!</string>
+    <string name="vai_al_manuale">Vai al manuale</string>
 </resources>
