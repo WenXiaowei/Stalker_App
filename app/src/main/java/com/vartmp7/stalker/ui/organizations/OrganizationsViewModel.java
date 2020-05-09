@@ -29,10 +29,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.vartmp7.stalker.MainActivity;
-import com.vartmp7.stalker.StalkerApplication;
 import com.vartmp7.stalker.datamodel.Organization;
-import com.vartmp7.stalker.injection.components.OrganizationsRepositoryComponent;
 import com.vartmp7.stalker.repository.OrganizationsRepository;
 
 import org.jetbrains.annotations.NotNull;
@@ -53,7 +50,7 @@ public class OrganizationsViewModel extends ViewModel {
     @Getter(AccessLevel.PUBLIC)
     private MutableLiveData<List<Organization>> organizationList;
 
-    public OrganizationsViewModel(OrganizationsRepository orgRepo) {
+    OrganizationsViewModel(OrganizationsRepository orgRepo) {
         this.orgRepo = orgRepo;
         organizationList = new MutableLiveData<>(new ArrayList<>());
         orgRepo.getOrganizations().observeForever(organizations -> organizationList.setValue(organizations));
@@ -71,13 +68,17 @@ public class OrganizationsViewModel extends ViewModel {
     }
 
     public static class OrganizationViewModelFactory implements ViewModelProvider.Factory{
+        private OrganizationsRepository repo;
+
+        OrganizationViewModelFactory(OrganizationsRepository repo) {
+            this.repo = repo;
+        }
+
         @NonNull
         @Override
         public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
             if (modelClass.isAssignableFrom(OrganizationsViewModel.class)){
-                OrganizationsRepositoryComponent organizationsRepositoryComponent = ((StalkerApplication) getActivity().getApplication()).getOrganizationsRepositoryComponent();
-
-                return (T) new OrganizationsViewModel(MainActivity.repository);
+                return (T) new OrganizationsViewModel(repo);
             }
             throw new IllegalArgumentException("View model not found!");
         }

@@ -45,7 +45,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.vartmp7.stalker.R;
+import com.vartmp7.stalker.StalkerApplication;
 import com.vartmp7.stalker.datamodel.Organization;
+import com.vartmp7.stalker.repository.OrganizationsRepository;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -74,7 +76,10 @@ public class HistoryFragment extends Fragment implements SwipeRefreshLayout.OnRe
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_cronologia, container, false);
-        historyViewModel = new ViewModelProvider(requireActivity(), new HistoryViewModel.HistoryViewModelFactory()).get(HistoryViewModel.class);
+        StalkerApplication application = (StalkerApplication) getActivity().getApplication();
+        OrganizationsRepository organizationsRepository = application.getOrganizationsRepositoryComponent().organizationsRepository();
+
+        historyViewModel = new ViewModelProvider(requireActivity(), new HistoryViewModel.HistoryViewModelFactory(organizationsRepository)).get(HistoryViewModel.class);
         organizationRecyclerView = v.findViewById(R.id.rvListaOrganizzazioni);
         refreshLayout = v.findViewById(R.id.swipeToRefresh);
         tvMessageBox = v.findViewById(R.id.tvMessageBox);
