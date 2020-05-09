@@ -39,7 +39,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -50,7 +49,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.MutableLiveData;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -66,28 +64,14 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.vartmp7.stalker.datamodel.Organization;
-import com.vartmp7.stalker.injection.components.OrganizationsRepositoryComponent;
-
-import com.vartmp7.stalker.injection.modules.FileStorageModule;
-import com.vartmp7.stalker.injection.modules.FirebaseFavoritesSourceModule;
-import com.vartmp7.stalker.repository.FavoritesSource;
-import com.vartmp7.stalker.repository.FileStorage;
 import com.vartmp7.stalker.repository.FirebaseFavoritesSource;
-import com.vartmp7.stalker.repository.Obtainer;
 import com.vartmp7.stalker.repository.OrganizationsRepository;
-import com.vartmp7.stalker.repository.RESTObtainer;
-
-import com.vartmp7.stalker.repository.RestApiService;
-import com.vartmp7.stalker.repository.Storage;
 import com.vartmp7.stalker.ui.IntroActivity;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * @author Xiaowei Wen, Lorenzo Taschin

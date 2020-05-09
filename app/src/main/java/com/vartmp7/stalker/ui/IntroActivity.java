@@ -27,11 +27,14 @@ package com.vartmp7.stalker.ui;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.preference.PreferenceManager;
+
 import com.cuneytayyildiz.onboarder.OnboarderActivity;
 import com.cuneytayyildiz.onboarder.OnboarderPage;
 import com.cuneytayyildiz.onboarder.utils.OnboarderPageChangeListener;
 import com.vartmp7.stalker.MainActivity;
 import com.vartmp7.stalker.R;
+import com.vartmp7.stalker.ui.organizations.OrganizationsFragment;
 
 import java.util.Arrays;
 import java.util.List;
@@ -93,7 +96,7 @@ public class IntroActivity extends OnboarderActivity implements OnboarderPageCha
        introductionFinished();
     }
     private void introductionFinished(){
-//        PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(OrganizationsFragment.FIRST_LOG,false).apply();
+        PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(OrganizationsFragment.FIRST_LOG,false).apply();
         startActivity(new Intent(this, MainActivity.class));
     }
     @Override

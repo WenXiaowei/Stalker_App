@@ -29,17 +29,13 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.vartmp7.stalker.datamodel.Organization;
 import com.vartmp7.stalker.datamodel.OrganizationResponse;
-import com.vartmp7.stalker.datamodel.PolygonPlace;
 import com.vartmp7.stalker.datamodel.TrackHistory;
 import com.vartmp7.stalker.datamodel.TrackRecord;
 import com.vartmp7.stalker.datamodel.TrackRequest;
-import com.vartmp7.stalker.datamodel.placecomponent.Coordinate;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -87,61 +83,61 @@ public class RESTObtainer implements Obtainer {
             @Override
             public void onFailure(@NotNull Call<OrganizationResponse> call, @NotNull Throwable throwable) {
 //                Log.d(TAG, "onFailure: " + throwable.getMessage());
-                ArrayList<Coordinate> torreArchimede = new ArrayList<>();
-                torreArchimede.add(new Coordinate(45.411555, 11.887476));
-                torreArchimede.add(new Coordinate(45.411442, 11.887942));
-                torreArchimede.add(new Coordinate(45.411108, 11.887787));
-                torreArchimede.add(new Coordinate(45.411222, 11.887319));
-                PolygonPlace t = new PolygonPlace();
-                t.setId(1).setName("Torre Archimede").setNumMaxPeople(10);
-                t.setCoordinates(torreArchimede).setOrgId(1);
-
-                ArrayList<Coordinate> dsea = new ArrayList<>();
-                dsea.add(new Coordinate(45.411660, 11.887957));
-                dsea.add(new Coordinate(45.411702, 11.888113));
-                dsea.add(new Coordinate(45.411341, 11.888381));
-                dsea.add(new Coordinate(45.411284, 11.888224));
-                PolygonPlace d = new PolygonPlace();
-                d.setId(2).setName("TORRE 3C").setNumMaxPeople(10);
-                d.setCoordinates(dsea).setOrgId(2);
-
-
-                List<Organization> orgs = Arrays.asList(
-                        new Organization().setId(1)
-                                .setName("UniPD Dipartimento di Matematica")
-                                .setTracking(true)
-                                .setAddress("Trieste n. 8")
-                                .setCity("Padova")
-                                .setRegion("Padova")
-                                .setNation("IT")
-                                .setPostalCode("35921")
-                                .setPhoneNumber("049********")
-                                .setLdapDomainComponent("dc=daf,dc=test,dc=it")
-                                .setLdapCommonName("cn=")
-                                .setLdapPort(389)
-                                .setLdapUrl("iuasdoas")
-                                .setType("both")
-                                .setEmail("info@math.unipd.it")
-//                                .setImage_url("https://upload.wikimedia.org/wikipedia/it/thumb/5/53/Logo_Universit%C3%A0_Padova.svg/1200px-Logo_Universit%C3%A0_Padova.svg.png")
-                                .setImageUrl("https://pbs.twimg.com/profile_images/1173976802416582657/LCZXVSqH_400x400.jpg")
-                                .setPlaces(Collections.singletonList(t)),
-                        new Organization()
-                                .setId(2)
-                                .setName("UNIPD dSeA")
-                                .setType(Organization.PRIVATE)
-                                .setTracking(false)
-//                                .setImageUrl("https://www.economia.unipd.it/sites/economia.unipd.it/files/img-logo-trentennale-dsea-big.png")
-                                .setPlaces(Collections.singletonList(d)),
-                        new Organization()
-                                .setId(3)
-                                .setName("UNIPD DSFARM")
-                                .setType(Organization.PUBLIC)
-                                .setTracking(true)
-//                                .setImageUrl("https://www.dsfarm.unipd.it/sites/dsfarm.unipd.it/files/sublogo_9.png")
-
-                );
-//                orgs.forEach(o -> Log.d(TAG, "onFailure: " + o.getId()));
-                mutableLiveDataOrganizzazioni.postValue(orgs);
+//                ArrayList<Coordinate> torreArchimede = new ArrayList<>();
+//                torreArchimede.add(new Coordinate(45.411555, 11.887476));
+//                torreArchimede.add(new Coordinate(45.411442, 11.887942));
+//                torreArchimede.add(new Coordinate(45.411108, 11.887787));
+//                torreArchimede.add(new Coordinate(45.411222, 11.887319));
+//                PolygonPlace t = new PolygonPlace();
+//                t.setId(1).setName("Torre Archimede").setNumMaxPeople(10);
+//                t.setCoordinates(torreArchimede).setOrgId(1);
+//
+//                ArrayList<Coordinate> dsea = new ArrayList<>();
+//                dsea.add(new Coordinate(45.411660, 11.887957));
+//                dsea.add(new Coordinate(45.411702, 11.888113));
+//                dsea.add(new Coordinate(45.411341, 11.888381));
+//                dsea.add(new Coordinate(45.411284, 11.888224));
+//                PolygonPlace d = new PolygonPlace();
+//                d.setId(2).setName("TORRE 3C").setNumMaxPeople(10);
+//                d.setCoordinates(dsea).setOrgId(2);
+//
+//
+//                List<Organization> orgs = Arrays.asList(
+//                        new Organization().setId(1)
+//                                .setName("UniPD Dipartimento di Matematica")
+//                                .setTracking(true)
+//                                .setAddress("Trieste n. 8")
+//                                .setCity("Padova")
+//                                .setRegion("Padova")
+//                                .setNation("IT")
+//                                .setPostalCode("35921")
+//                                .setPhoneNumber("049********")
+//                                .setLdapDomainComponent("dc=daf,dc=test,dc=it")
+//                                .setLdapCommonName("cn=")
+//                                .setLdapPort(389)
+//                                .setLdapUrl("iuasdoas")
+//                                .setType("both")
+//                                .setEmail("info@math.unipd.it")
+////                                .setImage_url("https://upload.wikimedia.org/wikipedia/it/thumb/5/53/Logo_Universit%C3%A0_Padova.svg/1200px-Logo_Universit%C3%A0_Padova.svg.png")
+//                                .setImageUrl("https://pbs.twimg.com/profile_images/1173976802416582657/LCZXVSqH_400x400.jpg")
+//                                .setPlaces(Collections.singletonList(t)),
+//                        new Organization()
+//                                .setId(2)
+//                                .setName("UNIPD dSeA")
+//                                .setType(Organization.PRIVATE)
+//                                .setTracking(false)
+////                                .setImageUrl("https://www.economia.unipd.it/sites/economia.unipd.it/files/img-logo-trentennale-dsea-big.png")
+//                                .setPlaces(Collections.singletonList(d)),
+//                        new Organization()
+//                                .setId(3)
+//                                .setName("UNIPD DSFARM")
+//                                .setType(Organization.PUBLIC)
+//                                .setTracking(true)
+////                                .setImageUrl("https://www.dsfarm.unipd.it/sites/dsfarm.unipd.it/files/sublogo_9.png")
+//
+//                );
+////                orgs.forEach(o -> Log.d(TAG, "onFailure: " + o.getId()));
+//                mutableLiveDataOrganizzazioni.postValue(orgs);
             }
 
 
@@ -178,10 +174,10 @@ public class RESTObtainer implements Obtainer {
 
                 @Override
                 public void onFailure(@NotNull Call<TrackHistory> call, @NotNull Throwable t) {
-                    mockedTrackRecords.add(new TrackRecord().setPlaceName("Torre Archimede").setOrgName("UNIPD").setEntered(true).setPlaceId(1).setDateTime("2020-04-20T13:14:15"));
-                    mockedTrackRecords.add(new TrackRecord().setPlaceName("Torre Archimede").setOrgName("UNIPD").setEntered(false).setPlaceId(1).setDateTime("2020-04-20T15:11:12"));
-                    mockedTrackRecords.add(new TrackRecord().setPlaceName("DSea").setOrgName("UNIPD").setEntered(true).setPlaceId(1).setDateTime("2020-04-20T15:30:15"));
-                    mockedTrackRecords.add(new TrackRecord().setPlaceName("DSea").setOrgName("UNIPD").setEntered(false).setPlaceId(1).setDateTime("2020-04-20T17:30:15"));
+//                    mockedTrackRecords.add(new TrackRecord().setPlaceName("Torre Archimede").setOrgName("UNIPD").setEntered(true).setPlaceId(1).setDateTime("2020-04-20T13:14:15"));
+//                    mockedTrackRecords.add(new TrackRecord().setPlaceName("Torre Archimede").setOrgName("UNIPD").setEntered(false).setPlaceId(1).setDateTime("2020-04-20T15:11:12"));
+//                    mockedTrackRecords.add(new TrackRecord().setPlaceName("DSea").setOrgName("UNIPD").setEntered(true).setPlaceId(1).setDateTime("2020-04-20T15:30:15"));
+//                    mockedTrackRecords.add(new TrackRecord().setPlaceName("DSea").setOrgName("UNIPD").setEntered(false).setPlaceId(1).setDateTime("2020-04-20T17:30:15"));
                     trackRecords.postValue(mockedTrackRecords);
                 }
             });
