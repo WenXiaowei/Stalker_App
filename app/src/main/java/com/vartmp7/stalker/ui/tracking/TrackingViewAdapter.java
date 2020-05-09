@@ -26,6 +26,7 @@ package com.vartmp7.stalker.ui.tracking;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -224,11 +225,12 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
 
 
 //                    // todo togliere i commenti
-                    StalkerLDAP ldap = new StalkerLDAP(organization.getLdapUrl(), organization.getLdapPort(),
-                            url, etPassword.getText().toString());
+                    Log.d(TAG, "showLDAPLoginDialog: " + organization.getLdapUrl() + organization.getLdapPort() + organization.getLdapCommonName());
+                    //StalkerLDAP ldap = new StalkerLDAP(organization.getLdapUrl(), organization.getLdapPort(),
+                    //        url, etPassword.getText().toString());
 
-//                    StalkerLDAP ldap = new StalkerLDAP("10.0.2.2", organization.getLdapPort(),
-//                            url, etPassword.getText().toString());
+                    StalkerLDAP ldap = new StalkerLDAP("10.0.2.2", organization.getLdapPort(),
+                            url, etPassword.getText().toString());
                     try {
                         ldap.bind();
                         ldap.search();

@@ -74,7 +74,7 @@ public class TrackRecord {
     }
 
     public String getPlaceName() {
-        place= (PolygonPlace) new PolygonPlace().setName(placeName);
+        //place= (PolygonPlace) new PolygonPlace().setName(placeName);
         return place.getName();
     }
 }

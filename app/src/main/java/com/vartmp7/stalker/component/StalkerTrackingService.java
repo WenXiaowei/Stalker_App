@@ -290,8 +290,16 @@ public class StalkerTrackingService extends Service {
 //                removeLocationUpdates();
                 serviceCallback.stopTracking();
                 updateChronometerBase(-1, -1);
-                currentOrganization = null;
-                currentPlace = null;
+                //if (currentPlace != null) {
+                //    TrackSignal trackSignal = new TrackSignal().setIdPlace(currentPlace.getId()).setIdOrganization(currentOrganization.getId()).setAuthenticated(currentOrganization.isAnonymous()).setEntered(false);
+                //    if (!currentOrganization.isAnonymous()) {
+                //        trackSignal.setPassword(currentOrganization.getLdapPassword()).setUsername(currentOrganization.getPersonalCn());
+                //    }
+                //    sendSignal(trackSignal);
+                // }
+                //currentOrganization = null;
+                //currentPlace = null;
+                //return;
             }
 
         }

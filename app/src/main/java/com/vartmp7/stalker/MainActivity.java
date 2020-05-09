@@ -203,7 +203,7 @@ public class MainActivity extends AppCompatActivity {
                 segnalaBug();
                 break;
             case R.id.menuManuale:
-                String url = "https://github.com/varTmp7/Stalker/tree/master/RQ/DocumentiEsterni";
+                String url = "https://github.com/varTmp7/Stalker/tree/master/RA/DocumentiEsterni";
                 Intent i = new Intent(Intent.ACTION_VIEW);
                 i.setData(Uri.parse(url));
                 startActivity(i);
