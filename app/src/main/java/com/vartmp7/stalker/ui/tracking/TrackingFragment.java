@@ -243,8 +243,8 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
                     Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show();
                 }
             }).attachToRecyclerView(recyclerView);
-        else
-            Toast.makeText(requireContext(), R.string.devi_loggarti, Toast.LENGTH_SHORT).show();
+//        else
+//            Toast.makeText(requireContext(), R.string.devi_loggarti, Toast.LENGTH_SHORT).show();
         return root;
     }
 
