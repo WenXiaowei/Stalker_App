@@ -97,6 +97,7 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
         View.OnClickListener listener = v -> {
             switch (v.getId()) {
                 case R.id.btnStartTracking:
+                case R.id.ibtnTrackingOn:
                     viewModel.updateOrganization(org.setTrackingActive(!org.isTrackingActive()));
                     notifyItemChanged(position);
                     break;
@@ -169,7 +170,7 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
             holder.btnLoginLDAP.setVisibility(View.VISIBLE);
         }
 
-
+        holder.ibtnTrackingStatus.setOnClickListener(listener);
         if (org.isTrackingActive()) {
             holder.ibtnTrackingStatus.setImageResource(R.drawable.ic_tracking_on);
             holder.btnTracciami.setText(R.string.stop);
