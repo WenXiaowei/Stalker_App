@@ -26,16 +26,12 @@ package com.vartmp7.stalker.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Toast;
-
-import androidx.preference.PreferenceManager;
 
 import com.cuneytayyildiz.onboarder.OnboarderActivity;
 import com.cuneytayyildiz.onboarder.OnboarderPage;
 import com.cuneytayyildiz.onboarder.utils.OnboarderPageChangeListener;
 import com.vartmp7.stalker.MainActivity;
 import com.vartmp7.stalker.R;
-import com.vartmp7.stalker.ui.organizations.OrganizationsFragment;
 
 import java.util.Arrays;
 import java.util.List;
@@ -46,26 +42,45 @@ public class IntroActivity extends OnboarderActivity implements OnboarderPageCha
         super.onCreate(savedInstanceState);
         List<OnboarderPage> pages = Arrays.asList(
                 new OnboarderPage.Builder()
-                        .title("Donut")
-                        .description("Android 1.6")
-                        .imageResourceId( R.drawable.ic_add_circle_outline_black_24dp)
-                        .backgroundColorId(R.color.black)
-                        .titleColorId(R.color.vartmp7bluChiaro)
-                        .descriptionColorId(R.color.vartmp7bluChiaro)
+                        .title(getString(R.string.intro_title_1))
+                        .description(getString(R.string.intro_desc_1))
+                        .imageResourceId( R.drawable.intro_1)
+                        .backgroundColorId(R.color.vartmp7bluChiaro)
+                        .titleColorId(R.color.white)
+                        .descriptionColorId(R.color.white)
                         .multilineDescriptionCentered(true)
                         .build(),
 
-                // No need to write all of them :P
+                new OnboarderPage.Builder()
+                        .title(getString(R.string.intro_title_2))
+                        .description(getString(R.string.intro_desc_2))
+                        .imageResourceId( R.drawable.intro_2)
+                        .backgroundColorId(R.color.vartmp7bluChiaro)
+                        .titleColorId(R.color.white)
+                        .descriptionColorId(R.color.white)
+                        .multilineDescriptionCentered(true)
+                        .build(),
 
                 new OnboarderPage.Builder()
-                        .title("oreo")
-                        .description("Android 1.6")
-                        .imageResourceId( R.drawable.ic_add_circle_outline_black_24dp)
-                        .backgroundColorId(R.color.black)
-                        .titleColorId(R.color.vartmp7bluChiaro)
-                        .descriptionColorId(R.color.vartmp7bluChiaro)
+                        .title(getString(R.string.intro_title_3))
+                        .description(getString(R.string.intro_desc_3))
+                        .imageResourceId( R.drawable.intro_3)
+                        .backgroundColorId(R.color.vartmp7bluChiaro)
+                        .titleColorId(R.color.white)
+                        .descriptionColorId(R.color.white)
+                        .multilineDescriptionCentered(true)
+                        .build(),
+
+                new OnboarderPage.Builder()
+                        .title(getString(R.string.intro_title_4))
+                        .description(getString(R.string.intro_desc_4))
+                        .imageResourceId( R.drawable.intro_4)
+                        .backgroundColorId(R.color.vartmp7bluChiaro)
+                        .titleColorId(R.color.white)
+                        .descriptionColorId(R.color.white)
                         .multilineDescriptionCentered(true)
                         .build()
+
         );
         setOnboarderPageChangeListener(this);
         initOnboardingPages(pages);
@@ -74,9 +89,17 @@ public class IntroActivity extends OnboarderActivity implements OnboarderPageCha
     @Override
     public void onFinishButtonPressed() {
         // implement your logic, save induction has done to sharedPrefs
-        Toast.makeText(this, "Finish button was pressed", Toast.LENGTH_SHORT).show();
-        PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(OrganizationsFragment.FIRST_LOG,false).apply();
-        startActivity(new Intent(this,MainActivity.class));
+//        Toast.makeText(this, "Finish button was pressed", Toast.LENGTH_SHORT).show();
+       introductionFinished();
+    }
+    private void introductionFinished(){
+//        PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(OrganizationsFragment.FIRST_LOG,false).apply();
+        startActivity(new Intent(this, MainActivity.class));
+    }
+    @Override
+    protected void onSkipButtonPressed() {
+        super.onSkipButtonPressed();
+        onFinishButtonPressed();
     }
 
     @Override

@@ -95,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String FIRST_LOG="first_log";
     private GoogleSignInClient mGoogleSignInClient;
 
+    private NavController navController;
     public static OrganizationsRepository repository;
 
     @Override
@@ -103,7 +104,6 @@ public class MainActivity extends AppCompatActivity {
         them.applyStyle(R.style.AppTheme, true);
         return them;
     }
-    NavController navController;
     private void showIntroduction(){
         SharedPreferences defaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         if (defaultSharedPreferences.getBoolean(FIRST_LOG,true)){
