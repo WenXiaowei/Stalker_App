@@ -285,24 +285,18 @@ public class StalkerTrackingService extends Service {
         this.organizations = organizations;
         //quando non ci sono organizzazioni con isTrackingActive == true e
         //è diverso da null, allora mostro il messaggio di nessun organizzazione ti sta tracciando!
-        if (serviceCallback != null) {
+        if (serviceCallback != null && organizations.size()==0) {
+            serviceCallback.stopTracking();}
+
             if (organizations.size() == 0) {
 //                removeLocationUpdates();
-                serviceCallback.stopTracking();
                 updateChronometerBase(-1, -1);
-                //if (currentPlace != null) {
-                //    TrackSignal trackSignal = new TrackSignal().setIdPlace(currentPlace.getId()).setIdOrganization(currentOrganization.getId()).setAuthenticated(currentOrganization.isAnonymous()).setEntered(false);
-                //    if (!currentOrganization.isAnonymous()) {
-                //        trackSignal.setPassword(currentOrganization.getLdapPassword()).setUsername(currentOrganization.getPersonalCn());
-                //    }
-                //    sendSignal(trackSignal);
-                // }
                 //currentOrganization = null;
                 //currentPlace = null;
                 //return;
             }
 
-        }
+
         if (currentOrganization != null) {
             Optional<Organization> optionalOrg = organizations.stream().filter(org -> org.getId() == currentOrganization.getId()).findAny();
 

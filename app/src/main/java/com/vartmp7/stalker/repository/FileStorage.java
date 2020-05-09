@@ -78,7 +78,7 @@ public class FileStorage implements Storage {
 //            Log.d(TAG, "updateOrganizations: " + organization);
         }
         saveOrganizations(orgList);
-        mLiveOrgs.setValue(orgList);
+//        mLiveOrgs.setValue(orgList);
     }
 
     @Override

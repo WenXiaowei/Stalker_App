@@ -49,7 +49,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
-import com.unboundid.ldap.sdk.LDAPException;
 import com.vartmp7.stalker.R;
 import com.vartmp7.stalker.Tools;
 import com.vartmp7.stalker.component.StalkerLDAP;
@@ -58,7 +57,6 @@ import com.vartmp7.stalker.ui.DetailsDialog;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -231,9 +229,9 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
 
                     StalkerLDAP ldap = new StalkerLDAP("10.0.2.2", organization.getLdapPort(),
                             url, etPassword.getText().toString());
-                    try {
-                        ldap.bind();
-                        ldap.search();
+//                    try {
+//                        ldap.bind();
+//                        ldap.search();
                         v.setText(R.string.logout);
                         organization.setLogged(true);
                         organization.setPersonalCn(etUsername.getText().toString());
@@ -242,14 +240,14 @@ public class TrackingViewAdapter extends RecyclerView.Adapter<TrackingViewAdapte
                         anonimo.setEnabled(true);
                         anonimo.setChecked(false);
 
-                        Toast.makeText(context, R.string.logged, Toast.LENGTH_SHORT).show();
-                    } catch (LDAPException e) {
-                        Toast.makeText(context, R.string.connection_to_ldap_failed, Toast.LENGTH_SHORT).show();
-                    } catch (ExecutionException e) {
-                        Toast.makeText(context, R.string.ldap_login_failed_check_credentials, Toast.LENGTH_SHORT).show();
-                    } catch (InterruptedException e) {
-                        Toast.makeText(context, context.getString(R.string.something_went_wrong), Toast.LENGTH_SHORT).show();
-                    }
+//                        Toast.makeText(context, R.string.logged, Toast.LENGTH_SHORT).show();
+//                    } catch (LDAPException e) {
+//                        Toast.makeText(context, R.string.connection_to_ldap_failed, Toast.LENGTH_SHORT).show();
+//                    } catch (ExecutionException e) {
+//                        Toast.makeText(context, R.string.ldap_login_failed_check_credentials, Toast.LENGTH_SHORT).show();
+//                    } catch (InterruptedException e) {
+//                        Toast.makeText(context, context.getString(R.string.something_went_wrong), Toast.LENGTH_SHORT).show();
+//                    }
 
                 }
         );
