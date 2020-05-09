@@ -28,12 +28,21 @@ import android.app.Application;
 
 import com.facebook.appevents.AppEventsLogger;
 import com.onesignal.OneSignal;
+import com.vartmp7.stalker.injection.components.DaggerOrganizationsRepositoryComponent;
+import com.vartmp7.stalker.injection.components.OrganizationsRepositoryComponent;
+import com.vartmp7.stalker.injection.modules.FileStorageModule;
+import com.vartmp7.stalker.injection.modules.FirebaseFavoritesSourceModule;
+import com.vartmp7.stalker.repository.OrganizationsRepository;
+
+import lombok.Getter;
 
 /**
  * @author Xiaowei Wen, Lorenzo Taschin
  */
 public class StalkerApplication extends Application {
     public static final String TAG ="com.vartmp7.stalker.StalkerApplication";
+    @Getter
+    private OrganizationsRepositoryComponent organizationsRepositoryComponent;
     @Override
     public void onCreate() {
         super.onCreate();
@@ -44,5 +53,12 @@ public class StalkerApplication extends Application {
 
 //        FacebookSdk.sdkInitialize(getApplicationContext());
         AppEventsLogger.activateApp(this);
+
+        organizationsRepositoryComponent =
+        DaggerOrganizationsRepositoryComponent.builder()
+                .fileStorageModule(new FileStorageModule(getApplicationContext()))
+                .build();
     }
+
+
 }

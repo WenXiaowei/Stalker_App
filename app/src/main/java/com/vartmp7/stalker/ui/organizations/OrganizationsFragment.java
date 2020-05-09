@@ -24,13 +24,17 @@
 
 package com.vartmp7.stalker.ui.organizations;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
@@ -41,6 +45,9 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.vartmp7.stalker.R;
 import com.vartmp7.stalker.datamodel.Organization;
+import com.vartmp7.stalker.ui.IntroActivity;
+import com.vartmp7.stalker.StalkerApplication;
+import com.vartmp7.stalker.repository.OrganizationsRepository;
 
 public class OrganizationsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
     public static final String TAG = "com.vartmp7.stalker.ui.organizations.OrganizationsFragment";
@@ -49,11 +56,25 @@ public class OrganizationsFragment extends Fragment implements SwipeRefreshLayou
     private RecyclerView recyclerView;
     private OrganizationViewAdapter mAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
+    public static final String FIRST_LOG="first_log";
+
+
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+
+    }
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_organizations, container, false);
+
+        StalkerApplication application = (StalkerApplication) getActivity().getApplication();
+        OrganizationsRepository organizationsRepository = application.getOrganizationsRepositoryComponent().organizationsRepository();
+
         organizzazioneViewModel = new ViewModelProvider(requireActivity(),
-                new OrganizationsViewModel.OrganizationViewModelFactory()).get(OrganizationsViewModel.class);
+                new OrganizationsViewModel.OrganizationViewModelFactory(organizationsRepository)).get(OrganizationsViewModel.class);
 
 
         swipeRefreshLayout = root.findViewById(R.id.srfl);
@@ -85,6 +106,7 @@ public class OrganizationsFragment extends Fragment implements SwipeRefreshLayou
 
         return root;
     }
+
 
     private void setUpRecyclerView() {
         mAdapter = new OrganizationViewAdapter(getContext(), organizzazioneViewModel,

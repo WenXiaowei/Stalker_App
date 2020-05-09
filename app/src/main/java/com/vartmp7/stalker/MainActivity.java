@@ -33,9 +33,11 @@
 package com.vartmp7.stalker;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -47,7 +49,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.MutableLiveData;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -63,22 +64,14 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.vartmp7.stalker.datamodel.Organization;
-import com.vartmp7.stalker.repository.FavoritesSource;
-import com.vartmp7.stalker.repository.FileStorage;
 import com.vartmp7.stalker.repository.FirebaseFavoritesSource;
-import com.vartmp7.stalker.repository.Obtainer;
 import com.vartmp7.stalker.repository.OrganizationsRepository;
-import com.vartmp7.stalker.repository.RESTObtainer;
-import com.vartmp7.stalker.repository.RestApiService;
-import com.vartmp7.stalker.repository.Storage;
+import com.vartmp7.stalker.ui.IntroActivity;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * @author Xiaowei Wen, Lorenzo Taschin
@@ -89,9 +82,10 @@ public class MainActivity extends AppCompatActivity {
     public static final String PREFERENCE_NOT_LOGIN = "not_login";
     //    public static final String URL_SERVER="https://stalker-be.ddns.net/";
     public static final String URL_SERVER = "https://10.0.2.2/";
-
+    public static final String FIRST_LOG="first_log";
     private GoogleSignInClient mGoogleSignInClient;
 
+    private NavController navController;
     public static OrganizationsRepository repository;
 
     @Override
@@ -100,13 +94,23 @@ public class MainActivity extends AppCompatActivity {
         them.applyStyle(R.style.AppTheme, true);
         return them;
     }
-    NavController navController;
+    private void showIntroduction(){
+        SharedPreferences defaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        if (defaultSharedPreferences.getBoolean(FIRST_LOG,true)){
+            startActivity(new Intent(this, IntroActivity.class));
+        }
+
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        if (!Tools.isUserLogged(this) && !getSharedPreferences(PREFERENCE_FILE, MODE_PRIVATE).getBoolean(PREFERENCE_NOT_LOGIN, false))
+        if (!Tools.isUserLogged(this) && !getSharedPreferences(PREFERENCE_FILE, MODE_PRIVATE).getBoolean(PREFERENCE_NOT_LOGIN, false)){
             goToLoginActivity(false);
+        }else{
+            showIntroduction();
+        }
+
         BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
@@ -116,23 +120,10 @@ public class MainActivity extends AppCompatActivity {
         navController = Navigation.findNavController(this, R.id.nav_host_fragment);
 
 
-        MutableLiveData<List<Organization>> list = new MutableLiveData<>(new ArrayList<>());
-        Storage localStorage = new FileStorage("orgs.json", this, list);
-        FavoritesSource preferitiRepository = null;
         if (FirebaseAuth.getInstance().getCurrentUser() != null || GoogleSignIn.getLastSignedInAccount(this) != null) {
-            preferitiRepository = new FirebaseFavoritesSource(getUserId(), FirebaseFirestore.getInstance());
+            OrganizationsRepository orgRepo = ((StalkerApplication) getApplication()).getOrganizationsRepositoryComponent().organizationsRepository();
+            orgRepo.setOrganizationFavoritesSource(new FirebaseFavoritesSource(getUserId(),FirebaseFirestore.getInstance()));
         }
-
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(URL_SERVER)
-                .client(Tools.getUnsafeOkHttpClient())
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        Obtainer webSource = new RESTObtainer(retrofit.create(RestApiService.class));
-
-        repository = new OrganizationsRepository(localStorage, webSource, preferitiRepository);
-
 
         NavigationUI.setupWithNavController(navView, navController);
 
@@ -141,7 +132,6 @@ public class MainActivity extends AppCompatActivity {
                 .build();
         // Build a GoogleSignInClient with the options specified by gson.
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-
 
     }
 
@@ -300,7 +290,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void cleanUserData() {
-        List<Organization> organizations = repository.getOrganizations().getValue();
+        OrganizationsRepository orgRepo = ((StalkerApplication)getApplication()).getOrganizationsRepositoryComponent().organizationsRepository();
+        List<Organization> organizations = orgRepo.getOrganizations().getValue();
         if (organizations != null) {
             organizations = new ArrayList<>(organizations);
             organizations.stream().sequential().forEach(o ->
@@ -312,7 +303,7 @@ public class MainActivity extends AppCompatActivity {
                             .setPersonalCn("")
                             .setLdapPassword("")
             );
-            repository.updateOrganizations(organizations);
+            orgRepo.updateOrganizations(organizations);
         }
 
     }

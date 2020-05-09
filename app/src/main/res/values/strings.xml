@@ -124,4 +124,12 @@
     <string name="rimuovi_filtro">Rimuovi filtro</string>
     <string name="non_hai_ancora_org_fav">Non hai ancora nessun\'organizzazione preferita!</string>
     <string name="vai_al_manuale">Vai al manuale</string>
+    <string name="intro_title_1">Selezione organizzazione</string>
+    <string name="intro_desc_1">Puoi selezionare l\'organizzazione da cui farti tracciare cliccando sull\'icona indicata dalla freccia o fare lo swipe da sinistra verso destra</string>
+    <string name="intro_title_2">Tracciamenti</string>
+    <string name="intro_desc_2">In ordine indicano: dove sei, da quanto tempo sei lì, mentre C, D, E sono rispettivamente organizzazioni di tipo privata-pubblica, privata e pubblica.</string>
+    <string name="intro_desc_3">Un\'organizzazione preferita nella schermata dei tracciamenti e, nella parte inferiore, schermata delle organizzazioni preferite</string>
+    <string name="intro_title_3">Preferiti</string>
+    <string name="intro_title_4">Storico tracciamenti</string>
+    <string name="intro_desc_4">Le lettere indicano rispettivamente: il filtro applicato per visualizzare i tracciamenti di un solo luogo, un tracciamento in uscita e un tracciamento in entrata.</string>
 </resources>

@@ -62,10 +62,12 @@ import com.google.android.material.snackbar.Snackbar;
 import com.vartmp7.stalker.BuildConfig;
 import com.vartmp7.stalker.MainActivity;
 import com.vartmp7.stalker.R;
+import com.vartmp7.stalker.StalkerApplication;
 import com.vartmp7.stalker.Tools;
 import com.vartmp7.stalker.component.StalkerServiceCallback;
 import com.vartmp7.stalker.component.StalkerTrackingService;
 import com.vartmp7.stalker.datamodel.Organization;
+import com.vartmp7.stalker.injection.components.OrganizationsRepositoryComponent;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -192,7 +194,8 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
         RecyclerView recyclerView = root.findViewById(R.id.trackingRecycleView);
 
         trackingViewModel = new ViewModelProvider(requireActivity()).get(TrackingViewModel.class);
-        trackingViewModel.init(MainActivity.repository);
+        OrganizationsRepositoryComponent organizationsRepositoryComponent = ((StalkerApplication) getActivity().getApplication()).getOrganizationsRepositoryComponent();
+        trackingViewModel.init(organizationsRepositoryComponent.organizationsRepository());
         updateOrganizationToTrack();
         mAdapter = new TrackingViewAdapter(getContext(), trackingViewModel);
         trackingViewModel.getOrganizations().observe(getViewLifecycleOwner(),
@@ -243,8 +246,8 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
                     Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show();
                 }
             }).attachToRecyclerView(recyclerView);
-        else
-            Toast.makeText(requireContext(), R.string.devi_loggarti, Toast.LENGTH_SHORT).show();
+//        else
+//            Toast.makeText(requireContext(), R.string.devi_loggarti, Toast.LENGTH_SHORT).show();
         return root;
     }
 

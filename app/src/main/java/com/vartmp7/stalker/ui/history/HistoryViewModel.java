@@ -30,7 +30,6 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.vartmp7.stalker.MainActivity;
 import com.vartmp7.stalker.datamodel.Organization;
 import com.vartmp7.stalker.datamodel.TrackRecord;
 import com.vartmp7.stalker.repository.OrganizationsRepository;
@@ -44,12 +43,17 @@ import java.util.stream.Collectors;
  */
 public class HistoryViewModel extends ViewModel {
     static public class HistoryViewModelFactory implements ViewModelProvider.Factory{
+        private OrganizationsRepository repo;
+
+        public HistoryViewModelFactory(OrganizationsRepository repo) {
+            this.repo = repo;
+        }
 
         @NonNull
         @Override
         public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
             if (modelClass.isAssignableFrom(HistoryViewModel.class)){
-                HistoryViewModel historyViewModel = new HistoryViewModel(MainActivity.repository);
+                HistoryViewModel historyViewModel = new HistoryViewModel(repo);
                 return (T) historyViewModel;
             }
             throw new IllegalArgumentException("View model not found");
