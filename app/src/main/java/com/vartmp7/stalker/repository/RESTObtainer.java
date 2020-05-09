@@ -42,6 +42,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import lombok.SneakyThrows;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -57,6 +59,7 @@ public class RESTObtainer implements Obtainer {
     private MutableLiveData<List<TrackRecord>> trackRecords;
 
 
+    @Inject
     public RESTObtainer(RestApiService service) {
         this.service = service;
         //this.mutableLiveDataOrganizzazioni= list;

@@ -32,7 +32,6 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.vartmp7.stalker.MainActivity;
 import com.vartmp7.stalker.component.NotLogged;
 import com.vartmp7.stalker.datamodel.Organization;
 import com.vartmp7.stalker.repository.OrganizationsRepository;
@@ -49,12 +48,17 @@ import lombok.Getter;
  */
 public class FavoritesViewModel extends ViewModel {
     public static class FavoritesViewModelFactory implements ViewModelProvider.Factory{
+        private OrganizationsRepository organizationsRepository;
+
+        public FavoritesViewModelFactory(OrganizationsRepository organizationsRepository) {
+            this.organizationsRepository= organizationsRepository;
+        }
 
         @NonNull
         @Override
         public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
             if (modelClass.isAssignableFrom(FavoritesViewModel.class)){
-                return (T) new FavoritesViewModel(MainActivity.repository);
+                return (T) new FavoritesViewModel(organizationsRepository);
             }
             throw new IllegalArgumentException("Viewmodel not found!");
         }

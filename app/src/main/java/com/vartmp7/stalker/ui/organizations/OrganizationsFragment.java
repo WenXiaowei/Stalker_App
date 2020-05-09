@@ -46,6 +46,8 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.vartmp7.stalker.R;
 import com.vartmp7.stalker.datamodel.Organization;
 import com.vartmp7.stalker.ui.IntroActivity;
+import com.vartmp7.stalker.StalkerApplication;
+import com.vartmp7.stalker.repository.OrganizationsRepository;
 
 public class OrganizationsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
     public static final String TAG = "com.vartmp7.stalker.ui.organizations.OrganizationsFragment";
@@ -67,8 +69,12 @@ public class OrganizationsFragment extends Fragment implements SwipeRefreshLayou
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_organizations, container, false);
+
+        StalkerApplication application = (StalkerApplication) getActivity().getApplication();
+        OrganizationsRepository organizationsRepository = application.getOrganizationsRepositoryComponent().organizationsRepository();
+
         organizzazioneViewModel = new ViewModelProvider(requireActivity(),
-                new OrganizationsViewModel.OrganizationViewModelFactory()).get(OrganizationsViewModel.class);
+                new OrganizationsViewModel.OrganizationViewModelFactory(organizationsRepository)).get(OrganizationsViewModel.class);
 
 
         swipeRefreshLayout = root.findViewById(R.id.srfl);

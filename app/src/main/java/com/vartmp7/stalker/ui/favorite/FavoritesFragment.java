@@ -42,6 +42,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.vartmp7.stalker.R;
+import com.vartmp7.stalker.StalkerApplication;
 import com.vartmp7.stalker.Tools;
 import com.vartmp7.stalker.component.NotLogged;
 import com.vartmp7.stalker.datamodel.Organization;
@@ -79,8 +80,13 @@ public class FavoritesFragment extends Fragment implements SwipeRefreshLayout.On
 
         this.favRecyclerView = root.findViewById(R.id.preferitiRecyclerView);
 
+        StalkerApplication application = (StalkerApplication) getActivity().getApplication();
+
         this.favViewModel = new ViewModelProvider(requireActivity(),
-                new FavoritesViewModel.FavoritesViewModelFactory()).get(FavoritesViewModel.class);
+                new FavoritesViewModel.FavoritesViewModelFactory
+                        (application.getOrganizationsRepositoryComponent()
+                                .organizationsRepository()))
+                .get(FavoritesViewModel.class);
 
         preferitiSwipeLayout = root.findViewById(R.id.srflPreferiti);
         preferitiSwipeLayout.setOnRefreshListener(this);
