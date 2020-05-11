@@ -74,18 +74,6 @@ public class OrganizationsRepository {
         this.storage = orgsLocalSource;
         this.obtainer = orgsWebSource;
         this.organizationFavoritesSource = fa;
-        //liveOrganizzazioni = new MediatorLiveData<>();
-        //fixme
-        // il seguente blocco risolve il problema dei favorites che non si aggiornano se si fa accesso per la prima
-        // volta, ma causa l'aggiornomento all'infinito degli ID delle organizzazioni preferite.
-        // se c'è tempo, trovare un modo di sistemarlo, altrimenti elimina tutto il blocco,
-        // il problema si presenta all'inizializzazione.
-//        organizationFavoritesSource.getFavoriteOrganizationID().observeForever(longs -> {
-//            List<Organization> value = getOrganizations().getValue();
-//            List<Organization> collect = value.stream().filter(o -> longs.contains(o.getId())).collect(Collectors.toList());
-//            collect.forEach(o->o.setFavorite(true));
-//            updateOrganizations(collect);
-//        });
     }
 
     public void setOrganizationFavoritesSource(FavoritesSource organizationFavoritesSource) {

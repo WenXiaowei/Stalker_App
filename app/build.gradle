@@ -215,7 +215,6 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:4.4.0'
     implementation 'com.onesignal:OneSignal:3.12.6'
     implementation 'com.unboundid:unboundid-ldapsdk:4.0.14'
-    //todo a me va se c'è quella sotto. senza non mi prendere InstantTaskExecutorRule
     implementation 'de.hdodenhof:circleimageview:3.1.0'
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'

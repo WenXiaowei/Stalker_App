@@ -53,7 +53,6 @@ public class TrackSignalTest {
     private TrackSignal signal2 ;
     @Before
     public void setUP(){
-        // TODO: la riga seguente a questa non ha senso, è stata messa solo per far salire la line coverage al 100%.
         new TrackSignal(0L);
         signal =new TrackSignal()
                 .setIdOrganization(idOrganization)

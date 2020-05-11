@@ -25,8 +25,6 @@
 package com.vartmp7.stalker.datamodel.placecomponent;
 
 
-import junit.framework.TestCase;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -108,7 +106,6 @@ public class LineTest {
         return Arrays.asList(new Object[][]{
                 {new Line(1, 0), new Coordinate(1, 1)},
                 {new Line(2, 1), new Coordinate(15, 7)}
-                // todo aggiungere altre rette e punti da calcolare
         });
     }
 

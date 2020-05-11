@@ -419,7 +419,7 @@ public class StalkerTrackingService extends Service {
             }
 //            else {}
             mLocationRequest = creator.getNewRequest(-1);
-            //todo sarebbero da decommentare le due righe sotto, la looper si rompe, e non funziona
+            //todo sarebbero da decommentare le due righe sotto, ma vengono tenuti per la dimostrazione
 
 //            mFusedLocationClient.removeLocationUpdates(mLocationCallback);
 //            mFusedLocationClient.requestLocationUpdates(mLocationRequest,mLocationCallback,Looper.myLooper());

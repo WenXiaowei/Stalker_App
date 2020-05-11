@@ -20,3 +20,5 @@ coverage/
 test-reports/connected/
 
 test-results/connected/TEST-Pixel_2_API_29(AVD) - 10-app-.xml
+
+app/release/

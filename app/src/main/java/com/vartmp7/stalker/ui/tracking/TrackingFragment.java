@@ -60,7 +60,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.vartmp7.stalker.BuildConfig;
-import com.vartmp7.stalker.MainActivity;
 import com.vartmp7.stalker.R;
 import com.vartmp7.stalker.StalkerApplication;
 import com.vartmp7.stalker.Tools;
@@ -165,7 +164,7 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
             Log.d(TAG, "onRebind ");
             mService = binder.getService();
             mService.requestLocationUpdates();
-            mService.updateOrganizations(organizationToTrack);//fixme maybe useless, buggoso
+            mService.updateOrganizations(organizationToTrack);
             mService.setCallback(callback);
             mBound = true;
         }
