@@ -40,9 +40,6 @@ import javax.inject.Singleton;
 
 @Singleton
 public class OrganizationsRepository {
-
-    private static final String TAG = "com.vartmp7.stalker.repository.OrganizationsRepository";
-
     private Storage storage;
     private Obtainer obtainer;
     private FavoritesSource organizationFavoritesSource;
@@ -82,19 +79,10 @@ public class OrganizationsRepository {
 
     public LiveData<List<Organization>> getOrganizations() {
         LiveData<List<Organization>> fromLocal = storage.getLocalOrganizations();
-//        Log.d(TAG, "getOrganizations() before if");
         if (organizationFavoritesSource != null) {
-//            Log.d(TAG, "getOrganizations() dentro if");
             organizationFavoritesSource.refresh();
         }
-//        Log.d(TAG, "getOrganizzazioni: " + fromLocal.getValue());
-        /*liveOrganizzazioni.addSource(fromLocal,organizzazioni->{
-            Log.d(TAG, "getOrganizzazioni: ");
-            organizzazioni.forEach(o-> Log.d(TAG, "getOrg: "+o.getId()));
-            liveOrganizzazioni.postValue(organizzazioni);
-            liveOrganizzazioni.removeSource(fromLocal);
-        });
-        return liveOrganizzazioni;*/
+
         return fromLocal;
     }
 

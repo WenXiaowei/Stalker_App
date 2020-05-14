@@ -43,7 +43,6 @@ import lombok.experimental.Accessors;
  * Usato per rappresentare dei luoghi con una forma di circonferenza.
  */
 public class CircumferencePlace extends AbstractPlace {
-    public static final String TAG = "com.vartmp7.stalker.gsonbeans.LuogoACirconferenza";
 
     @Setter
     @Accessors(chain = true)

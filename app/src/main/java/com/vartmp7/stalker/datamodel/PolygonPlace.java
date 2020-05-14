@@ -52,7 +52,6 @@ public class PolygonPlace extends AbstractPlace {
     PolygonPlace(long id, String name, List<Coordinate> coordinates) {
         super(id, name);
         this.coordinates = coordinates;
-
     }
 
     PolygonPlace(long id, String name, long num, List<Coordinate> coordinates) {

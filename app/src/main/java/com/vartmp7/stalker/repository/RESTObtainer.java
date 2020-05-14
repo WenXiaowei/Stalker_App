@@ -64,7 +64,6 @@ public class RESTObtainer implements Obtainer {
     @Inject
     public RESTObtainer(RestApiService service) {
         this.service = service;
-        //this.mutableLiveDataOrganizzazioni= list;
         mutableLiveDataOrganizzazioni = new MutableLiveData<>();
         trackRecords = new MutableLiveData<>(new ArrayList<>());
     }
@@ -78,7 +77,6 @@ public class RESTObtainer implements Obtainer {
             @SneakyThrows
             @Override
             public void onResponse(@NotNull Call<OrganizationResponse> call, @NotNull Response<OrganizationResponse> response) {
-//                Log.d(TAG, "onResponse: "+response.body().getOrganizations());
                 List<Organization> organizations1= new ArrayList<>();
                 if (response.body()!=null){
                     organizations1 = response.body().getOrganizations();
@@ -142,7 +140,6 @@ public class RESTObtainer implements Obtainer {
 //                                .setImageUrl("https://www.dsfarm.unipd.it/sites/dsfarm.unipd.it/files/sublogo_9.png")
 
                 );
-//                orgs.forEach(o -> Log.d(TAG, "onFailure: " + o.getId()));
                 mutableLiveDataOrganizzazioni.postValue(orgs);
             }
 
@@ -180,10 +177,6 @@ public class RESTObtainer implements Obtainer {
 
                 @Override
                 public void onFailure(@NotNull Call<TrackHistory> call, @NotNull Throwable t) {
-//                    mockedTrackRecords.add(new TrackRecord().setPlaceName("Torre Archimede").setOrgName("UNIPD").setEntered(true).setPlaceId(1).setDateTime("2020-04-20T13:14:15"));
-//                    mockedTrackRecords.add(new TrackRecord().setPlaceName("Torre Archimede").setOrgName("UNIPD").setEntered(false).setPlaceId(1).setDateTime("2020-04-20T15:11:12"));
-//                    mockedTrackRecords.add(new TrackRecord().setPlaceName("DSea").setOrgName("UNIPD").setEntered(true).setPlaceId(1).setDateTime("2020-04-20T15:30:15"));
-//                    mockedTrackRecords.add(new TrackRecord().setPlaceName("DSea").setOrgName("UNIPD").setEntered(false).setPlaceId(1).setDateTime("2020-04-20T17:30:15"));
                     trackRecords.postValue(mockedTrackRecords);
                 }
             });

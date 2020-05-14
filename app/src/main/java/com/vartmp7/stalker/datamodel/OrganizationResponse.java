@@ -37,7 +37,6 @@ import lombok.experimental.Accessors;
  * @author Xiaowei Wen, Lorenzo Taschin
  */
 public class OrganizationResponse {
-    public static final String TAG ="com.vartmp7.stalker.gsonbeans.ResponseOrganizzazione";
     @Getter
     @Setter
     @Accessors(chain = true)

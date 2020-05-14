@@ -77,7 +77,6 @@ import java.util.List;
  * @author Xiaowei Wen, Lorenzo Taschin
  */
 public class MainActivity extends AppCompatActivity {
-    private static final String TAG = "com.vartmp7.stalker.MainActivity";
     public static final String PREFERENCE_FILE = "stalker";
     public static final String PREFERENCE_NOT_LOGIN = "not_login";
     //    public static final String URL_SERVER="https://stalker-be.ddns.net/";

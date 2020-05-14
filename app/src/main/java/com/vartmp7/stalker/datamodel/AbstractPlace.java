@@ -34,7 +34,6 @@ import lombok.experimental.Accessors;
  * @author Xiaowei Wen, Lorenzo Taschin
  */
 public abstract class AbstractPlace {
-    public static final String TAG = "com.vartmp7.stalker.gsonbeans.AbstractLuogo";
     @Getter
     @Setter
     @Accessors(chain = true)

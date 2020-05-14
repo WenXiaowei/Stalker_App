@@ -41,7 +41,6 @@ import lombok.experimental.Accessors;
 
 public class Coordinate {
 
-    public static final String TAG = "com.vartmp7.stalker.gsonbeans.placecomponent.Coordinata";
     @Getter
     @Setter
     @Accessors(chain = true)

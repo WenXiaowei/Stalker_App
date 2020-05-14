@@ -31,8 +31,6 @@ import com.onesignal.OneSignal;
 import com.vartmp7.stalker.injection.components.DaggerOrganizationsRepositoryComponent;
 import com.vartmp7.stalker.injection.components.OrganizationsRepositoryComponent;
 import com.vartmp7.stalker.injection.modules.FileStorageModule;
-import com.vartmp7.stalker.injection.modules.FirebaseFavoritesSourceModule;
-import com.vartmp7.stalker.repository.OrganizationsRepository;
 
 import lombok.Getter;
 
@@ -40,7 +38,6 @@ import lombok.Getter;
  * @author Xiaowei Wen, Lorenzo Taschin
  */
 public class StalkerApplication extends Application {
-    public static final String TAG ="com.vartmp7.stalker.StalkerApplication";
     @Getter
     private OrganizationsRepositoryComponent organizationsRepositoryComponent;
     @Override

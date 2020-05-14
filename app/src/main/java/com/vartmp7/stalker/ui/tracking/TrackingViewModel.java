@@ -42,7 +42,6 @@ import lombok.Setter;
  * @author Xiaowei Wen, Lorenzo Taschin
  */
 public class TrackingViewModel extends ViewModel {
-    public static final String TAG = "com.vartmp7.stalker.ui.home.HomeViewModel";
 
     @Setter(AccessLevel.PUBLIC) @Getter(AccessLevel.PUBLIC)
     private OrganizationsRepository repository;

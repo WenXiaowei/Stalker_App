@@ -82,12 +82,6 @@ public class DetailsDialog {
                 org.getLdapCommonName()));
         TextView tvLuoghi = v.findViewById(R.id.tvElencoLuoghi);
         tvLuoghi.setText(org.getPlacesInfo());
-//        detailDialog.setPositiveButton(R.string.tracciami, (dialog, which) -> {
-//            viewModel.updateOrganizzazione(org.setTracking(true));
-//            navController.navigate(R.id.action_navigation_organizations_to_navigation_tracking);
-//        });
-
-//        detailDialog.setPositiveButtonIcon(context.getDrawable(R.drawable.ic_add_circle_black_24dp));
         detailDialog.setNegativeButton(context.getString(R.string.chiudi), (dialog, which) -> dialog.dismiss());
 
         detailDialog.setView(v);

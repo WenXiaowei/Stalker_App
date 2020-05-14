@@ -45,8 +45,6 @@ import lombok.Getter;
  * @author Xiaowei Wen, Lorenzo Taschin
  */
 class OrganizationsViewModel extends ViewModel {
-
-
     private OrganizationsRepository orgRepo;
     @Getter(AccessLevel.PUBLIC)
     private MutableLiveData<List<Organization>> organizationList;

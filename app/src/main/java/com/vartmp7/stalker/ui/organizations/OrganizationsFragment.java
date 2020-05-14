@@ -24,11 +24,8 @@
 
 package com.vartmp7.stalker.ui.organizations;
 
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,14 +41,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.vartmp7.stalker.R;
-import com.vartmp7.stalker.datamodel.Organization;
-import com.vartmp7.stalker.ui.IntroActivity;
 import com.vartmp7.stalker.StalkerApplication;
+import com.vartmp7.stalker.datamodel.Organization;
 import com.vartmp7.stalker.repository.OrganizationsRepository;
 
 public class OrganizationsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
-    public static final String TAG = "com.vartmp7.stalker.ui.organizations.OrganizationsFragment";
-
     private OrganizationsViewModel organizzazioneViewModel;
     private RecyclerView recyclerView;
     private OrganizationViewAdapter mAdapter;

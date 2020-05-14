@@ -59,8 +59,6 @@ import java.util.List;
  * @author Xiaowei Wen, Lorenzo Taschin
  */
 public class HistoryFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
-    public static final String TAG = "com.vartmp7.stalker.ui.cronologia.CronologiaFragment";
-
     private HistoryViewModel historyViewModel;
     private RecyclerView organizationRecyclerView;
     private SwipeRefreshLayout refreshLayout;

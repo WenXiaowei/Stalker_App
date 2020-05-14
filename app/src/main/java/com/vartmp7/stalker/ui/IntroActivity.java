@@ -91,8 +91,6 @@ public class IntroActivity extends OnboarderActivity implements OnboarderPageCha
 
     @Override
     public void onFinishButtonPressed() {
-        // implement your logic, save induction has done to sharedPrefs
-//        Toast.makeText(this, "Finish button was pressed", Toast.LENGTH_SHORT).show();
        introductionFinished();
     }
     private void introductionFinished(){
@@ -107,6 +105,5 @@ public class IntroActivity extends OnboarderActivity implements OnboarderPageCha
 
     @Override
     public void onPageChanged(int position) {
-//        Toast.makeText(this, "onPageChanged: " + position, Toast.LENGTH_SHORT).show();
     }
 }

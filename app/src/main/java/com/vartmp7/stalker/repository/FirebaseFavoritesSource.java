@@ -53,25 +53,11 @@ public class FirebaseFavoritesSource implements FavoritesSource {
     @Setter(AccessLevel.PUBLIC)
     private String userId;
 
-    /*
-    pescare da firebase e restituire una lista di id che sono i preferiti. (get)
-    e dare la possibilita' di dato un id di dire che non è più preferito. dato un id, toglierlo dalla lista
-    dei preferiti
-    aggiungere un id alla lista dei preferito su firebase firestore
-     */
     private MutableLiveData<List<Long>> mutableliveDataOrgIds;
-    //private LiveData<List<Organizzazione>> liveDataOrganizzazioni;
-   // private MediatorLiveData<List<Organizzazione>> mediatorLiveDataOrganizzazioni;
-    //private MutableLiveData<Boolean> organizationsQueryExhausted;
-    //private MutableLiveData<Boolean> firebaseQueryExhausted;
 
     public FirebaseFavoritesSource(String userId, FirebaseFirestore db) {
         this.mutableliveDataOrgIds = new MutableLiveData<>(new ArrayList<>());
-        //this.mediatorLiveDataOrganizzazioni = new MediatorLiveData<>();
-        //organizationsQueryExhausted = new MutableLiveData<Boolean>(false);
-        //firebaseQueryExhausted = new MutableLiveData<Boolean>(false);
         this.userId = userId;
-        //this.organizationsRepo = orgRepo;
         this.db = db;
         initUserStorage();
     }
@@ -81,13 +67,11 @@ public class FirebaseFavoritesSource implements FavoritesSource {
             .get()
             .addOnSuccessListener(docSnapshot->{
                 if(!docSnapshot.exists()){
-//                    Log.d(TAG, "initUserStorage(!document...exists()): ");
                     Map<String, Object> userData = new HashMap<>();
                     userData.put(FIELDNAME_ORGANIZZAZIONI, new ArrayList<Long>());
                     db.collection("utenti").document(userId).set(userData);
                 }
             }).addOnFailureListener(e->{
-//                Log.e(TAG, "initUserStorage: "+e.getMessage());
             });
 
     }
@@ -105,59 +89,6 @@ public class FirebaseFavoritesSource implements FavoritesSource {
                 })
                 .addOnFailureListener(e -> Log.w(TAG, "errore avvenuto aggiungendo organizzazione", e));
     }
-
-/*
-    public void updateOrganizzazioni(List<Long> orgIds){
-        this.firebaseQueryExhausted.setValue(false);
-        this.organizationsQueryExhausted.setValue(false);
-
-        db.collection("utenti").document(userId)
-                .get()
-                .addOnSuccessListener(documentSnapshot -> {
-                    Map<String, Object> data = documentSnapshot.getData();
-                    try {
-                        if (data != null) {
-                            final List<Long> orgIds = (List<Long>) data.get(FIELDNAME_ORGANIZZAZIONI);
-                            Log.w(TAG, "data got from firebase:");
-                            orgIds.forEach(l->Log.d(TAG,"orgId:"+l));
-                            mutableliveDataOrgIds.postValue(orgIds);
-                            firebaseQueryExhausted.postValue(true);
-                            //Log.w(TAG, "organizzazioni ottenute correttamente");
-                        }
-                    } catch (ClassCastException e) {
-                    }
-                });
-
-        this.mediatorLiveDataOrganizzazioni.addSource(liveDataOrganizzazioni, new Observer<List<Organizzazione>>() {
-            @Override
-            public void onChanged(List<Organizzazione> organizzazioni) {
-               organizationsQueryExhausted.postValue(true);
-            }
-        });
-
-        this.liveDataOrganizzazioni = new MutableLiveData<>(organizationsRepo.getOrganizzazioni().getValue());
-
-        final Observer<Boolean> queryExhaustedObserver =  new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean aBoolean) {
-
-                if(firebaseQueryExhausted.getValue() && organizationsQueryExhausted.getValue()){
-                    final List<Long> orgIds = mutableliveDataOrgIds.getValue();
-                    mediatorLiveDataOrganizzazioni.postValue(
-                            liveDataOrganizzazioni.getValue()
-                                    .stream()
-                                    .filter(o-> orgIds.contains(o.getId()))
-                                    .collect(Collectors.toList())
-                    );
-                }
-            }
-        };
-        this.mediatorLiveDataOrganizzazioni.addSource(organizationsQueryExhausted, queryExhaustedObserver);
-        this.mediatorLiveDataOrganizzazioni.addSource(firebaseQueryExhausted,queryExhaustedObserver);
-
-
-    }
-*/
 
 
     @Override
@@ -204,16 +135,11 @@ public class FirebaseFavoritesSource implements FavoritesSource {
                     try {
                         if (data != null) {
                             final List<Long> orgIds = (List<Long>) data.get(FIELDNAME_ORGANIZZAZIONI);
-//                            Log.w(TAG, "data got from firebase:");
-//                            orgIds.forEach(l->Log.d(TAG,"orgId:"+l));
                             mutableliveDataOrgIds.postValue(orgIds);
-//                            Log.w(TAG, "id delle org preferite ottenuti correttamente");
                         }
                     } catch (ClassCastException e) {
                     }
                 });
     }
-
-
 
 }

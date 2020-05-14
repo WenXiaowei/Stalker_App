@@ -214,24 +214,15 @@ public class StalkerTrackingService extends Service {
 //        Log.i(TAG, "Requesting location updates");
         Tools.setRequestingLocationUpdates(this, true);
         startService(new Intent(getApplicationContext(), StalkerTrackingService.class));
-//        try {
-//            mFusedLocationClient.requestLocationUpdates(mLocationRequest,
-//                    mLocationCallback, Looper.myLooper());
-//        } catch (SecurityException unlikely) {
-//            Tools.setRequestingLocationUpdates(this, false);
-////            Log.e(TAG, "Lost location permission. Could not request updates. " + unlikely);
-//        }
     }
 
     public void removeLocationUpdates() {
-//        Log.i(TAG, "Removing location updates");
         try {
             mFusedLocationClient.removeLocationUpdates(mLocationCallback);
             Tools.setRequestingLocationUpdates(this, false);
             stopSelf();
         } catch (SecurityException unlikely) {
             Tools.setRequestingLocationUpdates(this, true);
-//            Log.e(TAG, "Lost location permission. Could not remove updates. " + unlikely);
         }
     }
 
@@ -258,8 +249,6 @@ public class StalkerTrackingService extends Service {
                 Integer.MAX_VALUE)) {
             String className = getClass().getName();
             String otherClasseName = service.service.getClassName();
-            //Log.d("serviceIsRunningInForeground", "Class name"+className);
-            //Log.d("serviceIsRunningInForeground", "Other Class name"+otherClasseName);
             if (className.equals(otherClasseName)) {
               //  Log.d("serviceIsRunningInForeground", "FOUND match");
                 if (service.foreground) {
@@ -289,11 +278,7 @@ public class StalkerTrackingService extends Service {
             serviceCallback.stopTracking();}
 
             if (organizations.size() == 0) {
-//                removeLocationUpdates();
                 updateChronometerBase(-1, -1);
-                //currentOrganization = null;
-                //currentPlace = null;
-                //return;
             }
 
 
@@ -352,8 +337,6 @@ public class StalkerTrackingService extends Service {
                 updateChronometerBase(-1, -1);
             }
         } else {
-//            if (serviceCallback != null)
-//                serviceCallback.notInAnyPlace();
             if (mLocation != null) {
                 Coordinate coordinate = new Coordinate(mLocation.getLatitude(), mLocation.getLongitude());
                 onLocationsChanged(coordinate);
@@ -498,8 +481,6 @@ public class StalkerTrackingService extends Service {
         if (serviceIsRunningInForeground(this) && !lastMessage.equalsIgnoreCase(message)) {
             stalkerNotificationManager.notify(stalkerNotificationManager.getNotification(message));
             lastMessage= message;
-//            mNotificationManager.notify(NOTIFICATION_ID, );
-//            mNotificationManager.notify(NOTIFICATION_ID,getNotification());
         }
 
     }
@@ -526,7 +507,6 @@ public class StalkerTrackingService extends Service {
     public static final String LAST_PLACE_ID = "last_place_id";
 
     public void updateChronometerBase(long placeId, long time) {
-//        Log.d("TAG", "updateChronometerBase: " + time);
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         long lastPlaceId = sharedPreferences.getLong(LAST_PLACE_ID, -1);
 
@@ -534,7 +514,6 @@ public class StalkerTrackingService extends Service {
             sharedPreferences.edit().putLong(LAST_PLACE_ID, placeId).putLong(CHRONOMETER_KEY, -1).apply();
             return;
         }
-//      todo decidere se va bene così
         // id dell'ultimo place viene modificato solo se si cambia da un place ad un'altra,
         // mentre se si passa da modalità loggato a non loggato, id non viene modificato,
         // quindi il tempo di permanenza in un luogo non riparte.

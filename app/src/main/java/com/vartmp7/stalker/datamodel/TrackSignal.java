@@ -39,9 +39,6 @@ import lombok.experimental.Accessors;
  * @author Xiaowei Wen, Lorenzo Taschin
  */
 public class TrackSignal {
-
-
-    private static final String TAG="com.vartmp7.stalker.GsonBeans.TrackSignal";
     // Annotazione expose usato indicare quale campo devo venir serializzato
     @Setter
     @Getter

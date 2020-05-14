@@ -42,7 +42,6 @@ import lombok.experimental.Accessors;
  * @author Xiaowei Wen, Lorenzo Taschin
  */
 public class Organization implements Serializable {
-    public static final String TAG = "com.vartmp7.stalker.gsonbeans.Organizzazione";
     public static final String BOTH= "both";
     public static final String PUBLIC = "public";
     public static final String PRIVATE = "private";

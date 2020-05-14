@@ -28,7 +28,6 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,7 +46,6 @@ import com.vartmp7.stalker.R;
 import org.jetbrains.annotations.NotNull;
 
 public class LoginWithMail extends Fragment implements View.OnClickListener {
-    private final static String TAG="com.vartmp7.stalker.ui.login.LoginWithMail";
     private EditText etEmail, etPassoword;
     private FirebaseAuth mAuth;
     @Nullable
@@ -112,7 +110,6 @@ public class LoginWithMail extends Fragment implements View.OnClickListener {
                             task -> {
                                 if (task.isSuccessful()) {
                                     // Sign in success, update UI with the signed-in user's information
-                                    Log.d(TAG, "signInWithEmail:success");
                                     FirebaseUser user = mAuth.getCurrentUser();
                                     Intent intent = new Intent(requireContext(), MainActivity.class);
                                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -120,7 +117,6 @@ public class LoginWithMail extends Fragment implements View.OnClickListener {
                                     startActivity(intent);
                                 } else {
                                     // If sign in fails, display a message to the user.
-                                    Log.w(TAG, "signInWithEmail:failure", task.getException());
 
                                     Toast.makeText(requireContext(), "Autenticazione fallita!",
                                             Toast.LENGTH_SHORT).show();

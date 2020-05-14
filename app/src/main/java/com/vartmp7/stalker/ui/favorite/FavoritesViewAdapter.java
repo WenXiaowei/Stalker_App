@@ -47,7 +47,6 @@ import java.util.List;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class FavoritesViewAdapter extends RecyclerView.Adapter<FavoritesViewAdapter.ViewHolder> {
-    private static final String TAG = "com.vartmp7.stalker.ui.preferiti.PreferitiViewAdapter";
     private List<Organization> organizzazioni;
     private Context context;
     private FavoritesViewModel viewModel;

@@ -59,9 +59,6 @@ public class HistoryViewModel extends ViewModel {
             throw new IllegalArgumentException("View model not found");
         }
     }
-
-    public static final String TAG = "com.vartmp7.stalker.ui.cronologia.CronologiaViewModel";
-
     public enum Message {notLogged, noRecords, hasRecords}
 
     private OrganizationsRepository orgRepo;

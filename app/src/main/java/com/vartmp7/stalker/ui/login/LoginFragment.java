@@ -29,7 +29,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -69,7 +68,6 @@ import static android.content.Context.MODE_PRIVATE;
 public class LoginFragment extends Fragment implements View.OnClickListener{
 
     private static final int RC_SIGN_IN = 1;
-    private static final String TAG="com.vartmp7.stalker.ui.login";
 
     private CallbackManager callbackManager;
     private FirebaseAuth mAuth;
@@ -85,7 +83,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.form_login,container,false);
-        Log.d(TAG, "onCreateView: LoginFragment");
+//        Log.d(TAG, "onCreateView: LoginFragment");
         Button signUpButton = v.findViewById(R.id.btn_signUp);
         signUpButton.setOnClickListener(this);
 
@@ -110,7 +108,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
 
                 AccessToken accessToken = AccessToken.getCurrentAccessToken();
 
-                Log.d(TAG, "onSuccess: " + accessToken.getUserId());
+//                Log.d(TAG, "onSuccess: " + accessToken.getUserId());
                 boolean isLoggedIn = accessToken != null && !accessToken.isExpired();
 
 //                Successivamente, esegui l'accesso vero e proprio, come nell'OnClickListener di un pulsante personalizzato:
@@ -121,12 +119,12 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
             @Override
             public void onCancel() {
                 // App code
-                Log.d(TAG, "onCancel: ");
+//                Log.d(TAG, "onCancel: ");
             }
 
             @Override
             public void onError(FacebookException error) {
-                Log.d(TAG, "onError: " + error.toString());
+//                Log.d(TAG, "onError: " + error.toString());
             }
 
         });
@@ -147,23 +145,23 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
         return v;
     }
     private void handleFacebookAccessToken(@NotNull AccessToken token) {
-        Log.d(TAG, "handleFacebookAccessToken:" + token);
+//        Log.d(TAG, "handleFacebookAccessToken:" + token);
 
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
-        Log.d(TAG, "handleFacebookAccessToken: " + credential.getProvider());
+//        Log.d(TAG, "handleFacebookAccessToken: " + credential.getProvider());
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(requireActivity(), task -> {
                     if (task.isSuccessful()) {
                         // Sign in success, update UI with the signed-in user's information
-                        Log.d(TAG, "signInWithCredential:success");
+//                        Log.d(TAG, "signInWithCredential:success");
                         FirebaseUser user = mAuth.getCurrentUser();
                         goToMainActivity();
 //                            updateUI(user);
-                        if (user != null)
-                            Log.d(TAG, "onComplete: " + user.getDisplayName());
+//                        if (user != null)
+//                            Log.d(TAG, "onComplete: " + user.getDisplayName());
                     } else {
                         // If sign in fails, display a message to the user.
-                        Log.w(TAG, "signInWithCredential:failure", task.getException());
+//                        Log.w(TAG, "signInWithCredential:failure", task.getException());
                         Toast.makeText(requireContext(), "Authentication failed.",
                                 Toast.LENGTH_SHORT).show();
 //                            updateUI(null);
@@ -176,14 +174,14 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
         try {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
             goToMainActivity();
-            Log.d(TAG, "handleSignInResult: " + account.getDisplayName());
+//            Log.d(TAG, "handleSignInResult: " + account.getDisplayName());
             // Signed in successfully, show authenticated UI.
 
 //            updateUI(account);
         } catch (ApiException e) {
 
             // Please refer to the GoogleSignInStatusCodes class reference for more information.
-            Log.w(TAG, "signInResult:failed code=" + e.getStatusCode());
+//            Log.w(TAG, "signInResult:failed code=" + e.getStatusCode());
             Toast.makeText(requireContext(),"Accesso fallito, riprovare più tardi!", Toast.LENGTH_SHORT).show();
 //            updateUI(null);
         }
@@ -227,7 +225,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
                 goToMainActivity();
                 break;
             case R.id.btn_signUp:
-                Log.e(TAG, "cliccato btn signUp");
+//                Log.e(TAG, "cliccato btn signUp");
                 changeMethod(new LoginWithMail(),"login_with_mail");
 //                showSignUpDialog();
                 break;

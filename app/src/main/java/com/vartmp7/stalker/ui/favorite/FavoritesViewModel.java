@@ -112,9 +112,7 @@ public class FavoritesViewModel extends ViewModel {
     }
 
     public void refresh() {
-//        Log.e(TAG, "refresh: chiamato");
         int i = 0;
-        //MutableLiveData<List<Organizzazione>> listOrgs= new MutableLiveData<>();
         this.firebaseQueryExhausted.setValue(false);
         this.organizationsQueryExhausted.setValue(false);
         this.liveDataOrganizations = orgRepo.getOrganizations();

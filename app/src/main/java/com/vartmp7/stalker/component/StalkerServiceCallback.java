@@ -32,8 +32,8 @@ import android.os.Handler;
  * Classe astratta che eredita da Callback, ha inoltre un reference di Handler per poter modificare gli elementi di UI dal thread non principale
  */
 public abstract class StalkerServiceCallback implements CallBack{
-    private Handler handler;
-    public StalkerServiceCallback(Handler handler) {
+    private final Handler handler;
+    protected StalkerServiceCallback(Handler handler) {
         this.handler = handler;
     }
 

@@ -38,7 +38,6 @@ import lombok.experimental.Accessors;
  */
 public class PlaceResponse {
 
-    private static final String TAG="com.vartmp7.stalker.GsonBeans.ResponseLuogo";
     @Getter @Setter @Accessors(chain = true)
     private List<PolygonPlace> places;
 

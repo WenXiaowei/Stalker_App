@@ -51,11 +51,9 @@ import lombok.AccessLevel;
 import lombok.Getter;
 
 public class FileStorage implements Storage {
-    private static final String TAG = "com.vartmp7.stalker.repository.FileStorage";
     private String fileName;
     private Context context;
     private Gson gson;
-    //    List<Organizzazione> organizzazioni;
     @Getter(AccessLevel.PUBLIC)
     private MutableLiveData<List<Organization>> mLiveOrgs;
 
@@ -64,7 +62,6 @@ public class FileStorage implements Storage {
         this.context = context;
         this.gson = new Gson();
         this.mLiveOrgs = new MutableLiveData<>(new ArrayList<>());
-//        this.mLiveOrgs = org;
     }
 
     @Override
@@ -75,10 +72,8 @@ public class FileStorage implements Storage {
             if(i!=-1){
                 orgList.set(i,organization);
             }
-//            Log.d(TAG, "updateOrganizations: " + organization);
         }
         saveOrganizations(orgList);
-//        mLiveOrgs.setValue(orgList);
     }
 
     @Override
@@ -88,7 +83,6 @@ public class FileStorage implements Storage {
         for (int i = 0; i < l.size() && pos == -1; i++)
             if (o.getId() == l.get(i).getId())
                 pos = i;
-//        int pos = l.indexOf(o);
         if (pos != -1) {
             l.remove(pos);
             l.add(pos, o);
@@ -98,10 +92,8 @@ public class FileStorage implements Storage {
 
     @Override
     public void updateOrganizationInfo(@NotNull List<Organization> orgsToUpdate) {
-//        orgsToUpdate.forEach(o -> Log.d(TAG, "updateOrganizzazioni: updateOrgs" + o.getId()));
         List<Organization> currentOrgs = mLiveOrgs.getValue()!=null? new ArrayList<>(mLiveOrgs.getValue()) : new ArrayList<>();
         List<Organization> toSave = new ArrayList<>();
-//        currentOrgs.forEach(o -> Log.d(TAG, "currentorg: " + o.getId()));
         for (int j = 0; j < orgsToUpdate.size(); j++) {
             boolean contained = false;
             Organization orgToUpdate = orgsToUpdate.get(j);
@@ -117,32 +109,23 @@ public class FileStorage implements Storage {
                     orgToUpdate.setPersonalCn(currentOrg.getPersonalCn());
                     orgToUpdate.setLdapPassword(currentOrg.getLdapPassword());
                     toSave.add(orgToUpdate);
-                    //currentOrgs.remove(currentOrg);
                 }
             }
             if (!contained) {
                 toSave.add(orgToUpdate);
-//                Log.e(TAG, "updateOrganizzazioni: chel cannnn");
             }
         }
-//        Log.d(TAG, "updateOrganizzazioni: futureOrgs");
-//        toSave.forEach(o -> Log.d(TAG, "org: " + o.getId()));
         saveOrganizations(toSave);
     }
 
 
     @Override
     public LiveData<List<Organization>> getLocalOrganizations() {
-        //MutableLiveData<List<Organizzazione>> mLiveOrgs = new MutableLiveData<>();
-        //this.mLiveOrgs.setValue(organizzazioni);
-//        Log.d("TEST","arrivo qua1");
         new Thread() {
             @Override
             public void run() {
                 super.run();
-//                Log.d("TEST","arrivo qua 2");
                 try (FileInputStream fis = context.openFileInput(fileName)){
-//                    Log.d(TAG, "run: lettura dal file");
 
                     StringBuilder stringBuilder = new StringBuilder();
                     try (BufferedReader reader = new BufferedReader(new InputStreamReader(fis, StandardCharsets.UTF_8))) {
@@ -152,8 +135,6 @@ public class FileStorage implements Storage {
                             line = reader.readLine();
                         }
                     } catch (IOException e) {
-//                        Log.e(TAG, "run: Errore");
-                        // Error occurred when opening raw file for reading.
                     } finally {
                         String contents = stringBuilder.toString();
                         OrganizationResponse responseOrganizzazioni = gson.fromJson(contents, OrganizationResponse.class);
@@ -192,28 +173,18 @@ public class FileStorage implements Storage {
                             return;
                     } catch (IOException e) {
                     }
-//                    Log.d(TAG, "creazione file");
-//                    Log.d(TAG, "doInBackground: " + orgJson.mkdir());
                 }
 
                 try (FileWriter writer = new FileWriter(orgJson)){
-                    // fixme sonarqube segna come bug
-                    // fixme quest'istruzione delle volte, genera un concurrentModificationException
                     String l = new Gson().toJson(new OrganizationResponse().setOrganizations(orgs));
-//                    Log.d(TAG, "saving data:");
-//                    orgs.forEach(o -> Log.d(TAG, "save org:" + o.getId()));
                     writer.write(l);
                     writer.flush();
                     writer.close();
                     mLiveOrgs.postValue(orgs);
                 } catch (IOException e) {
-//                    Log.e(TAG, "Errore, file non trovato");
-//                    e.printStackTrace();
                 }
-//                Log.d(TAG, "doInBackground: finished saving data");
             }
         });
-//        saveOrganizzazioni(orgs);
     }
 
 

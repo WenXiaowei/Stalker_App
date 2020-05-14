@@ -49,7 +49,6 @@ import java.util.List;
  * @author Xiaowei Wen, Lorenzo Taschin
  */
 public class OrganizationViewAdapter extends RecyclerView.Adapter<OrganizationViewAdapter.ViewHolder> {
-    public static final String TAG = "com.vartmp7.stalker.ui.organizations.OrganizationAdapter";
     private List<Organization> listaOrganization;
     private Context context;
     private NavController navController;

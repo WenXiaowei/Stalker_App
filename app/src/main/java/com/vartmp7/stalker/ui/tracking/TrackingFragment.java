@@ -38,7 +38,6 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.SystemClock;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -80,7 +79,6 @@ import java.util.stream.Collectors;
  */
 public class TrackingFragment extends Fragment implements SharedPreferences.OnSharedPreferenceChangeListener {
 
-    private final static String TAG = "com.vartmp7.stalker.ui.home.TrackingFragment";
     private final static String PLACE_MSG = "PLACE_MSG";
     private final static int TRACKING_MSG_CODE = 1;
     private final static int TRACKING_STOP_MSG_CODE = 2;
@@ -161,7 +159,6 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             StalkerTrackingService.LocalBinder binder = (StalkerTrackingService.LocalBinder) service;
-            Log.d(TAG, "onRebind ");
             mService = binder.getService();
             mService.requestLocationUpdates();
             mService.updateOrganizations(organizationToTrack);
@@ -461,7 +458,6 @@ public class TrackingFragment extends Fragment implements SharedPreferences.OnSh
         @Override
         public void handleMessage(@NotNull Message msg) {
             super.handleMessage(msg);
-            Log.d(TAG, "handleMessage: ");
             TrackingFragment fragment = reference.get();
             Bundle b = msg.getData();
             //gestione dei empty message

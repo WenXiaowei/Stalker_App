@@ -32,8 +32,6 @@ import lombok.experimental.Accessors;
 
 public class TrackRecord {
 
-
-
     @Getter
     @Setter
     @Accessors(chain = true)

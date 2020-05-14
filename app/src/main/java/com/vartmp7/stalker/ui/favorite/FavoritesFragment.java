@@ -58,8 +58,6 @@ import lombok.Getter;
  * @author Xiaowei Wen, Lorenzo Taschin
  */
 public class FavoritesFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
-    public static final String TAG = "com.vartmp7.stalker.ui.preferiti.PreferitiFragment";
-
     private FavoritesViewModel favViewModel;
     private FavoritesViewAdapter favViewAdapter;
     private RecyclerView favRecyclerView;

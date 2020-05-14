@@ -165,7 +165,6 @@ sonarqube {
         property 'sonar.coverage.jacoco.xmlReportPaths','build/reports/jacoco/jacocoTestDebugUnitTestReport/jacocoTestDebugUnitTestReport.xml'
 
         def files = fileTree("${buildDir}/outputs/code-coverage/connected/flavors/DEV/").filter { it.isFile() }.files.name
-//        def instrumentationFileName = "${buildDir}/outputs/code-coverage/connected/flavors/DEV/" + files[0];
         def instrumentationFileName = "${buildDir}/reports/coverage/debug/reports.xml"
 
         property "sonar.coverage.jacoco.itReportPath", instrumentationFileName
@@ -220,7 +219,6 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
     implementation 'com.squareup.retrofit2:retrofit:2.8.1'
     implementation 'com.squareup.retrofit2:converter-gson:2.8.1'
-    annotationProcessor 'org.projectlombok:lombok:1.18.12'
     annotationProcessor 'org.projectlombok:lombok:1.18.12'
     annotationProcessor files("libs/lombok.jar")
 

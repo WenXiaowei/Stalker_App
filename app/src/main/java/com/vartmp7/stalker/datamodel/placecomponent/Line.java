@@ -62,8 +62,6 @@ public class Line {
     }
 
     public Coordinate intersezione(Line r) {
-        //System.out.println("x/:"+(-this.q + r.q));
-        //System.out.println("/x:"+(this.m - r.m));
         double x = (-this.q + r.q) / (this.m - r.m);
 
         return new Coordinate(calcoloLatitude(x),x);
